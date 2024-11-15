@@ -1,0 +1,23 @@
+/**
+  * @tokens Font Sizes
+  * @presenter FontSize
+  */
+
+$font-size-100: 10px;
+$font-size-200: 13px;
+$font-size-300: 16px;
+$font-size-400: 20px;
+$font-size-500: 28px;
+$font-size-600: 32px;
+$font-size-700: 48px;
+
+$token-font-sizes: (
+  "100": $font-size-100,
+  "200": $font-size-200,
+  "300": $font-size-300,
+  "400": $font-size-400,
+  "500": $font-size-500,
+  "600": $font-size-600,
+  "700": $font-size-700,
+);
+

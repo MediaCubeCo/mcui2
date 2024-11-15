@@ -1,0 +1,11 @@
+<svg data-token-name="mc_vidwide" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.6 2H10.4C5.8 2 2 5.8 2 10.4V20.7C2 21.4 2.6 22 3.3 22H13.6C18.2 22 22 18.2 22 13.6V10.4C22 5.8 18.2 2 13.6 2Z" fill="url(#paint0_linear)"/>
+<path d="M9.16652 10.0775C8.6872 9.14931 9.29987 8 10.274 8H17.726C18.7001 8 19.3128 9.14931 18.8335 10.0775L15.1075 17.2928C14.6205 18.2357 13.3795 18.2357 12.8925 17.2928L9.16652 10.0775Z" fill="white" fill-opacity="0.7"/>
+<path d="M5.16652 10.0775C4.6872 9.14931 5.29987 8 6.27399 8H13.726C14.7001 8 15.3128 9.14931 14.8335 10.0775L11.1075 17.2928C10.6205 18.2357 9.3795 18.2357 8.89253 17.2928L5.16652 10.0775Z" fill="white"/>
+<defs>
+<linearGradient id="paint0_linear" x1="12" y1="2" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+<stop stop-color="#26DFD5"/>
+<stop offset="1" stop-color="#3580F8"/>
+</linearGradient>
+</defs>
+</svg>

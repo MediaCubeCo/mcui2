@@ -1,0 +1,1 @@
+.mc-grid-row{display:flex;flex-direction:row;justify-content:var(--mc-grid-row-justify);align-items:var(--mc-grid-row-align)}.mc-grid-row--stretch>.mc-grid-col{flex:1}

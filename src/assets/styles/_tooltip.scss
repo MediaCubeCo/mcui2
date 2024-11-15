@@ -1,0 +1,123 @@
+@import "../tokens/colors";
+@import "../tokens/border-radius";
+@import "../tokens/box-shadows";
+@import "../tokens/spacings";
+@import "../tokens/font-sizes";
+@import "../tokens/line-heights";
+@import "../tokens/font-weights";
+@import "../tokens/font-families";
+@import "../tokens/z-indexes";
+
+.mc-tooltip {
+  --tooltip-color: $color-black;
+  --tooltip-text-color: $color-white;
+  font-family: $font-family-main;
+  text-transform: none;
+  font-size: $font-size-200;
+  line-height: $line-height-200;
+  user-select: none;
+  pointer-events: none;
+  position: absolute;
+  font-weight: $font-weight-normal;
+  text-align: center;
+
+  border-radius: $radius-100;
+  box-shadow: $shadow-s;
+  padding: $space-100 $space-150;
+  background: var(--tooltip-color);
+  color: var(--tooltip-text-color);
+  z-index: $z-index-toasted;
+  white-space: normal;
+  word-break: break-word;
+  width: max-content;
+  transition: all 0.3 ease;
+  & > * {
+    display: inline-block;
+  }
+  &[tooltip-arrow="true"]::before {
+    content: "";
+    border: 5px solid transparent;
+    z-index: 1001;
+    position: absolute;
+  }
+  &:hover:before,
+  &:hover:after {
+    display: block;
+  }
+  &[tooltip-size="xs"]::after {
+    max-width: 180px;
+  }
+  &[tooltip-size="s"]::after {
+    max-width: 250px;
+  }
+  &[tooltip-size="m"]::after {
+    max-width: 320px;
+  }
+  &[tooltip-size="l"]::after {
+    max-width: 380px;
+    font-size: $font-size-300;
+  }
+  &[tooltip-size="xl"]::after {
+    max-width: 500px;
+    font-size: $font-size-300;
+  }
+
+  &[tooltip-placement^="top"],
+  &[tooltip-placement^="bottom"] {
+    animation: tooltips-vert 300ms ease-out forwards;
+  }
+  &[tooltip-placement^="left"],
+  &[tooltip-placement^="right"] {
+    animation: tooltips-horz 300ms ease-out forwards;
+  }
+
+
+
+  /* position: Top */
+  &[tooltip-placement^="top"]::before {
+    top: 100%;
+    left: 50%;
+    border-bottom-width: 0;
+    border-top-color: var(--tooltip-color);
+    transform: translate(-50%, 0);
+  }
+
+  /* position: Bottom */
+  &[tooltip-placement^="bottom"]::before {
+    top: 0;
+    left: 50%;
+    border-top-width: 0;
+    border-bottom-color: var(--tooltip-color);
+    transform: translate(-50%, -100%);
+  }
+
+  /* position: Left */
+  &[tooltip-placement^="left"]::before {
+    top: 50%;
+    left: 100%;
+    border-right-width: 0;
+    border-left-color: var(--tooltip-color);
+    transform: translate(0, -50%);
+  }
+
+  /* position: Right */
+  &[tooltip-placement^="right"]::before {
+    top: 50%;
+    left: 0;
+    border-left-width: 0;
+    border-right-color: var(--tooltip-color);
+    transform: translate(-100%, -50%);
+  }
+}
+
+@keyframes tooltips-vert {
+  to {
+    opacity: 0.9;
+  }
+}
+
+@keyframes tooltips-horz {
+  to {
+    opacity: 0.9;
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$duration-s": "150ms",
+  "$duration-m": "300ms",
+  "$duration-l": "500ms",
+  "$token-durations": {
+    "s": "150ms",
+    "m": "300ms",
+    "l": "500ms"
+  }
+}

@@ -1,0 +1,22 @@
+/**
+ * @tokens Line Heights
+ * @presenter LineHeight
+ */
+
+$line-height-150: 12px; /* Additional token */
+$line-height-200: 16px;
+$line-height-250: 20px; /* Additional token */
+$line-height-300: 24px;
+$line-height-400: 32px;
+$line-height-500: 40px;
+$line-height-600: 48px;
+
+$token-line-heights: (
+  150: $line-height-150,
+  200: $line-height-200,
+  250: $line-height-250,
+  300: $line-height-300,
+  400: $line-height-400,
+  500: $line-height-500,
+  600: $line-height-600,
+);

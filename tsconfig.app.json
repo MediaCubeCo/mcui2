@@ -1,0 +1,25 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "src/assets/tokens/json/**/*.json", "src/mocks/**/*.json"],
+  "exclude": [
+    "src/**/__tests__/*",
+    "node_modules",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.stories.js",
+    "**/*.stories.jsx"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "declaration": true,
+    "emitDeclarationOnly": false,
+    "outDir": "./dist",
+    "declarationMap": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

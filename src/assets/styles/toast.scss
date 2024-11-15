@@ -1,0 +1,55 @@
+.toasted-container {
+  $toasted-container-name: &;
+  @import './mixins';
+  @import '../tokens/z-indexes';
+  z-index: $z-index-toasted !important;
+  .toasted {
+    &.mc-toast {
+      padding: $space-100 0;
+      padding-inline: $space-150 $space-400;
+      &--primary {
+        border-radius: $radius-100;
+        background-color: $color-black;
+        color: $color-white;
+        font-size: $font-size-200;
+        line-height: $line-height-200;
+
+        .action {
+          text-decoration: none;
+          text-transform: none;
+          margin: 0;
+          font-size: $font-size-200;
+          line-height: $line-height-200;
+          &.mc-toast__action {
+            color: fade-out($color-white, 0.5);
+
+            &--outline {
+              color: $color-white;
+              padding: $space-100 $space-150;
+              border: 1px solid $color-outline-gray;
+              border-radius: $radius-50;
+            }
+          }
+          &:not(:last-child) {
+            margin-inline-end: $space-50;
+          }
+          &:first-of-type {
+            margin-inline-start: $space-600;
+          }
+          &:last-child {
+            margin-inline-end: -$space-300; // TODO: refactor negative margin
+          }
+          &:first-of-type:last-child {
+            margin-inline-end: -$space-300; // TODO: refactor negative margin
+          }
+        }
+      }
+      .las,
+      i {
+        @include size($space-300);
+        font-size: 24px;
+        margin-inline-end: $space-150;
+      }
+    }
+  }
+}

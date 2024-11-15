@@ -1,0 +1,38 @@
+/**
+ * @tokens Spacings
+ * @presenter Spacing
+ */
+
+$space-zero: 0;
+$space-50: 4px; /* Additional token */
+$space-100: 8px;
+$space-150: 12px; /* Additional token */
+$space-200: 16px;
+$space-250: 20px; /* Additional token */
+$space-300: 24px;
+$space-350: 28px; /* Additional token */
+$space-400: 32px;
+$space-450: 36px; /* Additional token */
+$space-500: 40px;
+$space-600: 48px;
+$space-700: 56px;
+$space-800: 64px;
+$space-900: 72px;
+$space-1000: 80px;
+
+$token-spaces: (
+  50: $space-50, /* Additional token */
+  100: $space-100,
+  150: $space-150, /* Additional token */
+  200: $space-200,
+  250: $space-250, /* Additional token */
+  300: $space-300,
+  400: $space-400,
+  450: $space-450, /* Additional token */
+  500: $space-500,
+  600: $space-600,
+  700: $space-700,
+  800: $space-800,
+  900: $space-900,
+  1000: $space-1000,
+);

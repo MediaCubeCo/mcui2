@@ -1,0 +1,24 @@
+{
+  "$radius-square": "0px",
+  "$radius-50": "4px",
+  "$radius-100": "8px",
+  "$radius-150": "12px",
+  "$radius-200": "16px",
+  "$radius-300": "24px",
+  "$radius-400": "32px",
+  "$radius-1250": "100px",
+  "$radius-rounded": "300px",
+  "$radius-circle": "50%",
+  "$token-radius": {
+    "50": "4px",
+    "100": "8px",
+    "150": "12px",
+    "200": "16px",
+    "300": "24px",
+    "400": "32px",
+    "1250": "100px",
+    "square": "0px",
+    "rounded": "300px",
+    "circle": "50%"
+  }
+}

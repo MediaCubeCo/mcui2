@@ -1,0 +1,1 @@
+import{r as i,e as n,w as a}from"./vue.esm-bundler-DcuF_pQ3.js";function c(e){const l=i(!0),u=n(()=>{var t;return e===null||!(e!=null&&e.length)||!l.value?null:(t=e.join(", "))==null?void 0:t.replace(/-/gm,"&#x2011;")});return a(()=>e,()=>{l.value=!1}),{is_error_visible:l,errorText:u,toggleErrorVisible:()=>{l.value=!1}}}export{c as u};
