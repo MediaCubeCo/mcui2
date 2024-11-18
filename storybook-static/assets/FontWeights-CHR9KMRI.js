@@ -1,1 +1,0 @@
-const t={"$font-weight-normal":"400","$font-weight-medium":"500","$font-weight-semi-bold":"600","$font-weight-bold":"700","$token-font-weights":{normal:"400",medium:"500","semi-bold":"600",bold:"700"}},o=t["$token-font-weights"];export{o as F};
