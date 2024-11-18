@@ -9,7 +9,6 @@ import {
 } from '@/enums/Datepicker'
 import type {
   DatepickerFormatsObjectFormat,
-  DatepickerFormatsVariationsUnion,
   IDatepickerPlaceholders,
   IDatepickerPreset
 } from '@/types/IDatepicker'
@@ -26,8 +25,6 @@ import McTitle from '../McTitle/McTitle.vue'
 import McSvgIcon from '../McSvgIcon/McSvgIcon.vue'
 import McButton from '../McButton/McButton.vue'
 import { useFieldErrors } from '@/composables/useFieldErrors'
-
-// TODO import equalFieldHeight from '../../mixins/equalFieldHeight'
 
 const attrs = useAttrs()
 const emit = defineEmits(['update:modelValue'])

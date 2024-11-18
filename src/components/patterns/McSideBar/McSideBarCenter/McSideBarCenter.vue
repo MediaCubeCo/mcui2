@@ -7,21 +7,14 @@ import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import { useRandomNumber } from '@/composables/useRandomNumber'
 import { computed, inject, nextTick, onBeforeMount, type PropType, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import type {
-  ISideBarMenuItem,
-  ISideBarMenuItemEnrichment,
-  ISidebarThemeConfigProvide
-} from '@/types'
+import type { ISideBarChatra, ISideBarMenuItem, ISideBarMenuItemEnrichment, ISidebarThemeConfigProvide } from '@/types'
 import { ButtonSize, SidebarTheme } from '@/enums'
 import McSlideUpDown from '@/components/elements/McSlideUpDown/McSlideUpDown.vue'
 import { defaultThemes } from '@/mocks/sidebar'
 
 const route = useRoute()
 const randomNumber = useRandomNumber()
-const provideData = inject<ISidebarThemeConfigProvide>(
-  'provideData',
-  {} as ISidebarThemeConfigProvide
-)
+const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
 const emit = defineEmits<{
   (e: 'open-side-bar'): void
   (e: 'handlerChatraClick'): void
@@ -55,8 +48,8 @@ const props = defineProps({
    *
    */
   chatraConfig: {
-    type: Object as PropType<object>,
-    default: null
+    type: Object as PropType<ISideBarChatra>,
+    default: () => ({})
   },
   /**
    *  Компактный вид
@@ -93,27 +86,22 @@ watch(
 )
 
 // если переходим на роут с вложенным меню, открываем вложенное меню
-// TODO debug to.name || to.path
 watch(
   () => route,
   (newRoute, oldRoute): void => {
     loading.value = true
     if (oldRoute.path !== newRoute.path) {
       const target_route = preparedMainMenu.value.find(
-        (r) =>
-          r.to.name === newRoute.name ||
-          r.menu?.find((childRoute) => childRoute.to.name === newRoute.name)
+        (r) => r.to.path === newRoute.path || r.menu?.find((childRoute) => childRoute.to.path === newRoute.path)
       )
       target_route?.menu && !props.compact && (target_route.open = true)
     }
     nextTick(() => {
       preparedMainMenu.value.forEach((mi) => {
-        const exact_route = mi.to.name === newRoute.name
+        const exact_route = mi.to.path === newRoute.path
         const route_menu_match_new_route =
           mi.menu &&
-          mi.menu.some(
-            (mim) => mim.to.name?.match(newRoute?.name) || newRoute.name?.match(mim.to.name)
-          )
+          mi.menu.some((mim) => mim.to.path?.match(newRoute?.path) || newRoute.path?.match(mim.to.path as string))
         if (!(exact_route || route_menu_match_new_route)) mi.open = false
       })
       loading.value = false
@@ -128,8 +116,7 @@ const getMenuItemHeadClasses = (menuMainItem: ISideBarMenuItemEnrichment) => {
     'with-submenu': menuMainItem.menu && menuMainItem.menu.length,
     [`mc-side-bar--${themeConfig.value.mode || 'black'}__button`]: true,
     'purple-hover': themeConfig.value.mainMenuLinks.variable === 'black-flat',
-    [`mc-button--variation-${themeConfig.value.mainMenuLinks.variable}`]:
-      !!themeConfig.value.mainMenuLinks.variable,
+    [`mc-button--variation-${themeConfig.value.mainMenuLinks.variable}`]: !!themeConfig.value.mainMenuLinks.variable,
     ['mc-side-bar--black__button mc-button nuxt-link-active']:
       menuMainItem.menu && menuMainItem.menu.length && !menuMainItem.open && menuMainItem.active()
   }
@@ -145,8 +132,8 @@ const setMainMenu = (): void => {
   preparedMainMenu.value = props.menuMain.map((i: ISideBarMenuItem) => {
     const active = () => {
       return (
-        (i.menu && i.menu.some((r) => route?.name?.match(r.to.name))) ||
-        !!route?.name?.match(i.to.name)
+        (i.menu && i.menu.some((r) => route?.path?.match(r.to.path as string))) ||
+        !!route?.path?.match(i.to.path as string)
       )
     }
 
@@ -164,30 +151,18 @@ const setMainMenu = (): void => {
 
 <template>
   <div class="mc-side-bar-center">
-    <mc-title
-      v-if="title"
-      class="mc-side-bar-center__title"
-      :color="compact ? 'transparent' : 'dark-gray'"
-    >
+    <mc-title v-if="title" class="mc-side-bar-center__title" :color="compact ? 'transparent' : 'dark-gray'">
       {{ title }}
     </mc-title>
     <!-- v-show hides jumping with child menu opening after locale switch  -->
-    <div
-      v-show="!loading"
-      v-if="preparedMainMenu && preparedMainMenu.length"
-      class="mc-side-bar-center__content"
-    >
+    <div v-show="!loading" v-if="preparedMainMenu && preparedMainMenu.length" class="mc-side-bar-center__content">
       <div
         v-for="menuMainItem in preparedMainMenu"
         :key="menuMainItem.id"
         :class="{ 'item-active': menuMainItem.active() }"
         class="mc-side-bar-center__content-item item"
       >
-        <div
-          class="item__head"
-          :class="getMenuItemHeadClasses(menuMainItem)"
-          @click="handlerSidebarItemClick"
-        >
+        <div class="item__head" :class="getMenuItemHeadClasses(menuMainItem)" @click="handlerSidebarItemClick">
           <!-- TODO refactor info -->
           <mc-side-bar-button
             :info="
@@ -213,9 +188,7 @@ const setMainMenu = (): void => {
             :size="ButtonSize.MCompact"
             class="item__head-arrow"
             :class="{
-              rotate: menuMainItem.active()
-                ? menuMainItem.active() && menuMainItem.open
-                : menuMainItem.open
+              rotate: menuMainItem.active() ? menuMainItem.active() && menuMainItem.open : menuMainItem.open
             }"
             @click="menuMainItem.open = !menuMainItem.open"
           >
@@ -227,9 +200,7 @@ const setMainMenu = (): void => {
         <mc-slide-up-down
           v-if="menuMainItem.menu && menuMainItem.menu.length"
           class="item__submenu"
-          :active="
-            menuMainItem.active() ? menuMainItem.active() && menuMainItem.open : menuMainItem.open
-          "
+          :active="menuMainItem.active() ? menuMainItem.active() && menuMainItem.open : menuMainItem.open"
         >
           <mc-side-bar-button
             v-for="(menuItem, i) in menuMainItem.menu"
@@ -247,15 +218,15 @@ const setMainMenu = (): void => {
       </div>
     </div>
     <mc-separator
-      v-if="chatraConfig"
+      v-if="chatraConfig.title"
       color="dark-gray"
       indent-top="150"
       indent-bottom="150"
-      :indent-left="compact ? '0' : '100'"
-      :indent-right="compact ? '0' : '100'"
+      :indent-left="compact ? '50' : '100'"
+      :indent-right="compact ? '50' : '100'"
     />
     <mc-side-bar-button
-      v-if="chatraConfig"
+      v-if="chatraConfig.title"
       icon="chat_messages"
       :title="chatraConfig.title"
       :compact="compact"

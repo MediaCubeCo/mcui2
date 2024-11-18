@@ -379,7 +379,7 @@ const inputAttrs = computed((): object => {
   }
 })
 const inputStyles = computed((): object => {
-  const space = Spaces['150']
+  const space = parseInt(Spaces['150'])
   let bottomStyle = {}
   if (isTextarea.value || isTextareaAutosize.value) {
     const spaceBottomToken = hasCharCounter.value ? '400' : '150'
@@ -545,14 +545,14 @@ const calculatePadding = (): void => {
 }
 
 const calculateSlotPadding = (name: string): string => {
-  const tokenSpace = Spaces['50']
-  let result =
+  const tokenSpace = parseInt(Spaces['50'])
+
+  let result = slots[name]
     //@ts-ignore
-    slots[name].reduce((acc, cur, index) => {
-      const $el = cur.elm || cur
-      const space = index && tokenSpace
-      return acc + $el.getBoundingClientRect().width + space
-    }, 0)
+    ? (slots[name] || []).reduce((acc) => {
+        return acc + tokenSpace
+      }, 0) + tokenSpace
+    : tokenSpace
 
   if (name === 'prepend') return result
 
@@ -560,7 +560,7 @@ const calculateSlotPadding = (name: string): string => {
    *  Также увеличиваем padding при наличии кнопки копирования и если тип password
    */
 
-  const iconSpace = Spaces['300']
+  const iconSpace = parseInt(Spaces['300'])
 
   result = result ? result + tokenSpace : tokenSpace
   props.copy && (result += iconSpace)

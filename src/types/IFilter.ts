@@ -41,10 +41,11 @@ export type IFilter = IFastFilter | IRangeFilter | IRelationFilter | IBaseFilter
 
 export interface IFilterTag extends IBaseFilter {
   id?: string | number
-  title: string
+  title?: string
   category?: string
   categoryName: string
   relationKey?: string
+  closable?: boolean
 }
 export interface IFilterChip {
   id?: string | number
@@ -74,15 +75,19 @@ export interface IFilterRangeValue {
 }
 
 export interface IFilterCondition {
-  value: FilterConditionValue,
+  value: FilterConditionValue
   valueName?: FilterConditionName
 }
 
 export type FilterRelationValue = {
-  [key in FilterRelations | string]: string[] | object | string
+  [FilterRelations.Exists]: string | null
+  [FilterRelations.Is]: string[]
+  [FilterRelations.IsNot]: string[]
 }
 
-export type FilterConditionValue = IFilterRangeValue | IFilterDateValue | FilterRelationValue | object | null | string | number | boolean
+export type FilterTextValue = null | string | number
+
+export type FilterConditionValue = IFilterRangeValue | IFilterDateValue | FilterRelationValue | FilterTextValue
 export type FilterConditionName = FilterRelationValue | string | null
 
 export interface IFilterDragOptions {
@@ -94,7 +99,6 @@ export interface IFilterDragOptions {
 }
 
 export type FilterRelationsUnion = (typeof FilterRelations)[keyof typeof FilterRelations]
-
 
 export interface IFilterPlaceholders {
   main_tooltip: string

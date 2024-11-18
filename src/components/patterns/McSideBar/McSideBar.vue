@@ -14,7 +14,7 @@ import McSideBarCenter from '@/components/patterns/McSideBar/McSideBarCenter/McS
 import McSideBarBottom from '@/components/patterns/McSideBar/McSideBarBottom/McSideBarBottom.vue'
 import type {
   IconsListUnion,
-  ISideBarApp,
+  ISideBarApp, ISideBarChatra,
   ISideBarMenuItem,
   ISidebarThemeConfig, ISidebarThemeConfigProvide,
   TitleVariationsUnion
@@ -95,12 +95,12 @@ const props = defineProps({
     default: () => []
   },
   /**
-   *  Id чатры
+   *  Config чатры
    *
    */
   chatraConfig: {
-    type: Object as PropType<object>,
-    default: null
+    type: Object as PropType<ISideBarChatra>,
+    default: () => ({})
   },
   /**
    *  Текст кнопки

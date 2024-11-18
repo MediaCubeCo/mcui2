@@ -12,6 +12,8 @@ import McGridCol from '@/components/patterns/McGridCol/McGridCol.vue'
 import McButton from '@/components/elements/McButton/McButton.vue'
 import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
+import McTableCard from '../McTableCard/McTableCard.vue'
+import McTableCardHeader from '../McTableCard/McTableCardHeader/McTableCardHeader.vue'
 import { tableData, tableColumns, tableTotals } from '@/mocks/tableData'
 import type { ITableColumn, ITableData, ITableSort, ITableTotals } from '@/types/ITable'
 
@@ -49,13 +51,16 @@ export const Default: Story = {
         McButton,
         McSvgIcon,
         McTooltip,
+        McTableCard,
+        McTableCardHeader,
       },
       data() {
         return {
           sort: {
             sort_column: 'views_count',
             sort_direction: 'desc'
-          }
+          },
+          cardId: null
         }
       },
       computed: {
@@ -67,7 +72,7 @@ export const Default: Story = {
         },
         totals(): ITableTotals<ITableColumn> {
           return tableTotals
-        },
+        }
       },
       methods: {
         handleLoading() {
@@ -80,10 +85,23 @@ export const Default: Story = {
         handleBtnClick() {
           console.log('handleBtnClick')
         },
+        handleRowClick(payload) {
+          console.log(this.cardId = payload.id)
+        }
       },
       template: `
         <div style="height: 500px; display: flex">
-          <mc-table :data="data" :columns="columns" :sort="sort" fixed-last-column :totals="totals" @sort="handleSort" @loading="handleLoading">
+          <mc-table 
+            :data="data" 
+            :columns="columns"
+            :sort="sort"
+            fixed-last-column 
+            :totals="totals"
+            :header-row-height="55"
+            @sort="handleSort"
+            @loading="handleLoading"
+            @row-click="handleRowClick"
+          >
             <template #channel="{ column, cellValue, row }">
               <mc-preview>
                 <template #left>
@@ -150,6 +168,21 @@ export const Default: Story = {
                   <mc-button variation="red" size="xs" @click.stop="handleBtnClick">Нет</mc-button>
                 </mc-grid-col>
               </mc-grid-row>
+            </template>
+            
+            <!-- CARD -->
+            <template #default="tableProps">
+              <mc-table-card v-if="cardId" :id="cardId" v-bind="tableProps">
+                <template #header>
+                  <mc-table-card-header>
+                    <div>Card id - {{ cardId }}</div>
+                  </mc-table-card-header>
+                </template>
+                Card Content
+                <template #footer>
+                  Card Footer
+                </template>
+              </mc-table-card>
             </template>
           </mc-table>
         </div>

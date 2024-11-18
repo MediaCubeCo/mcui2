@@ -51,3 +51,26 @@ export interface ITablePlaceholders {
   all_loaded: string
   total: string
 }
+
+export interface ITableCardProps {
+  id?: string | number
+  tableColumns: ITableColumn[]
+  tableData: ITableData
+  tableTotals: ITableTotals<ITableColumn>
+  tableSort: ITableSort
+  tableHeaderRowHeight: number
+  tableFooterRowHeight: number
+  tableFixedFirstColumn: boolean
+  tableCardProps: Record<any, any>
+  footerBlur?: boolean
+}
+
+export interface ITableCardOpenState {
+  state: true
+  id: string | number | undefined
+}
+export interface ITableCardCloseState {
+  state: false
+  id?: never
+}
+export type TableCardState = ITableCardOpenState | ITableCardCloseState

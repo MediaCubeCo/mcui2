@@ -1,7 +1,7 @@
 import type { IconsListUnion } from '@/types/styles/Icons'
 import type { ButtonVariationUnion } from '@/types/IButton'
 import { SidebarTheme } from '@/enums'
-import type { ColorsUnion, ColorTypes } from '@/types/styles/Colors'
+import type { ColorTypes } from '@/types/styles/Colors'
 import type { TitleVariationsUnion } from '@/types/ITitle'
 import type { IRoute } from '@/types/IRoute'
 
@@ -14,7 +14,7 @@ export interface ISideBar {
   menuMain: ISideBarMenuItem[]
   counts: Record<string, number | null>
   menuApps: ISideBarApp[]
-  chatraConfig: object
+  chatraConfig: ISideBarChatra
   hideText: string
   compact: boolean
   variable: SidebarTheme
@@ -22,6 +22,10 @@ export interface ISideBar {
   compactWidth: string
   absoluteBreakpoint: number
   hiddenBreakpoint: number
+}
+export interface ISideBarChatra {
+  title: string
+  id: string
 }
 export interface ISideBarLang {
   name: 'en' | 'ru' | 'ar' | 'es' | 'pt' | string
@@ -60,11 +64,11 @@ export interface ISidebarThemeConfig {
   dropdownActivator: ButtonVariationUnion
   mainMenuLinks: {
     variable: ButtonVariationUnion
-    secondaryColor: ColorsUnion
+    secondaryColor: ColorTypes
   }
   closeButton: {
     variable: ButtonVariationUnion
-    secondaryColor: ColorsUnion
+    secondaryColor: ColorTypes
   }
 }
 

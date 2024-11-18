@@ -107,7 +107,7 @@ onMounted(() => {
 <template>
   <div ref="container" :class="classes">
     <div ref="content" class="mc-stack__content">
-      <template v-for="(child, index) in visibleChildren" :key="index">
+      <template v-for="(child, i) in visibleChildren" :key="`mc-stack-item-${i}`">
         <component :is="child" />
       </template>
       <span v-if="hiddenCount > 0" class="mc-stack__more-label">+{{ hiddenCount }}</span>

@@ -1,14 +1,11 @@
 <script setup lang="ts">
 import McSideBarButton from '@/components/patterns/McSideBar/McSideBarButton/McSideBarButton.vue'
 import { computed, inject, type PropType } from 'vue'
-import type { ButtonVariationUnion, ColorsUnion, ISidebarThemeConfigProvide } from '@/types'
+import type { ButtonVariationUnion, ColorTypes, ISidebarThemeConfigProvide } from '@/types'
 import { defaultThemes } from '@/mocks/sidebar'
 import { SidebarTheme } from '@/enums'
 
-const provideData = inject<ISidebarThemeConfigProvide>(
-  'provideData',
-  {} as ISidebarThemeConfigProvide
-)
+const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
 const emit = defineEmits<{
   (e: 'toggle-size', value: boolean): void
 }>()
@@ -38,12 +35,11 @@ const props = defineProps({
   }
 })
 
-
 const themeConfig = computed(() => {
   return provideData.currentThemeConfig || defaultThemes[SidebarTheme.Black]
 })
 
-const closeButtonProps = computed((): { [key: string]: ButtonVariationUnion | ColorsUnion } => {
+const closeButtonProps = computed((): { variable: ButtonVariationUnion; secondaryColor: ColorTypes } => {
   return themeConfig.value?.closeButton
 })
 
@@ -66,11 +62,7 @@ const handleClick = (): void => {
 
 <template>
   <div class="mc-side-bar-bottom" :class="classes">
-    <div
-      v-if="!compact && $slots['bottom-message']"
-      class="mc-side-bar-bottom__slot-message"
-      :style="messageStyles"
-    >
+    <div v-if="!compact && $slots['bottom-message']" class="mc-side-bar-bottom__slot-message" :style="messageStyles">
       <slot name="bottom-message" />
     </div>
     <mc-side-bar-button

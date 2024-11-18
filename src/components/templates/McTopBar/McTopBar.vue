@@ -6,6 +6,7 @@ import McSeparator from '@/components/elements/McSeparator/McSeparator.vue'
 import McDropdown from '@/components/patterns/McDropdown/McDropdown.vue'
 import { type PropType, ref, watch } from 'vue'
 import { ButtonSize, DropdownPositions, HorizontalAlignment } from '@/enums'
+import type { IconsListUnion } from '@/types'
 
 const props = defineProps({
   /**
@@ -80,7 +81,7 @@ const userDropdownOpen = ref(false)
               full-width
             >
               <template #icon-prepend>
-                <mc-svg-icon :name="`flag_${item.name.toLowerCase()}`" />
+                <mc-svg-icon :name="`flag_${item.name.toLowerCase()}` as IconsListUnion" />
               </template>
               {{ item.name }}
             </mc-button>

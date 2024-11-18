@@ -125,7 +125,8 @@ const classes = computed(() => {
     [`mc-side-bar--${themeConfig.value.mode || 'black'}__button`]: true,
     'purple-hover':
       !props.secondaryColor && themeConfig.value.mainMenuLinks.variable === 'black-flat',
-    [attrs.class]: true
+    //@ts-ignore
+    [attrs.class]: !!attrs.class
   }
 })
 
@@ -134,15 +135,14 @@ const btnAttrs = computed((): IButton => {
     ...attrs,
     variation: props.variation || themeConfig.value.mainMenuLinks.variable,
     secondaryColor: props.secondaryColor || themeConfig.value.mainMenuLinks.secondaryColor,
-    class: classes.value,
-    'text-align': HorizontalAlignment.Left,
-    'full-width': true,
+    textAlign: HorizontalAlignment.Left,
+    fullWidth: true,
     size: props.compact ? ButtonSize.SCompact : ButtonSize.S,
     href: props.href,
     to: props.to,
     exact: props.exact,
     disabled: props.disabled,
-    'is-active': props.isActive,
+    isActive: props.isActive,
     tooltip: props.compact && props.withTooltip ? props.title : '',
     tooltipPlacement: TooltipPositions.Right,
   }
@@ -150,8 +150,7 @@ const btnAttrs = computed((): IButton => {
 </script>
 
 <template>
-  <!-- TODO fixed tooltip useTooltip -->
-  <mc-button v-bind="btnAttrs">
+  <mc-button v-bind="btnAttrs" :class="classes">
     <template #icon-prepend>
       <mc-svg-icon v-if="icon" :fill="iconColor" class="mc-side-bar-button__icon" :name="icon" />
       <span v-if="icon && compact && (info || withIndicator)" class="mc-side-bar-button__dot" />

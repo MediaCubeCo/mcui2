@@ -13,7 +13,6 @@ import type { WeightsUnion } from '@/types/styles/Weights'
 import type { ColorsUnion } from '@/types/styles/Colors'
 import type { FontWeightsUnion } from '@/types/styles/FontWeights'
 import { ButtonModifiers } from '@/enums'
-import type { IRoute } from '@/types'
 
 interface ElButtonTagBind {
   to?: string | null

@@ -202,7 +202,7 @@ provide('selfRegisterTabMethod', selfRegisterTabMethod)
           <a
             :aria-controls="tab.hash"
             :aria-selected="tab.isActive"
-            :href="tab.to || tab.href || tab.hash"
+            :href="tab.href || tab.hash || 'javascript:void(0)'"
             class="tabs-component-tab-a"
             role="tab"
             @click="(e) => handleSelectTab(tab, e)"

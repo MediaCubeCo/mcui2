@@ -248,6 +248,7 @@ const getParams = (): void => {
   try {
     if (modalInner.value) {
       Object.keys(styles.value).forEach((attr) => {
+        //@ts-ignore
         const param = parseInt(getComputedStyle(modalInner.value)?.getPropertyValue(attr))
         param && (data.modal_params[attr] = param)
       })

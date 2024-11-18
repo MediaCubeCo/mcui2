@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import McGridRow from '../../patterns/McGridRow/McGridRow.vue'
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
-import { Spaces } from '@/types/styles/Spaces'
+import { computed, onBeforeUnmount, onMounted, type PropType, reactive, ref } from 'vue'
+import { Spaces, type SpaceTypes } from '@/types/styles/Spaces'
 import type { SpacesUnion } from '@/types/styles/Spaces'
 import type { ColumnJustifyAlignmentUnion } from '@/types/styles/Grid'
 import { ColumnAlignment, ColumnJustifyAlignment } from '@/enums/Grid'
@@ -9,15 +9,15 @@ import { ColumnAlignment, ColumnJustifyAlignment } from '@/enums/Grid'
 const emit = defineEmits(['content-scrolled'])
 const props = defineProps({
   wrap: {
-    type: Boolean,
+    type: Boolean as PropType<boolean>,
     default: false
   },
   gutterY: {
-    type: Number,
+    type: Number as PropType<number>,
     default: 0
   },
   gutterX: {
-    type: Number,
+    type: Number as PropType<number>,
     default: 0
   },
   justify: {
@@ -25,35 +25,35 @@ const props = defineProps({
     default: ColumnJustifyAlignment.Left
   },
   scrollable: {
-    type: Boolean,
+    type: Boolean as PropType<boolean>,
     default: true
   },
   gutterBottom: {
-    type: [Number, String],
+    type: String as () => SpaceTypes,
     default: null
   },
   hasScroll: {
-    type: Boolean,
+    type: Boolean as PropType<boolean>,
     default: false
   },
   withBlur: {
-    type: Boolean,
+    type: Boolean as PropType<boolean>,
     default: false
   },
   moreSpace: {
-    type: Boolean,
+    type: Boolean as PropType<boolean>,
     default: false
   },
   rtl: {
-    type: Boolean,
+    type: Boolean as PropType<boolean>,
     default: false
   },
   scrollSpeed: {
-    type: Number,
+    type: Number as PropType<number>,
     default: 1
   },
   tagName: {
-    type: String,
+    type: String as PropType<string>,
     default: 'div'
   }
 })
@@ -127,65 +127,73 @@ const init = () => {
 const handlerScroll = () => {
   emit('content-scrolled')
   if (!props.withBlur) return
-  try {
-    const container_width = Math.ceil(scrollContainer.value.getBoundingClientRect()?.width)
-    const scroll_width = Math.ceil(scrollContainer.value.scrollWidth)
-    const scroll_left = Math.ceil(scrollContainer.value.scrollLeft)
-    // Левый блюр
-    show_left_blur.value = props.rtl
-      ? scroll_width > container_width &&
+  if (scrollContainer.value) {
+    try {
+      const container_width = Math.ceil(scrollContainer.value.getBoundingClientRect()?.width)
+      const scroll_width = Math.ceil(scrollContainer.value.scrollWidth)
+      const scroll_left = Math.ceil(scrollContainer.value.scrollLeft)
+      // Левый блюр
+      show_left_blur.value = props.rtl
+        ? scroll_width > container_width &&
         scroll_width - 10 > Math.abs(scroll_left) + container_width
-      : !!scroll_left
-    // Правый блюр
-    show_right_blur.value = props.rtl
-      ? Math.abs(scroll_left) > 1
-      : scroll_width > container_width && scroll_width > Math.abs(scroll_left) + container_width
-  } catch (e) {
-    show_left_blur.value = false
-    show_right_blur.value = false
+        : !!scroll_left
+      // Правый блюр
+      show_right_blur.value = props.rtl
+        ? Math.abs(scroll_left) > 1
+        : scroll_width > container_width && scroll_width > Math.abs(scroll_left) + container_width
+    } catch (e) {
+      show_left_blur.value = false
+      show_right_blur.value = false
+    }
   }
 }
 
 const createMutationObserver = () => {
-  try {
-    observer.value = new MutationObserver(handlerScroll)
+  if (scrollContainer.value) {
+    try {
+      observer.value = new MutationObserver(handlerScroll)
 
-    const config = {
-      attributes: true,
-      childList: true,
-      subtree: true
+      const config = {
+        attributes: true,
+        childList: true,
+        subtree: true
+      }
+      observer.value.observe(scrollContainer.value, config)
+    } catch (e) {
+      console.error('Error when try to create observer in McWrapScroll')
     }
-    observer.value.observe(scrollContainer.value, config)
-  } catch (e) {
-    console.error('Error when try to create observer in McWrapScroll')
-  }
+  } else console.error('Error when try to create observer in McWrapScroll')
 }
 
 const onMouseDown = (e: MouseEvent) => {
-  const dragOptions = drag_options
-  dragOptions.start_client_pos = e.clientX
-  dragOptions.mouse_is_down = true
-  dragOptions.scroll_pos = scrollContainer.value.scrollLeft
-  // // Удалить все выделения на странице, иначе скролл "лагает" если где то на странице есть выделение
-  if (window.getSelection) {
-    let sel = window.getSelection()
-    sel?.removeAllRanges()
+  if (scrollContainer.value) {
+    const dragOptions = drag_options
+    dragOptions.start_client_pos = e.clientX
+    dragOptions.mouse_is_down = true
+    dragOptions.scroll_pos = scrollContainer.value.scrollLeft
+    // // Удалить все выделения на странице, иначе скролл "лагает" если где то на странице есть выделение
+    if (window.getSelection) {
+      let sel = window.getSelection()
+      sel?.removeAllRanges()
+    }
   }
 }
 
 const onMouseMove = (e: MouseEvent) => {
-  const dragOptions = drag_options
-  if (!dragOptions.mouse_is_down) return
-  dragOptions.distance = e.clientX - dragOptions.start_client_pos
-  if (Math.abs(dragOptions.distance) > 2 && !dragOptions.is_drag) {
-    dragOptions.is_drag = true
+  if (scrollContainer.value) {
+    const dragOptions = drag_options
+    if (!dragOptions.mouse_is_down) return
+    dragOptions.distance = e.clientX - dragOptions.start_client_pos
+    if (Math.abs(dragOptions.distance) > 2 && !dragOptions.is_drag) {
+      dragOptions.is_drag = true
+    }
+    if (dragOptions.is_drag) {
+      scrollContainer.value.scrollTo({
+        left: dragOptions.scroll_pos - dragOptions.distance * props.scrollSpeed
+      })
+    }
+    // Math.abs(dragOptions.scroll_pos) && (dragOptions.scroll_pos = 0)
   }
-  if (dragOptions.is_drag) {
-    scrollContainer.value.scrollTo({
-      left: dragOptions.scroll_pos - dragOptions.distance * props.scrollSpeed
-    })
-  }
-  // Math.abs(dragOptions.scroll_pos) && (dragOptions.scroll_pos = 0)
 }
 
 const onMouseUp = () => {

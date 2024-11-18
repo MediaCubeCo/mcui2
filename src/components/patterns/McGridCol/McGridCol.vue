@@ -59,8 +59,10 @@ const props = defineProps({
 const classes = computed((): { [key: string]: boolean } => {
   const list = {} as { [key: string]: boolean }
   adaptivePropsParams.forEach((value) => {
+    //@ts-ignore
     list[`mc-grid-col--${value}-${props[value]}`] = !!props[value]
     adaptivePropsSizes.forEach((size) => {
+      //@ts-ignore
       const sizeValue = props[`${value}${_upperFirst(size)}`]
       list[`mc-grid-col--${value}-${size}-${sizeValue}`] = !!sizeValue
     })

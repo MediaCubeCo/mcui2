@@ -2,7 +2,17 @@
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, type PropType, reactive, ref, useSlots } from 'vue'
 import { useHelper } from '@/composables/useHelper'
 import { ChipSize, Weights } from '@/enums'
-import type { ITableColumn, ITableColumnEnriched, ITableData, ITableSort, ITableTotals, ITablePlaceholders } from '@/types/ITable'
+import {
+  type ITableColumn,
+  type ITableColumnEnriched,
+  type ITableData,
+  type ITableSort,
+  type ITableTotals,
+  type ITablePlaceholders,
+  type TableCardState,
+  type ITableCardProps
+} from '@/types/ITable'
+import { TABLE } from '@/consts/table'
 import McInfinityLoadingTrigger from '@/components/elements/McInfinityLoadingTrigger/McInfinityLoadingTrigger.vue'
 import McTitle from '@/components/elements/McTitle/McTitle.vue'
 import McChip from '@/components/elements/McChip/McChip.vue'
@@ -19,12 +29,14 @@ const defaultPlaceholders = {
   no_data: 'No data',
   loading: 'Loading...',
   all_loaded: 'All loaded',
-  total: 'Total',
+  total: 'Total'
 } as ITablePlaceholders
 
 const emit = defineEmits<{
   (e: 'loading'): void
+  (e: 'row-click', value: any): void
   (e: 'sort', value: ITableSort): void
+  (e: 'table-card-opened', value: TableCardState): void
 }>()
 
 /**
@@ -92,21 +104,21 @@ const props = defineProps({
    * */
   headerRowHeight: {
     type: Number as PropType<number>,
-    default: 40
+    default: TABLE.defaultHeaderHeight
   },
   /**
    * Высота строки в теле таблицы
    * */
   rowHeight: {
     type: Number as PropType<number>,
-    default: 40
+    default: TABLE.defaultRowHeight
   },
   /**
    * Высота строки в подвале (строка с тоталами)
    * */
   footerRowHeight: {
     type: Number as PropType<number>,
-    default: 40
+    default: TABLE.defaultFooterRowHeight
   },
   /**
    *  Отрисовка всей таблицы и полоса загрузки в каждой ячейке (скелетная загрузка)
@@ -138,23 +150,32 @@ const props = defineProps({
   },
   noDataIcon: {
     type: String as () => IconsListUnion,
-    default: null,
+    default: null
   },
   noDataImg: {
     type: String as PropType<string>,
-    default: noTableDataImg,
+    default: noTableDataImg
   },
+  /**
+   * Любые данные что бы передать их в карточку из таблицы
+   * */
+  toTableCardProps: {
+    type: Object as PropType<Record<any, any>>,
+    default: () => ({})
+  }
 })
+
+const openCardState = ref<TableCardState>({ state: false })
 
 const mcTable = ref<null | HTMLElement>(null)
 
-const hasData = computed(() => {
+const hasData = computed((): boolean => {
   return !helper.isEmpty(props.data)
 })
-const hasTotals = computed(() => {
+const hasTotals = computed((): boolean => {
   return !helper.isEmpty(props.totals)
 })
-const hasFixedColumn = computed(() => {
+const hasFixedColumn = computed((): boolean => {
   return props.fixedFirstColumn || props.fixedLastColumn
 })
 const placeholders = reactive<ITablePlaceholders>(helper.deepMerge(defaultPlaceholders, props.placeholders))
@@ -165,7 +186,8 @@ const shadows = reactive({
 })
 
 const computedColumns = computed((): ITableColumnEnriched[] => {
-  return props.columns.map((column, index) => {
+  const [first] = props.columns
+  return (openCardState.value.state ? [first] : props.columns).map((column, index) => {
     const fixedFirst = props.fixedFirstColumn && index === 0
     const fixedLast = props.fixedLastColumn && index === props.columns.length - 1
 
@@ -176,15 +198,15 @@ const computedColumns = computed((): ITableColumnEnriched[] => {
       style: {
         ...(column.width
           ? {
-            '--mc-table-cell-width': `${column.width}px`,
-            '--mc-table-cell-max-width': `${column.width}px`,
-            '--mc-table-cell-min-width': `${column.width}px`
-          }
+              '--mc-table-cell-width': `${column.width}px`,
+              '--mc-table-cell-max-width': `${column.width}px`,
+              '--mc-table-cell-min-width': `${column.width}px`
+            }
           : {
-            '--mc-table-cell-min-width': column.minWidth && `${column.minWidth}px`,
-            '--mc-table-cell-width': '100%'
-          })
-      },
+              '--mc-table-cell-min-width': column.minWidth && `${column.minWidth}px`,
+              '--mc-table-cell-width': '100%'
+            })
+      }
     }
   })
 })
@@ -233,35 +255,57 @@ const containerStyle = computed((): { [key: string]: string } => {
     '--mc-table-height': typeof props.height === 'number' ? `${props.height}px` : props.height,
     '--mc-table-header-row-height': helper.isNumber(props.headerRowHeight) ? `${props.headerRowHeight}px` : '40px',
     '--mc-table-row-height': helper.isNumber(props.rowHeight) ? `${props.rowHeight}px` : '40px',
-    '--mc-table-footer-row-height': helper.isNumber(props.headerRowHeight) ? `${props.headerRowHeight}px` : '40px'
+    '--mc-table-footer-row-height': helper.isNumber(props.footerRowHeight) ? `${props.footerRowHeight}px` : '40px'
   }
 })
 
-const onBodyScroll = useThrottleFn(() => {
+const computedTableCardProps = computed((): ITableCardProps => {
+  return {
+    tableColumns: props.columns,
+    tableData: props.data,
+    tableTotals: props.totals,
+    tableSort: props.sort,
+    tableHeaderRowHeight: props.headerRowHeight,
+    tableFooterRowHeight: props.footerRowHeight,
+    tableFixedFirstColumn: props.fixedFirstColumn,
+    tableCardProps: props.toTableCardProps
+  }
+})
+
+const onBodyScroll = useThrottleFn((): void => {
   if (mcTable.value) {
     const { scrollLeft, scrollWidth, clientWidth } = mcTable.value
-    const firstColShadow = (props.fixedFirstColumn && scrollLeft > 0)
-    const lastColShadow = (props.fixedLastColumn && scrollLeft + clientWidth < scrollWidth)
+    const firstColShadow = props.fixedFirstColumn && scrollLeft > 0
+    const lastColShadow = props.fixedLastColumn && scrollLeft + clientWidth < scrollWidth
 
     if (shadows.firstColHasShadow !== firstColShadow) shadows.firstColHasShadow = firstColShadow
     if (shadows.lastColHasShadow !== lastColShadow) shadows.lastColHasShadow = lastColShadow
   }
 }, 10)
 
-const addListeners = () => {
+const addListeners = (): void => {
   if (hasFixedColumn.value && mcTable.value) {
     onBodyScroll()
     mcTable.value.addEventListener('scroll', onBodyScroll)
   }
 }
-const removeListeners = () => {
+const removeListeners = (): void => {
   if (hasFixedColumn.value && mcTable.value) mcTable.value.removeEventListener('scroll', onBodyScroll)
 }
 
-onMounted(() => {
+const handleRowClick = (row: any): void => {
+  emit('row-click', row)
+}
+
+const handleSetCardState = (payload: TableCardState) => {
+  openCardState.value = payload
+  emit('table-card-opened', payload)
+}
+
+onMounted((): void => {
   addListeners()
 })
-onBeforeUnmount(() => {
+onBeforeUnmount((): void => {
   removeListeners()
 })
 </script>
@@ -270,6 +314,7 @@ onBeforeUnmount(() => {
   <div class="mc-table__container" :style="containerStyle">
     <div ref="mcTable" class="mc-table">
       <div class="mc-table__table">
+        <!-- HEADER -->
         <div class="mc-table__table_header">
           <div class="mc-table__table_header-row">
             <div v-for="(column, cI) in computedHeaderColumns" :key="cI" :class="column.class" :style="column.style">
@@ -281,6 +326,7 @@ onBeforeUnmount(() => {
                     :sort="sort"
                     @change="(val) => emit('sort', val)"
                   />
+                  <!-- slot для колонки хедера -->
                   <slot name="header-cell" :column="column" :cellIndex="cI">
                     <mc-title :text-align="column.align" :weight="Weights.SemiBold" pre-line
                       >{{ column.header }}
@@ -288,7 +334,9 @@ onBeforeUnmount(() => {
                   </slot>
                 </div>
                 <div class="mc-table__table_header-cell_content-right">
+                  <!-- slot справа от хедера колонки -->
                   <slot :name="`${column.field}-header-right`" :column="column" :cellIndex="cI" />
+                  <!-- slot для тотала (выводится в chip) -->
                   <slot :name="`${column.field}-total`" :column="column" :cellIndex="cI">
                     <mc-chip
                       v-if="column.total"
@@ -303,14 +351,23 @@ onBeforeUnmount(() => {
             </div>
           </div>
         </div>
+
+        <!-- BODY -->
         <div class="mc-table__table_body">
           <!-- Отображение скелетной загрузки -->
           <mc-table-skeleton-loading v-if="props.skeletonLoading" :columns="computedBodyColumns" />
           <template v-if="hasData">
-            <div v-for="(row, rI) in data" :key="rI" class="mc-table__table_body-row">
+            <div
+              v-for="(row, rI) in data"
+              :key="rI"
+              class="mc-table__table_body-row"
+              :class="{ 'mc-table__table_body-row--active': String(openCardState.id) === String(row.id) }"
+              @click="() => handleRowClick(row)"
+            >
               <div v-for="(column, cI) in computedBodyColumns" :key="cI" :class="column.class" :style="column.style">
                 <div class="mc-table__table_body-cell_content">
                   <div class="mc-table__table_body-cell_content-left">
+                    <!-- slot для контента (по именем колонки) -->
                     <slot
                       :name="column.field"
                       :row="row"
@@ -322,6 +379,7 @@ onBeforeUnmount(() => {
                       <mc-title :text-align="column.align" ellipsis>{{ row[column.field] }}</mc-title>
                     </slot>
                   </div>
+                  <!-- slot срава от контента (по именем колонки + '-right') -->
                   <div v-if="slots[`${column.field}-right`]" class="mc-table__table_body-cell_content-right">
                     <slot :name="`${column.field}-right`" />
                   </div>
@@ -331,6 +389,8 @@ onBeforeUnmount(() => {
           </template>
           <mc-infinity-loading-trigger :active="props.hasLoadMore" @loading="emit('loading')" />
         </div>
+
+        <!-- FOOTER -->
         <div v-if="hasTotals" class="mc-table__table_footer">
           <div class="mc-table__table_footer-row">
             <div v-for="(column, cI) in computedFooterColumns" :key="cI" :class="column.class" :style="column.style">
@@ -344,9 +404,20 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
+    <!-- slot для карточки, по дефолту будет вывлдить карточку из вложенного роута -->
+    <slot v-bind="computedTableCardProps" @setTableCardState="handleSetCardState">
+      <!-- место для рендера карточки, когда она находится по вложенному роуту -->
+      <router-view v-bind="computedTableCardProps" @setTableCardState="handleSetCardState" />
+    </slot>
     <mc-bottom-loader v-if="bottomLoading" />
     <mc-overlay v-if="loading" />
-    <mc-no-data v-if="!hasData" variation="small" :title="placeholders.no_data" :img="props.noDataImg" :icon="props.noDataIcon" />
+    <mc-no-data
+      v-if="!hasData"
+      variation="small"
+      :title="placeholders.no_data"
+      :img="props.noDataImg"
+      :icon="props.noDataIcon"
+    />
   </div>
 </template>
 
@@ -432,7 +503,6 @@ onBeforeUnmount(() => {
   font-family: $font-family-main;
   overflow-y: auto;
   max-height: 100%;
-  flex-grow: 1;
   @include grow;
   * {
     box-sizing: border-box;
@@ -496,6 +566,12 @@ onBeforeUnmount(() => {
         display: flex;
         flex-wrap: nowrap;
         height: var(--mc-table-row-height);
+        cursor: pointer;
+        &--active {
+          #{$body}-cell {
+            background-color: var(--table-row-hover-background-color);
+          }
+        }
         &:hover {
           #{$body}-cell {
             background-color: var(--table-row-hover-background-color);

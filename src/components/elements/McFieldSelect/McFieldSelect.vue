@@ -210,7 +210,6 @@ const props = defineProps({
    * Рендерить ли выпадающий список абсолютно, что бы помещался в ограниченном пространстве
    * */
   renderAbsoluteList: {
-    //TODO check append-body prop
     type: Boolean as PropType<boolean>,
     default: false
   },
