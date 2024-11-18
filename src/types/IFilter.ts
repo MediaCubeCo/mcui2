@@ -90,14 +90,6 @@ export type FilterTextValue = null | string | number
 export type FilterConditionValue = IFilterRangeValue | IFilterDateValue | FilterRelationValue | FilterTextValue
 export type FilterConditionName = FilterRelationValue | string | null
 
-export interface IFilterDragOptions {
-  scrollPos: number
-  startClientPos: number
-  distance: number
-  isDrag: boolean
-  mouseIsDown: boolean
-}
-
 export type FilterRelationsUnion = (typeof FilterRelations)[keyof typeof FilterRelations]
 
 export interface IFilterPlaceholders {

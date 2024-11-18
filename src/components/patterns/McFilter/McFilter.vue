@@ -30,7 +30,6 @@ import type {
   IFilter,
   IFilterChip,
   IFilterCondition,
-  IFilterDragOptions,
   IFilterPlaceholders,
   IFilterPreset,
   IFilterValue,
@@ -123,27 +122,25 @@ const typeComponents: Partial<Record<FilterTypes, TypeComponentInstanceType>> = 
 }
 
 const isOpen = ref<boolean>(false)
-const currentValues = ref<FilterConditionValue>({})
-const currentValuesName = ref<FilterConditionName>({})
 
-const temporaryValues = ref<object>({})
-const temporaryValuesName = ref<object>({})
+// текущие значения фильтра filter / filter_name
+const currentValues = ref<{ [key: string]: FilterConditionValue } | null>(null)
+const currentValuesName = ref<FilterConditionName>(null)
 
-const selectedOptionFilter = ref<string | null | undefined>(null)
+//временные значения, до нажатия на кнопку применить фильтр
+const temporaryValues = ref<{ [key: string]: FilterConditionValue } | null>(null)
+const temporaryValuesName = ref<FilterConditionName>(null)
 
+// текущие выбранные значения в типе фильтра
 const currentCondition = ref<FilterConditionValue>(null)
 const currentConditionName = ref<FilterConditionName>(null)
 
+// значение выбранного фильтра из списка фильтров
+const selectedOptionFilter = ref<string | null | undefined>(null)
+
+
 const isDisableConfirmButton = ref<boolean>(false)
 
-const dragArea = ref<HTMLElement | null>(null)
-const dragOptions = reactive<IFilterDragOptions>({
-  scrollPos: 0,
-  startClientPos: 0,
-  distance: 0,
-  isDrag: false,
-  mouseIsDown: false
-})
 const newPresetName = ref<string>('')
 const activePreset = ref<IFilterPreset | null>(null)
 const temporaryActivePreset = ref<IFilterPreset | null>(null)
@@ -155,16 +152,24 @@ const presets = ref<IFilterPreset[]>([])
 
 const placeholders = reactive<IFilterPlaceholders>(helper.deepMerge(defaultPlaceholders, props.placeholders))
 
+// выбранный фильтр из списка фильтров
+const currentFilter = computed((): IFilter | undefined => {
+  return props.filters.find((f) => String(f.value) === String(selectedOptionFilter.value))
+})
+
+// компонент выбранного фильтра
 const currentComponent = computed((): TypeComponentInstanceType | null => {
   if (!currentFilter.value || !currentFilter.value.type) return null
   return typeComponents[currentFilter.value.type] || null
 })
 
+// отфильтрованные быстрые фильтры
 const fastFilters = computed((): IFastFilter[] => {
   const selected = (currentValues.value && Object.keys(currentValues.value)) || []
   return props.filters.filter((f) => f.type === FilterTypes.Fast && !selected.includes(f.value)) as IFastFilter[]
 })
 
+// отфильтрованные фильтры кроме быстрых
 const regularFilters = computed((): ISelectOption[] => {
   return props.filters.filter((f) => f.type !== FilterTypes.Fast)
 })
@@ -173,30 +178,24 @@ const visibilityToggleVariation = computed((): ButtonVariationUnion => {
   return isOpen.value || !isDisableConfirmButton.value ? 'purple-invert' : 'black-flat'
 })
 
-const currentFilter = computed((): IFilter | undefined => {
-  return props.filters.find((f) => String(f.value) === String(selectedOptionFilter.value))
-})
-
+// видна ли кнопка добавить фильтр
 const hasButtonAdd = computed((): boolean => {
   return (
     !helper.isEmpty(currentCondition.value) && !!currentFilter.value && currentFilter.value.type !== FilterTypes.Fast
   )
 })
 
+// задизэйблена ли кнопка создать, для пресетов
 const buttonCreateIsDisable = computed((): boolean => {
   return !newPresetName.value.trim()
 })
 
 onMounted((): void => {
   updatePresets()
-  document.documentElement.addEventListener('mousemove', onMouseMove)
-  document.documentElement.addEventListener('mouseup', onMouseUp)
   window.addEventListener('storage', updatePresets)
 })
 
 onBeforeUnmount((): void => {
-  document.documentElement.removeEventListener('mousemove', onMouseMove)
-  document.documentElement.removeEventListener('mouseup', onMouseUp)
   window.removeEventListener('storage', updatePresets)
 })
 
@@ -209,54 +208,6 @@ const handlerSetFastFilter = (tag: IFastFilter): void => {
   selectedOptionFilter.value = tag.value
   handleConditionChange({ value: filterValue, valueName: tag.name })
   handleStoreTag()
-}
-
-const onMouseDown = (e: MouseEvent) => {
-  dragOptions.startClientPos = e.clientX
-  dragOptions.mouseIsDown = true
-  if (dragArea.value) {
-    dragOptions.scrollPos = dragArea.value.scrollLeft
-  }
-}
-
-const onMouseMove = (e: MouseEvent): void => {
-  if (!dragOptions.mouseIsDown) return
-
-  dragOptions.distance = e.clientX - dragOptions.startClientPos
-  if (Math.abs(dragOptions.distance) > 2 && !dragOptions.isDrag) {
-    dragOptions.isDrag = true
-  }
-  if (dragOptions.isDrag && dragArea.value) {
-    dragArea.value.scrollTo({
-      left: dragOptions.scrollPos - dragOptions.distance
-    })
-  }
-  if (Math.abs(dragOptions.scrollPos)) {
-    dragOptions.scrollPos = 0
-  }
-}
-
-const onMouseUp = (): void => {
-  if (dragOptions.isDrag) {
-    dragOptions.isDrag = false
-  }
-  dragOptions.mouseIsDown = false
-}
-
-const handlePresetMouseUp = (preset: IFilterPreset) => {
-  if (dragOptions.isDrag) return
-  if (activePreset.value && activePreset.value.name === preset.name) {
-    activePreset.value = null
-    currentValues.value = {}
-    currentValuesName.value = {}
-  } else {
-    activePreset.value = preset
-    currentValues.value = helper.cloneDeep(preset.filter)
-    currentValuesName.value = helper.cloneDeep(preset.filter_name)
-  }
-  if (!isOpen.value) {
-    handleConfirm()
-  }
 }
 
 const handleConditionChange = ({ value = null, valueName = null }: IFilterCondition): void => {
@@ -502,6 +453,25 @@ const handleConfirm = (): void => {
   }
 }
 
+/**
+ * PRESETS BELOW
+ * */
+
+const handlePresetMouseUp = (preset: IFilterPreset) => {
+  if (activePreset.value && activePreset.value.name === preset.name) {
+    activePreset.value = null
+    currentValues.value = {}
+    currentValuesName.value = {}
+  } else {
+    activePreset.value = preset
+    currentValues.value = helper.cloneDeep(preset.filter)
+    currentValuesName.value = helper.cloneDeep(preset.filter_name)
+  }
+  if (!isOpen.value) {
+    handleConfirm()
+  }
+}
+
 const handleDeletePreset = (preset: IFilterPreset | null): void => {
   const filteredPresets = filterLocalStorage.value[props.name]?.filter((p) => preset && p.name !== preset.name)
   filterLocalStorage.value[props.name] = [...filteredPresets]
@@ -616,7 +586,7 @@ watch(
         </mc-button>
       </mc-tooltip>
       <div v-if="presets" class="mc-filter__presets">
-        <div ref="dragArea" class="mc-filter__presets-inner" @mousedown="onMouseDown">
+        <div class="mc-filter__presets-inner">
           <mc-button
             v-for="preset in presets"
             :key="preset.name"
