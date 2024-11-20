@@ -1,12 +1,11 @@
 import { ButtonModifiers, ButtonSize, ButtonType } from '@/enums/ui/Button'
 import type { ColorsUnion, ColorTypes } from '@/types/styles/Colors'
-import type { IRoute } from '@/types/IRoute'
 import type { HorizontalAlignmentUnion } from '@/types/styles/Alignment'
 import type { WeightsUnion } from '@/types/styles/Weights'
 import type { TooltipPositionsUnion } from '@/types/ITooltip'
 
 export interface IButton {
-  to?: IRoute
+  to?: string
   href?: string
   nuxt?: boolean
   disabled?: boolean

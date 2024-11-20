@@ -3,7 +3,6 @@ import type { ButtonVariationUnion } from '@/types/IButton'
 import { SidebarTheme } from '@/enums'
 import type { ColorTypes } from '@/types/styles/Colors'
 import type { TitleVariationsUnion } from '@/types/ITitle'
-import type { IRoute } from '@/types/IRoute'
 
 export interface ISideBar {
   logoTitle: string
@@ -44,7 +43,7 @@ export interface ISideBarLink {
   icon: IconsListUnion
   iconColor?: ColorTypes
   href: string
-  to: IRoute
+  to: string
   info?: string | number | null
   count_key: string
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
 import { computed, type PropType } from 'vue'
-import type { FilterConditionValue, IFilter, IFilterCondition, IFilterPlaceholders } from '@/types'
+import type { FilterTextValue, IFilter, IFilterCondition, IFilterPlaceholders } from '@/types'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: IFilterCondition): void
@@ -11,7 +11,7 @@ const props = defineProps({
    *  Значение
    */
   modelValue: {
-    type: [String, Number] as PropType<FilterConditionValue>,
+    type: [String, Number] as PropType<FilterTextValue>,
     default: null
   },
   /**
@@ -32,10 +32,10 @@ const props = defineProps({
 })
 
 const text = computed({
-  get() {
+  get(): FilterTextValue {
     return props.modelValue
   },
-  set(val) {
+  set(val: FilterTextValue) {
     /**
      * Событие по изменению значения
      */

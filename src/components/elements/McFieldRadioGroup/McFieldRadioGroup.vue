@@ -9,6 +9,7 @@ import { Directions } from '@/enums/ui/Directions'
 import type { RadioGroupDirectionUnion } from '@/types/IRadioGroup'
 import { RadioGroupDirection } from '@/enums/RadioGroup'
 import type { RadioVariationUnion } from '@/types/IRadio'
+import { TitleVariations } from '@/enums'
 
 const emit = defineEmits(['update:modelValue', 'change'])
 //@ts-ignore
@@ -19,7 +20,7 @@ const props = defineProps({
    */
   options: {
     type: [Array as PropType<IRadioGroupOptions>],
-    default: () => [],
+    default: () => []
   },
   /**
    *  Заголовок:
@@ -27,7 +28,7 @@ const props = defineProps({
    */
   title: {
     type: String,
-    default: '',
+    default: ''
   },
   /**
    *  Вспомогательный текст под инпутом:
@@ -35,7 +36,7 @@ const props = defineProps({
    */
   helpText: {
     type: String,
-    default: '',
+    default: ''
   },
   /**
    *  Ошибки
@@ -43,14 +44,14 @@ const props = defineProps({
    */
   errors: {
     type: Array as PropType<string[]>,
-    default: () => [],
+    default: () => []
   },
   /**
    *  Name
    */
   name: {
     type: String,
-    required: true,
+    required: true
   },
   /**
    *  Отключенное состояние
@@ -58,7 +59,7 @@ const props = defineProps({
    */
   disabled: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    *  Добавление пользовательского
@@ -66,7 +67,7 @@ const props = defineProps({
    */
   radioClassName: {
     type: String,
-    default: '',
+    default: ''
   },
   /**
    *  Направление списка
@@ -74,11 +75,11 @@ const props = defineProps({
    */
   direction: {
     type: String as () => RadioGroupDirectionUnion,
-    default: RadioGroupDirection.Column,
+    default: RadioGroupDirection.Column
   },
   dir: {
     type: String as () => DirectionsUnion,
-    default: Directions.Ltr,
+    default: Directions.Ltr
   },
   /**
    * Вариант активного состояния
@@ -87,8 +88,8 @@ const props = defineProps({
    * */
   variation: {
     type: String as () => RadioVariationUnion,
-    default: 'circle',
-  },
+    default: 'circle'
+  }
 })
 
 const fieldErrors = useFieldErrors(props.errors)
@@ -96,7 +97,7 @@ const fieldErrors = useFieldErrors(props.errors)
 const computedOptions = computed((): object => {
   if (!props.options.length) return []
   return props.options.map((o: IRadioGroupOption, i: number) => {
-    const optionData = typeof o === 'object' ? o : { label: o, value: o } as IRadioGroupOption
+    const optionData = typeof o === 'object' ? o : ({ label: o, value: o } as IRadioGroupOption)
     return {
       id: Date.now() + i,
       ...optionData,
@@ -105,14 +106,14 @@ const computedOptions = computed((): object => {
       modelValue: props.modelValue,
       class: props.radioClassName,
       dir: props.dir,
-      variation: props.variation,
+      variation: props.variation
     }
   })
 })
 
 const classes = computed((): { [key: string]: boolean } => {
   return {
-    [`mc-field-radio-group--direction-${props.direction}`]: !!props.direction,
+    [`mc-field-radio-group--direction-${props.direction}`]: !!props.direction
   }
 })
 
@@ -120,7 +121,7 @@ const classes = computed((): { [key: string]: boolean } => {
  * Событие по смене выбора
  * @property {event}
  */
-const handleInput = (e:string | number): void => {
+const handleInput = (e: string | number): void => {
   fieldErrors.toggleErrorVisible()
   emit('update:modelValue', e)
   emit('change', e)
@@ -149,7 +150,7 @@ const handleInput = (e:string | number): void => {
         v-if="fieldErrors.errorText.value"
         tag-name="div"
         color="red"
-        variation="overline"
+        :variation="TitleVariations.Overline"
         max-width="100%"
       >
         {{ fieldErrors.errorText.value }}
@@ -160,7 +161,7 @@ const handleInput = (e:string | number): void => {
         <mc-title
           v-if="props.helpText"
           tag-name="div"
-          variation="overline"
+          :variation="TitleVariations.Overline"
           color="gray"
           max-width="100%"
         >

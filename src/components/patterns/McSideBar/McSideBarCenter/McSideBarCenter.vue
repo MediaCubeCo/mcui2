@@ -92,16 +92,15 @@ watch(
     loading.value = true
     if (oldRoute.path !== newRoute.path) {
       const target_route = preparedMainMenu.value.find(
-        (r) => r.to.path === newRoute.path || r.menu?.find((childRoute) => childRoute.to.path === newRoute.path)
+        (r) => r.to === newRoute.path || r.menu?.find((childRoute) => childRoute.to === newRoute.path)
       )
       target_route?.menu && !props.compact && (target_route.open = true)
     }
     nextTick(() => {
       preparedMainMenu.value.forEach((mi) => {
-        const exact_route = mi.to.path === newRoute.path
+        const exact_route = mi.to === newRoute.path
         const route_menu_match_new_route =
-          mi.menu &&
-          mi.menu.some((mim) => mim.to.path?.match(newRoute?.path) || newRoute.path?.match(mim.to.path as string))
+          mi.menu && mi.menu.some((mim) => mim.to?.match(newRoute?.path) || newRoute.path?.match(mim.to as string))
         if (!(exact_route || route_menu_match_new_route)) mi.open = false
       })
       loading.value = false
@@ -131,10 +130,7 @@ const setMainMenu = (): void => {
   loading.value = true
   preparedMainMenu.value = props.menuMain.map((i: ISideBarMenuItem) => {
     const active = () => {
-      return (
-        (i.menu && i.menu.some((r) => route?.path?.match(r.to.path as string))) ||
-        !!route?.path?.match(i.to.path as string)
-      )
+      return (i.menu && i.menu.some((r) => route?.path?.match(r.to as string))) || !!route?.path?.match(i.to as string)
     }
 
     return {

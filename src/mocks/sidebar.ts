@@ -54,17 +54,17 @@ const menu = [
       {
         name: 'Сеть',
         icon: 'public',
-        to: { name: `payment-accounts-partners-network-index` },
+        to: `payment-accounts-partners-network-index`,
       },
       {
         name: 'Доходы',
         icon: 'assessment',
-        to: { name: `payment-accounts-partners-revenues-index` },
+        to: `payment-accounts-partners-revenues-index`,
       },
       {
         name: 'Объекты',
         icon: 'subscriptions',
-        to: { name: `payment-accounts-partners-assets-index` },
+        to: `payment-accounts-partners-assets-index`,
       },
     ],
   },

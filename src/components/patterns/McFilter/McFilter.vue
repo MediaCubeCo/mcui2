@@ -28,16 +28,26 @@ import type {
   FilterConditionValue,
   IFastFilter,
   IFilter,
-  IFilterChip,
   IFilterCondition,
+  IFilterParsedValue,
+  IFilterParsedValueFilter,
+  IFilterParsedValueFilterName,
   IFilterPlaceholders,
   IFilterPreset,
   IFilterValue,
-  ISelectOption
+  ISelectOption,
+  FilterRelationValue,
+  FilterRelationName,
+  IFilterRelationTag,
+  IFilterDateValue,
+  RangeFilterValue,
+  IFilterRangeValue,
+  IFilterTag
 } from '@/types'
 import { useHelper } from '@/composables/useHelper'
 import { ButtonSize, ChipSize, FilterRelations, FilterTypes, TooltipPositions, TooltipSizes } from '@/enums'
 import { useLocalStorage } from '@vueuse/core'
+import { UseEncodeDecode } from '@/composables/useEncodeDecode'
 
 const helper = useHelper()
 const emit = defineEmits<{
@@ -62,11 +72,7 @@ const props = defineProps({
   modelValue: {
     type: Object as PropType<IFilterValue>,
     required: true,
-    default: () =>
-      ({
-        filter: null,
-        filter_name: null
-      }) as IFilterValue
+    default: () => ({ filter: null, filter_name: null })
   },
   /**
    *  Типы фильтров
@@ -124,33 +130,53 @@ const typeComponents: Partial<Record<FilterTypes, TypeComponentInstanceType>> = 
 const isOpen = ref<boolean>(false)
 
 // текущие значения фильтра filter / filter_name
-const currentValues = ref<{ [key: string]: FilterConditionValue } | null>(null)
-const currentValuesName = ref<FilterConditionName>(null)
+const currentValues = ref<IFilterParsedValueFilter>({})
+const currentValuesName = ref<IFilterParsedValueFilterName>({})
 
 //временные значения, до нажатия на кнопку применить фильтр
-const temporaryValues = ref<{ [key: string]: FilterConditionValue } | null>(null)
-const temporaryValuesName = ref<FilterConditionName>(null)
+const temporaryFilter = ref<IFilterParsedValueFilter>({})
+const temporaryFilterName = ref<IFilterParsedValueFilterName>({})
 
 // текущие выбранные значения в типе фильтра
-const currentCondition = ref<FilterConditionValue>(null)
-const currentConditionName = ref<FilterConditionName>(null)
+const currentCondition = ref<FilterConditionValue>({})
+const currentConditionName = ref<FilterConditionName>({})
 
 // значение выбранного фильтра из списка фильтров
-const selectedOptionFilter = ref<string | null | undefined>(null)
+const selectedOptionFilter = ref<string | null>(null)
 
+const activeTag = ref<IFilterRelationTag | null>(null)
 
-const isDisableConfirmButton = ref<boolean>(false)
+const placeholders = reactive<IFilterPlaceholders>(helper.deepMerge(defaultPlaceholders, props.placeholders))
+
+const isDisableConfirmButton = computed(() => {
+  return helper.isEqual(computedModelValue.value.filter, currentValues.value)
+})
 
 const newPresetName = ref<string>('')
 const activePreset = ref<IFilterPreset | null>(null)
 const temporaryActivePreset = ref<IFilterPreset | null>(null)
-
-const activeTag = ref<IFilterChip | null>(null)
-
 const filterLocalStorage = useLocalStorage<Record<string, IFilterPreset[]>>('mcFilterPresets', {})
 const presets = ref<IFilterPreset[]>([])
 
-const placeholders = reactive<IFilterPlaceholders>(helper.deepMerge(defaultPlaceholders, props.placeholders))
+const computedModelValue = computed({
+  get(): IFilterParsedValue {
+    const { filter = null, filter_name = null } = props.modelValue || {}
+
+    return {
+      filter: filter,
+      filter_name: UseEncodeDecode.decode(filter_name)
+    } as IFilterParsedValue
+  },
+  set(val: IFilterParsedValue) {
+    const { filter = null, filter_name = {} } = val || {}
+
+    const payload: IFilterValue = {
+      filter: filter,
+      filter_name: UseEncodeDecode.encode(filter_name)
+    } as IFilterValue
+    emit('update:modelValue', payload)
+  }
+})
 
 // выбранный фильтр из списка фильтров
 const currentFilter = computed((): IFilter | undefined => {
@@ -190,9 +216,19 @@ const buttonCreateIsDisable = computed((): boolean => {
   return !newPresetName.value.trim()
 })
 
+const init = () => {
+  temporaryFilter.value = computedModelValue.value.filter
+  temporaryFilterName.value = computedModelValue.value.filter_name
+
+  currentValues.value = computedModelValue.value.filter
+  currentValuesName.value = computedModelValue.value.filter_name
+}
+
 onMounted((): void => {
   updatePresets()
   window.addEventListener('storage', updatePresets)
+
+  init()
 })
 
 onBeforeUnmount((): void => {
@@ -204,15 +240,18 @@ const updatePresets = (): void => {
 }
 
 const handlerSetFastFilter = (tag: IFastFilter): void => {
-  const filterValue = tag.relation ? { [tag.relation]: tag.default } : tag.default
-  selectedOptionFilter.value = tag.value
+  const { relation, value } = tag
+
+  const filterValue = relation ? { [relation]: tag.default } : tag.default
+
+  selectedOptionFilter.value = value
   handleConditionChange({ value: filterValue, valueName: tag.name })
   handleStoreTag()
 }
 
-const handleConditionChange = ({ value = null, valueName = null }: IFilterCondition): void => {
+const handleConditionChange = ({ value, valueName }: IFilterCondition): void => {
   currentCondition.value = value
-  currentConditionName.value = valueName
+  currentConditionName.value = valueName || ''
 }
 
 const handleStoreTag = (): void => {
@@ -248,35 +287,39 @@ const addTag = (): void => {
 }
 
 const editRelationValue = (): void => {
-  const tagRelationValue = activeTag.value.relationKey === FilterRelations.Exists ? [0] : [activeTag.value.value]
-  const tagRelation = {
-    [activeTag.value.category]: {
-      [activeTag.value.relationKey]: tagRelationValue
+  if (activeTag.value) {
+    const tagRelationValue = activeTag.value.relationKey === FilterRelations.Exists ? [0] : [activeTag.value.value]
+    const tagRelation = {
+      [activeTag.value.category]: {
+        [activeTag.value.relationKey as FilterRelations]: tagRelationValue
+      }
+    }
+
+    const selectedRelation: IFilterParsedValueFilter = {
+      [selectedOptionFilter.value as string]: helper.cloneDeep(currentCondition.value)
+    }
+    if (helper.isEqual(selectedRelation, tagRelation)) {
+      /**
+       * Событие по возникшей ошибке
+       */
+      emit('error', placeholders.messages.same_filter)
+      return
     }
   }
-  const selectedRelation: Record<string, FilterConditionValue> = {
-    [selectedOptionFilter.value]: helper.cloneDeep(currentCondition.value)
-  }
-  if (helper.isEqual(selectedRelation, tagRelation)) {
-    /**
-     * Событие по возникшей ошибке
-     */
-    emit('error', placeholders.messages.same_filter)
-    return
-  }
-  const { category, categoryName } = getCategoriesWithNewRelation()
+  const { category, categoryName }: { category: FilterRelationValue; categoryName: FilterRelationName } =
+    getCategoriesWithNewRelation()
+
   if (activeTag.value) {
     if (activeTag.value.relationKey === FilterRelations.Exists) {
       delete category[activeTag.value.relationKey]
       delete categoryName[activeTag.value.relationKey]
     } else {
       const numerableValues = category[activeTag.value.relationKey]
-      const index = numerableValues.indexOf(activeTag.value.value)
+      const index = numerableValues?.indexOf(String(activeTag.value.value)) ?? -1
       if (index !== -1) {
-        category[activeTag.value.relationKey].splice(index, 1)
+        category?.[activeTag.value.relationKey]?.splice(index, 1)
         helper.isEmpty(category[activeTag.value.relationKey]) && delete category[activeTag.value.relationKey]
-
-        delete categoryName[activeTag.value.relationKey][activeTag.value.value]
+        delete categoryName?.[activeTag.value.relationKey]?.[activeTag.value.value]
         helper.isEmpty(categoryName[activeTag.value.relationKey]) && delete categoryName[activeTag.value.relationKey]
       }
     }
@@ -290,31 +333,34 @@ const addRelationValue = (): void => {
   setFilterValues(category, categoryName)
 }
 
-const getCategoriesWithNewRelation = (): {
-  category: FilterConditionValue
-  categoryName: FilterConditionName
-} => {
-  const relationKeys = Object.keys(currentCondition.value)
+const getCategoriesWithNewRelation = (): { category: FilterRelationValue; categoryName: FilterRelationName } => {
+  const relationKeys = Object.keys(currentCondition.value) as FilterRelations[]
   const values = helper.cloneDeep(currentValues.value)
   const valuesName = helper.cloneDeep(currentValuesName.value)
-  const selectedCategory = values[selectedOptionFilter.value]
-  const selectedCategoryName = valuesName[selectedOptionFilter.value]
+  const selectedCategory: FilterRelationValue = values[selectedOptionFilter.value as string]
+  const selectedCategoryName: FilterRelationName = valuesName[selectedOptionFilter.value as string]
 
   selectedCategory &&
     relationKeys.forEach((k) => {
       if (k === FilterRelations.Exists) {
-        selectedCategory[k] = [0]
-        selectedCategoryName[k] = [0]
+        selectedCategory[FilterRelations.Exists] = 0
+        selectedCategoryName[FilterRelations.Exists] = null
       } else {
+        //@ts-ignore
+        const conditionValue = currentCondition.value[k]
+        //@ts-ignore
+        const conditionName = currentConditionName.value[k]
+
         if (k in selectedCategory) {
-          selectedCategory[k] = helper.uniqWith([...selectedCategory[k], ...currentCondition.value[k]], helper.isEqual)
+          //@ts-ignore
+          selectedCategory[k] = helper.uniqWith([...selectedCategory[k], ...conditionValue], helper.isEqual)
           selectedCategoryName[k] = {
             ...selectedCategoryName[k],
-            ...currentConditionName.value[k]
+            ...conditionName
           }
         } else {
-          selectedCategory[k] = currentCondition.value[k]
-          selectedCategoryName[k] = currentConditionName.value[k]
+          selectedCategory[k] = conditionValue
+          selectedCategoryName[k] = conditionName
         }
       }
     })
@@ -322,9 +368,9 @@ const getCategoriesWithNewRelation = (): {
 }
 
 const setFilterValues = (val: FilterConditionValue, valName: FilterConditionName): void => {
-  const newVal: Record<string, FilterConditionValue> = {
+  const newVal: IFilterParsedValueFilter = {
     ...currentValues.value,
-    [selectedOptionFilter.value]: val || currentCondition.value
+    [selectedOptionFilter.value as string]: val || currentCondition.value
   }
   if (helper.isEqual(currentValues.value, newVal)) {
     /**
@@ -336,7 +382,7 @@ const setFilterValues = (val: FilterConditionValue, valName: FilterConditionName
   currentValues.value = newVal
   currentValuesName.value = {
     ...currentValuesName.value,
-    [selectedOptionFilter.value]: valName || currentConditionName.value
+    [selectedOptionFilter.value as string]: valName || currentConditionName.value
   }
 
   setEmptyCondition()
@@ -344,14 +390,12 @@ const setFilterValues = (val: FilterConditionValue, valName: FilterConditionName
 
 const setEmptyCondition = (): void => {
   switch (currentFilter.value?.type) {
-    case FilterTypes.Relation:
-    case FilterTypes.Date:
-      handleConditionChange({ value: null })
-      break
     case FilterTypes.Text:
+    case FilterTypes.Relation:
       handleConditionChange({ value: '' })
       break
     case FilterTypes.Range:
+    case FilterTypes.Date:
       handleConditionChange({ value: {} })
       break
     default:
@@ -361,7 +405,8 @@ const setEmptyCondition = (): void => {
 
 const addSimpleValue = (): void => {
   if (currentFilter.value?.type === FilterTypes.Range && Object.keys(currentCondition.value || {}).length === 2) {
-    if (currentCondition.value?.more > currentCondition.value?.less) {
+    const _currentCondition = currentCondition.value as IFilterRangeValue
+    if (_currentCondition.more && _currentCondition.less && _currentCondition.more > _currentCondition.less) {
       /**
        * Событие по возникшей ошибке
        */
@@ -372,7 +417,7 @@ const addSimpleValue = (): void => {
   setFilterValues(currentCondition.value, currentCondition.value as FilterConditionName)
 }
 
-const onTagsChange = (val: IFilterChip): void => {
+const onTagsChange = (val: IFilterParsedValueFilterName): void => {
   activeTag.value = null
   if (helper.isEmpty(val)) {
     currentValues.value = {}
@@ -384,8 +429,9 @@ const onTagsChange = (val: IFilterChip): void => {
 }
 
 const handleClearAllTags = (): void => {
-  temporaryValues.value = helper.cloneDeep(currentValues.value)
-  temporaryValuesName.value = helper.cloneDeep(currentValuesName.value)
+  temporaryFilter.value = {}
+  temporaryFilterName.value = {}
+
   currentValues.value = {}
   currentValuesName.value = {}
   /**
@@ -394,8 +440,8 @@ const handleClearAllTags = (): void => {
   emit('clear', placeholders.messages.accidentally_cleared)
 }
 
-const setRelationsToArrayFormat = (obj: IFilterChip): void => {
-  const newObj: IFilterChip = helper.cloneDeep(obj)
+const setRelationsToArrayFormat = (obj: IFilterParsedValueFilterName): void => {
+  const newObj = helper.cloneDeep(obj)
   const relationKeys = [FilterRelations.Is, FilterRelations.IsNot]
   for (let [categoryKey, categoryVal] of Object.entries(obj)) {
     if (categoryVal.constructor === Object) {
@@ -409,8 +455,8 @@ const setRelationsToArrayFormat = (obj: IFilterChip): void => {
   currentValues.value = newObj
 }
 
-const onTagClick = (tag: IFilterChip): void => {
-  activeTag.value = helper.isEqual(activeTag.value, tag) ? null : tag
+const onTagClick = (tag: IFilterTag): void => {
+  activeTag.value = (helper.isEqual(activeTag.value, tag) ? null : tag) as IFilterRelationTag
   if (!activeTag.value) {
     setEmptyCondition()
     return
@@ -437,20 +483,20 @@ const onTagClick = (tag: IFilterChip): void => {
 }
 
 const handleConfirm = (): void => {
-  const encodedData = btoa(encodeURI(JSON.stringify(currentValuesName.value)))
   /**
    * Событие по изменению значения фильтра
    */
-  const filterValue: IFilterValue = {
+  computedModelValue.value = {
     filter: currentValues.value,
-    filter_name: encodedData
-  }
+    filter_name: currentValuesName.value
+  } as IFilterParsedValue
 
-  emit('update:modelValue', filterValue)
-  emit('confirm', filterValue)
-  if (helper.isEmpty(currentValues.value)) {
-    isDisableConfirmButton.value = true
-  }
+  const payload: IFilterValue = {
+    filter: currentValues.value,
+    filter_name: UseEncodeDecode.encode(currentValuesName.value)
+  } as IFilterValue
+
+  emit('confirm', payload)
 }
 
 /**
@@ -524,20 +570,19 @@ watch(
     currentValues.value = { ...filter_value.filter }
     if (filter_value.filter_name) {
       try {
-        currentValuesName.value = JSON.parse(decodeURI(atob(filter_value.filter_name)))
+        currentValuesName.value = UseEncodeDecode.decode(filter_value.filter_name)
       } catch (e) {
         console.error(`Can't parse filters`)
       }
     }
-    isDisableConfirmButton.value = helper.isEmpty(val.filter) || helper.isEmpty(val.filter_name)
   },
-  { deep: true, immediate: true }
+  { deep: true }
 )
 
 watch(
   () => currentFilter.value,
   (): void => {
-    handleConditionChange({ value: null })
+    handleConditionChange({ value: '' })
   },
   { deep: true }
 )
@@ -545,13 +590,6 @@ watch(
 watch(
   () => currentValues.value,
   (newVal, oldVal): void => {
-    if (helper.isEmpty(oldVal) && !helper.isEmpty(newVal)) {
-      isDisableConfirmButton.value = false
-    }
-    if (helper.isEmpty(props.modelValue?.filter) && helper.isEmpty(newVal)) {
-      isDisableConfirmButton.value = true
-    }
-
     if (activePreset.value) {
       const mappedPresets = filterLocalStorage.value[props.name].map((p) => {
         if (activePreset.value && p.name === activePreset.value.name) {
@@ -634,8 +672,8 @@ watch(
           :placeholders="placeholders"
           :active-tag="activeTag"
           :use-timezone="props.useTimezone"
-          @tag-change="onTagsChange"
-          @tag-click="onTagClick"
+          @tag-change="(payload) => onTagsChange(payload)"
+          @tag-click="(payload) => onTagClick(payload)"
           @clear="handleClearAllTags"
         />
         <section class="mc-filter__body-fast-tags-wrapper">

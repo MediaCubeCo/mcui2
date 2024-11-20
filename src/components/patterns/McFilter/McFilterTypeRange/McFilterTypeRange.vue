@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
-import type { IFilter, IFilterCondition, IFilterPlaceholders, IFilterRangeValue } from '@/types/IFilter.js'
+import type {
+  IFilterCondition,
+  IFilterPlaceholders,
+  IFilterRangeValue,
+  IRangeFilter
+} from '@/types/IFilter.js'
 import { computed, type PropType, ref, watch } from 'vue'
 import { InputTypes } from '@/enums'
 
@@ -23,7 +28,7 @@ const props = defineProps({
    *  фильтра
    */
   filter: {
-    type: Object as PropType<IFilter>,
+    type: Object as PropType<IRangeFilter>,
     default: () => ({})
   },
   /**
@@ -95,8 +100,8 @@ const emitValue = () => {
     less = props.filter.min
   }
   const result: IFilterRangeValue = {
-    ...(hasMore ? { more } : {}),
-    ...(hasLess ? { less } : {})
+    more: more || null,
+    less: less || null
   }
   currentLess.value = less
   currentMore.value = more

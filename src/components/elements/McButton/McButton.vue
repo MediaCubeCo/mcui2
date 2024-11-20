@@ -40,7 +40,6 @@ const buttonTooltip = computed((): ITooltip => {
 const props = defineProps({
   /**
    *  Если нужна ссылка внутри приложения:
-   * `{name: 'test', params: { id: test.id }}`
    */
   to: {
     type: String as PropType<string>,

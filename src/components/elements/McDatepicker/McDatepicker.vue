@@ -7,16 +7,8 @@ import {
   DatepickerOutputFormat,
   DatepickerFormatsVariations
 } from '@/enums/Datepicker'
-import type {
-  DatepickerFormatsObjectFormat,
-  IDatepickerPlaceholders,
-  IDatepickerPreset
-} from '@/types/IDatepicker'
-import {
-  type DatePickerValue,
-  type DatepickerTypesUnion,
-  type DatepickerFormatsObject,
-} from '@/types/IDatepicker'
+import type { DatepickerFormatsObjectFormat, IDatepickerPlaceholders, IDatepickerPreset } from '@/types/IDatepicker'
+import { type DatePickerValue, type DatepickerTypesUnion, type DatepickerFormatsObject } from '@/types/IDatepicker'
 //@ts-ignore
 import { dayjs, dayjsLocales } from '../../../utils/dayjs.js'
 import DatePicker, { type DatePickerMarker } from '@vuepic/vue-datepicker'
@@ -25,6 +17,7 @@ import McTitle from '../McTitle/McTitle.vue'
 import McSvgIcon from '../McSvgIcon/McSvgIcon.vue'
 import McButton from '../McButton/McButton.vue'
 import { useFieldErrors } from '@/composables/useFieldErrors'
+import { ButtonSize, TitleVariations, Weights } from '@/enums'
 
 const attrs = useAttrs()
 const emit = defineEmits(['update:modelValue'])
@@ -331,8 +324,7 @@ const init = () => {
 
 const handlerPreselectRange = (period: string[]): void => {
   const [start, end] = period
-  input.value &&
-    (input.value.currentValue = dayjs ? [dayjs(start).toDate(), dayjs(end).toDate()] : period)
+  input.value && (input.value.currentValue = dayjs ? [dayjs(start).toDate(), dayjs(end).toDate()] : period)
 }
 
 /**
@@ -342,16 +334,14 @@ const handlePreselectToday = (): void => {
   if (isWeekPicker.value) return
 
   const hasValue = props.range
-    ? localValue.value?.length &&
-      Array.isArray(localValue.value) &&
-      localValue.value.every((v) => dayjs(v).isValid())
+    ? localValue.value?.length && Array.isArray(localValue.value) && localValue.value.every((v) => dayjs(v).isValid())
     : dayjs(localValue.value).isValid()
 
   if (!hasValue) {
-    let today = props.toIsoFormat ? dayjs().toISOString() : dayjs().format(dateFormat[DatepickerFormatsVariations.Output])
-    localValue.value = props.range
-      ? getFormattedPickerDate([today, today])
-      : getFormattedPickerDate(today)
+    let today = props.toIsoFormat
+      ? dayjs().toISOString()
+      : dayjs().format(dateFormat[DatepickerFormatsVariations.Output])
+    localValue.value = props.range ? getFormattedPickerDate([today, today]) : getFormattedPickerDate(today)
   }
 }
 
@@ -366,7 +356,7 @@ const getFormattedPickerDate = (value: DatePickerValue): DatePickerValue => {
   }
 
   const [start, end] = preparedValue
-  return props.range ? [start, end].filter(Boolean) as DatePickerValue : start
+  return props.range ? ([start, end].filter(Boolean) as DatePickerValue) : start
 }
 
 /**
@@ -374,22 +364,17 @@ const getFormattedPickerDate = (value: DatePickerValue): DatePickerValue => {
  * */
 const getFormattedOutputDate = (value: DatePickerValue): DatePickerValue => {
   if (isWeekPicker.value) return value
-  let preparedValue = props.range
-    ? Array.isArray(value)
-      ? value.map((pv) => String(pv))
-      : []
-    : [String(value)]
+  let preparedValue = props.range ? (Array.isArray(value) ? value.map((pv) => String(pv)) : []) : [String(value)]
   if (!props.toIsoFormat) {
     preparedValue = preparedValue.map((pv) => dayjs(pv, dateFormat.dayjs).format(dateFormat.output))
   }
 
   const [start, end] = preparedValue.map((pv) => (pv === 'Invalid Date' ? null : pv))
-  return props.range ? [start, end].filter(Boolean) as DatePickerValue : start
+  return props.range ? ([start, end].filter(Boolean) as DatePickerValue) : start
 }
 
 const setLocale = async (): Promise<void> => {
-  const locale =
-    props.lang !== 'ar' && Object.keys(dayjsLocales).includes(props.lang) ? props.lang : 'en'
+  const locale = props.lang !== 'ar' && Object.keys(dayjsLocales).includes(props.lang) ? props.lang : 'en'
   await dayjsLocales[locale]?.()
   dayjs.locale(locale)
 }
@@ -436,7 +421,7 @@ watch(
     <label v-if="$slots.header || !!props.title" :for="name" class="mc-date-picker__header">
       <!-- @slot Слот для заголовка над инпутом -->
       <slot name="title">
-        <mc-title v-if="props.title" weight="medium">{{ props.title }}</mc-title>
+        <mc-title v-if="props.title" :weight="Weights.Medium">{{ props.title }}</mc-title>
       </slot>
     </label>
     <div class="mc-date-picker__inner">
@@ -532,7 +517,7 @@ watch(
               <mc-button
                 v-if="placeholders.confirm"
                 variation="purple-outline"
-                size="xs"
+                :size="ButtonSize.Xs"
                 @click="handleSubmit"
               >
                 {{ placeholders.confirm }}
@@ -540,11 +525,7 @@ watch(
             </div>
           </template>
           <template #input-icon>
-            <mc-svg-icon
-              name="calendar"
-              size="300"
-              :color="props.disabled ? 'outline-gray' : 'black'"
-            />
+            <mc-svg-icon name="calendar" size="300" :color="props.disabled ? 'outline-gray' : 'black'" />
           </template>
           <template v-if="$slots.header" #header>
             <div>
@@ -565,22 +546,14 @@ watch(
         </date-picker>
       </div>
     </div>
-    <div
-      v-if="!!fieldErrors.errorText.value || !!props.helpText || !!$slots.bottom"
-      class="mc-date-picker__footer"
-    >
-      <mc-title
-        v-if="!!fieldErrors.errorText.value"
-        tag-name="div"
-        color="red"
-        variation="overline"
-      >
+    <div v-if="!!fieldErrors.errorText.value || !!props.helpText || !!$slots.bottom" class="mc-date-picker__footer">
+      <mc-title v-if="!!fieldErrors.errorText.value" tag-name="div" color="red" :variation="TitleVariations.Overline">
         {{ fieldErrors.errorText.value }}
       </mc-title>
       <br v-if="!!fieldErrors.errorText.value && (!!props.helpText || !!$slots.bottom)" />
       <!-- @slot Слот для доп. текста под инпутом -->
       <slot name="bottom">
-        <mc-title v-if="!!props.helpText" tag-name="div" variation="overline">
+        <mc-title v-if="!!props.helpText" tag-name="div" :variation="TitleVariations.Overline">
           {{ props.helpText }}
         </mc-title>
       </slot>

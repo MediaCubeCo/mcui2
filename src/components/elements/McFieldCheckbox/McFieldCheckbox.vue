@@ -6,6 +6,7 @@ import { computed, type PropType, useSlots } from 'vue'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Directions } from '@/enums/ui/Directions'
 import type { SizesUnion } from '@/types/styles/Sizes'
+import { TitleVariations, Weights } from '@/enums'
 
 const emit = defineEmits(['update:modelValue'])
 const slots = useSlots()
@@ -163,7 +164,7 @@ const handleChange = (e: Event): void => {
     <div v-if="props.title || $slots.header" class="mc-field-text__header">
       <!-- @slot Слот заголовка -->
       <slot name="header">
-        <mc-title weight="medium">{{ props.title }}</mc-title>
+        <mc-title :weight="Weights.Medium">{{ props.title }}</mc-title>
       </slot>
     </div>
     <div class="mc-field-checkbox__input-wrap">
@@ -187,7 +188,7 @@ const handleChange = (e: Event): void => {
           v-if="fieldErrors.errorText.value"
           tag-name="div"
           color="red"
-          variation="overline"
+          :variation="TitleVariations.Overline"
           max-width="100%"
         >
           {{ fieldErrors.errorText.value }}
@@ -198,7 +199,7 @@ const handleChange = (e: Event): void => {
           <mc-title
             v-if="props.helpText"
             tag-name="div"
-            variation="overline"
+            :variation="TitleVariations.Overline"
             color="gray"
             max-width="100%"
           >

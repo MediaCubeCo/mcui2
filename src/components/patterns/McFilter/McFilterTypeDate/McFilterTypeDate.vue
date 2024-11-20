@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import McDatepicker from '@/components/elements/McDatepicker/McDatepicker.vue'
 import { computed, type PropType } from 'vue'
-import type { IFilter, IFilterCondition, IFilterDateValue } from '@/types/IFilter'
+import type { IFilter, IFilterCondition, IFilterDateValue, IRangeFilter } from '@/types/IFilter'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: IFilterCondition): void
@@ -19,7 +19,7 @@ const props = defineProps({
    *  фильтра
    */
   filter: {
-    type: Object as PropType<IFilter>,
+    type: Object as PropType<IRangeFilter>,
     default: () => ({})
   },
   /**
@@ -40,9 +40,7 @@ const period = computed({
     return props.modelValue ? [props.modelValue.more, props.modelValue.less] : []
   },
   set(val) {
-    const period: IFilterDateValue = (val || []).every((d) => !!d?.trim()?.length)
-      ? { more: val[0], less: val[1] }
-      : {}
+    const period: IFilterDateValue = { more: val?.[0], less: val?.[1] }
     /**
      * Событие по изменению периода
      */

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+//@ts-ignore
 import { dayjs } from '@/utils/dayjs'
 
 import McButton from '@/components/elements/McButton/McButton.vue'
@@ -15,16 +16,21 @@ import { FilterRelations, FilterTypes } from '@/enums/Filter'
 import type {
   FilterConditionName,
   IFilter,
-  IFilterChip,
-  IFilterPlaceholders, IFilterTag
+  IFilterTag,
+  IFilterPlaceholders,
+  IFilterParsedValueFilterName,
+  FilterMoreLessConditionName,
+  RangeFilterValue,
+  DateFilterValue,
+  IFilterParsedValueFilter
 } from '@/types/IFilter'
 
 const helper = useHelper()
 const randomNumber = useRandomNumber()
 
 const emit = defineEmits<{
-  (e: 'tag-click', value: IFilterChip): void
-  (e: 'tag-change', value: IFilterChip): void
+  (e: 'tag-click', value: IFilterTag): void
+  (e: 'tag-change', value: IFilterParsedValueFilterName): void
   (e: 'clear'): void
 }>()
 const props = defineProps({
@@ -32,7 +38,7 @@ const props = defineProps({
    *  Данные фильтра
    */
   modelValue: {
-    type: Object as PropType<FilterConditionName>,
+    type: Object as PropType<IFilterParsedValueFilterName>,
     default: () => ({})
   },
   /**
@@ -54,7 +60,7 @@ const props = defineProps({
    *  Активный тэг
    */
   activeTag: {
-    type: Object as PropType<IFilterChip | null>,
+    type: Object as PropType<IFilterTag | null>,
     default: () => ({})
   },
   useTimezone: {
@@ -63,11 +69,11 @@ const props = defineProps({
   }
 })
 
-const simpleValues = ref({})
-const relationValues = ref({})
-const prettyActiveTag = ref<IFilterChip | null>(null)
+const simpleValues = ref<IFilterParsedValueFilterName>({})
+const relationValues = ref<IFilterParsedValueFilterName>({})
+const prettyActiveTag = ref<IFilterTag | null>(null)
 
-const fastFilterTags = computed(() => {
+const fastFilterTags = computed((): IFilterTag[] => {
   return simpleTags.value.filter((st) => st && st.type === FilterTypes.Fast)
 })
 
@@ -75,32 +81,32 @@ const tagsWithoutFast = computed(() => {
   return simpleTags.value.filter((st) => st && st.type !== FilterTypes.Fast)
 })
 
-const simpleTags = computed((): IFilterChip[] => {
-  const tags: IFilterChip[] = []
-
+const simpleTags = computed((): IFilterTag[] => {
+  const tags: IFilterTag[] = []
   !helper.isEmpty(simpleValues.value) &&
     Object.entries(simpleValues.value).forEach(([key, value]) => {
-      const filter = props.filters.find((f) => f.value === key)
+      const _key = key as string
+      let _value = value as FilterConditionName
+
+      const filter: IFilter = props.filters.find((f) => f.value === _key) || ({} as IFilter)
       if (filter && filter.type === FilterTypes.Fast) {
         tags.push({
           id: randomNumber.timestamp(5),
           categoryName: filter?.name,
-          category: key,
-          type: FilterTypes.Fast,
-          ...filter
+          category: _key,
+          type: FilterTypes.Fast
         } as IFilterTag)
       } else if (filter) {
-        const from = value.more
-          ? `${props.placeholders.from} ${getFormattedVal(value.more, filter)}`
-          : ''
+        _value = value as FilterMoreLessConditionName
+        const from = _value.more ? `${props.placeholders.from} ${getFormattedVal(_value.more, filter)}` : ''
 
-        const to = value.less
+        const to = _value.less
           ? `${props.placeholders.to} ${getFormattedVal(
               filter.type === FilterTypes.Date
                 ? props.useTimezone
-                  ? dayjs(value.less).subtract(1, 'days').format()
-                  : dayjs(value.less).format()
-                : value.less,
+                  ? dayjs(_value.less).subtract(1, 'days').format()
+                  : dayjs(_value.less).format()
+                : _value.less,
               filter
             )}`
           : ''
@@ -111,19 +117,23 @@ const simpleTags = computed((): IFilterChip[] => {
           categoryName: filter?.name,
           title,
           value,
-          category: key
+          category: _key
         } as IFilterTag)
       }
     })
   return tags
 })
 
-const relationRows = computed(() => {
-  let tags: IFilterTag[] = []
+const relationRows = computed((): IFilterTag[][] => {
+  let tags: IFilterTag[][] = []
+
   if (!helper.isEmpty(relationValues.value)) {
     tags = Object.entries(relationValues.value).map(([relationKey, relationVal]) => {
+      const _relationKey = relationKey as string
+      const _relationVal = relationVal as IFilterParsedValueFilterName
+
       if (relationKey === FilterRelations.Exists) {
-        const empties = Object.keys(relationVal).map((key) => {
+        const empties: IFilterTag[] = Object.keys(_relationVal).map((key) => {
           const filter = props.filters.find((f) => f.value === key)
           return {
             id: randomNumber.timestamp(5),
@@ -132,35 +142,41 @@ const relationRows = computed(() => {
             category: key,
             relationKey,
             closable: true
-          }
+          } as IFilterTag
         })
         const head = {
           id: randomNumber.timestamp(5),
           categoryName: props.placeholders.actions.empty,
           relationKey: FilterRelations.Exists
-        }
+        } as IFilterTag
+
         return [head, ...empties]
       }
-      const values = []
-      Object.entries(relationVal).forEach(([categoryKey, categoryVal]) => {
-        const filter = props.filters.find((f) => f.value === categoryKey)
-        Object.entries(categoryVal).forEach(([key, val]) => {
+      const values: IFilterTag[] = []
+      Object.entries(_relationVal).forEach(([categoryKey, categoryVal]) => {
+        const _categoryKey = categoryKey as string
+        const _categoryVal = categoryVal as FilterConditionName
+
+        const filter: IFilter = props.filters.find((f) => f.value === _categoryKey) || ({} as IFilter)
+        Object.entries(_categoryVal).forEach(([key, val]) => {
           values.push({
             id: randomNumber.timestamp(5),
             categoryName: filter?.name,
             title: val,
             value: key,
-            category: categoryKey,
+            category: _categoryKey,
             relationKey,
             closable: true
-          })
+          } as IFilterTag)
         })
       })
       const head = {
         id: randomNumber.timestamp(5),
-        categoryName: props.placeholders.actions[relationKey],
+        //@ts-ignore
+        categoryName: props.placeholders.actions?.[_relationKey],
         relationKey
-      }
+      } as IFilterTag
+
       return [head, ...values]
     })
   }
@@ -178,38 +194,38 @@ const splitTags = (value: FilterConditionName) => {
   addInitTags(value)
 }
 
-const addInitTags = (parentVal: FilterConditionName, parentKey = null) => {
+const addInitTags = (parentVal: FilterConditionName, parentKey?: string) => {
   const relationKeys = [FilterRelations.Is, FilterRelations.IsNot, FilterRelations.Exists]
+
   for (let [key, val] of Object.entries(parentVal)) {
-    if (relationKeys.includes(key)) {
-      const relationValuesKey = {
-        ...(key in relationValues.value ? relationValues.value[key] : {}),
+    if (relationKeys.includes(key as FilterRelations)) {
+      relationValues.value[key] = {
+        ...((relationValues.value[key] || {}) as object),
         ...(parentKey ? { [parentKey]: val } : {})
-      }
-      relationValues.value[key] = relationValuesKey
+      } as FilterConditionName
       continue
     }
-    if (typeof val !== 'object' && parentKey) {
+    if (val.constructor !== Object && parentKey) {
       simpleValues.value[parentKey] = parentVal
       continue
     }
     const filter = props.filters.find((f) => f.value === key)
     if (filter && filter.type === FilterTypes.Fast) {
-      simpleValues.value[key] = { value: key }
+      simpleValues.value[key] = { value: key } as FilterConditionName
       continue
     }
     val && addInitTags(val, key)
   }
 }
 
-const onTagClick = (tag: IFilterChip) => {
+const onTagClick = (tag: IFilterTag) => {
   prettyActiveTag.value = helper.isEqual(prettyActiveTag.value, tag) ? null : tag
   /**
    * Событие по клику на тэг
    */
   emit('tag-click', tag)
 }
-const onTagClose = (tag: IFilterChip, relationKey = null) => {
+const onTagClose = (tag: IFilterTag, relationKey?: FilterRelations) => {
   const value = helper.cloneDeep(props.modelValue)
   switch (relationKey) {
     case FilterRelations.Exists:
@@ -217,6 +233,7 @@ const onTagClose = (tag: IFilterChip, relationKey = null) => {
       break
     case FilterRelations.Is:
     case FilterRelations.IsNot:
+      //@ts-ignore
       delete value[tag.category][relationKey][tag.value]
       if (helper.isEmpty(value[tag.category][relationKey])) {
         delete value[tag.category][relationKey]
@@ -233,7 +250,7 @@ const onTagClose = (tag: IFilterChip, relationKey = null) => {
   /**
    * Событие по изменению набора тэгов
    */
-  emit('tag-change', value)
+  emit('tag-change', value as IFilterParsedValueFilterName)
 }
 
 const handleClear = () => {
@@ -243,22 +260,22 @@ const handleClear = () => {
   emit('clear')
 }
 
-const getFormattedVal = (val, filter) => {
+const getFormattedVal = (val: RangeFilterValue | DateFilterValue, filter: IFilter) => {
   switch (filter.type) {
-    case 'date':
+    case FilterTypes.Date:
       return dayjs(val).format('DD.MM.YYYY')
-    case 'range':
+    case FilterTypes.Range:
       return getFormattedNum(val)
     default:
       return val
   }
 }
 
-const getFormattedNum = (num) => {
+const getFormattedNum = (num: RangeFilterValue) => {
   return num
 }
 
-const checkTagIsActive = (tag) => {
+const checkTagIsActive = (tag: IFilterTag) => {
   return helper.isEqual(prettyActiveTag.value, tag)
 }
 
@@ -296,12 +313,7 @@ watch(
           </mc-grid-col>
         </mc-grid-row>
         <template v-if="relationRows.length">
-          <mc-grid-row
-            v-for="(row, index) in relationRows"
-            :key="index"
-            :gutter-x="4"
-            :gutter-y="8"
-          >
+          <mc-grid-row v-for="(row, index) in relationRows" :key="index" :gutter-x="4" :gutter-y="8">
             <mc-grid-col v-for="tag in row" :key="tag.id">
               <mc-filter-chip
                 :tag="tag"
@@ -315,11 +327,7 @@ watch(
         </template>
         <mc-grid-row v-if="fastFilterTags.length" :gutter-x="4" :gutter-y="8">
           <mc-grid-col v-for="tag in fastFilterTags" :key="tag.id">
-            <mc-tooltip
-              :content="tag.description || ''"
-              :placement="TooltipPositions.Top"
-              :size="TooltipSizes.S"
-            >
+            <mc-tooltip :content="tag.description || ''" :placement="TooltipPositions.Top" :size="TooltipSizes.S">
               <mc-filter-chip :tag="tag" closable @close="() => onTagClose(tag)" />
             </mc-tooltip>
           </mc-grid-col>

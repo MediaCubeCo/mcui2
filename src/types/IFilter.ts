@@ -10,7 +10,7 @@ export interface IBaseFilter {
 export interface IFastFilter extends IBaseFilter {
   type: FilterTypes.Fast
   relation: FilterRelations
-  default: string | number | boolean
+  default: string | number
   description: string
 }
 
@@ -23,7 +23,7 @@ export interface IRangeFilter extends IBaseFilter {
 export interface IRelationOptionsFilter extends IBaseFilter {
   type: FilterTypes.Relation
   is_text: boolean
-  options: { name?: string; value?: string | number }[]
+  options: FilterOption[]
   getAjaxOne?: never
   getAjaxOptions?: never
 }
@@ -35,62 +35,114 @@ export interface IRelationApiFilter extends IBaseFilter {
   getAjaxOptions: Function
 }
 
+export type FilterOption = Record<string, string | number>
 export type IRelationFilter = IRelationApiFilter | IRelationOptionsFilter
 
 export type IFilter = IFastFilter | IRangeFilter | IRelationFilter | IBaseFilter
 
-export interface IFilterTag extends IBaseFilter {
-  id?: string | number
-  title?: string
-  category?: string
-  categoryName: string
-  relationKey?: string
-  closable?: boolean
-}
-export interface IFilterChip {
-  id?: string | number
-  value: string | number
+export interface IFilterBaseTag {
+  id: string | number
   title: string
-  category?: string
+  description?: string
+  category: string
   categoryName: string
-  relationKey?: string
+  closable?: boolean
+  type: FilterTypes
 }
 
+export interface IFilterRelationTag extends IFilterBaseTag {
+  value: string | number
+  relationKey: FilterRelations
+}
+
+export interface IFilterRangeTag extends IFilterBaseTag {
+  value: IFilterRangeValue
+  relationKey?: never
+}
+export interface IFilterDateTag extends IFilterBaseTag {
+  value: IFilterDateValue
+  relationKey?: never
+}
+export interface IFilterTextTag extends IFilterBaseTag {
+  value: string | number
+  relationKey?: never
+}
+
+export type IFilterTag = IFilterRelationTag | IFilterRangeTag | IFilterDateTag | IFilterTextTag
+
+export type DateFilterValue = string | null
+export type RangeFilterValue = string | number | null
+
+// Range filter pair
+export interface IFilterRangeValue {
+  more: RangeFilterValue
+  less: RangeFilterValue
+}
+export interface IFilterRangeName {
+  more: RangeFilterValue
+  less: RangeFilterValue
+}
+
+// Date filter pair
+export interface IFilterDateValue {
+  more: DateFilterValue
+  less: DateFilterValue
+}
+export interface IFilterDateName {
+  more: DateFilterValue
+  less: DateFilterValue
+}
+
+// Relation filter pair
+export type FilterRelationValue = {
+  [FilterRelations.Exists]?: string | number | null
+  [FilterRelations.Is]?: string[]
+  [FilterRelations.IsNot]?: string[]
+}
+export type FilterRelationName = {
+  [FilterRelations.Exists]?: string | null
+  [FilterRelations.Is]?: Record<string, string>
+  [FilterRelations.IsNot]?: Record<string, string>
+}
+
+// Text filter pair
+export type FilterTextValue = string | number
+export type FilterTextName = string | number
+
+// Типы у которых есть more & less
+export type FilterMoreLessConditionName = IFilterRangeName | IFilterDateName
+
+// Filter condition types
+export type FilterConditionValue = IFilterRangeValue | IFilterDateValue | FilterRelationValue | FilterTextValue
+export type FilterConditionName = FilterMoreLessConditionName | FilterRelationName | FilterTextName
+
+
+export type IFilterValueFilter = Record<string, FilterConditionValue>
+export type IFilterValueFilterName = string
+
+export type IFilterParsedValueFilter = Record<string, FilterConditionValue>
+export type IFilterParsedValueFilterName = Record<string, FilterConditionName>
+
+// Filter general value
 export interface IFilterValue {
-  filter: { [key: string]: FilterConditionValue } | null
-  filter_name: FilterConditionName
+  filter: IFilterValueFilter
+  filter_name: IFilterValueFilterName
+}
+
+// Filter general parsed value
+export interface IFilterParsedValue {
+  filter: IFilterParsedValueFilter
+  filter_name: IFilterParsedValueFilterName
 }
 
 export interface IFilterPreset extends IFilterValue {
   name: string
 }
 
-export interface IFilterDateValue {
-  more: string | null
-  less: string | null
-}
-export interface IFilterRangeValue {
-  more: string | number | null
-  less: string | number | null
-}
-
 export interface IFilterCondition {
   value: FilterConditionValue
   valueName?: FilterConditionName
 }
-
-export type FilterRelationValue = {
-  [FilterRelations.Exists]: string | null
-  [FilterRelations.Is]: string[]
-  [FilterRelations.IsNot]: string[]
-}
-
-export type FilterTextValue = null | string | number
-
-export type FilterConditionValue = IFilterRangeValue | IFilterDateValue | FilterRelationValue | FilterTextValue
-export type FilterConditionName = FilterRelationValue | string | null
-
-export type FilterRelationsUnion = (typeof FilterRelations)[keyof typeof FilterRelations]
 
 export interface IFilterPlaceholders {
   main_tooltip: string

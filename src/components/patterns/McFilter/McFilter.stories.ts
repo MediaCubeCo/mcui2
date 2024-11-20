@@ -11,7 +11,7 @@ const meta = {
     buttonConfirmIsLoading: { control: 'boolean' },
     useTeleport: { control: 'boolean' },
     disabledOpen: { control: 'boolean' },
-    useTimezone: { control: 'boolean' },
+    useTimezone: { control: 'boolean' }
   },
   args: {
     filters: filters,
@@ -19,7 +19,7 @@ const meta = {
     buttonConfirmIsLoading: false,
     useTeleport: false,
     disabledOpen: false,
-    useTimezone: false,
+    useTimezone: false
   },
   parameters: {
     componentSubtitle: 'Status: Ready',

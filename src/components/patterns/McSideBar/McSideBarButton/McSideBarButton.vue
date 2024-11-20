@@ -21,11 +21,9 @@ const provideData = inject<ISidebarThemeConfigProvide>(
 const props = defineProps({
   /**
    *  Если нужна ссылка внутри приложения:
-   * `{name: 'test', params: { id: test.id }}`
    */
   to: {
-    // TODO check "to"
-    type: Object as PropType<IRoute>,
+    type: Object as PropType<string>,
     default: null
   },
   /**
@@ -130,7 +128,7 @@ const classes = computed(() => {
   }
 })
 
-const btnAttrs = computed((): IButton => {
+const btnAttrs = computed(() => {
   return {
     ...attrs,
     variation: props.variation || themeConfig.value.mainMenuLinks.variable,
