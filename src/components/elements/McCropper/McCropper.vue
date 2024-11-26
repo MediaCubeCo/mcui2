@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 //@ts-ignore
-import VueCropper from 'vue3-cropperjs'
+import { default as VueCropper } from 'vue3-cropperjs'
 import 'vue3-cropperjs/dist/v3cropper.css'
 
 const emit = defineEmits(['crop', 'ready'])
@@ -12,15 +12,18 @@ const props = defineProps({
    */
   imgSrc: {
     type: String,
-    default: null,
-  },
+    default: null
+  }
 })
 const cropper = ref<InstanceType<VueCropper>>(null)
 const timeout = ref<number | null>(null)
 
-watch(() => props.imgSrc, (value) => {
-  setImage(value)
-})
+watch(
+  () => props.imgSrc,
+  (value) => {
+    setImage(value)
+  }
+)
 const setImage = (value: string): void => {
   cropper.value.replace(props.imgSrc || value)
 }
@@ -31,9 +34,10 @@ const debounce = (method: TimerHandler): void => {
 }
 
 const cropImage = (e: any): void => {
-  e.target?.cropper?.getCroppedCanvas({
+  e.target?.cropper
+    ?.getCroppedCanvas({
       maxWidth: 650,
-      maxHeight: 650,
+      maxHeight: 650
     })
     .toBlob((blob: Blob) => {
       /**
@@ -69,10 +73,10 @@ const clearDebounce = (): void => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/tokens/border-radius';
-@import '../../../assets/tokens/opacities';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/media-queries';
+@use '../../../assets/tokens/border-radius' as *;
+@use '../../../assets/tokens/opacities' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/media-queries' as *;
 .mc-cropper {
   $block-name: &;
 

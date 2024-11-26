@@ -23,10 +23,10 @@ const classes = computed(() => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/z-indexes';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/z-indexes' as *;
 .mc-bottom-loader {
   position: sticky;
   bottom: 0;

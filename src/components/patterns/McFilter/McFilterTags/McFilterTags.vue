@@ -1,17 +1,10 @@
 <script setup lang="ts">
-//@ts-ignore
 import { dayjs } from '@/utils/dayjs'
 
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McGridRow from '@/components/patterns/McGridRow/McGridRow.vue'
-import McGridCol from '@/components/patterns/McGridCol/McGridCol.vue'
-import McFilterChip from '@/components/patterns/McFilter/McFilterChip/McFilterChip.vue'
+import { McButton, McTooltip, McTitle, McGridRow, McGridCol, McFilterChip } from '@/components'
 import { computed, type PropType, ref, watch } from 'vue'
-import { useRandomNumber } from '@/composables/useRandomNumber'
+import { useRandomNumber, useHelper } from '@/composables'
 import { TooltipPositions, TooltipSizes } from '@/enums'
-import { useHelper } from '@/composables/useHelper'
 import { FilterRelations, FilterTypes } from '@/enums/Filter'
 import type {
   FilterConditionName,
@@ -21,8 +14,7 @@ import type {
   IFilterParsedValueFilterName,
   FilterMoreLessConditionName,
   RangeFilterValue,
-  DateFilterValue,
-  IFilterParsedValueFilter
+  DateFilterValue
 } from '@/types/IFilter'
 
 const helper = useHelper()
@@ -343,9 +335,10 @@ watch(
 </template>
 
 <style lang="scss">
-@import '../../../../assets/styles/mixins';
-@import '../../../../assets/tokens/spacings';
-@import '../../../../assets/tokens/colors';
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/colors' as *;
+@use '../../../../assets/tokens/border-radius' as *;
 .mc-filter-tags {
   $block-name: &;
   @include child-indent-bottom($space-100);

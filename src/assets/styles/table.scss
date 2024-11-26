@@ -1,3 +1,5 @@
+@use '../tokens/colors' as *;
+
 $vxe-table-border-color: $color-hover-gray;
 $vxe-table-header-background-color: $color-white;
 $vxe-table-row-hover-background-color: $color-hover-gray;

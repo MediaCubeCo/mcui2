@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, type PropType, reactive, ref, useSlots } from 'vue'
-import { useHelper } from '@/composables/useHelper'
+import { computed, onBeforeUnmount, onMounted, type PropType, reactive, ref, useSlots } from 'vue'
+import { useHelper } from '@/composables'
 import { ChipSize, Weights } from '@/enums'
 import {
   type ITableColumn,
@@ -13,17 +13,19 @@ import {
   type ITableCardProps
 } from '@/types/ITable'
 import { TABLE } from '@/consts/table'
-import McInfinityLoadingTrigger from '@/components/elements/McInfinityLoadingTrigger/McInfinityLoadingTrigger.vue'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McChip from '@/components/elements/McChip/McChip.vue'
-import McTableSort from '@/components/templates/McTable/McTableSort/McTableSort.vue'
-import McTableSkeletonLoading from '@/components/templates/McTable/McTableSkeletonLoading/McTableSkeletonLoading.vue'
-import McNoData from '@/components/elements/McNodata/McNoData.vue'
-const McBottomLoader = defineAsyncComponent(() => import('@/components/elements/McBottomLoader/McBottomLoader.vue'))
-const McOverlay = defineAsyncComponent(() => import('@/components/patterns/McOverlay/McOverlay.vue'))
+import {
+  McInfinityLoadingTrigger,
+  McTitle,
+  McChip,
+  McTableSort,
+  McTableSkeletonLoading,
+  McNoData,
+  McBottomLoader,
+  McOverlay
+} from '@/components'
 import { useThrottleFn } from '@vueuse/core'
 import type { IconsListUnion } from '@/types'
-import noTableDataImg from '../../../../assets/img/no_table_data.png'
+import { default as noTableDataImg } from '@/assets/img/no_table_data.png'
 
 const defaultPlaceholders = {
   no_data: 'No data',
@@ -272,6 +274,13 @@ const computedTableCardProps = computed((): ITableCardProps => {
   }
 })
 
+onMounted((): void => {
+  addListeners()
+})
+onBeforeUnmount((): void => {
+  removeListeners()
+})
+
 const onBodyScroll = useThrottleFn((): void => {
   if (mcTable.value) {
     const { scrollLeft, scrollWidth, clientWidth } = mcTable.value
@@ -301,13 +310,6 @@ const handleSetCardState = (payload: TableCardState) => {
   openCardState.value = payload
   emit('table-card-opened', payload)
 }
-
-onMounted((): void => {
-  addListeners()
-})
-onBeforeUnmount((): void => {
-  removeListeners()
-})
 </script>
 
 <template>
@@ -422,16 +424,16 @@ onBeforeUnmount((): void => {
 </template>
 
 <style lang="scss">
-@import '../../../../assets/styles/mixins';
-@import '../../../../assets/tokens/colors';
-@import '../../../../assets/tokens/font-families';
-@import '../../../../assets/tokens/font-weights';
-@import '../../../../assets/tokens/font-sizes';
-@import '../../../../assets/tokens/spacings';
-@import '../../../../assets/tokens/sizes';
-@import '../../../../assets/tokens/box-shadows';
-@import '../../../../assets/tokens/z-indexes';
-@import '../../../../assets/tokens/media-queries';
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/colors' as *;
+@use '../../../../assets/tokens/font-families' as *;
+@use '../../../../assets/tokens/font-weights' as *;
+@use '../../../../assets/tokens/font-sizes' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/sizes' as *;
+@use '../../../../assets/tokens/box-shadows' as *;
+@use '../../../../assets/tokens/z-indexes' as *;
+@use '../../../../assets/tokens/media-queries' as *;
 @mixin fixed-first {
   left: 0;
   z-index: $z-index-notification;
@@ -510,6 +512,13 @@ onBeforeUnmount((): void => {
   &__container {
     --border-style: 1px solid #{$color-hover-gray};
     --table-row-hover-background-color: #{$color-hover-gray};
+    --mc-table-height: auto;
+    --mc-table-cell-width: auto;
+    --mc-table-cell-max-width: auto;
+    --mc-table-cell-min-width: auto;
+    --mc-table-row-height: 40px;
+    --mc-table-footer-row-height: 40px;
+
     position: relative;
     overflow: hidden;
     font-size: $font-size-200;

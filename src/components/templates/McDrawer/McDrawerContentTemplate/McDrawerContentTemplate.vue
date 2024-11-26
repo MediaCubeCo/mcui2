@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TitleVariations } from '@/enums/Title'
 import { Weights } from '@/enums/ui/Weights'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import { McTitle } from '@/components'
 import type { PropType } from 'vue'
 
 const props = defineProps({
@@ -15,7 +15,7 @@ const props = defineProps({
   titleEllipsis: {
     type: Boolean as PropType<boolean>,
     default: false
-  },
+  }
 })
 </script>
 
@@ -24,11 +24,7 @@ const props = defineProps({
     <div v-if="$slots.title || props.title" class="mc-drawer-content-template__header">
       <!-- @slot Слот заголовка -->
       <slot name="title">
-        <mc-title
-          :variation="TitleVariations.Subtitle"
-          :ellipsis="props.titleEllipsis"
-          :weight="Weights.SemiBold"
-        >
+        <mc-title :variation="TitleVariations.Subtitle" :ellipsis="props.titleEllipsis" :weight="Weights.SemiBold">
           {{ props.title }}
         </mc-title>
       </slot>
@@ -48,11 +44,11 @@ const props = defineProps({
 </template>
 
 <style lang="scss">
-@import "../../../../assets/styles/mixins";
-@import "../../../../assets/tokens/spacings";
-@import "../../../../assets/tokens/sizes";
-@import "../../../../assets/tokens/colors";
-@import "../../../../assets/tokens/font-families";
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/sizes' as *;
+@use '../../../../assets/tokens/colors' as *;
+@use '../../../../assets/tokens/font-families' as *;
 .mc-drawer-content-template {
   font-family: $font-family-main;
   height: 100%;

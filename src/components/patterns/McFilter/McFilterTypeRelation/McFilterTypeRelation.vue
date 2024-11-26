@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McFieldSelect from '@/components/elements/McFieldSelect/McFieldSelect.vue'
-import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
+import { McButton, McTitle, McFieldSelect, McFieldText } from '@/components'
 import { computed, type PropType, ref, watch, nextTick } from 'vue'
 import type {
   IFilterPlaceholders,
@@ -15,7 +12,7 @@ import type {
   IFilterCondition
 } from '@/types'
 import { FilterRelations } from '@/enums'
-import { useHelper } from '@/composables/useHelper'
+import { useHelper } from '@/composables'
 import { useDebounceFn } from '@vueuse/core'
 
 const helper = useHelper()
@@ -136,9 +133,9 @@ const addAjaxOption = async (value: FilterRelationValue): Promise<void> => {
   ajaxOptions.value = helper.uniqWith([...ajaxOptions.value, option], helper.isEqual)
 }
 
-const handleSearchChange = (value: string): void => {
+const handleSearchChange = (value: string | unknown): void => {
   if (!isAjax.value || !value) return
-  debounce(() => setAjaxOptions(value))
+  debounce(() => setAjaxOptions(value as string))
 }
 
 const setValue = (value: FilterRelationValue): void => {
@@ -201,7 +198,7 @@ watch(
     hide-selected
     class="mc-filter-type-relation"
     :name="`relation_${props.filter.type}`"
-    @search-change="(payload) => handleSearchChange(payload as string)"
+    @search-change="handleSearchChange"
   >
     <template #header>
       <div class="mc-filter-type-relation__header">
@@ -222,9 +219,9 @@ watch(
 </template>
 
 <style lang="scss">
-@import '../../../../assets/styles/mixins';
-@import '../../../../assets/tokens/spacings';
-@import '../../../../assets/tokens/sizes';
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/sizes' as *;
 .mc-filter-type-relation {
   $block-name: &;
   width: 300px;

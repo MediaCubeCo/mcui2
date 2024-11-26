@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McSideBarButton from '@/components/patterns/McSideBar/McSideBarButton/McSideBarButton.vue'
-import McSeparator from '@/components/elements/McSeparator/McSeparator.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import { useRandomNumber } from '@/composables/useRandomNumber'
+import { McTitle, McSideBarButton, McSeparator, McButton, McSvgIcon } from '@/components'
+import { useRandomNumber } from '@/composables'
 import { computed, inject, nextTick, onBeforeMount, type PropType, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { ISideBarChatra, ISideBarMenuItem, ISideBarMenuItemEnrichment, ISidebarThemeConfigProvide } from '@/types'
@@ -233,9 +229,9 @@ const setMainMenu = (): void => {
 </template>
 
 <style lang="scss">
-@import '../../../../assets/styles/mixins';
-@import '../../../../assets/tokens/spacings';
-@import '../../../../assets/tokens/colors';
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/colors' as *;
 .mc-side-bar-center {
   $block-name: &;
   margin-bottom: $space-150;

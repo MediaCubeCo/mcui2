@@ -1,3 +1,24 @@
 {
-  "$token-shadows": {}
+  "$shadow-xs": "0 2px 8px rgba(0, 0, 0, 0.16)",
+  "$shadow-s": "0 4px 12px rgba(0, 0, 0, 0.16)",
+  "$shadow-m": "0 12px 32px rgba(0, 0, 0, 0.24)",
+  "$shadow-l": "0 24px 40px rgba(0, 0, 0, 0.16)",
+  "$shadow-xs-blue": "0px 2px 8px rgba(51, 68, 153, 0.1)",
+  "$shadow-s-blue": "0 4px 12px rgba(51, 68, 153, 0.1)",
+  "$shadow-m-blue": "0 12px 32px rgba(51, 68, 153, 0.2)",
+  "$shadow-xs-purple": "0px 2px 8px rgba(91, 44, 205, 0.1)",
+  "$shadow-s-purple": "0 4px 12px rgba(91, 44, 205, 0.1)",
+  "$shadow-m-purple": "0 12px 32px rgba(91, 44, 205, 0.2)",
+  "$token-shadows": {
+    "xs": "0 2px 8px rgba(0, 0, 0, 0.16)",
+    "s": "0 4px 12px rgba(0, 0, 0, 0.16)",
+    "m": "0 12px 32px rgba(0, 0, 0, 0.24)",
+    "l": "0 24px 40px rgba(0, 0, 0, 0.16)",
+    "xs-blue": "0px 2px 8px rgba(51, 68, 153, 0.1)",
+    "s-blue": "0 4px 12px rgba(51, 68, 153, 0.1)",
+    "m-blue": "0 12px 32px rgba(51, 68, 153, 0.2)",
+    "xs-purple": "0px 2px 8px rgba(91, 44, 205, 0.1)",
+    "s-purple": "0 4px 12px rgba(91, 44, 205, 0.1)",
+    "m-purple": "0 12px 32px rgba(91, 44, 205, 0.2)"
+  }
 }

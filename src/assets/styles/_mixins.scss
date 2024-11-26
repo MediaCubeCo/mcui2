@@ -14,7 +14,15 @@
   @include responsive-font(5vw, 35px, 150px, 50px);
 */
 
-@import '../tokens/border-radius';
+@use 'sass:list' as *;
+@use 'sass:color' as sasscolor;
+@use '../tokens/border-radius' as *;
+@use '../tokens/colors' as *;
+@use '../tokens/font-sizes' as *;
+@use '../tokens/line-heights' as *;
+@use '../tokens/spacings' as *;
+@use '../tokens/font-weights' as *;
+@use '../styles/functions' as *;
 
 @mixin size($width, $height: $width) {
   height: $height;
@@ -216,7 +224,7 @@
     color: $second-color if($is-important, !important, null);
   }
   &:active {
-    color: darken($second-color, 8%) if($is-important, !important, null);
+    color: sasscolor.adjust($second-color, $lightness: 8%) if($is-important, !important, null);
   }
 }
 
@@ -465,11 +473,7 @@
   }
 }
 
-@mixin animation-border-spinner(
-  $duration: 2s,
-  $border-color: $color-purple,
-  $border-size: $space-100
-) {
+@mixin animation-border-spinner($duration: 2s, $border-color: $color-purple, $border-size: $space-100) {
   background-repeat: no-repeat;
   background-image: linear-gradient(to right, $border-color 100%, $border-color 100%),
     linear-gradient(to bottom, $border-color 100%, $border-color 100%),

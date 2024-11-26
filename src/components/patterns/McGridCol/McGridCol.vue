@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import _upperFirst from 'lodash/upperFirst'
-import {
-  adaptiveAdditionalProps,
-  adaptivePropsParams,
-  adaptivePropsSizes
-} from '@/utils/mcGridColAdaptiveProps'
+import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from '@/utils/mcGridColAdaptiveProps'
 import { computed, inject } from 'vue'
 import type { IGridGutters } from '@/types/IGrid'
 import type { ColumnSpanUnion } from '@/types/styles/Grid'
+import { useHelper } from '@/composables'
 
+const helper = useHelper()
 const provideData = inject('provideData', { gutterX: 0, gutterY: 0 } as IGridGutters)
 
 const props = defineProps({
@@ -63,7 +60,7 @@ const classes = computed((): { [key: string]: boolean } => {
     list[`mc-grid-col--${value}-${props[value]}`] = !!props[value]
     adaptivePropsSizes.forEach((size) => {
       //@ts-ignore
-      const sizeValue = props[`${value}${_upperFirst(size)}`]
+      const sizeValue = props[`${value}${helper.upperFirst(size)}`]
       list[`mc-grid-col--${value}-${size}-${sizeValue}`] = !!sizeValue
     })
   })
@@ -101,8 +98,8 @@ const styles = computed((): { [key: string]: string | number } => {
 </template>
 
 <style lang="scss">
-@import '@/assets/styles/mixins';
-@import '@/assets/tokens/media-queries';
+@use '@/assets/styles/mixins' as *;
+@use '@/assets/tokens/media-queries' as *;
 .mc-grid-col {
   $block-name: &;
   box-sizing: border-box;

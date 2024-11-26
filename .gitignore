@@ -8,12 +8,25 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-storybook-static/
+./storybook-static/
+storybook-static
 .DS_Store
 dist
 dist-ssr
 coverage
 *.local
+/src/index.js
+/src/components/index.js
+/src/assets/tokens/json/index.js
+/src/main.js
+/src/**/*.vue.js
+/src/composables/**/*.js
+/src/consts/**/*.js
+/src/enums/**/*.js
+/src/mocks/**/*.js
+/src/types/**/*.js
+/src/utils/**/*.js
+/src/utils/**/vue.js
 
 /cypress/videos/
 /cypress/screenshots/

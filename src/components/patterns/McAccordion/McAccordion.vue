@@ -57,7 +57,7 @@ provide('accordionTriggerMethod', handleTrigger)
 </template>
 
 <style lang="scss">
-@import '../../../assets/tokens/font-families';
+@use '../../../assets/tokens/font-families' as *;
 .mc-accordion {
   $block-name: &;
   font-family: $font-family-main;

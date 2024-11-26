@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import { McSvgIcon } from '@/components'
 import { computed, type PropType } from 'vue'
 import type { ITableSort, ITableSortState } from '@/types/ITable'
 
@@ -28,19 +28,19 @@ const sortState = computed((): ITableSortState => {
       return {
         direction: 'asc',
         next_direction: 'desc',
-        icon: 'arrow_downward',
+        icon: 'arrow_downward'
       }
     case props.sort.sort_direction === 'desc' && isActive.value:
       return {
         direction: 'desc',
         next_direction: 'asc',
-        icon: 'arrow_upward',
+        icon: 'arrow_upward'
       }
     default:
       return {
         direction: null,
         next_direction: 'asc',
-        icon: 'arrow_up_down',
+        icon: 'arrow_up_down'
       }
   }
 })

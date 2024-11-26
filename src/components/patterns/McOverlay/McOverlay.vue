@@ -5,17 +5,17 @@ import { computed } from 'vue'
 const props = defineProps({
   size: {
     type: String as () => SizeTypes,
-    default: '500',
+    default: '500'
   },
   backgroundColor: {
     type: String as () => ColorTypes,
-    default: 'white',
-  },
+    default: 'white'
+  }
 })
 const styles = computed((): { [key: string]: string } => {
   return {
     '--mc-overlay-color': props.backgroundColor && Colors[props.backgroundColor],
-    '--mc-overlay-spinner-size': props.size && Sizes[props.size],
+    '--mc-overlay-spinner-size': props.size && Sizes[props.size]
   }
 })
 </script>
@@ -28,8 +28,8 @@ const styles = computed((): { [key: string]: string } => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/tokens/z-indexes';
-@import '../../../assets/tokens/colors';
+@use '../../../assets/tokens/z-indexes' as *;
+@use '../../../assets/tokens/colors' as *;
 .mc-overlay {
   $block-name: &;
   --mc-overlay-spinner-size: initial;

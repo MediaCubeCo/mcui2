@@ -1,23 +1,12 @@
 <script setup lang="ts">
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McChip from '@/components/elements/McChip/McChip.vue'
-import type {
-  ButtonVariationUnion,
-  ColorTypes, IButton,
-  IconsListUnion,
-  IRoute,
-  ISidebarThemeConfigProvide
-} from '@/types'
+import { McButton, McSvgIcon, McChip } from '@/components'
+import type { ButtonVariationUnion, ColorTypes, IconsListUnion, ISidebarThemeConfigProvide } from '@/types'
 import { computed, inject, type PropType, useAttrs } from 'vue'
 import { ButtonSize, HorizontalAlignment, SidebarTheme, TooltipPositions } from '@/enums'
 import { defaultThemes } from '@/mocks/sidebar'
 
 const attrs = useAttrs()
-const provideData = inject<ISidebarThemeConfigProvide>(
-  'provideData',
-  {} as ISidebarThemeConfigProvide
-)
+const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
 const props = defineProps({
   /**
    *  Если нужна ссылка внутри приложения:
@@ -121,8 +110,7 @@ const classes = computed(() => {
   return {
     'mc-side-bar-button': true,
     [`mc-side-bar--${themeConfig.value.mode || 'black'}__button`]: true,
-    'purple-hover':
-      !props.secondaryColor && themeConfig.value.mainMenuLinks.variable === 'black-flat',
+    'purple-hover': !props.secondaryColor && themeConfig.value.mainMenuLinks.variable === 'black-flat',
     //@ts-ignore
     [attrs.class]: !!attrs.class
   }
@@ -142,7 +130,7 @@ const btnAttrs = computed(() => {
     disabled: props.disabled,
     isActive: props.isActive,
     tooltip: props.compact && props.withTooltip ? props.title : '',
-    tooltipPlacement: TooltipPositions.Right,
+    tooltipPlacement: TooltipPositions.Right
   }
 })
 </script>
@@ -168,10 +156,11 @@ const btnAttrs = computed(() => {
 </template>
 
 <style lang="scss">
-@import '../../../../assets/styles/mixins';
-@import '../../../../assets/tokens/colors';
-@import '../../../../assets/tokens/sizes';
-@import '../../../../assets/tokens/spacings';
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/colors' as *;
+@use '../../../../assets/tokens/sizes' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/border-radius' as *;
 .mc-side-bar-button {
   $block-name: &;
   &__tooltip {

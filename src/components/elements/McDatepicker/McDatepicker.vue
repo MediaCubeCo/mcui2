@@ -10,13 +10,11 @@ import {
 import type { DatepickerFormatsObjectFormat, IDatepickerPlaceholders, IDatepickerPreset } from '@/types/IDatepicker'
 import { type DatePickerValue, type DatepickerTypesUnion, type DatepickerFormatsObject } from '@/types/IDatepicker'
 //@ts-ignore
-import { dayjs, dayjsLocales } from '../../../utils/dayjs.js'
-import DatePicker, { type DatePickerMarker } from '@vuepic/vue-datepicker'
+import { dayjs, dayjsLocales } from '@/utils'
+import { default as DatePicker, type DatePickerMarker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import McTitle from '../McTitle/McTitle.vue'
-import McSvgIcon from '../McSvgIcon/McSvgIcon.vue'
-import McButton from '../McButton/McButton.vue'
-import { useFieldErrors } from '@/composables/useFieldErrors'
+import { McTitle, McSvgIcon, McButton } from '@/components'
+import { useFieldErrors } from '@/composables'
 import { ButtonSize, TitleVariations, Weights } from '@/enums'
 
 const attrs = useAttrs()
@@ -302,6 +300,10 @@ const isFooterVisible = computed((): boolean => {
   )
 })
 
+onMounted(() => {
+  init()
+})
+
 const localValue = computed({
   get() {
     return getFormattedPickerDate(props.modelValue)
@@ -312,10 +314,6 @@ const localValue = computed({
     fieldErrors.toggleErrorVisible()
     emit('update:modelValue', date)
   }
-})
-
-onMounted(() => {
-  init()
 })
 
 const init = () => {
@@ -335,7 +333,8 @@ const handlePreselectToday = (): void => {
 
   const hasValue = props.range
     ? localValue.value?.length && Array.isArray(localValue.value) && localValue.value.every((v) => dayjs(v).isValid())
-    : dayjs(localValue.value).isValid()
+    : //@ts-ignore
+      dayjs(localValue.value).isValid()
 
   if (!hasValue) {
     let today = props.toIsoFormat
@@ -352,7 +351,7 @@ const getFormattedPickerDate = (value: DatePickerValue): DatePickerValue => {
   if (isWeekPicker.value) return value
   let preparedValue = props.range ? (Array.isArray(value) ? value : []) : [value]
   if (!props.toIsoFormat) {
-    preparedValue = preparedValue.map((pv) => dayjs(pv, dateFormat.output).format(dateFormat.dayjs))
+    preparedValue = preparedValue.map((pv) => dayjs(pv as string, dateFormat.output).format(dateFormat.dayjs))
   }
 
   const [start, end] = preparedValue
@@ -375,12 +374,12 @@ const getFormattedOutputDate = (value: DatePickerValue): DatePickerValue => {
 
 const setLocale = async (): Promise<void> => {
   const locale = props.lang !== 'ar' && Object.keys(dayjsLocales).includes(props.lang) ? props.lang : 'en'
-  await dayjsLocales[locale]?.()
   dayjs.locale(locale)
 }
 
 const selectPeriod = (key: string) => {
   let start = dayjs()
+  //@ts-ignore
   const end = pickDate.value ? dayjs(pickDate.value) : dayjs()
   switch (key) {
     case 'week':
@@ -563,16 +562,18 @@ watch(
 
 <style lang="scss">
 //More info https://vue3datepicker.com/installation/
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/tokens/box-shadows';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/sizes';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/font-weights';
-@import '../../../assets/tokens/media-queries';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/box-shadows' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/media-queries' as *;
+@use '../../../assets/tokens/border-radius' as *;
+@use 'sass:color' as sasscolor;
 .mc-date-picker {
   $block-name: &;
   display: block;
@@ -706,7 +707,7 @@ watch(
             border-radius: $radius-100;
             &:hover {
               color: $color-purple;
-              background-color: fade-out($color-purple, 0.8);
+              background-color: sasscolor.scale($color-purple, $lightness: 80%);
               border-radius: $radius-100;
             }
           }
@@ -719,7 +720,7 @@ watch(
           }
           &__range_between {
             color: $color-black;
-            background-color: fade-out($color-purple, 0.9);
+            background-color: sasscolor.scale($color-purple, $lightness: 90%);
             border-radius: 0;
           }
           &__range_start,

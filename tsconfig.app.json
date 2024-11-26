@@ -1,25 +1,12 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "src/assets/tokens/json/**/*.json", "src/mocks/**/*.json"],
-  "exclude": [
-    "src/**/__tests__/*",
-    "node_modules",
-    "**/*.stories.ts",
-    "**/*.stories.tsx",
-    "**/*.stories.js",
-    "**/*.stories.jsx"
-  ],
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "composite": true,
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "module": "ESNext",
+    "target": "ESNext",
     "declaration": true,
-    "emitDeclarationOnly": false,
-    "outDir": "./dist",
     "declarationMap": true,
-
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.js", "src/**/*.ts", "src/**/*.vue", "src/**/*.json"],
+  "exclude": ["node_modules", "src/**/*.stories.ts", "src/**/*.stories.js", "src/**/*.stories.vue", "dist"]
 }

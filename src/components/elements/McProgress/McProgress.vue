@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, type PropType } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
-import { useFieldErrors } from '@/composables/useFieldErrors'
+import { useFieldErrors } from '@/composables'
 
 const props = defineProps({
   /**
@@ -123,13 +123,13 @@ const percentValue = computed(() => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/tokens/border-radius';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/sizes';
+@use '../../../assets/tokens/border-radius' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/sizes' as *;
 .mc-progress {
   $block-name: &;
   --mc-progress-color: #{$color-dark-gray};

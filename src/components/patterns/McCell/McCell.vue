@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import McTitle from '../../elements/McTitle/McTitle.vue'
+import { McTitle } from '@/components'
 import { computed, type PropType } from 'vue'
 import { CellSizes } from '@/enums/Cell'
 import type { CellSizesUnion } from '@/types/ICell'
@@ -60,9 +60,9 @@ const classes = computed((): { [key: string]: boolean } => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/font-families';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/font-families' as *;
 .mc-cell {
   $block-name: &;
   font-family: $font-family-main;

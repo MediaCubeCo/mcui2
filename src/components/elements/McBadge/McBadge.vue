@@ -90,14 +90,15 @@ const rootStyles = computed((): { [key: string]: string } => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/tokens/letter-spacings';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/font-weights';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/spacings';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/letter-spacings' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/border-radius' as *;
 .mc-badge {
   $block-name: &;
   --mc-badge-color: #{$color-white};

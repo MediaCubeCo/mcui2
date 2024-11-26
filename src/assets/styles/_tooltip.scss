@@ -1,16 +1,16 @@
-@import "../tokens/colors";
-@import "../tokens/border-radius";
-@import "../tokens/box-shadows";
-@import "../tokens/spacings";
-@import "../tokens/font-sizes";
-@import "../tokens/line-heights";
-@import "../tokens/font-weights";
-@import "../tokens/font-families";
-@import "../tokens/z-indexes";
+@use "../tokens/colors" as *;
+@use "../tokens/border-radius" as *;
+@use "../tokens/box-shadows" as *;
+@use "../tokens/spacings" as *;
+@use "../tokens/font-sizes" as *;
+@use "../tokens/line-heights" as *;
+@use "../tokens/font-weights" as *;
+@use "../tokens/font-families" as *;
+@use "../tokens/z-indexes" as *;
 
 .mc-tooltip {
-  --tooltip-color: $color-black;
-  --tooltip-text-color: $color-white;
+  --tooltip-color: #{$color-black};
+  --tooltip-text-color: #{$color-white};
   font-family: $font-family-main;
   text-transform: none;
   font-size: $font-size-200;
@@ -30,7 +30,7 @@
   white-space: normal;
   word-break: break-word;
   width: max-content;
-  transition: all 0.3 ease;
+  transition: all 0.3s ease;
   & > * {
     display: inline-block;
   }

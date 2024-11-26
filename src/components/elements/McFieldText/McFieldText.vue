@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import { IMaskComponent, IMask } from 'vue-imask'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
+import { McTitle, McButton, McSvgIcon, McTooltip } from '@/components'
 import { Spaces } from '@/types/styles/Spaces'
 import { computed, onMounted, type PropType, ref, useAttrs, useSlots } from 'vue'
 import type { DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
 import type { InputTypesUnion, InputValue } from '@/types/IInput'
-import { useFieldErrors } from '@/composables/useFieldErrors'
+import { useFieldErrors } from '@/composables'
 import { InputTypes, Autocomplete } from '@/enums/Input'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { type ColorTypes } from '@/types/styles/Colors'
@@ -17,7 +14,11 @@ import { useTextareaAutosize } from '@vueuse/core'
 import { ButtonSize, ButtonType, HorizontalAlignment, TitleVariations, Weights } from '@/enums'
 
 const { textarea } = useTextareaAutosize()
-const emit = defineEmits(['update:modelValue', 'keydown', 'copy'])
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void
+  (e: 'keydown', value: KeyboardEvent): void
+  (e: 'copy', value: string): void
+}>()
 const slots = useSlots()
 const attrs = useAttrs()
 const props = defineProps({
@@ -356,14 +357,14 @@ const computedValue = computed({
       return getAmountFormat(String(props.modelValue))
     } else return props.modelValue
   },
-  set(value) {
+  set(value: string) {
     fieldErrors.toggleErrorVisible()
     emit('update:modelValue', value)
   }
 })
 
 const handleInput = (e: Event): void => {
-  computedValue.value = getPreparedInputValue(e)
+  computedValue.value = getPreparedInputValue(e) as string
 }
 const inputAttrs = computed((): object => {
   return {
@@ -548,8 +549,8 @@ const calculateSlotPadding = (name: string): string => {
   const tokenSpace = parseInt(Spaces['50'])
 
   let result = slots[name]
-    //@ts-ignore
-    ? (slots[name] || []).reduce((acc) => {
+    ? //@ts-ignore
+      (slots[name] || []).reduce((acc) => {
         return acc + tokenSpace
       }, 0) + tokenSpace
     : tokenSpace
@@ -572,7 +573,7 @@ const handlerCopy = (): void => {
   /**
    * Событие по кнопке копирования
    */
-  emit('copy', props.modelValue)
+  emit('copy', props.modelValue as string)
 }
 
 const togglePasswordVisibility = (): void => {
@@ -704,14 +705,15 @@ const togglePasswordVisibility = (): void => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/durations';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/sizes';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/line-heights';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/durations' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/border-radius' as *;
 .mc-field-text {
   $block-name: &;
   display: block;

@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McSlideUpDown from '@/components/elements/McSlideUpDown/McSlideUpDown.vue'
+import { McSvgIcon, McSlideUpDown } from '@/components'
 import { computed, type PropType, ref, useSlots, watch, inject, onMounted } from 'vue'
 import type { ICollapse, ICollapseEmitPayload } from '@/types/ICollapse'
-import { useRandomNumber } from '@/composables/useRandomNumber'
+import { useRandomNumber } from '@/composables'
 
 const randomNumber = useRandomNumber()
 const selfRegisterCollapseMethod: Function = inject('selfRegisterCollapseMethod', () => {})
@@ -180,10 +179,11 @@ const slideCloseEnd = (value: boolean): void => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/durations';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/spacings';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/durations' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/border-radius' as *;
 .mc-collapse {
   $block-name: &;
 

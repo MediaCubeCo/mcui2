@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import McAvatar from '@/components/elements/McAvatar/McAvatar.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McSeparator from '@/components/elements/McSeparator/McSeparator.vue'
-import McDropdown from '@/components/patterns/McDropdown/McDropdown.vue'
-import { type PropType, ref, watch } from 'vue'
+import { McAvatar, McButton, McSvgIcon, McSeparator, McDropdown } from '@/components'
+import { type PropType, ref } from 'vue'
 import { ButtonSize, DropdownPositions, HorizontalAlignment } from '@/enums'
 import type { IconsListUnion } from '@/types'
 
@@ -15,7 +11,7 @@ const props = defineProps({
    */
   user: {
     type: Object as PropType<Record<string, any>>,
-    default: () => ({}),
+    default: () => ({})
   },
   /**
    *  Меню языков
@@ -23,7 +19,7 @@ const props = defineProps({
    */
   menuLangs: {
     type: Array,
-    default: () => [],
+    default: () => []
   },
   /**
    *  Локализация или текст по умолчанию
@@ -31,7 +27,7 @@ const props = defineProps({
    */
   defaultLang: {
     type: String as PropType<string>,
-    default: 'Выберите язык',
+    default: 'Выберите язык'
   },
   /**
    *  Текущая локализация
@@ -39,8 +35,8 @@ const props = defineProps({
    */
   currentLang: {
     type: String as PropType<string>,
-    default: null,
-  },
+    default: null
+  }
 })
 
 const menuLangsDD = ref<HTMLElement | null>(null)
@@ -107,43 +103,43 @@ const userDropdownOpen = ref(false)
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/colors';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/colors' as *;
 .mc-top-bar {
-    $block-name: &;
+  $block-name: &;
 
-    width: 100%;
+  width: 100%;
 
-    &__inner {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: $space-100 $space-150 0 $space-150;
-        @include child-indent-right($space-100);
-    }
+  &__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $space-100 $space-150 0 $space-150;
+    @include child-indent-right($space-100);
+  }
 
-    &__left,
-    &__right {
-        display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
-        @include child-indent-right($space-100);
-    }
+  &__left,
+  &__right {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    @include child-indent-right($space-100);
+  }
 
-    &__right {
-        min-width: 0;
-        flex: 1 1 auto;
-        justify-content: flex-end;
-    }
-    &__menu-langs {
-        .mc-svg-icon {
-            svg {
-                rect {
-                    stroke: $color-hover-gray;
-                }
-            }
+  &__right {
+    min-width: 0;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+  }
+  &__menu-langs {
+    .mc-svg-icon {
+      svg {
+        rect {
+          stroke: $color-hover-gray;
         }
+      }
     }
+  }
 }
 </style>

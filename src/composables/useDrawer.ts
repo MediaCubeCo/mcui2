@@ -57,9 +57,9 @@ const showDrawer = (
     close: () => {
       //@ts-ignore
       const drawerToClose = reactiveProps.drawers.findLast((d) => d.id === id)
-      drawerToClose.modelValue = false
+      drawerToClose && (drawerToClose.modelValue = false)
       setTimeout(() => {
-        reactiveProps.drawers = reactiveProps.drawers.filter((d) => d.id !== drawerToClose.id)
+        reactiveProps.drawers = reactiveProps.drawers.filter((d) => d.id !== drawerToClose?.id)
       }, drawerProps?.duration || 300)
     }
   }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TransitionPresets, useTransition } from '@vueuse/core'
 import { computed, type PropType, ref, watch } from 'vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import { McSvgIcon } from '@/components'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import type { DrawerPositionsUnion } from '@/types/IDrawer'
 import { DrawerPositions } from '@/enums/Drawer'
@@ -111,8 +111,7 @@ const openDrawer = () => {
 }
 const closeDrawer = () => {
   overlayStateNumber.value = overlayStartAnimationPosition.value
-  drawerStateNumber.value =
-    overlayStateNumber.value === 0 ? (isRightDrawerPosition.value ? 100 : -100) : 0
+  drawerStateNumber.value = overlayStateNumber.value === 0 ? (isRightDrawerPosition.value ? 100 : -100) : 0
   if (props.modelValue) {
     emit('update:modelValue', false)
     emit('close')
@@ -138,12 +137,7 @@ watch(
     <div :class="overlayClasses" :style="overlayStyle" @click.stop="handleOverlayClick" />
     <div class="mc-drawer" :style="drawerStyle" @click.stop>
       <slot />
-      <button
-        v-if="closeVisible"
-        type="button"
-        class="mc-drawer__btn-close"
-        @click.prevent="closeDrawer"
-      >
+      <button v-if="closeVisible" type="button" class="mc-drawer__btn-close" @click.prevent="closeDrawer">
         <mc-svg-icon class="mc-drawer__icon-close" :name="iconClose" />
         <mc-svg-icon class="mc-drawer__icon-close--small" :name="iconClose" size="200" />
       </button>
@@ -152,12 +146,12 @@ watch(
 </template>
 
 <style lang="scss">
-@import '../../../assets/tokens/box-shadows';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/sizes';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/media-queries';
-@import '../../../assets/styles/mixins';
+@use '../../../assets/tokens/box-shadows' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/media-queries' as *;
+@use '../../../assets/styles/mixins' as *;
 .mc-drawer {
   $block-name: &;
   position: absolute;

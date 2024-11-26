@@ -135,13 +135,6 @@ const header = computed(() => {
   return props.visible ? computedTabName.value : ''
 })
 
-const showTab = () => {
-  isActive.value = true
-}
-const hideTab = () => {
-  isActive.value = false
-}
-
 onMounted(() => {
   if (selfRegisterTabToMcTabs) {
     const payload: Partial<ITab> = {
@@ -174,6 +167,13 @@ onMounted(() => {
     selfRegisterTabToMcTabs(payload)
   }
 })
+
+const showTab = () => {
+  isActive.value = true
+}
+const hideTab = () => {
+  isActive.value = false
+}
 </script>
 
 <template>
@@ -192,10 +192,13 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
+@use '../../../assets/tokens/colors' as *;
+
 .tabs-component-panel {
   $block-name: &;
 }
 .tabs-component-tab {
+  --mc-tab-append-count-color: #{$color-black};
   &__tab {
     &-name-append-count {
       color: var(--mc-tab-append-count-color);

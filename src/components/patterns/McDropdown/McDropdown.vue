@@ -2,7 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, type PropType, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useThrottleFn } from '@vueuse/core'
-import McDropdownPanel from '@/components/patterns/McDropdown/McDropdownPanel.vue'
+import { McDropdownPanel } from '@/components'
 import type { DropdownListPositionsUnion, DropdownPositionsUnion } from '@/types/IDropdown'
 import { DropdownListPositions, DropdownPositions } from '@/enums/Dropdown'
 
@@ -131,11 +131,9 @@ const calculateDropdownPosition = (): void => {
   // Определяем направление отображения списка
   const auto_list_position: string =
     space_below < dropdown_height ? DropdownListPositions.Top : DropdownListPositions.Bottom
-  const auto_position: string =
-    space_left > dropdown_width ? DropdownPositions.Left : DropdownPositions.Right
+  const auto_position: string = space_left > dropdown_width ? DropdownPositions.Left : DropdownPositions.Right
   // Устанавливаем значения в зависимости от position
-  localList_position.value =
-    props.listPosition === DropdownListPositions.Auto ? auto_list_position : props.listPosition
+  localList_position.value = props.listPosition === DropdownListPositions.Auto ? auto_list_position : props.listPosition
   local_position.value = props.position === DropdownPositions.Auto ? auto_position : props.position
 }
 
@@ -186,11 +184,12 @@ watch(
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/z-indexes';
-@import '../../../assets/tokens/durations';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/spacings';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/z-indexes' as *;
+@use '../../../assets/tokens/durations' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use 'sass:color' as sasscolor;
 .mc-dropdown {
   $block-name: &;
   --dropdown-body-min-width: inherit;
@@ -223,7 +222,7 @@ watch(
     .mc-button {
       &:not(.nuxt-link-active):not(.mc-button--is-active):not(.mc-button--variation-red-flat) {
         &:hover {
-          background-color: fade-out($color-purple, 0.9);
+          background-color: sasscolor.scale($color-purple, $lightness: 90%);
           .mc-button__background {
             opacity: 0 !important;
           }

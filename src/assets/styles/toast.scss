@@ -1,7 +1,14 @@
+@use 'sass:color' as sasscolor;
+@use './mixins' as *;
+@use '../tokens/z-indexes' as *;
+@use '../tokens/spacings' as *;
+@use '../tokens/border-radius' as *;
+@use '../tokens/colors' as *;
+@use '../tokens/font-sizes' as *;
+@use '../tokens/line-heights' as *;
+
 .toasted-container {
   $toasted-container-name: &;
-  @import './mixins';
-  @import '../tokens/z-indexes';
   z-index: $z-index-toasted !important;
   .toasted {
     &.mc-toast {
@@ -21,7 +28,7 @@
           font-size: $font-size-200;
           line-height: $line-height-200;
           &.mc-toast__action {
-            color: fade-out($color-white, 0.5);
+            color: sasscolor.scale($color-white, $lightness: 50%);
 
             &--outline {
               color: $color-white;

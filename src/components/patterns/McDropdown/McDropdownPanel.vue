@@ -23,13 +23,14 @@ const panelStyles = computed((): { [key: string]: string } => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/box-shadows';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/tokens/font-weights';
-@import '../../../assets/tokens/sizes';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/box-shadows' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/border-radius' as *;
 .mc-dropdown-panel {
   $block-name: &;
   --panel-max-height: 300px;

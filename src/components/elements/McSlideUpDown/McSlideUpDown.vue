@@ -134,7 +134,7 @@ watch(
 </template>
 
 <style lang="scss">
-@import '../../../assets/tokens/font-families';
+@use '../../../assets/tokens/font-families' as *;
 .mc-slide-up-down {
   overflow: hidden;
   font-family: $font-family-main;

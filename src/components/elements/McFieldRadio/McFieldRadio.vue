@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import McTitle from '../McTitle/McTitle.vue'
-import McSvgIcon from '../McSvgIcon/McSvgIcon.vue'
-import { computed, type PropType, type Ref, useSlots, watch } from 'vue'
+import { McTitle, McSvgIcon } from '@/components'
+import { computed, type PropType, useSlots, watch } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { SizeTypes } from '@/types/styles/Sizes'
-import { useFieldErrors } from '@/composables/useFieldErrors'
+import { useFieldErrors } from '@/composables'
 import type { RadioVariationUnion } from '@/types/IRadio'
 import { Directions } from '@/enums/ui/Directions'
 import { type DirectionsUnion } from '@/types/IDirections'
 import type { IconsListUnion } from '@/types/styles/Icons'
-import type { ColorsUnion } from '@/types/styles/Colors'
 import { TitleVariations } from '@/enums'
 
 const slots = useSlots()
@@ -19,17 +17,17 @@ const props = defineProps({
    *  Значение
    */
   modelValue: {
-    default: null,
+    default: null
   },
   value: {
-    default: null,
+    default: null
   },
   /**
    *  Name
    */
   name: {
     type: String,
-    required: true,
+    required: true
   },
   /**
    *  Подпись радио:
@@ -37,7 +35,7 @@ const props = defineProps({
    */
   label: {
     type: [String, Number],
-    default: null,
+    default: null
   },
   /**
    *  Вспомогательный текст под инпутом:
@@ -45,7 +43,7 @@ const props = defineProps({
    */
   helpText: {
     type: String,
-    default: null,
+    default: null
   },
 
   /**
@@ -54,7 +52,7 @@ const props = defineProps({
    */
   errors: {
     type: Array as PropType<string[]>,
-    default: null,
+    default: null
   },
   /**
    *  Отключенное состояние
@@ -62,7 +60,7 @@ const props = defineProps({
    */
   disabled: {
     type: Boolean,
-    default: false,
+    default: false
   },
 
   /**
@@ -70,7 +68,7 @@ const props = defineProps({
    *
    */
   tabindex: {
-    type: [String, Number],
+    type: [String, Number]
   },
   /**
    * Вариант активного состояния
@@ -79,23 +77,23 @@ const props = defineProps({
    * */
   variation: {
     type: String as () => RadioVariationUnion,
-    default: 'circle',
+    default: 'circle'
   },
   /**
    * цвет
    */
   color: {
     type: String as () => ColorTypes,
-    default: 'purple',
+    default: 'purple'
   },
   iconSize: {
     type: String as () => SizeTypes,
-    default: '250',
+    default: '250'
   },
   dir: {
     type: String as () => DirectionsUnion,
-    default: Directions.Ltr,
-  },
+    default: Directions.Ltr
+  }
 })
 const fieldErrors = useFieldErrors(props.errors)
 
@@ -103,7 +101,7 @@ const classes = computed((): { [key: string]: boolean } => {
   return {
     'mc-field-radio-button--disabled': props.disabled,
     'mc-field-radio-button--empty': !props.label && !slots.default,
-    'mc-field-radio-button--rtl': rtl.value,
+    'mc-field-radio-button--rtl': rtl.value
   }
 })
 const rtl = computed((): boolean => {
@@ -140,15 +138,18 @@ const inputProps = computed((): { [key: string]: any } => {
     checked: props.value && props.value === props.modelValue,
     tabindex: props.tabindex,
     class: 'mc-field-radio-button__input',
-    type: 'radio',
+    type: 'radio'
   }
 })
 
-watch(() => props.modelValue, () => {
-  fieldErrors.toggleErrorVisible()
-})
+watch(
+  () => props.modelValue,
+  () => {
+    fieldErrors.toggleErrorVisible()
+  }
+)
 
-const handleChange = (e: Event) => {
+const handleChange = () => {
   emit('update:modelValue', props.value)
 }
 </script>
@@ -167,7 +168,7 @@ const handleChange = (e: Event) => {
     <span v-if="label || $slots.default" class="mc-field-radio-button__text">
       <!-- @slot Слот для пользовательской подписи радио -->
       <slot>
-          <mc-title>{{ label }}</mc-title>
+        <mc-title>{{ label }}</mc-title>
       </slot>
       <mc-title
         v-if="fieldErrors.errorText.value"
@@ -181,28 +182,29 @@ const handleChange = (e: Event) => {
       <br v-if="fieldErrors.errorText.value" />
       <!-- @slot -->
       <slot name="footer">
-          <mc-title
-            v-if="props.helpText"
-            tag-name="div"
-            :variation="TitleVariations.Overline"
-            color="gray"
-            max-width="100%"
-          >
-            {{ props.helpText }}
-          </mc-title>
-        </slot>
-        </span>
+        <mc-title
+          v-if="props.helpText"
+          tag-name="div"
+          :variation="TitleVariations.Overline"
+          color="gray"
+          max-width="100%"
+        >
+          {{ props.helpText }}
+        </mc-title>
+      </slot>
+    </span>
   </label>
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/sizes';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/tokens/colors';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/border-radius' as *;
 .mc-field-radio-button {
   $block-name: &;
   font-family: $font-family-main;

@@ -9,13 +9,13 @@ const props = defineProps({
    */
   size: {
     type: String as () => PreviewSizesUnion,
-    default: 'm',
-  },
+    default: 'm'
+  }
 })
 const classes = computed((): { [key: string]: boolean } => {
   return {
     'mc-preview': true,
-    [`mc-preview--size-${props.size}`]: !!props.size,
+    [`mc-preview--size-${props.size}`]: !!props.size
   }
 })
 </script>
@@ -44,8 +44,8 @@ const classes = computed((): { [key: string]: boolean } => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/spacings';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/spacings' as *;
 .mc-preview {
   $block-name: &;
   display: flex;
@@ -78,7 +78,7 @@ const classes = computed((): { [key: string]: boolean } => {
       display: none;
     }
   }
-  @mixin previewIndents($indent, $bottom: '') {
+  @mixin previewIndents($indent, $bottom: unset) {
     #{$block-name}__left {
       margin-inline-end: $indent;
     }

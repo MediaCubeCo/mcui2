@@ -1,25 +1,20 @@
 <script setup lang="ts">
 import { Teleport } from 'vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McFieldSelect from '@/components/elements/McFieldSelect/McFieldSelect.vue'
-import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
-import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
-import McFilterTags from '@/components/patterns/McFilter/McFilterTags/McFilterTags.vue'
-import McFilterTypeRange from '@/components/patterns/McFilter/McFilterTypeRange/McFilterTypeRange.vue'
-import McFilterTypeDate from '@/components/patterns/McFilter/McFilterTypeDate/McFilterTypeDate.vue'
-import McFilterTypeText from '@/components/patterns/McFilter/McFilterTypeText/McFilterTypeText.vue'
-import McFilterTypeRelation from '@/components/patterns/McFilter/McFilterTypeRelation/McFilterTypeRelation.vue'
-import McChip from '@/components/elements/McChip/McChip.vue'
+import {
+  McSvgIcon,
+  McButton,
+  McTitle,
+  McFieldSelect,
+  McFieldText,
+  McTooltip,
+  McFilterTags,
+  McFilterTypeRange,
+  McFilterTypeDate,
+  McFilterTypeText,
+  McFilterTypeRelation,
+  McChip
+} from '@/components'
 import { defaultPlaceholders } from '@/mocks/filterMocks'
-
-type TypeComponentInstanceType =
-  | typeof McFilterTags
-  | typeof McFilterTypeRange
-  | typeof McFilterTypeDate
-  | typeof McFilterTypeText
-  | typeof McFilterTypeRelation
 
 import { computed, onBeforeUnmount, onMounted, type PropType, reactive, ref, watch, nextTick } from 'vue'
 import type {
@@ -39,15 +34,17 @@ import type {
   FilterRelationValue,
   FilterRelationName,
   IFilterRelationTag,
-  IFilterDateValue,
-  RangeFilterValue,
   IFilterRangeValue,
-  IFilterTag
+  IFilterTag,
+  IRelationFilter,
+  IFilterDateValue,
+  IBaseFilter,
+  FilterTextValue,
+  IRangeFilter
 } from '@/types'
-import { useHelper } from '@/composables/useHelper'
+import { useHelper, UseEncodeDecode } from '@/composables'
 import { ButtonSize, ChipSize, FilterRelations, FilterTypes, TooltipPositions, TooltipSizes } from '@/enums'
 import { useLocalStorage } from '@vueuse/core'
-import { UseEncodeDecode } from '@/composables/useEncodeDecode'
 
 const helper = useHelper()
 const emit = defineEmits<{
@@ -120,13 +117,6 @@ const props = defineProps({
   }
 })
 
-const typeComponents: Partial<Record<FilterTypes, TypeComponentInstanceType>> = {
-  [FilterTypes.Relation]: McFilterTypeRelation,
-  [FilterTypes.Date]: McFilterTypeDate,
-  [FilterTypes.Text]: McFilterTypeText,
-  [FilterTypes.Range]: McFilterTypeRange
-}
-
 const isOpen = ref<boolean>(false)
 
 // текущие значения фильтра filter / filter_name
@@ -179,14 +169,20 @@ const computedModelValue = computed({
 })
 
 // выбранный фильтр из списка фильтров
-const currentFilter = computed((): IFilter | undefined => {
-  return props.filters.find((f) => String(f.value) === String(selectedOptionFilter.value))
+const currentFilter = computed((): IFilter => {
+  return props.filters.find((f) => String(f.value) === String(selectedOptionFilter.value)) || ({} as IFilter)
 })
-
-// компонент выбранного фильтра
-const currentComponent = computed((): TypeComponentInstanceType | null => {
-  if (!currentFilter.value || !currentFilter.value.type) return null
-  return typeComponents[currentFilter.value.type] || null
+const isCurrentComponentIsRelation = computed((): boolean => {
+  return currentFilter.value?.type === FilterTypes.Relation
+})
+const isCurrentComponentIsDate = computed((): boolean => {
+  return currentFilter.value?.type === FilterTypes.Date
+})
+const isCurrentComponentIsText = computed((): boolean => {
+  return currentFilter.value?.type === FilterTypes.Text
+})
+const isCurrentComponentIsRange = computed((): boolean => {
+  return currentFilter.value?.type === FilterTypes.Range
 })
 
 // отфильтрованные быстрые фильтры
@@ -216,14 +212,6 @@ const buttonCreateIsDisable = computed((): boolean => {
   return !newPresetName.value.trim()
 })
 
-const init = () => {
-  temporaryFilter.value = computedModelValue.value.filter
-  temporaryFilterName.value = computedModelValue.value.filter_name
-
-  currentValues.value = computedModelValue.value.filter
-  currentValuesName.value = computedModelValue.value.filter_name
-}
-
 onMounted((): void => {
   updatePresets()
   window.addEventListener('storage', updatePresets)
@@ -234,6 +222,14 @@ onMounted((): void => {
 onBeforeUnmount((): void => {
   window.removeEventListener('storage', updatePresets)
 })
+
+const init = () => {
+  temporaryFilter.value = computedModelValue.value.filter
+  temporaryFilterName.value = computedModelValue.value.filter_name
+
+  currentValues.value = computedModelValue.value.filter
+  currentValuesName.value = computedModelValue.value.filter_name
+}
 
 const updatePresets = (): void => {
   presets.value = filterLocalStorage.value[props.name] || ([] as IFilterPreset[])
@@ -589,7 +585,7 @@ watch(
 
 watch(
   () => currentValues.value,
-  (newVal, oldVal): void => {
+  (): void => {
     if (activePreset.value) {
       const mappedPresets = filterLocalStorage.value[props.name].map((p) => {
         if (activePreset.value && p.name === activePreset.value.name) {
@@ -651,10 +647,37 @@ watch(
               name="filter_value_name"
             />
             <template v-if="currentFilter">
-              <component
-                :is="currentComponent"
-                :model-value="currentCondition"
-                :filter="currentFilter"
+              <mc-filter-type-relation
+                v-if="isCurrentComponentIsRelation"
+                :model-value="currentCondition as FilterRelationValue"
+                :filter="currentFilter as IRelationFilter"
+                :placeholders="placeholders"
+                :current-values="!activeTag ? currentValues : {}"
+                :use-timezone="props.useTimezone"
+                @update:modelValue="handleConditionChange"
+              />
+              <mc-filter-type-date
+                v-else-if="isCurrentComponentIsDate"
+                :model-value="currentCondition as IFilterDateValue"
+                :filter="currentFilter as IBaseFilter"
+                :placeholders="placeholders"
+                :current-values="!activeTag ? currentValues : {}"
+                :use-timezone="props.useTimezone"
+                @update:modelValue="handleConditionChange"
+              />
+              <mc-filter-type-text
+                v-else-if="isCurrentComponentIsText"
+                :model-value="currentCondition as FilterTextValue"
+                :filter="currentFilter as IBaseFilter"
+                :placeholders="placeholders"
+                :current-values="!activeTag ? currentValues : {}"
+                :use-timezone="props.useTimezone"
+                @update:modelValue="handleConditionChange"
+              />
+              <mc-filter-type-range
+                v-else-if="isCurrentComponentIsRange"
+                :model-value="currentCondition as IFilterRangeValue"
+                :filter="currentFilter as IRangeFilter"
                 :placeholders="placeholders"
                 :current-values="!activeTag ? currentValues : {}"
                 :use-timezone="props.useTimezone"
@@ -672,8 +695,8 @@ watch(
           :placeholders="placeholders"
           :active-tag="activeTag"
           :use-timezone="props.useTimezone"
-          @tag-change="(payload) => onTagsChange(payload)"
-          @tag-click="(payload) => onTagClick(payload)"
+          @tag-change="(payload: IFilterParsedValueFilterName) => onTagsChange(payload)"
+          @tag-click="(payload: IFilterTag) => onTagClick(payload)"
           @clear="handleClearAllTags"
         />
         <section class="mc-filter__body-fast-tags-wrapper">
@@ -747,10 +770,12 @@ watch(
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/sizes';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use 'sass:color' as sasscolor;
+
 .mc-filter {
   $block-name: &;
   flex-grow: 1;
@@ -830,9 +855,9 @@ watch(
       .mc-button {
         &--disabled {
           opacity: 1;
-          background-color: fade-out($color-dark-gray, 0.8);
+          background-color: sasscolor.scale($color-dark-gray, $lightness: 80%);
           color: $color-dark-gray;
-          border-color: fade-out($color-dark-gray, 1);
+          border-color: sasscolor.scale($color-dark-gray, $lightness: 100%);
           .mc-button__background {
             display: none;
           }

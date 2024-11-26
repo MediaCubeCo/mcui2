@@ -130,6 +130,10 @@ const styles = computed((): { [key: string]: string | number } => {
 <style lang="scss">
 .mc-grid-row {
   $block-name: &;
+
+  --mc-grid-row-justify: initial;
+  --mc-grid-row-align: initial;
+
   display: flex;
   flex-direction: row;
   justify-content: var(--mc-grid-row-justify);

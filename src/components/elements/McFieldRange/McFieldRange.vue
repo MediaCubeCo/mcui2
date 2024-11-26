@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import VueSlider from 'vue-3-slider-component'
-import { computed, type PropType, reactive, ref } from 'vue'
+import { default as VueSlider } from 'vue-3-slider-component'
+import { computed, type PropType, reactive } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import type { TooltipPositionsUnion } from '@/types/ITooltip'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import { useFieldErrors } from '@/composables/useFieldErrors'
+import { McTitle } from '@/components'
+import { useFieldErrors } from '@/composables'
 import { TitleVariations, Weights } from '@/enums'
 
 type RangeValue = string[] | number[] | number | string | null
@@ -23,14 +23,14 @@ const props = defineProps({
    */
   min: {
     type: [String, Number] as PropType<number | string>,
-    default: 0,
+    default: 0
   },
   /**
    *  Макс. значение
    */
   max: {
     type: [String, Number] as PropType<number | string>,
-    default: 100,
+    default: 100
   },
   /**
    *  The interval between two values.
@@ -99,7 +99,7 @@ const props = defineProps({
   },
   errors: {
     type: Array as PropType<string[]>,
-    default: () => [],
+    default: () => []
   }
 })
 
@@ -146,16 +146,16 @@ const sliderProps = reactive({
   adsorb: !props.smooth,
   'tooltip-placement': props.tooltipPlacement,
   'tooltip-formatter': tooltipFormatter,
-  'dot-size': 20,
+  'dot-size': 20
 })
-const handleInput = (value: RangeValue):void => {
+const handleInput = (value: RangeValue): void => {
   /**
    * Событие по изменению значения
    */
   emit('update:modelValue', value)
 }
 
-const handleDrag = (value: RangeValue):void => {
+const handleDrag = (value: RangeValue): void => {
   /**
    * Событие по изменению значения
    * (если нужно отслеживать value в ленивом режиме)
@@ -206,13 +206,13 @@ const handleDrag = (value: RangeValue):void => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/box-shadows';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/font-families';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/box-shadows' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/font-families' as *;
 .mc-range-slider {
   $block-name: &;
   font-family: $font-family-main;

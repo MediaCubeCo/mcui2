@@ -44,11 +44,11 @@ const firstColsWidth = computed(() => {
 </template>
 
 <style lang="scss">
-@import '../../../../assets/styles/mixins';
-@import '../../../../assets/tokens/z-indexes';
-@import '../../../../assets/tokens/colors';
-@import '../../../../assets/tokens/spacings';
-@import '../../../../assets/tokens/sizes';
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/z-indexes' as *;
+@use '../../../../assets/tokens/colors' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/sizes' as *;
 @mixin gradient() {
   background: $color-hover-gray;
   background-image: -webkit-gradient(

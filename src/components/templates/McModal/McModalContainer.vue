@@ -20,7 +20,7 @@ const containerStyle = computed((): { [key: string]: string | number } => ({
 const closeModal = (value: IModalState) => {
   value.close()
   setTimeout(() => {
-    if (props.reactiveProps.modals.every(d => !d.modelValue)) {
+    if (props.reactiveProps.modals.every((d) => !d.modelValue)) {
       props.modalServiceState.closeServiceState()
     }
   }, 300)
@@ -29,12 +29,13 @@ const closeModal = (value: IModalState) => {
 
 <template>
   <div class="mc-modal-container" :style="containerStyle">
-    <div
-      v-for="modal in props.reactiveProps.modals"
-      :key="modal.id"
-      @close="() => closeModal(modal)"
-    >
-      <component v-model="modal.modelValue" :is="modal.component" v-bind="modal.componentProps" @closed="() => closeModal(modal)" />
+    <div v-for="modal in props.reactiveProps.modals" :key="modal.id" @close="() => closeModal(modal)">
+      <component
+        v-model="modal.modelValue"
+        :is="modal.component"
+        v-bind="modal.componentProps"
+        @closed="() => closeModal(modal)"
+      />
     </div>
   </div>
 </template>

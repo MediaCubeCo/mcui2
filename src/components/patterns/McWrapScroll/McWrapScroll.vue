@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import McGridRow from '../../patterns/McGridRow/McGridRow.vue'
+import { McGridRow } from '@/components'
 import { computed, onBeforeUnmount, onMounted, type PropType, reactive, ref } from 'vue'
 import { Spaces, type SpaceTypes } from '@/types/styles/Spaces'
 import type { SpacesUnion } from '@/types/styles/Spaces'
@@ -134,8 +134,7 @@ const handlerScroll = () => {
       const scroll_left = Math.ceil(scrollContainer.value.scrollLeft)
       // Левый блюр
       show_left_blur.value = props.rtl
-        ? scroll_width > container_width &&
-        scroll_width - 10 > Math.abs(scroll_left) + container_width
+        ? scroll_width > container_width && scroll_width - 10 > Math.abs(scroll_left) + container_width
         : !!scroll_left
       // Правый блюр
       show_right_blur.value = props.rtl
@@ -204,12 +203,7 @@ const onMouseUp = () => {
 
 <template>
   <component :is="props.tagName" :class="wrapperClasses" class="mc-wrap-scroll__wrapper">
-    <div
-      ref="scrollContainer"
-      :class="containerClasses"
-      :style="containerStyles"
-      @mousedown="onMouseDown"
-    >
+    <div ref="scrollContainer" :class="containerClasses" :style="containerStyles" @mousedown="onMouseDown">
       <mc-grid-row
         v-bind="containerProps"
         :style="{ 'pointer-events': drag_options.is_drag ? 'none' : 'auto' }"
@@ -222,16 +216,16 @@ const onMouseUp = () => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/font-families';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/font-families' as *;
 .mc-wrap-scroll {
   $block-name: &;
   $more-space-indent: $space-200;
   --mc-wrap-scroll-bottom: #{$space-zero};
   padding-bottom: var(--mc-wrap-scroll-bottom);
-  margin-bottom: -(var(--mc-wrap-scroll-bottom));
+  margin-bottom: calc((var(--mc-wrap-scroll-bottom)) * -1);
   font-family: $font-family-main;
   &.mc-wrap-scroll--scrollable {
     overflow-x: auto;

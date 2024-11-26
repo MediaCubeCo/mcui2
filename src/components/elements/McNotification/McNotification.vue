@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McPreview from '@/components/patterns/McPreview/McPreview.vue'
+import { McTitle, McSvgIcon, McButton, McPreview } from '@/components'
 import { computed, type PropType } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import type { IconsListUnion } from '@/types/styles/Icons'
@@ -129,13 +126,14 @@ const handleClick = (e: Event):void => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/sizes';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/media-queries';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/media-queries' as *;
+@use '../../../assets/tokens/border-radius' as *;
 .mc-notification {
   $block-name: &;
   --mc-notification-color: #{$color-orange};

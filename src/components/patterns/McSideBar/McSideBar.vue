@@ -1,22 +1,14 @@
 <script setup lang="ts">
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  type PropType,
-  provide,
-  reactive,
-  ref,
-  watch
-} from 'vue'
-import McSideBarTop from '@/components/patterns/McSideBar/McSideBarTop/McSideBarTop.vue'
-import McSideBarCenter from '@/components/patterns/McSideBar/McSideBarCenter/McSideBarCenter.vue'
-import McSideBarBottom from '@/components/patterns/McSideBar/McSideBarBottom/McSideBarBottom.vue'
+import { computed, onBeforeUnmount, onMounted, type PropType, provide, reactive, ref, watch } from 'vue'
+import { McSideBarTop, McSideBarCenter, McSideBarBottom } from '@/components'
+
 import type {
   IconsListUnion,
-  ISideBarApp, ISideBarChatra,
+  ISideBarApp,
+  ISideBarChatra,
   ISideBarMenuItem,
-  ISidebarThemeConfig, ISidebarThemeConfigProvide,
+  ISidebarThemeConfig,
+  ISidebarThemeConfigProvide,
   TitleVariationsUnion
 } from '@/types'
 import { defaultThemes } from '@/mocks/sidebar'
@@ -295,18 +287,8 @@ provide('provideData', reactive<ISidebarThemeConfigProvide>({ currentThemeConfig
 
 <template>
   <article ref="sidebar-wrapper" class="mc-side-bar-wrapper" :style="wrapperStyles">
-    <section
-      class="mc-side-bar-wrapper__backdrop"
-      :class="backdropClasses"
-      @click.stop.prevent="handleToggleSize"
-    >
-      <div
-        ref="sidebar"
-        class="mc-side-bar"
-        :class="sideBarClasses"
-        :style="sideBarStyles"
-        @click.stop
-      >
+    <section class="mc-side-bar-wrapper__backdrop" :class="backdropClasses" @click.stop.prevent="handleToggleSize">
+      <div ref="sidebar" class="mc-side-bar" :class="sideBarClasses" :style="sideBarStyles" @click.stop>
         <mc-side-bar-top
           :logo-title="logoTitle"
           :logo-title-variation="logoTitleVariation"
@@ -347,9 +329,9 @@ provide('provideData', reactive<ISidebarThemeConfigProvide>({ currentThemeConfig
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/colors';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/colors' as *;
 .mc-side-bar {
   $block-name: &;
   box-sizing: border-box;

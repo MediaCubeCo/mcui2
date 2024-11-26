@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
+import { McTitle, McSvgIcon, McButton } from '@/components'
 import { computed, type PropType } from 'vue'
 import { HorizontalAlignment, TitleVariations, Weights } from '@/enums'
 import type { IconsListUnion } from '@/types'
-import noTableDataImg from '@/assets/img/no_table_data.png'
+
+import { default as noTableDataImg } from '@/assets/img/no_table_data.png'
 
 const emit = defineEmits<{
   (e: 'click'): void
@@ -14,7 +13,7 @@ const emit = defineEmits<{
 const props = defineProps({
   img: {
     type: String as PropType<string>,
-    default: noTableDataImg,
+    default: noTableDataImg
   },
   icon: {
     type: String as () => IconsListUnion,
@@ -128,11 +127,11 @@ const handleClick = (): void => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/sizes';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/media-queries';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/media-queries' as *;
 .mc-no-data {
   min-width: 100px;
   max-width: 100%;

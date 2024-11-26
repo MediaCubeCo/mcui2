@@ -2,11 +2,11 @@
 import { computed, type PropType, ref } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
-import { useTooltip } from '@/composables/useTooltip'
+import { useTooltip } from '@/composables'
 import type { ITooltip, TooltipPositionsUnion } from '@/types/ITooltip'
 import type { ButtonVariationUnion, IButtonStyleOptions } from '@/types/IButton'
 import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'
-import McSvgIcon from '../McSvgIcon/McSvgIcon.vue'
+import { McSvgIcon } from '@/components'
 import type { ButtonSizeUnion, ButtonTypeUnion } from '@/types/IButton'
 import type { HorizontalAlignmentUnion } from '@/types/styles/Alignment'
 import type { WeightsUnion } from '@/types/styles/Weights'
@@ -399,20 +399,21 @@ const handleClick = (e: Event): void => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/styles/tooltip';
-@import '../../../assets/tokens/durations';
-@import '../../../assets/tokens/opacities';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/tokens/letter-spacings';
-@import '../../../assets/tokens/animations';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/font-weights';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/sizes';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/media-queries';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/styles/tooltip' as *;
+@use '../../../assets/tokens/durations' as *;
+@use '../../../assets/tokens/opacities' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/letter-spacings' as *;
+@use '../../../assets/tokens/animations' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/media-queries' as *;
+@use '../../../assets/tokens/border-radius' as *;
 
 .mc-button {
   $block-name: &;

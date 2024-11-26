@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import McDatepicker from '@/components/elements/McDatepicker/McDatepicker.vue'
 import { computed, type PropType } from 'vue'
-import type { IFilter, IFilterCondition, IFilterDateValue, IRangeFilter } from '@/types/IFilter'
+import type { IBaseFilter, IFilterCondition, IFilterDateValue } from '@/types/IFilter'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: IFilterCondition): void
@@ -12,14 +12,14 @@ const props = defineProps({
    */
   modelValue: {
     type: Object as PropType<IFilterDateValue>,
-    default: () => ({})
+    default: () => ({}) as IFilterDateValue
   },
   /**
    *  Объект выбранного
    *  фильтра
    */
   filter: {
-    type: Object as PropType<IRangeFilter>,
+    type: Object as PropType<IBaseFilter>,
     default: () => ({})
   },
   /**
@@ -32,7 +32,7 @@ const props = defineProps({
   useTimezone: {
     type: Boolean as PropType<boolean>,
     default: true
-  },
+  }
 })
 
 const period = computed({

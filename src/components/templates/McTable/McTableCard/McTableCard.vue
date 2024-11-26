@@ -6,7 +6,7 @@ import {
   type ITableData,
   type ITableSort,
   type ITableTotals,
-  type TableCardState,
+  type TableCardState
 } from '@/types/ITable'
 import { TABLE } from '@/consts/table'
 import { useHelper } from '@/composables'
@@ -30,7 +30,7 @@ const props = defineProps({
    * Если карточка используется как рутовый узел страницы, будет автоматически приходить router.params.id
    * */
   id: {
-    type: [String, Number] as PropType<string | number>,
+    type: [String, Number] as PropType<string | number>
   },
   tableColumns: {
     type: Array as PropType<ITableColumnWidth[]>,
@@ -100,6 +100,18 @@ const cardStyle = computed((): { [key: string]: string } => {
   }
 })
 
+onMounted(() => {
+  if (props.footerBlur) {
+    initBlur()
+  }
+  handleEmitTableCardState({ state: true, id: props.id })
+})
+
+onBeforeUnmount(() => {
+  bodyEl.value && bodyEl.value.removeEventListener('scroll', handlerScroll)
+  handleEmitTableCardState({ state: false })
+})
+
 const initBlur = () => {
   try {
     body_scrolled_to_bottom.value = false
@@ -109,7 +121,7 @@ const initBlur = () => {
   }
 }
 
-const handlerScroll = (e: Event) => {
+const handlerScroll = () => {
   try {
     if (bodyEl.value) {
       const { offsetHeight, scrollTop, scrollHeight } = bodyEl.value
@@ -125,18 +137,6 @@ const handleEmitTableCardState = (payload: TableCardState) => {
   emit('set-table-card-state', payload)
 }
 
-onMounted(() => {
-  if (props.footerBlur) {
-    initBlur()
-  }
-  handleEmitTableCardState({ state: true, id: props.id })
-})
-
-onBeforeUnmount(() => {
-  bodyEl.value && bodyEl.value.removeEventListener('scroll', handlerScroll)
-  handleEmitTableCardState({ state: false })
-})
-
 watch(
   () => props.footerBlur,
   (val) => {
@@ -147,11 +147,14 @@ watch(
     }
   }
 )
-watch(() => props.id, (id) => {
-  const state:TableCardState = { state: true, id }
-  handleEmitTableCardState(state)
-  emit('card-id-updated', state)
-})
+watch(
+  () => props.id,
+  (id) => {
+    const state: TableCardState = { state: true, id }
+    handleEmitTableCardState(state)
+    emit('card-id-updated', state)
+  }
+)
 </script>
 
 <template>
@@ -172,16 +175,16 @@ watch(() => props.id, (id) => {
 </template>
 
 <style lang="scss">
-@import '../../../../assets/styles/mixins';
-@import '../../../../assets/tokens/colors';
-@import '../../../../assets/tokens/spacings';
-@import '../../../../assets/tokens/sizes';
-@import '../../../../assets/tokens/z-indexes';
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/colors' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/sizes' as *;
+@use '../../../../assets/tokens/z-indexes' as *;
 .mc-table-card {
   $block-name: &;
 
-  --table-card-header-height: $size-500;
-  --table-card-footer-height: $size-500;
+  --table-card-header-height: #{$size-500};
+  --table-card-footer-height: #{$size-500};
   @include position(absolute, 0);
   z-index: $z-index-overlay;
   background-color: $color-white;

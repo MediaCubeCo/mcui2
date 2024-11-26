@@ -108,7 +108,7 @@ const styles = computed((): { [key: string]: ColorsUnion | SpacesUnion | string 
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
+@use '../../../assets/styles/mixins' as *;
 .mc-separator {
   $block-name: &;
   --mc-separator-color: initial;

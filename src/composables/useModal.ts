@@ -55,9 +55,9 @@ const showModal = (
     close: () => {
       //@ts-ignore
       const modalToClose = reactiveProps.modals.findLast((d) => d.id === id)
-      modalToClose.modelValue = false
+      modalToClose && (modalToClose.modelValue = false)
       setTimeout(() => {
-        reactiveProps.modals = reactiveProps.modals.filter((d) => d.id !== modalToClose.id)
+        reactiveProps.modals = reactiveProps.modals.filter((d) => d.id !== modalToClose?.id)
       }, 300)
     }
   }

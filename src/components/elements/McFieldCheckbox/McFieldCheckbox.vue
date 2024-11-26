@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import { useFieldErrors } from '@/composables/useFieldErrors'
+import { McTitle, McSvgIcon } from '@/components'
+import { useFieldErrors } from '@/composables'
 import { computed, type PropType, useSlots } from 'vue'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Directions } from '@/enums/ui/Directions'
@@ -212,14 +211,16 @@ const handleChange = (e: Event): void => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/font-families';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/font-families' as *;
 .mc-field-checkbox {
   $block-name: &;
+  --mc-field-checkbox-size: #{$size-250};
   font-family: $font-family-main;
   position: relative;
   display: block;

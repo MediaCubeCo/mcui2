@@ -1,136 +1,72 @@
 /**
  * elements
  * */
-import McAvatar from './elements/McAvatar/McAvatar.vue'
-import McBadge from './elements/McBadge/McBadge.vue'
-import McBottomLoader from './elements/McBottomLoader/McBottomLoader.vue'
-import McButton from './elements/McButton/McButton.vue'
-import McChip from './elements/McChip/McChip.vue'
-import McCropper from './elements/McCropper/McCropper.vue'
-import McDatepicker from './elements/McDatepicker/McDatepicker.vue'
-import McDraggable from './elements/McDraggable/McDraggable.vue'
-import McFieldCheckbox from './elements/McFieldCheckbox/McFieldCheckbox.vue'
-import McFieldRadio from './elements/McFieldRadio/McFieldRadio.vue'
-import McFieldRadioGroup from './elements/McFieldRadioGroup/McFieldRadioGroup.vue'
-import McFieldRange from './elements/McFieldRange/McFieldRange.vue'
-import McFieldSelect from './elements/McFieldSelect/McFieldSelect.vue'
-import McFieldText from './elements/McFieldText/McFieldText.vue'
-import McFieldToggle from './elements/McFieldToggle/McFieldToggle.vue'
-import McInfinityLoadingTrigger from './elements/McInfinityLoadingTrigger/McInfinityLoadingTrigger.vue'
-import McNoData from './elements/McNodata/McNoData.vue'
-import McNotification from './elements/McNotification/McNotification.vue'
-import McProgress from './elements/McProgress/McProgress.vue'
-import McSeparator from './elements/McSeparator/McSeparator.vue'
-import McSlideUpDown from './elements/McSlideUpDown/McSlideUpDown.vue'
-import McStack from './elements/McStack/McStack.vue'
-import McSvgIcon from './elements/McSvgIcon/McSvgIcon.vue'
-import McTitle from './elements/McTitle/McTitle.vue'
-import McTooltip from './elements/McTooltip/McTooltip.vue'
+
+export { default as McAvatar } from './elements/McAvatar/McAvatar.vue'
+export { default as McBadge } from './elements/McBadge/McBadge.vue'
+export { default as McBottomLoader } from './elements/McBottomLoader/McBottomLoader.vue'
+export { default as McButton } from './elements/McButton/McButton.vue'
+export { default as McChip } from './elements/McChip/McChip.vue'
+export { default as McDatepicker } from './elements/McDatepicker/McDatepicker.vue'
+export { default as McDraggable } from './elements/McDraggable/McDraggable.vue'
+export { default as McFieldCheckbox } from './elements/McFieldCheckbox/McFieldCheckbox.vue'
+export { default as McFieldRadio } from './elements/McFieldRadio/McFieldRadio.vue'
+export { default as McFieldRadioGroup } from './elements/McFieldRadioGroup/McFieldRadioGroup.vue'
+export { default as McFieldRange } from './elements/McFieldRange/McFieldRange.vue'
+export { default as McFieldSelect } from './elements/McFieldSelect/McFieldSelect.vue'
+export { default as McFieldText } from './elements/McFieldText/McFieldText.vue'
+export { default as McFieldToggle } from './elements/McFieldToggle/McFieldToggle.vue'
+export { default as McInfinityLoadingTrigger } from './elements/McInfinityLoadingTrigger/McInfinityLoadingTrigger.vue'
+export { default as McNoData } from './elements/McNodata/McNoData.vue'
+export { default as McNotification } from './elements/McNotification/McNotification.vue'
+export { default as McProgress } from './elements/McProgress/McProgress.vue'
+export { default as McSeparator } from './elements/McSeparator/McSeparator.vue'
+export { default as McSlideUpDown } from './elements/McSlideUpDown/McSlideUpDown.vue'
+export { default as McStack } from './elements/McStack/McStack.vue'
+export { default as McSvgIcon } from './elements/McSvgIcon/McSvgIcon.vue'
+export { default as McTitle } from './elements/McTitle/McTitle.vue'
+export { default as McTooltip } from './elements/McTooltip/McTooltip.vue'
 
 /**
  * patterns
  * */
-import McAccordion from './patterns/McAccordion/McAccordion.vue'
-import McCell from './patterns/McCell/McCell.vue'
-import McCollapse from './patterns/McCollapse/McCollapse.vue'
-import McDropdown from './patterns/McDropdown/McDropdown.vue'
-import McDropdownPanel from './patterns/McDropdown/McDropdownPanel.vue'
-import McFilter from './patterns/McFilter/McFilter.vue'
-import McFilterChip from './patterns/McFilter/McFilterChip/McFilterChip.vue'
-import McFilterTags from './patterns/McFilter/McFilterTags/McFilterTags.vue'
-import McFilterTypeDate from './patterns/McFilter/McFilterTypeDate/McFilterTypeDate.vue'
-import McFilterTypeRange from './patterns/McFilter/McFilterTypeRange/McFilterTypeRange.vue'
-import McFilterTypeRelation from './patterns/McFilter/McFilterTypeRelation/McFilterTypeRelation.vue'
-import McFilterTypeText from './patterns/McFilter/McFilterTypeText/McFilterTypeText.vue'
-import McGridCol from './patterns/McGridCol/McGridCol.vue'
-import McGridRow from './patterns/McGridRow/McGridRow.vue'
-import McOverlay from './patterns/McOverlay/McOverlay.vue'
-import McPreview from './patterns/McPreview/McPreview.vue'
-import McSideBar from './patterns/McSideBar/McSideBar.vue'
-import McSideBarBottom from './patterns/McSideBar/McSideBarBottom/McSideBarBottom.vue'
-import McSideBarButton from './patterns/McSideBar/McSideBarButton/McSideBarButton.vue'
-import McSideBarCenter from './patterns/McSideBar/McSideBarCenter/McSideBarCenter.vue'
-import McSideBarTop from './patterns/McSideBar/McSideBarTop/McSideBarTop.vue'
-import McTab from './patterns/McTab/McTab.vue'
-import McTabs from './patterns/McTabs/McTabs.vue'
-import McWrapScroll from './patterns/McWrapScroll/McWrapScroll.vue'
+export { default as McAccordion } from './patterns/McAccordion/McAccordion.vue'
+export { default as McCell } from './patterns/McCell/McCell.vue'
+export { default as McCollapse } from './patterns/McCollapse/McCollapse.vue'
+export { default as McDropdown } from './patterns/McDropdown/McDropdown.vue'
+export { default as McDropdownPanel } from './patterns/McDropdown/McDropdownPanel.vue'
+export { default as McFilter } from './patterns/McFilter/McFilter.vue'
+export { default as McFilterChip } from './patterns/McFilter/McFilterChip/McFilterChip.vue'
+export { default as McFilterTags } from './patterns/McFilter/McFilterTags/McFilterTags.vue'
+export { default as McFilterTypeDate } from './patterns/McFilter/McFilterTypeDate/McFilterTypeDate.vue'
+export { default as McFilterTypeRange } from './patterns/McFilter/McFilterTypeRange/McFilterTypeRange.vue'
+export { default as McFilterTypeRelation } from './patterns/McFilter/McFilterTypeRelation/McFilterTypeRelation.vue'
+export { default as McFilterTypeText } from './patterns/McFilter/McFilterTypeText/McFilterTypeText.vue'
+export { default as McGridCol } from './patterns/McGridCol/McGridCol.vue'
+export { default as McGridRow } from './patterns/McGridRow/McGridRow.vue'
+export { default as McOverlay } from './patterns/McOverlay/McOverlay.vue'
+export { default as McPreview } from './patterns/McPreview/McPreview.vue'
+export { default as McSideBar } from './patterns/McSideBar/McSideBar.vue'
+export { default as McSideBarBottom } from './patterns/McSideBar/McSideBarBottom/McSideBarBottom.vue'
+export { default as McSideBarButton } from './patterns/McSideBar/McSideBarButton/McSideBarButton.vue'
+export { default as McSideBarCenter } from './patterns/McSideBar/McSideBarCenter/McSideBarCenter.vue'
+export { default as McSideBarTop } from './patterns/McSideBar/McSideBarTop/McSideBarTop.vue'
+export { default as McTab } from './patterns/McTab/McTab.vue'
+export { default as McTabs } from './patterns/McTabs/McTabs.vue'
+export { default as McWrapScroll } from './patterns/McWrapScroll/McWrapScroll.vue'
 
 /**
  * templates
  * */
-import McDrawer from './templates/McDrawer/McDrawer.vue'
-import McDrawerContainer from './templates/McDrawer/McDrawerContainer.vue'
-import McDrawerContentTemplate from './templates/McDrawer/McDrawerContentTemplate/McDrawerContentTemplate.vue'
-import McModalContainer from './templates/McModal/McModalContainer.vue'
-import McModal from './templates/McModal/McModal.vue'
-import McTable from './templates/McTable/McTable/McTable.vue'
-import McTableCardHeader from './templates/McTable/McTableCard/McTableCardHeader/McTableCardHeader.vue'
-import McTableCard from './templates/McTable/McTableCard/McTableCard.vue'
-import McTableSkeletonLoading from './templates/McTable/McTableSkeletonLoading/McTableSkeletonLoading.vue'
-import McTableSort from './templates/McTable/McTableSort/McTableSort.vue'
-import McTopBar from './templates/McTopBar/McTopBar.vue'
-import McVirtualScroll from './templates/McVirtualScroll/McVirtualScroll.vue'
-
-export {
-  McAvatar,
-  McBadge,
-  McBottomLoader,
-  McButton,
-  McChip,
-  McCropper,
-  McDatepicker,
-  McDraggable,
-  McFieldCheckbox,
-  McFieldRadio,
-  McFieldRadioGroup,
-  McFieldRange,
-  McFieldSelect,
-  McFieldText,
-  McFieldToggle,
-  McInfinityLoadingTrigger,
-  McNoData,
-  McNotification,
-  McProgress,
-  McSeparator,
-  McSlideUpDown,
-  McStack,
-  McSvgIcon,
-  McTitle,
-  McTooltip,
-  McAccordion,
-  McCell,
-  McCollapse,
-  McDropdown,
-  McDropdownPanel,
-  McFilter,
-  McFilterChip,
-  McFilterTags,
-  McFilterTypeDate,
-  McFilterTypeRange,
-  McFilterTypeRelation,
-  McFilterTypeText,
-  McGridCol,
-  McGridRow,
-  McOverlay,
-  McPreview,
-  McSideBar,
-  McSideBarBottom,
-  McSideBarButton,
-  McSideBarCenter,
-  McSideBarTop,
-  McTab,
-  McTabs,
-  McWrapScroll,
-  McDrawer,
-  McDrawerContainer,
-  McDrawerContentTemplate,
-  McModalContainer,
-  McModal,
-  McTable,
-  McTableCardHeader,
-  McTableCard,
-  McTableSkeletonLoading,
-  McTableSort,
-  McTopBar,
-  McVirtualScroll
-}
+export { default as McDrawer } from './templates/McDrawer/McDrawer.vue'
+export { default as McDrawerContainer } from './templates/McDrawer/McDrawerContainer.vue'
+export { default as McDrawerContentTemplate } from './templates/McDrawer/McDrawerContentTemplate/McDrawerContentTemplate.vue'
+export { default as McModalContainer } from './templates/McModal/McModalContainer.vue'
+export { default as McModal } from './templates/McModal/McModal.vue'
+export { default as McTable } from './templates/McTable/McTable/McTable.vue'
+export { default as McTableCardHeader } from './templates/McTable/McTableCard/McTableCardHeader/McTableCardHeader.vue'
+export { default as McTableCard } from './templates/McTable/McTableCard/McTableCard.vue'
+export { default as McTableSkeletonLoading } from './templates/McTable/McTableSkeletonLoading/McTableSkeletonLoading.vue'
+export { default as McTableSort } from './templates/McTable/McTableSort/McTableSort.vue'
+export { default as McTopBar } from './templates/McTopBar/McTopBar.vue'
+export { default as McVirtualScroll } from './templates/McVirtualScroll/McVirtualScroll.vue'

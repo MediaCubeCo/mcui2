@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import { McButton, McSvgIcon } from '@/components'
 import { ButtonSize } from '@/enums'
 import type { PropType } from 'vue'
 
 const props = defineProps({
   buttonBackText: {
     type: String as PropType<string>,
-    default: 'Back',
+    default: 'Back'
   },
   backTo: {
     type: String as PropType<string>,
-    default: null,
-  },
+    default: null
+  }
 })
 </script>
 
@@ -37,9 +36,9 @@ const props = defineProps({
 </template>
 
 <style lang="scss">
-@import '../../../../../assets/styles/mixins';
-@import '../../../../../assets/tokens/colors';
-@import '../../../../../assets/tokens/spacings';
+@use '../../../../../assets/styles/mixins' as *;
+@use '../../../../../assets/tokens/colors' as *;
+@use '../../../../../assets/tokens/spacings' as *;
 .mc-table-card-header {
   $block-name: &;
 

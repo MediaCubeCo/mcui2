@@ -1,11 +1,6 @@
 <script setup lang="ts">
-import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
-import type {
-  IFilterCondition,
-  IFilterPlaceholders,
-  IFilterRangeValue,
-  IRangeFilter
-} from '@/types/IFilter.js'
+import { McFieldText } from '@/components'
+import type { IFilterCondition, IFilterPlaceholders, IFilterRangeValue, IRangeFilter } from '@/types/IFilter.js'
 import { computed, type PropType, ref, watch } from 'vue'
 import { InputTypes } from '@/enums'
 
@@ -21,7 +16,7 @@ const props = defineProps({
     default: () => ({
       more: null,
       less: null
-    })
+    } as IFilterRangeValue)
   },
   /**
    *  Объект выбранного
@@ -131,8 +126,8 @@ const emitValue = () => {
 </template>
 
 <style lang="scss">
-@import '../../../../assets/styles/mixins';
-@import '../../../../assets/tokens/spacings';
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/spacings' as *;
 .mc-filter-type-range {
   $block-name: &;
   display: flex;

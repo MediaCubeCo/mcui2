@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import defaultImage from '../../../assets/img/no_user.png'
+//@ts-ignore
+import defaultImage from '@/assets/img/no_user.png'
 import { computed, ref, watch } from 'vue'
 import { AvatarSizes, type AvatarSizeTypes } from '@/types/styles/AvatarSizes'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
@@ -171,11 +172,12 @@ const handleOnError = (e: Event): void => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/durations';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/sizes';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/durations' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/border-radius' as *;
 $color-borders: $token-colors;
 $dot-colors: $token-colors;
 
@@ -227,6 +229,7 @@ $dot-colors: $token-colors;
     }
   }
   &__wrapper {
+    --mc-avatar-dot-color: transparent;
     --mc-avatar-dot-border-width: 1px;
     --mc-avatar-dot-size: #{$space-100};
     position: relative;

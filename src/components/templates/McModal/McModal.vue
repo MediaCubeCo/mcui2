@@ -1,14 +1,7 @@
 <script setup lang="ts">
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import { McSvgIcon } from '@/components'
 import { computed, nextTick, type PropType, reactive, ref, watch } from 'vue'
-import {
-  LineHeights,
-  type LineHeightTypes,
-  Sizes,
-  type SizeTypes,
-  Spaces,
-  type SpaceTypes
-} from '@/types'
+import { LineHeights, type LineHeightTypes, Sizes, type SizeTypes, Spaces, type SpaceTypes } from '@/types'
 import { HorizontalAlignment } from '@/enums'
 import { TransitionPresets, useTransition } from '@vueuse/core'
 import { ModalVariation } from '@/enums/Modal'
@@ -164,8 +157,7 @@ const classes = computed((): { [key: string]: boolean } => {
     'mc-modal--top-padding': props.topPadding,
     'mc-modal--small-indents': data.small_indents,
     [`mc-modal--variation-${props.variation}`]: !!props.variation,
-    [`mc-modal--header-align-${props.headerAlign}`]:
-      (props.closeVisible || props.arrowVisible) && !!props.headerAlign
+    [`mc-modal--header-align-${props.headerAlign}`]: (props.closeVisible || props.arrowVisible) && !!props.headerAlign
   }
 })
 
@@ -263,20 +255,15 @@ const calculateIndents = (): void => {
    * Иначе смотрим, чтобы отступ был > чем убираемые отступы, т.к. нет смысла сжимать шапку, если <
    */
   const indentDifferences =
-    (+data.modal_params?.['--mc-modal-padding'] -
-      +data.modal_params?.['--mc-modal-padding-small']) *
-      3 +
+    (+data.modal_params?.['--mc-modal-padding'] - +data.modal_params?.['--mc-modal-padding-small']) * 3 +
     +data.modal_params?.['--mc-modal-padding-small']
   const lineHeightDifferences =
-    +data.modal_params?.['--mc-modal-header-line-height'] -
-    +data.modal_params?.['--mc-modal-header-line-height-small']
+    +data.modal_params?.['--mc-modal-header-line-height'] - +data.modal_params?.['--mc-modal-header-line-height-small']
   const buttonDifferences =
-    +data.modal_params?.['--mc-modal-button-height'] -
-    +data.modal_params?.['--mc-modal-button-height-small']
+    +data.modal_params?.['--mc-modal-button-height'] - +data.modal_params?.['--mc-modal-button-height-small']
   const sizeDifferences = indentDifferences + lineHeightDifferences + buttonDifferences
   if (!data.small_indents && mcModalBody.value) {
-    data.can_shorten_modal =
-      mcModalBody.value?.scrollHeight - mcModalBody.value?.clientHeight > sizeDifferences
+    data.can_shorten_modal = mcModalBody.value?.scrollHeight - mcModalBody.value?.clientHeight > sizeDifferences
   }
 }
 
@@ -336,20 +323,10 @@ watch(
           <div id="mcModalFooter" />
         </div>
       </div>
-      <button
-        v-if="arrowVisible"
-        type="button"
-        class="mc-modal__btn-back"
-        @click.prevent="handleBack"
-      >
+      <button v-if="arrowVisible" type="button" class="mc-modal__btn-back" @click.prevent="handleBack">
         <mc-svg-icon name="arrow_leftward" class="mc-modal__icon-back" />
       </button>
-      <button
-        v-if="closeVisible"
-        type="button"
-        class="mc-modal__btn-close"
-        @click.prevent="closeModal"
-      >
+      <button v-if="closeVisible" type="button" class="mc-modal__btn-close" @click.prevent="closeModal">
         <mc-svg-icon class="mc-modal__icon-close" width="24" height="24" name="close" />
       </button>
     </div>
@@ -357,19 +334,21 @@ watch(
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/z-indexes';
-@import '../../../assets/tokens/durations';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/tokens/font-weights';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/sizes';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/media-queries';
-@import '../../../assets/tokens/border-radius';
-@import '../../../assets/tokens/box-shadows';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/z-indexes' as *;
+@use '../../../assets/tokens/durations' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/media-queries' as *;
+@use '../../../assets/tokens/border-radius' as *;
+@use '../../../assets/tokens/box-shadows' as *;
+@use 'sass:color' as sasscolor;
+
 .mc-modal {
   $block-name: &;
   $border-color: #dee1e9;
@@ -395,10 +374,11 @@ watch(
   z-index: 2;
 
   @media #{$media-query-s} {
+    --modal-scale: calc(var(--mc-modal-state-number) * 0.1 + 0.9);
     padding: 12px 0;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -50%) scale(calc(#{var(--mc-modal-state-number)} * 0.1 + 0.9));
+    transform: translate(-50%, -50%) scale(var(--modal-scale));
     height: auto;
     max-height: 80%;
     max-width: var(--mc-modal-max-width);
@@ -409,7 +389,7 @@ watch(
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: fade-out($color-black, 0.5);
+    background-color: rgba($color-black, 0.5);
     display: flex;
     justify-content: flex-start;
     &--hidden {

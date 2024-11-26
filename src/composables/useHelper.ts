@@ -13,12 +13,7 @@ function isEqual(value1: any, value2: any) {
   if (value1 === value2) {
     return true
   }
-  if (
-    typeof value1 !== 'object' ||
-    typeof value2 !== 'object' ||
-    value1 === null ||
-    value2 === null
-  ) {
+  if (typeof value1 !== 'object' || typeof value2 !== 'object' || value1 === null || value2 === null) {
     return false
   }
   if (Array.isArray(value1) !== Array.isArray(value2)) {
@@ -80,6 +75,11 @@ function isNumber(payload: any) {
   return typeof payload === 'number'
 }
 
+function upperFirst(str: string): string {
+  if (!str) return str
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
 export function useHelper() {
-  return { isEmpty, isEqual, cloneDeep, uniqWith, deepMerge, hasProperty, isNumber }
+  return { isEmpty, isEqual, cloneDeep, uniqWith, deepMerge, hasProperty, isNumber, upperFirst }
 }

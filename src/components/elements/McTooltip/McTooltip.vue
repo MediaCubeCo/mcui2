@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import type { TooltipPositionsUnion, TooltipSizesUnion } from '@/types/ITooltip'
-import { useTooltip } from '@/composables/useTooltip'
+import { useTooltip } from '@/composables'
 import { computed, type PropType } from 'vue'
 import type { ITooltip } from '@/types/ITooltip'
 import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'
@@ -73,7 +73,8 @@ const tooltipProps = computed<ITooltip>((): ITooltip => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/tooltip';
+@use '../../../assets/styles/tooltip' as *;
+@use '../../../assets/tokens/font-families' as *;
 
 .mc-tooltip-target {
   $block-name: &;

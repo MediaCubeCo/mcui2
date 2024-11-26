@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import McStack from '@/components/elements/McStack/McStack.vue'
 import McChip from '@/components/elements/McChip/McChip.vue'
-import categories from '@/mocks/categories.js'
+import { categories } from '@/mocks/categories'
 
 const meta = {
   title: 'McStack',

@@ -1,33 +1,72 @@
-import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
+import dts from 'vite-plugin-dts'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
+import path from 'path'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
-    vueJsx(),
+    /**
+     * Генерация деклараций для всей папки src.
+     * Что бы подсказки работали в IDE, обязательно указание в package.json ("types": "./dist/types/index.d.ts",)
+     * */
+    dts({
+      outDir: 'dist/types',
+      insertTypesEntry: true,
+      include: ['src'],
+      exclude: ['src/mocks']
+    }),
+    /**
+     * Перенос файлов которые не задеваются сборкой
+     * */
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'src/assets/iconsSprite.svg',
+          dest: 'assets'
+        },
+        {
+          src: 'src/assets/img',
+          dest: 'assets'
+        }
+      ]
+    })
   ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  },
   build: {
+    /**
+     * Папка куда будет билдиться
+     * */
+    outDir: 'dist',
+    /**
+     * Блок указывающий что билд будет как библиотека
+     * */
     lib: {
-      entry: 'src/index.js',
-      name: 'MediacubeUiv2',
-      fileName: (format) => `mediacube-ui-v2.${format}.js`
+      // Точка входа
+      entry: './src/index.ts',
+      // Название
+      name: 'mediacube-ui-v2',
+      // Название файлов скриптов
+      fileName: 'mediacube-ui-v2',
+      // Форматы скриптов es - ECMAScript Modules, umd - Universal Module Definition
+      formats: ['es', 'umd']
     },
+    /**
+     * Управление зависимостями
+     * */
     rollupOptions: {
-      external: ['vue'],
+      external: ['vue', 'src/mocks'],
       output: {
+        exports: 'named',
         globals: {
           vue: 'Vue'
         }
       }
+    }
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src')
     }
   }
 })

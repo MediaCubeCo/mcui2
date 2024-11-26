@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import McSideBarButton from '@/components/patterns/McSideBar/McSideBarButton/McSideBarButton.vue'
+import { McSideBarButton } from '@/components'
 import { computed, inject, type PropType } from 'vue'
 import type { ButtonVariationUnion, ColorTypes, ISidebarThemeConfigProvide } from '@/types'
 import { defaultThemes } from '@/mocks/sidebar'
@@ -79,8 +79,8 @@ const handleClick = (): void => {
 </template>
 
 <style lang="scss">
-@import '../../../../assets/tokens/durations';
-@import '../../../../assets/tokens/spacings';
+@use '../../../../assets/tokens/durations' as *;
+@use '../../../../assets/tokens/spacings' as *;
 .mc-side-bar-bottom {
   $block-name: &;
 

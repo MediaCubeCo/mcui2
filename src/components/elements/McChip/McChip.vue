@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import McSvgIcon from '../McSvgIcon/McSvgIcon.vue'
+import { McSvgIcon } from '@/components'
 import { computed, type PropType } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import type { ChipVariationUnion, IChipStyleOptions } from '@/types/IChip'
@@ -128,15 +128,16 @@ const handleClick = (e: Event): void => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/durations';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/font-weights';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/sizes';
+@use 'sass:color' as sasscolor;
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/durations' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/sizes' as *;
 
 .mc-chip {
   $block-name: &;
@@ -263,7 +264,7 @@ const handleClick = (e: Event): void => {
     }
 
     &:active {
-      color: darken($color-red, 15%);
+      color: sasscolor.adjust($color-red, $lightness: 15%);
     }
   }
 
@@ -277,7 +278,7 @@ const handleClick = (e: Event): void => {
             color: $color-white;
           }
           &:active {
-            color: darken($color-white, 15%);
+            color: sasscolor.adjust($color-white, $lightness: 15%);
           }
         }
         &__title {

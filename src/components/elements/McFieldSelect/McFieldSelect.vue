@@ -1,22 +1,25 @@
 <script setup lang="ts">
 import { computed, type PropType, ref, watch } from 'vue'
-import MultiSelect from 'vue-multiselect'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McAvatar from '@/components/elements/McAvatar/McAvatar.vue'
-import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
-import McPreview from '@/components/patterns/McPreview/McPreview.vue'
+import { default as MultiSelect } from 'vue-multiselect'
+import { McTitle, McSvgIcon, McAvatar, McTooltip, McPreview } from '@/components'
 import type { ISelectGroupOptions, ISelectOption, ISelectOptions } from '@/types/ISelect'
 import { type DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
-import { useFieldErrors } from '@/composables/useFieldErrors'
+import { useFieldErrors } from '@/composables'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { SelectGroupKeys } from '@/enums/Select'
 import type { SelectListDirectionsUnion } from '@/types/ISelect'
 import { PreviewSizes, TitleVariations, TooltipPositions, Weights } from '@/enums'
 
-const emit = defineEmits(['original-input', 'tag', 'search-change', 'update:modelValue', 'handle-open', 'handle-close'])
+const emit = defineEmits<{
+  (e: 'original-input', value: ISelectOptions[]): void
+  (e: 'tag', value: string): void
+  (e: 'search-change', value: string): void
+  (e: 'update:modelValue', value: string[] | number[] | string | number | null): void
+  (e: 'handle-open'): void
+  (e: 'handle-close'): void
+}>()
 const props = defineProps({
   /**
    *  Значение
@@ -584,17 +587,18 @@ watch(
 </template>
 
 <style lang="scss">
-@import 'vue-multiselect/dist/vue-multiselect.css';
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/durations';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/tokens/box-shadows';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/sizes';
-@import '../../../assets/tokens/font-weights';
+@use 'vue-multiselect/dist/vue-multiselect.css' as *;
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/durations' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/box-shadows' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/border-radius' as *;
 .mc-field-select {
   $block-name: &;
   --mc-field-select-color: initial;

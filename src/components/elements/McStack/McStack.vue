@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import {
-  ref,
-  onMounted,
-  onUnmounted,
-  computed,
-  h,
-  useSlots,
-  createApp,
-  type PropType,
-} from 'vue'
+import { ref, onMounted, onUnmounted, computed, h, useSlots, createApp, type PropType } from 'vue'
 import { Spaces } from '@/types'
 
 const props = defineProps({
@@ -27,8 +18,8 @@ const container = ref<HTMLElement | null>(null)
 const children =
   (slots.default && slots.default()[0].children?.length
     ? slots.default()[0].children
-    //@ts-ignore
-    : slots.default()) || []
+    : //@ts-ignore
+      slots.default()) || []
 
 //@ts-ignore
 const visibleChildren = ref<any[]>(children || [])
@@ -39,6 +30,17 @@ const classes = computed((): { [key: string]: boolean } => {
     'mc-stack': true,
     'mc-stack--collapsed': props.collapsed
   }
+})
+
+onMounted(() => {
+  const resizeObserver = new ResizeObserver(updateChildrenVisible)
+  if (container.value) resizeObserver.observe(container.value)
+
+  updateChildrenVisible()
+
+  onUnmounted(() => {
+    resizeObserver.disconnect()
+  })
 })
 
 const updateChildrenVisible = (): void => {
@@ -71,9 +73,7 @@ const updateChildrenVisible = (): void => {
     itemNode.remove()
 
     const moreContentWidth = +Spaces['300'].replace('px', '')
-    const itemIndent = props.collapsed
-      ? -Spaces['200'].replace('px', '')
-      : +Spaces['150'].replace('px', '')
+    const itemIndent = props.collapsed ? -Spaces['200'].replace('px', '') : +Spaces['150'].replace('px', '')
 
     if (
       totalWidth + (itemWidth + itemIndent) <= container.value.clientWidth - moreContentWidth &&
@@ -91,17 +91,6 @@ const updateChildrenVisible = (): void => {
   document.body.removeChild(tempContainer)
   visibleChildren.value = visibleItems
 }
-
-onMounted(() => {
-  const resizeObserver = new ResizeObserver(updateChildrenVisible)
-  if (container.value) resizeObserver.observe(container.value)
-
-  updateChildrenVisible()
-
-  onUnmounted(() => {
-    resizeObserver.disconnect()
-  })
-})
 </script>
 
 <template>
@@ -116,13 +105,13 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/font-weights';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/styles/mixins';
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/styles/mixins' as *;
 .mc-stack {
   $block-name: &;
   overflow: hidden;

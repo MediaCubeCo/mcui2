@@ -1,4 +1,6 @@
-@import 'variables.scss';
-@import 'spacing.scss';
-@import 'mixins.scss';
-@import 'functions.scss';
+@use 'functions.scss' as *;
+@use 'mixins.scss' as *;
+@use 'tooltip.scss' as *;
+@use 'variables.scss' as *;
+@use 'table.scss' as *;
+@use 'toast.scss' as *;

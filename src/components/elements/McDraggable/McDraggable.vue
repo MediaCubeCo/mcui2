@@ -2,7 +2,7 @@
 import { useDebounceFn, useDraggable, useLocalStorage, useSessionStorage } from '@vueuse/core'
 import { computed, type PropType, ref, watch } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
-import McPreview from '@/components/patterns/McPreview/McPreview.vue'
+import { McPreview } from '@/components'
 import type { ColorsUnion } from '@/types/styles/Colors'
 
 interface DraggableInitPayload {
@@ -143,17 +143,17 @@ watch(
 </template>
 
 <style lang="scss">
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/media-queries';
-@import '../../../assets/tokens/sizes';
-@import '../../../assets/tokens/border-radius';
-@import '../../../assets/tokens/font-families';
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/media-queries' as *;
+@use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/border-radius' as *;
+@use '../../../assets/tokens/font-families' as *;
 .mc-draggable {
   cursor: move;
   font-family: $font-family-main;
   &__inner {
-    --mc-draggable-color: $color-purple;
+    --mc-draggable-color: #{$color-purple};
 
     padding: $space-100 $space-150 $space-100 $space-200;
     min-height: $size-700;

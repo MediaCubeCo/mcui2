@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import {
-  computed,
-  onMounted,
-  onUpdated,
-  type PropType,
-  ref,
-  watch,
-  provide,
-  nextTick,
-} from 'vue'
+import { computed, onMounted, onUpdated, type PropType, ref, watch, provide, nextTick } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import type { ColorsUnion } from '@/types/styles/Colors'
 import { useRouter } from 'vue-router'
@@ -16,7 +7,7 @@ import McWrapScroll from '@/components/patterns/McWrapScroll/McWrapScroll.vue'
 import type { ITab } from '@/types/ITabs'
 import { type TabVariationUnion } from '@/types/ITabs'
 import { TabVariations } from '@/enums/Tab'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import { McSvgIcon } from '@/components'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
@@ -35,7 +26,7 @@ const props = defineProps({
    */
   tabVariation: {
     type: String as PropType<TabVariationUnion>,
-    default: TabVariations.Captions,
+    default: TabVariations.Captions
   },
   /**
    *  Цвет текста табов
@@ -100,7 +91,7 @@ const styles = computed((): { [key: string]: ColorsUnion } => {
   }
 })
 
-const computedValue = computed<{ get: () => string | null, set: (val: string) => void }>({
+const computedValue = computed<{ get: () => string | null; set: (val: string) => void }>({
   // @ts-ignore
   get(): string | null {
     return props.modelValue
@@ -112,7 +103,6 @@ const computedValue = computed<{ get: () => string | null, set: (val: string) =>
 const activeVisibleTabs = computed((): ITab[] => {
   return tabs.value.filter((tab) => tab.visible && !tab.isDisabled)
 })
-
 
 onMounted(() => {
   handleCheckInitTab()
@@ -160,7 +150,7 @@ const watchDisableTab = (): void => {
 const handleSelectTab = (tab: ITab, event?: Event): void | undefined => {
   event?.preventDefault()
   if (tab.isDisabled) return
-  if (tab.onClick && typeof tab.onClick=== 'function') return tab.onClick(tab)
+  if (tab.onClick && typeof tab.onClick === 'function') return tab.onClick(tab)
   if (tab.href) {
     window.open(tab.href, '_blank')
     return
@@ -223,16 +213,19 @@ provide('selfRegisterTabMethod', selfRegisterTabMethod)
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/z-indexes';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/tokens/colors';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/font-weights';
-@import '../../../assets/tokens/spacings';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/z-indexes' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/spacings' as *;
 .mc-tabs {
   $block-name: &;
+
+  --mc-tabs-color: #{$color-black};
+  --mc-tabs-accent-color: #{$color-purple};
 
   @mixin border() {
     &::before {
@@ -355,10 +348,10 @@ provide('selfRegisterTabMethod', selfRegisterTabMethod)
     }
     &__icon {
       &-prepend {
-        color: var(--mc-tab-icon-prepend-color);
+        //color: var(--mc-tab-icon-prepend-color);
       }
       &-append {
-        color: var(--mc-tab-icon-append-color);
+        //color: var(--mc-tab-icon-append-color);
       }
     }
   }

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McChip from '@/components/elements/McChip/McChip.vue'
+import { McTitle, McChip } from '@/components'
 import { computed, type PropType } from 'vue'
 import type { ChipVariationUnion } from '@/types'
 import { ChipSize, Weights } from '@/enums'
@@ -75,8 +74,9 @@ const handleChipClick = (e: Event): void => {
 </template>
 
 <style lang="scss">
-@import '../../../../assets/tokens/spacings';
-@import '../../../../assets/tokens/colors';
+@use 'sass:color' as sasscolor;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/colors' as *;
 .mc-filter-chip {
   $block-name: &;
   border-radius: $space-50;
@@ -84,11 +84,11 @@ const handleChipClick = (e: Event): void => {
     border-radius: $space-150;
     &:hover {
       cursor: pointer;
-      background-color: fade-out($color-purple, 0.6);
+      background-color: sasscolor.scale($color-purple, $lightness: 60%);
     }
   }
   &--is-active {
-    background-color: fade-out($color-purple, 0.6);
+    background-color: sasscolor.scale($color-purple, $lightness: 60%);
   }
   .mc-title {
     width: auto;

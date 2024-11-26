@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, type PropType } from 'vue'
-import McDrawer from '@/components/templates/McDrawer/McDrawer.vue'
+import { McDrawer } from '@/components'
 import type { IDrawerServiceState, IDrawerState } from '@/types/IDrawer'
 
 const props = defineProps({
@@ -21,7 +21,7 @@ const containerStyle = computed((): { [key: string]: string | number } => ({
 const closeDrawer = (value: IDrawerState) => {
   value.close()
   setTimeout(() => {
-    if (props.reactiveProps.drawers.every(d => !d.modelValue)) {
+    if (props.reactiveProps.drawers.every((d) => !d.modelValue)) {
       props.drawerServiceState.closeServiceState()
     }
   }, value?.drawerProps?.duration || 300)

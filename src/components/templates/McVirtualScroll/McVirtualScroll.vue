@@ -54,6 +54,11 @@ const styles = computed((): { [key: string]: string } => {
   }
 })
 
+onMounted((): void => {
+  calculateTotalHeight()
+  nextTick(calculateVisibleItems)
+})
+
 const calculateTotalHeight = (): void => {
   totalHeight.value = props.items.length * props.itemHeight
 }
@@ -61,18 +66,11 @@ const calculateTotalHeight = (): void => {
 const calculateVisibleItems = (): void => {
   const containerHeight = containerRef.value?.clientHeight || 0
   const startIndex = Math.floor(scrollTop.value / props.itemHeight)
-  const endIndex = Math.min(
-    props.items.length - 1,
-    Math.floor((scrollTop.value + containerHeight) / props.itemHeight)
-  )
+  const endIndex = Math.min(props.items.length - 1, Math.floor((scrollTop.value + containerHeight) / props.itemHeight))
   const buffer = props.buffer || 5
 
   const result: VisibleItem[] = []
-  for (
-    let i = Math.max(0, startIndex - buffer);
-    i <= Math.min(endIndex + buffer, props.items.length - 1);
-    i++
-  ) {
+  for (let i = Math.max(0, startIndex - buffer); i <= Math.min(endIndex + buffer, props.items.length - 1); i++) {
     result.push({
       key: i,
       data: props.items[i],
@@ -87,11 +85,6 @@ const onScroll = (): void => {
   scrollTop.value = containerRef.value?.scrollTop || 0
   requestAnimationFrame(calculateVisibleItems)
 }
-
-onMounted((): void => {
-  calculateTotalHeight()
-  nextTick(calculateVisibleItems)
-})
 
 watch(
   () => props.items,

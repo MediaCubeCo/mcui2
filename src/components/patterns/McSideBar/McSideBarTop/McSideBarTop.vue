@@ -1,19 +1,8 @@
 <script setup lang="ts">
-import McDropdown from '@/components/patterns/McDropdown/McDropdown.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McPreview from '@/components/patterns/McPreview/McPreview.vue'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import { McDropdown, McButton, McSvgIcon, McPreview, McTitle } from '@/components'
 import { computed, inject, type PropType, ref } from 'vue'
-import { useHelper } from '@/composables/useHelper'
-import {
-  ButtonSize,
-  DropdownPositions,
-  HorizontalAlignment,
-  SidebarTheme,
-  TitleVariations,
-  Weights
-} from '@/enums'
+import { useHelper } from '@/composables'
+import { ButtonSize, DropdownPositions, HorizontalAlignment, SidebarTheme, TitleVariations, Weights } from '@/enums'
 import type {
   ButtonVariationUnion,
   DropdownPositionsUnion,
@@ -26,10 +15,7 @@ import type {
 import { defaultThemes } from '@/mocks/sidebar'
 
 const helper = useHelper()
-const provideData = inject<ISidebarThemeConfigProvide>(
-  'provideData',
-  {} as ISidebarThemeConfigProvide
-)
+const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
 const props = defineProps({
   /**
    *  Меню приложений
@@ -91,9 +77,7 @@ const themeConfig = computed((): ISidebarThemeConfig => {
 
 const computedMenuApps = computed((): ISideBarApp[] | null => {
   if (helper.isEmpty(props.menuApps)) return null
-  return props.menuApps.filter(
-    (app) => !Object.prototype.hasOwnProperty.call(app, 'isVisible') || app.isVisible
-  )
+  return props.menuApps.filter((app) => !Object.prototype.hasOwnProperty.call(app, 'isVisible') || app.isVisible)
 })
 </script>
 
@@ -116,14 +100,7 @@ const computedMenuApps = computed((): ISideBarApp[] | null => {
       <template #activator>
         <mc-preview>
           <template #left>
-            <img
-              v-if="logoSrc"
-              class="mc-side-bar-top__img"
-              :src="logoSrc"
-              width="24"
-              height="24"
-              :alt="logoTitle"
-            />
+            <img v-if="logoSrc" class="mc-side-bar-top__img" :src="logoSrc" width="24" height="24" :alt="logoTitle" />
             <mc-svg-icon v-else-if="logoIcon" class="rotate" :name="logoIcon" />
           </template>
           <template #top>
@@ -158,13 +135,7 @@ const computedMenuApps = computed((): ISideBarApp[] | null => {
         >
           <template #icon-prepend>
             <mc-svg-icon v-if="item.icon" :name="item.icon" />
-            <img
-              v-else-if="item.image"
-              :src="item.image"
-              width="24"
-              height="24"
-              alt="service image"
-            />
+            <img v-else-if="item.image" :src="item.image" width="24" height="24" alt="service image" />
           </template>
           {{ item.name }}
         </mc-button>
@@ -174,12 +145,12 @@ const computedMenuApps = computed((): ISideBarApp[] | null => {
 </template>
 
 <style lang="scss">
-@import '../../../../assets/styles/mixins';
-@import '../../../../assets/tokens/spacings';
-@import '../../../../assets/tokens/colors';
-@import '../../../../assets/tokens/line-heights';
-@import '../../../../assets/tokens/sizes';
-@import '../../../../assets/tokens/font-sizes';
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/colors' as *;
+@use '../../../../assets/tokens/line-heights' as *;
+@use '../../../../assets/tokens/sizes' as *;
+@use '../../../../assets/tokens/font-sizes' as *;
 .mc-side-bar-top {
   $block-name: &;
   @include reset-text-indents();

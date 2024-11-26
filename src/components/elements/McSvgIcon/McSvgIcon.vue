@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import iconsSpriteIcon from '../../../assets/iconsSprite.svg'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import { computed, type PropType } from 'vue'
@@ -13,7 +12,7 @@ const props = defineProps({
    * */
   spritePath: {
     type: String,
-    default: iconsSpriteIcon,
+    default: '/assets/iconsSprite.svg',
     validator(value: string): boolean {
       return !!value
     }
@@ -23,7 +22,7 @@ const props = defineProps({
    */
   name: {
     type: String as () => IconsListUnion,
-    required: true,
+    required: true
   },
   /**
    * Цвет иконки
@@ -31,14 +30,14 @@ const props = defineProps({
    */
   color: {
     type: String as () => ColorTypes,
-    default: '',
+    default: ''
   },
   /**
    * Размер
    */
   size: {
     type: String as () => SizeTypes,
-    default: '250',
+    default: '250'
   },
   /**
    * Толщина линий 0-5 если нужно больше, нужно дописать список в стилях
@@ -46,7 +45,7 @@ const props = defineProps({
    */
   weight: {
     type: Number as PropType<number>,
-    default: 1.5,
+    default: 1.5
   },
   /**
    * Отображение иконки,
@@ -55,26 +54,23 @@ const props = defineProps({
    */
   defaultName: {
     type: String as PropType<string>,
-    default: '',
+    default: ''
   },
   dir: {
     type: String as () => DirectionsUnion,
-    default: Directions.Ltr,
-  },
+    default: Directions.Ltr
+  }
 })
 
 const classes = computed((): { [key: string]: boolean } => ({
   'mc-svg-icon': true,
-  [`mc-svg-icon--dir-${props.dir}`]: !!props.dir,
+  [`mc-svg-icon--dir-${props.dir}`]: !!props.dir
 }))
 
 const styles = computed((): { [key: string]: string } => ({
   ['--mc-svg-icon-size']: Sizes[props.size],
-  ['--mc-svg-icon-weight']: String(props.weight)
-    ?.replace('.', '')
-    ?.split('')
-    ?.join('.'),
-  ['--mc-svg-icon-color']: props.color && Colors[props.color],
+  ['--mc-svg-icon-weight']: String(props.weight)?.replace('.', '')?.split('')?.join('.'),
+  ['--mc-svg-icon-color']: props.color && Colors[props.color]
 }))
 </script>
 
@@ -85,8 +81,8 @@ const styles = computed((): { [key: string]: string } => ({
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/sizes';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/sizes' as *;
 .mc-svg-icon {
   --mc-svg-icon-size: #{$size-250};
   --mc-svg-icon-weight: 1.5;

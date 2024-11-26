@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import _upperFirst from 'lodash/upperFirst'
-import DOMPurify from 'isomorphic-dompurify'
+// import DOMPurify from 'isomorphic-dompurify'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import { type HorizontalAlignmentUnion } from '@/types/styles/Alignment'
 import { LineHeights, type LineHeightTypes } from '@/types/styles/LineHeights'
@@ -10,7 +9,9 @@ import { computed, type PropType, useAttrs } from 'vue'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from '@/utils/mcTitleAdaptiveProps'
 import type { TitleVariationsUnion } from '@/types/ITitle'
+import { useHelper } from '@/composables'
 
+const helper = useHelper()
 const attrs = useAttrs()
 const props = defineProps({
   ...adaptiveAdditionalProps,
@@ -111,7 +112,7 @@ const responsivePropsClasses = computed((): { [key: string]: boolean } => {
   adaptivePropsParams.forEach((value) => {
     adaptivePropsSizes.forEach((size) => {
       //@ts-ignore
-      const sizeValue: string | undefined | unknown = props[`${value}${_upperFirst(size)}`]
+      const sizeValue: string | undefined | unknown = props[`${value}${helper.upperFirst(size)}`]
       result[`mc-title--${value}-${size}-${sizeValue}`] = !!sizeValue
     })
   })
@@ -153,8 +154,8 @@ const contentStyle = computed((): { [key: string]: string } => ({
       v-if="props.htmlData"
       class="mc-title__text"
       :style="contentStyle"
-      v-html="DOMPurify.sanitize(props.htmlData)"
-    />
+      v-html="props.htmlData"
+    /> <!-- DOMPurify.sanitize() -->
     <div v-else class="mc-title__text" :style="contentStyle"><slot /></div>
 
     <!-- @slot -->
@@ -163,14 +164,14 @@ const contentStyle = computed((): { [key: string]: string } => ({
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/font-families';
-@import '../../../assets/tokens/letter-spacings';
-@import '../../../assets/tokens/font-weights';
-@import '../../../assets/tokens/font-sizes';
-@import '../../../assets/tokens/line-heights';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/media-queries';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/letter-spacings' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/media-queries' as *;
 .mc-title {
   $block-name: &;
   --mc-title-color: initial;

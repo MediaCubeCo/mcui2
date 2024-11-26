@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import McFieldRadioButton from '../McFieldRadio/McFieldRadio.vue'
-import McTitle from '../McTitle/McTitle.vue'
+import { McTitle, McFieldRadio } from '@/components'
 import { computed, type PropType } from 'vue'
-import { useFieldErrors } from '@/composables/useFieldErrors'
+import { useFieldErrors } from '@/composables'
 import type { IRadioGroupOptions, IRadioGroupOption } from '@/types/IRadioGroup'
 import { type DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
@@ -137,7 +136,7 @@ const handleInput = (e: string | number): void => {
       </slot>
     </div>
     <div class="mc-field-radio-group__buttons">
-      <mc-field-radio-button
+      <mc-field-radio
         v-for="radio in computedOptions"
         :key="radio.id"
         v-bind="radio"
@@ -173,9 +172,9 @@ const handleInput = (e: string | number): void => {
 </template>
 
 <style lang="scss">
-@import '../../../assets/styles/mixins';
-@import '../../../assets/tokens/spacings';
-@import '../../../assets/tokens/line-heights';
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/line-heights' as *;
 .mc-field-radio-group {
   $block-name: &;
 
