@@ -1,6 +1,6 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.50",
+  "version": "0.0.51",
   "license": "MIT",
   "description": "Design system for Mediacube services",
   "keywords": [
@@ -49,7 +49,7 @@
     "build:svg-sprite": "node create-svg-sprite.js",
     "build:readme": "node update-readme.js",
     "prerelease": "yarn build:svg-sprite && yarn build:scss-to-json && yarn build:readme && yarn build-storybook && yarn build",
-    "release": "standard-version && npm publish"
+    "release": "standard-version"
   },
   "dependencies": {
     "@vuepic/vue-datepicker": "^9.0.2",
