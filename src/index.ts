@@ -7,8 +7,6 @@ export * from './composables'
 export * from './consts'
 export * from './utils'
 export * from './assets/tokens/json'
-import './assets/fonts/inter/inter.css'
-import './assets/iconsSprite.svg'
 
 export default {
   install(app: App, options = {}) {

@@ -1,6 +1,6 @@
 /* VUE DESIGN SYSTEM SPACING HELPERS
 --------------------------------------------- */
-
+@use '../tokens/line-heights' as *;
 $spacing-ratio: $line-height-250;
 
 /*
@@ -29,5 +29,5 @@ $spacing-ratio: $line-height-250;
 }
 
 @mixin indent-bottom($size: "middle", $indent-type: "margin") {
-  #{$indent-type}-bottom: $space;
+  #{$indent-type}-bottom: $space-xs;
 }

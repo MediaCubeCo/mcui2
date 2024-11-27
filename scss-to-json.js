@@ -58,7 +58,7 @@ async function extractVariablesFromFolder(folder) {
     const json_output_path = path.join('./src/assets/tokens/', 'json', json_file_name)
 
     fs.writeFileSync(json_output_path, JSON.stringify(extracted_vars, null, 2))
-    console.log(`SCSS variables from ${file} exported to ${json_output_path}`);
+    console.log('\x1b[35m', `\nSCSS VARIABLES FROM ${file} EXPORTED TO ${json_output_path}\n`);
   }
 }
 

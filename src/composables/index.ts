@@ -1,6 +1,7 @@
 export { useDrawer } from './useDrawer'
-export { UseEncodeDecode } from '@/composables/useEncodeDecode'
+export { UseEncodeDecode } from './useEncodeDecode'
 export { useFieldErrors } from './useFieldErrors'
+export { UseFile } from './useFile'
 export { useHelper } from './useHelper'
 export { useModal } from './useModal'
 export { useRandomNumber } from './useRandomNumber'

@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import mediacubeUiSprite from '@/assets/iconsSprite.svg'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
-import { computed, type PropType } from 'vue'
+import { computed, onBeforeMount, type PropType } from 'vue'
 import type { DirectionsUnion } from '@/types/IDirections'
 import { type IconsListUnion } from '@/types/styles/Icons'
 import { Directions } from '@/enums/ui/Directions'
+import { FileContentType } from '@/enums/File'
+import { UseFile } from '@/composables/useFile'
 
 const props = defineProps({
   /**
@@ -12,7 +15,7 @@ const props = defineProps({
    * */
   spritePath: {
     type: String,
-    default: '/assets/iconsSprite.svg',
+    default: mediacubeUiSprite,
     validator(value: string): boolean {
       return !!value
     }
@@ -72,11 +75,34 @@ const styles = computed((): { [key: string]: string } => ({
   ['--mc-svg-icon-weight']: String(props.weight)?.replace('.', '')?.split('')?.join('.'),
   ['--mc-svg-icon-color']: props.color && Colors[props.color]
 }))
+
+onBeforeMount(() => {
+  injectSprite()
+})
+
+const spriteId = computed(() => {
+  return props.spritePath.replace(/\//gm, '').substring(0, 50)
+})
+
+const injectSprite = async () => {
+  if (document.getElementById(spriteId.value)) return
+
+  const svgSprite = UseFile.loadAsString(props.spritePath, FileContentType.Svg)
+  if (!svgSprite) return
+
+  const div = document.createElement('div')
+  div.id = spriteId.value
+  div.style.display = 'none'
+  div.style.visibility = 'hidden'
+  div.innerHTML = svgSprite
+
+  document.body.appendChild(div)
+}
 </script>
 
 <template>
   <svg :class="classes" :style="styles">
-    <use :xlink:href="`${props.spritePath}#${props.name}`"></use>
+    <use :xlink:href="`#${props.name}`"></use>
   </svg>
 </template>
 

@@ -26,4 +26,4 @@ readmeContent = readmeContent.replace('{{types}}', typesContent)
 readmeContent = readmeContent.replace('{{tokens}}', tokensContent)
 
 fs.writeFileSync(readmePath, readmeContent, 'utf-8')
-console.log('README.md updated')
+console.log('\x1b[35m', '\nREADME.md SUCCESSFULLY UPDATED\n')

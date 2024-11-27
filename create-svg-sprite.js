@@ -43,7 +43,7 @@ spriteConfigs.forEach(spriteConfig => {
 
         if (!fs.existsSync(outputFolder)) await fs.mkdirSync(outputFolder, { recursive: true })
         fs.writeFileSync(outputFilePath, spriteContent)
-        console.log('Sprite successfully created:', outputFilePath)
+        console.log('\x1b[35m', '\nSPRITE SUCCESSFULLY CREATED:', outputFilePath, '\n')
 
 
         // Создание файла со списком икнок
@@ -55,6 +55,6 @@ spriteConfigs.forEach(spriteConfig => {
         const outputIconsListPath = path.join(`./src/mocks/`, 'icons.json')
         if (!fs.existsSync(`./src/mocks/`)) await fs.mkdirSync(outputIconsListPath, { recursive: true })
         fs.writeFileSync(outputIconsListPath, JSON.stringify(iconsList))
-        console.log('Icons list successfully created:', outputIconsListPath)
+        console.log('\x1b[35m', '\nICONS LIST SUCCESSFULLY CREATED:', outputIconsListPath, '\n')
     })
 })

@@ -29,6 +29,18 @@ export default defineConfig({
         {
           src: 'src/assets/img',
           dest: 'assets'
+        },
+        {
+          src: 'src/assets/styles/*.scss',
+          dest: 'assets/styles'
+        },
+        {
+          src: 'src/assets/tokens/*.scss',
+          dest: 'assets/tokens'
+        },
+        {
+          src: 'src/assets/variables.scss',
+          dest: 'assets'
         }
       ]
     })

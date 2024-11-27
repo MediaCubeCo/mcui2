@@ -94,7 +94,6 @@ TypeScript cannot handle type information for `.vue` imports by default, so we r
  **SVG example:**
 
  ```html
- <?xml version="1.0" encoding="UTF-8"?>
  <svg
    data-token-name="check"
    width="24px"
@@ -113,24 +112,76 @@ TypeScript cannot handle type information for `.vue` imports by default, so we r
 
  Make sure to specify the `data-token-name` attribute.
 
- ## Presenters
+## Variables
+Variables used to build DS styles. Available for use in your project
 
- Presenters are used to render examples for your design tokens. The following presenters are available:
+For global use:
+```scss
+@use mediacube-ui-v2/variables as *;
+```
 
-   - Animation
-   - BorderRadius
-   - Border
-   - Color
-   - Easing
-   - FontFamily
-   - FontSize
-   - FontWeight
-   - Gradient
-   - LineHeight
-   - Opacity
-   - Shadow
-   - Spacing
-   - Svg
+### For each component use tokens
+
+```scss
+//For example
+<style lang="scss">
+@use 'mediacube-ui-v2/tokens/colors' as colors;
+
+.class-name {
+  &__background {
+    background: colors.$color-red;
+  }
+}
+</style>
+```
+
+The following tokens are available:
+
+   - animations
+   - border-radius
+   - box-shadows
+   - colors
+   - durations
+   - easings
+   - font-families
+   - font-sizes
+   - font-weights
+   - gradients
+   - letter-spacing
+   - line-height
+   - media-queries
+   - opacities
+   - sizes
+   - spacings
+   - z-indexes
+
+
+### For each component use style helpers
+
+```scss
+//For example
+<style lang="scss">
+@use 'mediacube-ui-v2/styles/mixins' as mixins;
+@use 'mediacube-ui-v2/tokens/spacings' as spacings;
+
+.class-name {
+  &__inner {
+    @include mixins.child-indent-bottom(spacings.$space-200);
+  }
+}
+</style>
+```
+
+The following style files are available:
+
+- functions
+- mixins 
+- spacing 
+- toast 
+
+## Storybook interface support
+
+![info image storybook interface](/dist/npm_preview.jpg)
 
 [//]: # (## Available Types)
 [//]: # (&mdash;)

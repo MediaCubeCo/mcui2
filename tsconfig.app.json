@@ -3,8 +3,8 @@
   "compilerOptions": {
     "module": "ESNext",
     "target": "ESNext",
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,
+    "declarationMap": false,
     "skipLibCheck": true
   },
   "include": ["src/**/*.js", "src/**/*.ts", "src/**/*.vue", "src/**/*.json"],

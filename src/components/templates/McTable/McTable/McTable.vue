@@ -290,7 +290,7 @@ const onBodyScroll = useThrottleFn((): void => {
     if (shadows.firstColHasShadow !== firstColShadow) shadows.firstColHasShadow = firstColShadow
     if (shadows.lastColHasShadow !== lastColShadow) shadows.lastColHasShadow = lastColShadow
   }
-}, 10)
+}, 5)
 
 const addListeners = (): void => {
   if (hasFixedColumn.value && mcTable.value) {
