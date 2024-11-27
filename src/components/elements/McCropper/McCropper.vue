@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 //@ts-ignore
-import { default as VueCropper } from 'vue3-cropperjs'
+import VueCropper from 'vue3-cropperjs'
 import 'vue3-cropperjs/dist/v3cropper.css'
 
 const emit = defineEmits(['crop', 'ready'])

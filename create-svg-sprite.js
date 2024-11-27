@@ -43,7 +43,7 @@ spriteConfigs.forEach(spriteConfig => {
 
         if (!fs.existsSync(outputFolder)) await fs.mkdirSync(outputFolder, { recursive: true })
         fs.writeFileSync(outputFilePath, spriteContent)
-        console.log('\x1b[35m', '\nSPRITE SUCCESSFULLY CREATED:', outputFilePath, '\n')
+        console.log('\x1b[35m', '\nSPRITE SUCCESSFULLY CREATED:', outputFilePath)
 
 
         // Создание файла со списком икнок
