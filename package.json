@@ -1,6 +1,7 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.44",
+  "version": "0.0.50",
+  "license": "MIT",
   "description": "Design system for Mediacube services",
   "keywords": [
     "vue3",
@@ -9,20 +10,25 @@
     "design-system"
   ],
   "author": "dsa@mediacube.io",
-  "license": "MIT",
   "main": "./dist/mediacube-ui-v2.umd.cjs",
   "module": "./dist/mediacube-ui-v2.js",
   "types": "./dist/types/index.d.ts",
   "style": "./dist/style.css",
+  "default": "./dist/mediacube-ui-v2.js",
   "exports": {
     ".": {
       "import": "./dist/mediacube-ui-v2.js",
       "require": "./dist/mediacube-ui-v2.umd.cjs"
     },
-    "./style": "./dist/style.css"
+    "./style": "./dist/style.css",
+    "./variables": "./dist/assets/variables.scss",
+    "./tokens/*": "./dist/assets/tokens/*",
+    "./styles/*": "./dist/assets/styles/*"
   },
   "files": [
-    "dist"
+    "dist",
+    "dist/assets/tokens",
+    "dist/assets/styles"
   ],
   "private": false,
   "type": "module",
@@ -40,9 +46,10 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "build:scss-to-json": "node scss-to-json.js",
-    "build:svg-sprite": "node createsvgsprite.js",
-    "build:readme": "node createReadmeByTemplate.js",
-    "prebuild": "yarn build:svg-sprite && yarn build:scss-to-json && vue-tsc && yarn build-storybook && yarn build:readme"
+    "build:svg-sprite": "node create-svg-sprite.js",
+    "build:readme": "node update-readme.js",
+    "prerelease": "yarn build:svg-sprite && yarn build:scss-to-json && yarn build:readme && yarn build-storybook && yarn build",
+    "release": "standard-version && npm publish"
   },
   "dependencies": {
     "@vuepic/vue-datepicker": "^9.0.2",
@@ -85,6 +92,7 @@
     "sass-embedded": "^1.77.8",
     "sass-extract": "^3.0.0",
     "sass-loader": "^16.0.1",
+    "standard-version": "^9.5.0",
     "storybook": "^8.2.9",
     "svgstore": "^3.0.1",
     "typescript": "~5.4.0",
