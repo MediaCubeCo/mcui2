@@ -20,6 +20,7 @@ export * from './ISideBar'
 export * from './ITable'
 export * from './ITabs'
 export * from './ITitle'
+export * from './IToast'
 export * from './ITooltip'
 
 // Style types

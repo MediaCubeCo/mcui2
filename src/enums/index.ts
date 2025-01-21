@@ -15,6 +15,7 @@ export * from './Select'
 export * from './Sidebar'
 export * from './Tab'
 export * from './Title'
+export * from './Toast'
 export * from './Tooltip'
 
 // UI enums

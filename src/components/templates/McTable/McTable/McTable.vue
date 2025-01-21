@@ -187,6 +187,13 @@ const shadows = reactive({
   lastColHasShadow: false
 })
 
+const tableClasses = computed(() => {
+  return {
+    'mc-table': true,
+    'mc-table--card-opened': openCardState.value.state
+  }
+})
+
 const computedColumns = computed((): ITableColumnEnriched[] => {
   const [first] = props.columns
   return (openCardState.value.state ? [first] : props.columns).map((column, index) => {
@@ -314,7 +321,7 @@ const handleSetCardState = (payload: TableCardState) => {
 
 <template>
   <div class="mc-table__container" :style="containerStyle">
-    <div ref="mcTable" class="mc-table">
+    <div ref="mcTable" :class="tableClasses">
       <div class="mc-table__table">
         <!-- HEADER -->
         <div class="mc-table__table_header">
@@ -328,7 +335,7 @@ const handleSetCardState = (payload: TableCardState) => {
                     :sort="sort"
                     @change="(val) => emit('sort', val)"
                   />
-                  <!-- slot для колонки хедера -->
+                  <!-- slot для ячейки колонки хедера -->
                   <slot name="header-cell" :column="column" :cellIndex="cI">
                     <mc-title :text-align="column.align" :weight="Weights.SemiBold" pre-line
                       >{{ column.header }}
@@ -369,7 +376,7 @@ const handleSetCardState = (payload: TableCardState) => {
               <div v-for="(column, cI) in computedBodyColumns" :key="cI" :class="column.class" :style="column.style">
                 <div class="mc-table__table_body-cell_content">
                   <div class="mc-table__table_body-cell_content-left">
-                    <!-- slot для контента (по именем колонки) -->
+                    <!-- slot для контента ячейки (по именем колонки) -->
                     <slot
                       :name="column.field"
                       :row="row"
@@ -508,6 +515,9 @@ const handleSetCardState = (payload: TableCardState) => {
   @include grow;
   * {
     box-sizing: border-box;
+  }
+  &--card-opened {
+    width: max-content;
   }
   &__container {
     --border-style: 1px solid #{$color-hover-gray};

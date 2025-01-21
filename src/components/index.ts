@@ -68,5 +68,6 @@ export { default as McTableCardHeader } from './templates/McTable/McTableCard/Mc
 export { default as McTableCard } from './templates/McTable/McTableCard/McTableCard.vue'
 export { default as McTableSkeletonLoading } from './templates/McTable/McTableSkeletonLoading/McTableSkeletonLoading.vue'
 export { default as McTableSort } from './templates/McTable/McTableSort/McTableSort.vue'
+export { default as McToast } from './templates/McToast/McToast.vue'
 export { default as McTopBar } from './templates/McTopBar/McTopBar.vue'
 export { default as McVirtualScroll } from './templates/McVirtualScroll/McVirtualScroll.vue'

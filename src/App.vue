@@ -1,10 +1,7 @@
-<script setup lang="ts">
-import { McButton } from '@/components'
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <mc-button>asdqwdqwd</mc-button>
-  <RouterView />
+  <div></div>
 </template>
 
 <style></style>

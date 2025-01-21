@@ -12,7 +12,8 @@ export default {
   install(app: App, options = {}) {
     const defaultOptions = {
       drawerComponents: {},
-      modalComponents: {}
+      modalComponents: {},
+      toasts: {}
     }
     app.config.globalProperties.$dsOptions = { ...defaultOptions, ...options }
   }

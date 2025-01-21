@@ -87,6 +87,9 @@ export const Default: Story = {
         },
         handleRowClick(payload) {
           console.log(this.cardId = payload.id)
+        },
+        handleCloseCard() {
+          this.cardId = null
         }
       },
       template: `
@@ -175,6 +178,11 @@ export const Default: Story = {
               <mc-table-card v-if="cardId" :id="cardId" v-bind="tableProps">
                 <template #header>
                   <mc-table-card-header>
+                    <mc-button variation="purple-link" tooltip="Close" @click="handleCloseCard">
+                      <template #icon-prepend>
+                        <mc-svg-icon name="arrow_leftward" />
+                      </template>
+                    </mc-button>
                     <div>Card id - {{ cardId }}</div>
                   </mc-table-card-header>
                 </template>
