@@ -6,6 +6,8 @@ import McSpinDigit from '@/components/elements/McSpinDigit/McSpinDigit.vue'
 
 export type FontSizesUnion = keyof typeof FontSizes
 
+const id = String(Date.now())
+
 const props = defineProps({
   start: {
     type: [Number, String] as PropType<number | string>,
@@ -54,8 +56,8 @@ const actualizeNumbers = (): void => {
 </script>
 
 <template>
-  <div class="mc-spin-number-container">
-    <div v-for="(digit, i) in currentTo" :key="`mc-spin-number-${i}-${props.end}`" class="mc-spin-number">
+  <div class="mc-spin-number-container" :id="id">
+    <div v-for="(digit, i) in currentTo" :key="`mc-spin-number-${id}-${i}-${props.end}`" class="mc-spin-number">
       <template v-if="isNaN(digit as number)">
         <span :style="nonDigitStyles" class="mc-spin-number__non-digit">
         {{ currentTo[i] }}

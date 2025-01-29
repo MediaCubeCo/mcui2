@@ -413,6 +413,10 @@ watch(
   },
   { immediate: true }
 )
+
+watch(() => props.errors, (value: string[]): void => {
+  fieldErrors.setError(value)
+})
 </script>
 
 <template>

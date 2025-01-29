@@ -29,6 +29,10 @@ const props = defineProps({
     type: Boolean as PropType<boolean>,
     default: false
   },
+  block: {
+    type: Boolean as PropType<boolean>,
+    default: false
+  },
   /**
    * Если нужен другой тэг
    */
@@ -122,6 +126,7 @@ const responsivePropsClasses = computed((): { [key: string]: boolean } => {
 
 const classes = computed((): { [key: string]: boolean } => ({
   'mc-title': true,
+  ['mc-title--block']: props.block,
   ['mc-title--ellipsis']: props.ellipsis,
   [`mc-title--text-align-${props.textAlign}`]: !!props.textAlign,
   [`mc-title--pre-line`]: props.preLine,
@@ -150,13 +155,13 @@ const contentStyle = computed((): { [key: string]: string } => ({
   <div :class="classes" :style="style" :id="id">
     <!-- @slot -->
     <slot name="icon-prepend" />
-    <div
+    <span
       v-if="props.htmlData"
       class="mc-title__text"
       :style="contentStyle"
       v-html="props.htmlData"
     /> <!-- DOMPurify.sanitize() -->
-    <div v-else class="mc-title__text" :style="contentStyle"><slot /></div>
+    <span v-else class="mc-title__text" :style="contentStyle"><slot /></span>
 
     <!-- @slot -->
     <slot name="icon-append" />
@@ -250,11 +255,13 @@ const contentStyle = computed((): { [key: string]: string } => ({
 
   margin-top: 0;
   margin-bottom: 0;
-  display: inline-flex;
   max-width: 100%;
   width: 100%;
   text-decoration: none;
   //@include child-indent-right($space-50);
+  &--block {
+    display: inline-flex;
+  }
 
   &__text {
     padding-bottom: 1px; // fix overflow

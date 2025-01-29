@@ -1,4 +1,5 @@
 import { App } from 'vue'
+import { IDSOptions } from '@/types/IDSOptions'
 
 export * from './types'
 export * from './enums'
@@ -10,10 +11,11 @@ export * from './assets/tokens/json'
 
 export default {
   install(app: App, options = {}) {
-    const defaultOptions = {
+    const defaultOptions: IDSOptions = {
       drawerComponents: {},
       modalComponents: {},
-      toasts: {}
+      toasts: {},
+      router: null
     }
     app.config.globalProperties.$dsOptions = { ...defaultOptions, ...options }
   }

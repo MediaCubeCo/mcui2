@@ -129,6 +129,17 @@ class TooltipInstance {
     tooltipToDestroy && tooltipToDestroy.remove()
   }
 }
+
+onMounted(() => {
+  window.addEventListener('scroll', () => updateAllTooltips)
+  window.addEventListener('resize', () => updateAllTooltips)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', () => updateAllTooltips)
+  window.removeEventListener('resize', () => updateAllTooltips)
+})
+
 const updateAllTooltips = debounce(() => {
   tooltipInstances.value.forEach((instance) => instance.updateTooltipPosition())
 })
@@ -144,16 +155,6 @@ const ensureTooltipContainerExists = () => {
     createTooltipContainer()
   }
 }
-
-onMounted(() => {
-  window.addEventListener('scroll', () => updateAllTooltips)
-  window.addEventListener('resize', () => updateAllTooltips)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', () => updateAllTooltips)
-  window.removeEventListener('resize', () => updateAllTooltips)
-})
 
 export function useTooltip() {
   const tooltip = ref<ITooltipInstance | null>(null)

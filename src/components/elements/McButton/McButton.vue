@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type PropType, ref } from 'vue'
+import { computed, getCurrentInstance, onMounted, type PropType, ref } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { useTooltip } from '@/composables'
@@ -13,6 +13,7 @@ import type { WeightsUnion } from '@/types/styles/Weights'
 import type { ColorsUnion } from '@/types/styles/Colors'
 import type { FontWeightsUnion } from '@/types/styles/FontWeights'
 import { ButtonModifiers } from '@/enums'
+import { Router } from 'vue-router'
 
 interface ElButtonTagBind {
   to?: string | null
@@ -37,6 +38,8 @@ const buttonTooltip = computed((): ITooltip => {
   return payload
 })
 
+const router = ref<null | Router>(null)
+
 const props = defineProps({
   /**
    *  Если нужна ссылка внутри приложения:
@@ -58,6 +61,10 @@ const props = defineProps({
   nuxt: {
     type: Boolean as PropType<boolean>,
     default: true
+  },
+  target: {
+    type: String as PropType<'_self' | '_blank'>,
+    default: '_self',
   },
   /**
    *  Отключенное состояние
@@ -323,10 +330,11 @@ const styles = computed((): { [key: string]: ColorsUnion | FontWeightsUnion | st
 })
 
 const tag = computed((): string => {
+  const defaultLink = 'a'
   if (props.to) {
-    return props.nuxt ? 'nuxt-link' : 'router-link'
+    return defaultLink
   } else if (props.href) {
-    return 'a'
+    return defaultLink
   }
   return props.defaultTag
 })
@@ -362,8 +370,23 @@ const handleBlur = (e: Event): void => {
   emit('blur', e)
 }
 const handleClick = (e: Event): void => {
+  e.preventDefault()
+  if (props.to) router.value && router.value.push({ path: props.to })
+  else window.open(props.href, props.target)
   emit('click', e)
 }
+
+const handleSetRouter = (): void => {
+  //@ts-ignore
+  const { proxy } = getCurrentInstance()
+  if (proxy.$dsOptions?.router) {
+    router.value = proxy.$dsOptions?.router
+  }
+}
+
+onMounted((): void => {
+  handleSetRouter()
+})
 </script>
 
 <template>

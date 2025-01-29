@@ -2,7 +2,7 @@
 import { IMaskComponent, IMask } from 'vue-imask'
 import { McTitle, McButton, McSvgIcon, McTooltip } from '@/components'
 import { Spaces } from '@/types/styles/Spaces'
-import { computed, onMounted, type PropType, ref, useAttrs, useSlots } from 'vue'
+import { computed, onMounted, type PropType, ref, useAttrs, useSlots, watch } from 'vue'
 import type { DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
 import type { InputTypesUnion, InputValue } from '@/types/IInput'
@@ -546,16 +546,19 @@ const calculatePadding = (): void => {
 }
 
 const calculateSlotPadding = (name: string): string => {
-  const tokenSpace = parseInt(Spaces['50'])
+  const tokenSpace = parseInt(Spaces['300'])
+  const hasSlotItems = slots && slots[name] && slots?.[name]?.() && slots?.[name]?.()?.length
 
-  let result = slots[name]
-    ? //@ts-ignore
-      (slots[name] || []).reduce((acc) => {
-        return acc + tokenSpace
-      }, 0) + tokenSpace
-    : tokenSpace
+  let result = parseInt(Spaces['50'])
 
-  if (name === 'prepend') return result
+  if (hasSlotItems) {
+    // @ts-ignore
+    result = (slots[name]() || []).reduce((acc) => {
+      return acc + tokenSpace
+    }, 0)
+  }
+
+  if (name === 'prepend') return String(result)
 
   /**
    *  Также увеличиваем padding при наличии кнопки копирования и если тип password
@@ -566,7 +569,7 @@ const calculateSlotPadding = (name: string): string => {
   result = result ? result + tokenSpace : tokenSpace
   props.copy && (result += iconSpace)
   isPassword.value && (result += iconSpace)
-  return result
+  return String(result)
 }
 
 const handlerCopy = (): void => {
@@ -579,10 +582,16 @@ const handlerCopy = (): void => {
 const togglePasswordVisibility = (): void => {
   prettyType.value = isPasswordType.value ? InputTypes.Text : InputTypes.Password
 }
+watch(
+  () => props.errors,
+  (value: string[]): void => {
+    fieldErrors.setError(value)
+  }
+)
 </script>
 
 <template>
-  <div ref="field" :dir="props.dir" :class="classes">
+  <div :dir="props.dir" :class="classes">
     <label :for="name" class="mc-field-text__header">
       <!-- @slot Слот заголовка -->
       <slot name="header">
@@ -606,13 +615,7 @@ const togglePasswordVisibility = (): void => {
             rows="1"
             @input="handleInput"
           />
-          <textarea
-            v-else-if="isTextareaAutosize"
-            :value="computedValue"
-            ref="textarea"
-            v-bind="inputAttrs"
-            @input="handleInput"
-          />
+          <textarea v-else-if="isTextareaAutosize" :value="computedValue" v-bind="inputAttrs" @input="handleInput" />
           <template v-else>
             <!-- When possible, prefer to use input type="tel" to avoid glitch on android devices -->
             <i-mask-component
@@ -624,7 +627,6 @@ const togglePasswordVisibility = (): void => {
             <input
               v-else
               :value="computedValue"
-              ref="input"
               v-bind="inputAttrs"
               :type="prettyType"
               :readonly="props.readOnly"
@@ -643,7 +645,7 @@ const togglePasswordVisibility = (): void => {
           <slot name="append" />
           <mc-button v-if="copy" variation="black-link" :size="ButtonSize.MCompact" @click.prevent="handlerCopy">
             <template #icon-append>
-              <mc-svg-icon name="copy" />
+              <mc-svg-icon name="copy_icon" />
             </template>
           </mc-button>
           <mc-tooltip

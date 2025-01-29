@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { default as VueSlider } from 'vue-3-slider-component'
-import { computed, type PropType, reactive } from 'vue'
+import { computed, type PropType, reactive, watch } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import type { TooltipPositionsUnion } from '@/types/ITooltip'
 import { McTitle } from '@/components'
@@ -162,6 +162,10 @@ const handleDrag = (value: RangeValue): void => {
    */
   emit('dragging', value)
 }
+
+watch(() => props.errors, (value: string[]): void => {
+  fieldErrors.setError(value)
+})
 </script>
 
 <template>

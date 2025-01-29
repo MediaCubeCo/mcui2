@@ -2,7 +2,7 @@
 import { McTitle } from '@/components'
 import { useFieldErrors } from '@/composables'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
-import { computed, type PropType } from 'vue'
+import { computed, type PropType, watch } from 'vue'
 import type { HorizontalAlignmentUnion } from '@/types/styles/Alignment'
 import type { HorizontalAlignment } from '@/enums/ui/Alignment'
 import { TitleVariations } from '@/enums'
@@ -130,6 +130,10 @@ const change = (e: Event): void => {
    */
   emit('update:modelValue', checked ? props.checkedValue : props.uncheckedValue)
 }
+
+watch(() => props.errors, (value: string[]): void => {
+  fieldErrors.setError(value)
+})
 </script>
 
 <template>

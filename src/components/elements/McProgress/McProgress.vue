@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type PropType } from 'vue'
+import { computed, type PropType, watch } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import { useFieldErrors } from '@/composables'
 
@@ -100,6 +100,10 @@ const lineStyles = computed(() => {
 const percentValue = computed(() => {
   if (fieldErrors.errorText.value) return 0
   return props.amount ?? `${props.percent}%`
+})
+
+watch(() => props.errors, (value: string[]): void => {
+  fieldErrors.setError(value)
 })
 </script>
 

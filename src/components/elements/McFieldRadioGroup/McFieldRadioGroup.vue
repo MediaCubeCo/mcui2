@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { McTitle, McFieldRadio } from '@/components'
-import { computed, type PropType } from 'vue'
+import { computed, type PropType, watch } from 'vue'
 import { useFieldErrors } from '@/composables'
 import type { IRadioGroupOptions, IRadioGroupOption } from '@/types/IRadioGroup'
 import { type DirectionsUnion } from '@/types/IDirections'
@@ -125,6 +125,10 @@ const handleInput = (e: string | number): void => {
   emit('update:modelValue', e)
   emit('change', e)
 }
+
+watch(() => props.errors, (value: string[]): void => {
+  fieldErrors.setError(value)
+})
 </script>
 
 <template>

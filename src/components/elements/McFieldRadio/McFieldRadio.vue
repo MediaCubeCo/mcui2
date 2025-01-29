@@ -149,6 +149,10 @@ watch(
   }
 )
 
+watch(() => props.errors, (value: string[]): void => {
+  fieldErrors.setError(value)
+})
+
 const handleChange = () => {
   emit('update:modelValue', props.value)
 }

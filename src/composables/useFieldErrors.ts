@@ -1,24 +1,26 @@
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 
 export function useFieldErrors(errors: string[]) {
   const is_error_visible = ref<boolean>(true)
-  const errorText = computed<string | null>(() => {
-    if (errors === null || !errors?.length || !is_error_visible.value) return null
-    return errors.join(', ')?.replace(/-/gm, '&#x2011;')
+  const errors_text = ref(errors)
+
+  const errorText = computed((): string | null => {
+    if (errors_text.value === null || !errors_text.value?.length || !is_error_visible.value) return null
+    return errors_text.value.join(', ')?.replace(/-/gm, '&#x2011;')
   })
-  watch(
-    () => errors,
-    (): void => {
-      is_error_visible.value = false
-    }
-  )
-  const toggleErrorVisible = (): void => {
+
+  const toggleErrorVisible = function(): void {
     is_error_visible.value = false
+  }
+  const setError = function (payload: string[]): void{
+    errors_text.value = payload
+    is_error_visible.value = true
   }
 
   return {
     is_error_visible,
     errorText,
-    toggleErrorVisible
+    toggleErrorVisible,
+    setError,
   }
 }

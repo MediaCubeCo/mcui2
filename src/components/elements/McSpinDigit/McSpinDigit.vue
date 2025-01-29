@@ -9,6 +9,9 @@ const emit = defineEmits<{
   (e: 'spin-start', value: number): void
   (e: 'spin-end', value: number): void
 }>()
+
+const id = String(Date.now())
+
 const props = defineProps({
   /**
    * min - 0, max - 9
@@ -49,7 +52,7 @@ const containerStyles = computed((): { [key: string]: string } => {
 })
 
 // Анимация барабана
-const spinDigit = () => {
+const spinDigit = (): void => {
   spin_active.value = true
   offset.value = props.start
   emit('spin-start', props.start)
@@ -58,7 +61,7 @@ const spinDigit = () => {
   let current_frame = 0
   const indent = props.end - props.start
 
-  const animate = () => {
+  const animate = (): void => {
     const progress = indent / total_frames
 
     if (current_frame <= total_frames && spin_active.value) {
@@ -88,11 +91,11 @@ onMounted((): void => {
 </script>
 
 <template>
-  <div class="mc-spin-digit-container" :style="containerStyles">
+  <div class="mc-spin-digit-container" :style="containerStyles" :id="id">
     <!-- фэйк цифра, нужно что бы устанавливать нужную ширину контейнера -->
     <span class="mc-spin-digit-container__target">{{ props.end }}</span>
     <div class="mc-spin-digit" :style="{ transform: `translateY(${-(offset * 10)}%)` }">
-      <span v-for="n in 10" :key="`${props.start}-${props.end}-${n}`" class="mc-spin-digit__digit">
+      <span v-for="n in 10" :key="`${id}-${props.start}-${props.end}-${n}`" class="mc-spin-digit__digit">
         {{ (n - 1 + 10) % 10 }}
       </span>
     </div>

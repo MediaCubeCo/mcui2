@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, type PropType, ref, watch, provide, nextTick } from 'vue'
+import { computed, onMounted, onUpdated, type PropType, ref, watch, provide, nextTick, getCurrentInstance } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import type { ColorsUnion } from '@/types/styles/Colors'
-import { useRouter } from 'vue-router'
+import { Router } from 'vue-router'
 import McWrapScroll from '@/components/patterns/McWrapScroll/McWrapScroll.vue'
 import type { ITab } from '@/types/ITabs'
 import { type TabVariationUnion } from '@/types/ITabs'
@@ -14,7 +14,9 @@ const emit = defineEmits<{
   (e: 'tab-changed', value: { tab: ITab }): void
   (e: 'clicked', value: { tab: ITab }): void
 }>()
-const router = useRouter()
+
+const router = ref<null | Router>(null)
+
 const props = defineProps({
   modelValue: {
     type: String as PropType<string | null>,
@@ -155,8 +157,8 @@ const handleSelectTab = (tab: ITab, event?: Event): void | undefined => {
     window.open(tab.href, '_blank')
     return
   }
-  if (tab.to && router) {
-    router.push(tab.to)
+  if (tab.to && router.value) {
+    router.value.push(tab.to)
     return
   }
   handleEmitChange(tab)
@@ -164,6 +166,18 @@ const handleSelectTab = (tab: ITab, event?: Event): void | undefined => {
   //@ts-ignore
   computedValue.value = tab.computedId
 }
+
+const handleSetRouter = (): void => {
+  //@ts-ignore
+  const { proxy } = getCurrentInstance()
+  if (proxy.$dsOptions?.router) {
+    router.value = proxy.$dsOptions?.router
+  }
+}
+
+onMounted((): void => {
+  handleSetRouter()
+})
 
 watch(
   () => props.loading,

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { McTitle, McSvgIcon } from '@/components'
 import { useFieldErrors } from '@/composables'
-import { computed, type PropType, useSlots } from 'vue'
+import { computed, type PropType, useSlots, watch } from 'vue'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Directions } from '@/enums/ui/Directions'
 import type { SizesUnion } from '@/types/styles/Sizes'
@@ -156,6 +156,10 @@ const handleChange = (e: Event): void => {
 
   emit('update:modelValue', payload)
 }
+
+watch(() => props.errors, (value: string[]): void => {
+  fieldErrors.setError(value)
+})
 </script>
 
 <template>

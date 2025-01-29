@@ -13,6 +13,7 @@ const meta = {
     argTypes: {
         variation: { control: 'select', options: TitleVariations },
         ellipsis: { control: 'boolean' },
+        block: { control: 'boolean' },
         uppercase: { control: 'boolean' },
         preLine: { control: 'boolean' },
         nowrap: { control: 'boolean' },
@@ -25,6 +26,7 @@ const meta = {
     },
     args: {
         ellipsis: true,
+        block: false,
         uppercase: false,
         preLine: false,
         nowrap: false,
