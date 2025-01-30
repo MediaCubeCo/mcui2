@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, type PropType, ref, watch, provide, nextTick, getCurrentInstance } from 'vue'
+import { computed, onMounted, onUpdated, type PropType, ref, watch, provide, nextTick, inject } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import type { ColorsUnion } from '@/types/styles/Colors'
-import { Router } from 'vue-router'
 import McWrapScroll from '@/components/patterns/McWrapScroll/McWrapScroll.vue'
 import type { ITab } from '@/types/ITabs'
 import { type TabVariationUnion } from '@/types/ITabs'
 import { TabVariations } from '@/enums/Tab'
 import { McSvgIcon } from '@/components'
+import { IDSOptions } from '@/types'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
@@ -15,7 +15,7 @@ const emit = defineEmits<{
   (e: 'clicked', value: { tab: ITab }): void
 }>()
 
-const router = ref<null | Router>(null)
+const dsOptions = inject<IDSOptions>('dsOptions', {})
 
 const props = defineProps({
   modelValue: {
@@ -157,8 +157,8 @@ const handleSelectTab = (tab: ITab, event?: Event): void | undefined => {
     window.open(tab.href, '_blank')
     return
   }
-  if (tab.to && router.value) {
-    router.value.push(tab.to)
+  if (tab.to && dsOptions.router) {
+    dsOptions.router.push(tab.to)
     return
   }
   handleEmitChange(tab)
@@ -166,18 +166,6 @@ const handleSelectTab = (tab: ITab, event?: Event): void | undefined => {
   //@ts-ignore
   computedValue.value = tab.computedId
 }
-
-const handleSetRouter = (): void => {
-  //@ts-ignore
-  const { proxy } = getCurrentInstance()
-  if (proxy.$dsOptions?.router) {
-    router.value = proxy.$dsOptions?.router
-  }
-}
-
-onMounted((): void => {
-  handleSetRouter()
-})
 
 watch(
   () => props.loading,

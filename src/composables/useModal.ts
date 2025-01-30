@@ -1,6 +1,7 @@
-import { reactive, h, render, getCurrentInstance, shallowRef, markRaw } from 'vue'
+import { reactive, h, render, shallowRef, markRaw, inject } from 'vue'
 import ModalContainer from '@/components/templates/McModal/McModalContainer.vue'
 import type { IModalServiceState, IModalState } from '@/types/IModal'
+import { IDSOptions } from '@/types'
 
 const closeServiceState = () => {
   modalServiceState.isOpen = false
@@ -78,10 +79,9 @@ const closeAllModals = () => {
 }
 
 export function useModal() {
-  //@ts-ignore
-  const { proxy } = getCurrentInstance()
-  if (proxy.$dsOptions?.modalComponents) {
-    modalComponents.value = proxy.$dsOptions.modalComponents
+  const dsOptions = inject<IDSOptions>('dsOptions', {})
+  if (dsOptions.modalComponents) {
+    modalComponents.value = dsOptions.modalComponents
   }
 
   return { showModal, closeModal, closeAllModals }

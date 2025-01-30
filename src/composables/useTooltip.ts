@@ -35,8 +35,8 @@ class TooltipInstance {
     this.color = value.color || Colors.black
     this.textColor = value.textColor || Colors.white
 
-    this.target.addEventListener('mouseenter', this.showTooltip)
-    this.target.addEventListener('mouseleave', this.hideTooltip)
+    this.target.onmouseenter = this.showTooltip
+    this.target.onmouseleave = this.hideTooltip
 
     //@ts-ignore
     tooltipInstances.value.push(this)
@@ -59,6 +59,9 @@ class TooltipInstance {
       tooltipDiv.setAttribute('tooltip-size', this.size)
       tooltipDiv.setAttribute('tooltip-arrow', String(this.arrow))
       document.getElementById('tooltip-container')?.appendChild(tooltipDiv)
+
+      tooltipDiv.onmouseenter = this.showTooltip
+      tooltipDiv.onmouseleave = this.hideTooltip
     }
 
     tooltipElement = document.getElementById(String(this.id))
@@ -79,6 +82,10 @@ class TooltipInstance {
     const tooltipElement = document.getElementById(String(this.id))
     if (tooltipElement) {
       tooltipElement.style.visibility = 'hidden'
+      setTimeout(() => {
+        // Если на момент выхода таймера, его не открыли заново, удаляем
+        !this.visible.value && this.destroy()
+      }, 3000)
     }
   }
 

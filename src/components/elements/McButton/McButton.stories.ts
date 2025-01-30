@@ -143,3 +143,10 @@ export const WeightNormal: Story = {
         weight: Weights.Normal
     },
 };
+export const Link: Story = {
+    args: {
+        to: '/some-path',
+        variation: 'green-link',
+        default: 'Link',
+    },
+};

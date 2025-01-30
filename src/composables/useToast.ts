@@ -1,8 +1,8 @@
 import { useRandomNumber } from '@/composables/useRandomNumber'
-import { h, reactive, render, shallowRef, getCurrentInstance } from 'vue'
+import { h, reactive, render, shallowRef, inject } from 'vue'
 import ToastContainer from '@/components/templates/McToast/McToastContainer.vue'
 import { ToastPositions } from '@/enums/Toast'
-import { IToast, IToastAction } from '@/types'
+import { IDSOptions, IToast, IToastAction } from '@/types'
 
 const toastDefaultOptions = {
   position: ToastPositions.BottomCenter,
@@ -84,10 +84,9 @@ const ensureToastContainerExists = () => {
 export function useToast() {
   ensureToastContainerExists()
 
-  //@ts-ignore
-  const { proxy } = getCurrentInstance()
-  if (proxy.$dsOptions?.toasts) {
-    toastOptions.value = proxy.$dsOptions.toasts || {}
+  const dsOptions = inject<IDSOptions>('dsOptions', {})
+  if (dsOptions.toasts) {
+    toastOptions.value = dsOptions.toasts
   }
 
   return {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, onMounted, type PropType, ref } from 'vue'
+import { computed, getCurrentInstance, inject, type PropType, ref } from 'vue'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { useTooltip } from '@/composables'
@@ -13,7 +13,7 @@ import type { WeightsUnion } from '@/types/styles/Weights'
 import type { ColorsUnion } from '@/types/styles/Colors'
 import type { FontWeightsUnion } from '@/types/styles/FontWeights'
 import { ButtonModifiers } from '@/enums'
-import { Router } from 'vue-router'
+import { IDSOptions } from '@/types'
 
 interface ElButtonTagBind {
   to?: string | null
@@ -23,6 +23,8 @@ interface ElButtonTagBind {
   type: ButtonTypeUnion
   tabindex: number | string | undefined | null
 }
+
+const dsOptions = inject<IDSOptions>('dsOptions', {})
 
 const vTooltip = useTooltip()
 
@@ -37,8 +39,6 @@ const buttonTooltip = computed((): ITooltip => {
   }
   return payload
 })
-
-const router = ref<null | Router>(null)
 
 const props = defineProps({
   /**
@@ -371,22 +371,14 @@ const handleBlur = (e: Event): void => {
 }
 const handleClick = (e: Event): void => {
   e.preventDefault()
-  if (props.to) router.value && router.value.push({ path: props.to })
+  if (props.to) {
+    if (dsOptions.router) {
+      dsOptions.router.push({ path: props.to })
+    }
+  }
   else window.open(props.href, props.target)
   emit('click', e)
 }
-
-const handleSetRouter = (): void => {
-  //@ts-ignore
-  const { proxy } = getCurrentInstance()
-  if (proxy.$dsOptions?.router) {
-    router.value = proxy.$dsOptions?.router
-  }
-}
-
-onMounted((): void => {
-  handleSetRouter()
-})
 </script>
 
 <template>

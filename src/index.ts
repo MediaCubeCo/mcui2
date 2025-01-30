@@ -18,5 +18,6 @@ export default {
       router: null
     }
     app.config.globalProperties.$dsOptions = { ...defaultOptions, ...options }
+    app.provide('dsOptions', { ...defaultOptions, ...options })
   }
 }

@@ -615,7 +615,10 @@ watch(
             rows="1"
             @input="handleInput"
           />
-          <textarea v-else-if="isTextareaAutosize" :value="computedValue" v-bind="inputAttrs" @input="handleInput" />
+          <div v-else-if="isTextareaAutosize" class="mc-field-text--textarea-autosize_wrapper">
+            <span class="mc-field-text--textarea-autosize_backdrop-cover" v-bind="inputAttrs">{{ computedValue }}</span>
+            <textarea :value="computedValue" v-bind="inputAttrs" @input="handleInput" />
+          </div>
           <template v-else>
             <!-- When possible, prefer to use input type="tel" to avoid glitch on android devices -->
             <i-mask-component
@@ -719,6 +722,9 @@ watch(
 .mc-field-text {
   $block-name: &;
   display: block;
+  * {
+    box-sizing: border-box;
+  }
 
   &__header {
     @include reset-text-indents();
@@ -863,6 +869,23 @@ watch(
         height: auto;
         resize: vertical;
       }
+    }
+    &_wrapper {
+      position: relative;
+    }
+    &_backdrop-cover {
+      white-space: pre-line;
+      word-break: break-word;
+      visibility: hidden;
+      z-index: -1;
+      line-height: $line-height-200;
+      font-size: $font-size-200;
+    }
+    textarea {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
     }
   }
 

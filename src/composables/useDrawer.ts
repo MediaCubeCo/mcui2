@@ -1,6 +1,7 @@
-import { reactive, ref, h, render, getCurrentInstance, shallowRef, markRaw } from 'vue'
+import { reactive, ref, h, render, shallowRef, markRaw, inject } from 'vue'
 import DrawerContainer from '@/components/templates/McDrawer/McDrawerContainer.vue'
 import type { IDrawerServiceState, IDrawerProps, IDrawerState } from '@/types/IDrawer'
+import { IDSOptions } from '@/types'
 
 const closeServiceState = () => {
   drawerServiceState.isOpen = false
@@ -80,10 +81,9 @@ const closeAllDrawers = () => {
 }
 
 export function useDrawer() {
-  //@ts-ignore
-  const { proxy } = getCurrentInstance()
-  if (proxy.$dsOptions?.drawerComponents) {
-    drawerComponents.value = proxy.$dsOptions.drawerComponents
+  const dsOptions = inject<IDSOptions>('dsOptions', {})
+  if (dsOptions.drawerComponents) {
+    drawerComponents.value = dsOptions.drawerComponents
   }
 
   return { showDrawer, closeDrawer, closeAllDrawers }
