@@ -132,7 +132,22 @@ const props = defineProps({
     type: Number as PropType<number>,
     default: null
   },
-
+  /**
+   *  textarea-autosize Min height
+   *
+   */
+  minHeight: {
+    type: Number as PropType<number>,
+    default: null
+  },
+  /**
+   *  textarea-autosize Max height
+   *
+   */
+  maxHeight: {
+    type: Number as PropType<number>,
+    default: null
+  },
   /**
    *  Состояние копирования
    *
@@ -279,6 +294,15 @@ const isTextarea = computed((): boolean => {
 const isTextareaAutosize = computed((): boolean => {
   return props.type === InputTypes.TextareaAutosize
 })
+const textareaAutosizeHeight = computed((): { [key: string]: string } => {
+  const min_height = Math.max(props.minHeight, 40)
+  const max_height = Math.max(props.maxHeight, min_height)
+
+  return {
+    '--textarea-autosize-min-height': `${min_height}px`,
+    '--textarea-autosize-max-height': props.maxHeight ? `${max_height}px` : 'auto'
+  }
+})
 const isPassword = computed((): boolean => {
   return props.type === InputTypes.Password
 })
@@ -372,7 +396,7 @@ const inputAttrs = computed((): object => {
     placeholder: props.placeholder,
     disabled: props.disabled,
     name: props.name,
-    id: props.name,
+    'field-id': props.name,
     autocomplete: props.autocomplete,
     tabindex: props.tabindex,
     ...attrs,
@@ -615,7 +639,11 @@ watch(
             rows="1"
             @input="handleInput"
           />
-          <div v-else-if="isTextareaAutosize" class="mc-field-text--textarea-autosize_wrapper">
+          <div
+            v-else-if="isTextareaAutosize"
+            class="mc-field-text--textarea-autosize_wrapper"
+            :style="textareaAutosizeHeight"
+          >
             <span class="mc-field-text--textarea-autosize_backdrop-cover" v-bind="inputAttrs">{{ computedValue }}</span>
             <textarea :value="computedValue" v-bind="inputAttrs" @input="handleInput" />
           </div>
@@ -648,7 +676,7 @@ watch(
           <slot name="append" />
           <mc-button v-if="copy" variation="black-link" :size="ButtonSize.MCompact" @click.prevent="handlerCopy">
             <template #icon-append>
-              <mc-svg-icon name="copy_icon" />
+              <mc-svg-icon name="copy" />
             </template>
           </mc-button>
           <mc-tooltip
@@ -872,6 +900,8 @@ watch(
     }
     &_wrapper {
       position: relative;
+      min-height: var(--textarea-autosize-min-height);
+      max-height: var(--textarea-autosize-max-height);
     }
     &_backdrop-cover {
       white-space: pre-line;
