@@ -1,4 +1,4 @@
-import { reactive, h, render, shallowRef, markRaw, inject } from 'vue'
+import { reactive, h, render, shallowRef, markRaw, inject, getCurrentInstance, AppContext } from 'vue'
 import ModalContainer from '@/components/templates/McModal/McModalContainer.vue'
 import type { IModalServiceState, IModalState } from '@/types/IModal'
 import { IDSOptions } from '@/types'
@@ -13,6 +13,7 @@ const modalServiceState = reactive<IModalServiceState>({
   closeServiceState: closeServiceState
 })
 
+const appContent = shallowRef<AppContext | null>(null)
 const modalComponents = shallowRef({})
 const reactiveProps = reactive<{ modals: IModalState[] }>({ modals: [] })
 
@@ -22,6 +23,7 @@ const createModalContainer = () => {
   document.body.appendChild(modalContainerElement)
 
   const vnode = h(ModalContainer, { modalServiceState, reactiveProps })
+  vnode.appContext = appContent.value
   render(vnode, modalContainerElement)
 }
 
@@ -79,6 +81,8 @@ const closeAllModals = () => {
 }
 
 export function useModal() {
+  const instance = getCurrentInstance()
+  appContent.value = instance?.appContext || null
   const dsOptions = inject<IDSOptions>('dsOptions', {})
   if (dsOptions.modalComponents) {
     modalComponents.value = dsOptions.modalComponents

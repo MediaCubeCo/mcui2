@@ -1,4 +1,4 @@
-import { reactive, ref, h, render, shallowRef, markRaw, inject } from 'vue'
+import { reactive, ref, h, render, shallowRef, markRaw, inject, getCurrentInstance, AppContext } from 'vue'
 import DrawerContainer from '@/components/templates/McDrawer/McDrawerContainer.vue'
 import type { IDrawerServiceState, IDrawerProps, IDrawerState } from '@/types/IDrawer'
 import { IDSOptions } from '@/types'
@@ -13,6 +13,7 @@ const drawerServiceState = reactive<IDrawerServiceState>({
   closeServiceState: closeServiceState
 })
 
+const appContent = shallowRef<AppContext | null>(null)
 const drawerComponents = shallowRef({})
 const reactiveProps = reactive<{ drawers: IDrawerState[] }>({ drawers: [] })
 
@@ -22,6 +23,7 @@ const createDrawerContainer = () => {
   document.body.appendChild(drawerContainerElement)
 
   const vnode = h(DrawerContainer, { drawerServiceState, reactiveProps })
+  vnode.appContext = appContent.value
   render(vnode, drawerContainerElement)
 }
 
@@ -81,6 +83,8 @@ const closeAllDrawers = () => {
 }
 
 export function useDrawer() {
+  const instance = getCurrentInstance()
+  appContent.value = instance?.appContext || null
   const dsOptions = inject<IDSOptions>('dsOptions', {})
   if (dsOptions.drawerComponents) {
     drawerComponents.value = dsOptions.drawerComponents
