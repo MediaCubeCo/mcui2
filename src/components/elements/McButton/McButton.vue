@@ -373,7 +373,7 @@ const handleClick = (e: Event): void => {
   e.preventDefault()
   if (props.to) {
     if (dsOptions.router) {
-      dsOptions.router.push({ path: props.to })
+      dsOptions.router.push(props.to)
     }
   }
   else window.open(props.href, props.target)
