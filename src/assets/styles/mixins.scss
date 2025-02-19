@@ -368,8 +368,8 @@
     }
   }
   a {
-    @include text-link(true);
     text-decoration: none;
+    @include text-link(true);
   }
   h1 {
     &,
