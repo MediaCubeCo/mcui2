@@ -31,6 +31,13 @@ const props = defineProps({
     default: 510
   },
   /**
+   * Минимальная ширина модального окна
+   * */
+  minWidth: {
+    type: Number as PropType<number>,
+    default: 480
+  },
+  /**
    * Скорость анимации
    * */
   duration: {
@@ -170,6 +177,7 @@ const styles = computed((): { [key: string]: string | number } => {
     '--mc-modal-button-height': Sizes[data.footer.button.regular],
     '--mc-modal-button-height-small': Sizes[data.footer.button.small],
     '--mc-modal-max-width': `${props.maxWidth + 24}px`,
+    '--mc-modal-min-width': `${props.minWidth - 24}px`,
     '--mc-modal-state-number': modalTransition.value
   }
 })
@@ -361,6 +369,7 @@ watch(
   --mc-modal-button-height: #{$size-600};
   --mc-modal-button-height-small: #{$size-500};
   --mc-modal-max-width: 510px;
+  --mc-modal-min-width: 768px;
   --mc-modal-state-number: 0;
 
   position: absolute;
@@ -382,6 +391,7 @@ watch(
     height: auto;
     max-height: 80%;
     max-width: var(--mc-modal-max-width);
+    min-width: var(--mc-modal-min-width);
   }
   &__overlay {
     position: absolute;

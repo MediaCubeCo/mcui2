@@ -14,7 +14,7 @@ const props = defineProps({
 })
 
 const containerStyle = computed((): { [key: string]: string | number } => ({
-  zIndex: props.reactiveProps.modals.length ? 99 : -1,
+  zIndex: props.reactiveProps.modals.length ? 99999 : -1,
   visibility: props.reactiveProps.modals.length ? 'visible' : 'hidden'
 }))
 const closeModal = (value: IModalState) => {
