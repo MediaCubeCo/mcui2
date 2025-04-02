@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, type PropType, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
 import { useThrottleFn } from '@vueuse/core'
 import { McDropdownPanel } from '@/components'
 import type { DropdownListPositionsUnion, DropdownPositionsUnion } from '@/types/IDropdown'
@@ -16,7 +15,6 @@ const local_position = ref<string | null>(null)
 const dropdown_body = ref<HTMLElement | null>(null)
 const activator = ref<HTMLElement | null>(null)
 const is_open = ref<boolean>(false)
-const route = useRoute()
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
@@ -139,7 +137,6 @@ const calculateDropdownPosition = (): void => {
 
 const throttledCalculateDropdownPosition = () => throttle(() => calculateDropdownPosition())
 
-watch(() => route, closeDropdown)
 watch(
   () => props.modelValue,
   (val: boolean): void => {

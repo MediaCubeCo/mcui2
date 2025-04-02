@@ -47,6 +47,7 @@ class Toast {
 }
 
 function show(payload: Partial<IToast>) {
+  ensureToastContainerExists()
   //@ts-ignore
   const toast: IToast = new Toast(payload)
 
@@ -54,6 +55,7 @@ function show(payload: Partial<IToast>) {
 }
 
 function info(payload: Partial<IToast>) {
+  ensureToastContainerExists()
   const icon = 'info'
   const variation = 'black'
   //@ts-ignore
@@ -82,8 +84,6 @@ const ensureToastContainerExists = () => {
 }
 
 export function useToast() {
-  ensureToastContainerExists()
-
   const dsOptions = inject<IDSOptions>('dsOptions', {})
   if (dsOptions.toasts) {
     toastOptions.value = dsOptions.toasts
