@@ -41,11 +41,15 @@ const props = defineProps({
   icon: {
     type: Boolean as PropType<boolean>,
     default: false
+  },
+  defaultOpen: {
+    type: Boolean as PropType<boolean>,
+    default: false
   }
 })
 
 const id = ref<number>(randomNumber.timestamp(5))
-const isCollapsed = ref<boolean>(false)
+const isCollapsed = ref<boolean>(props.defaultOpen)
 const animated = ref<boolean>(false)
 
 const classes = computed((): { [key: string]: boolean } => {
