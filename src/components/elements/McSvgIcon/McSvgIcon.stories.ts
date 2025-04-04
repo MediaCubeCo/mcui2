@@ -41,7 +41,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    name: 'bank_card'
+    name: 'alert_solid'
   }
 }
 export const FullList: Story = {

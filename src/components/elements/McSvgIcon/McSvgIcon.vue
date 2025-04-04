@@ -102,7 +102,7 @@ const injectSprite = async () => {
 
 <template>
   <svg :class="classes" :style="styles">
-    <use :xlink:href="`#${props.name}`"></use>
+    <use :xlink:href="`#mcSvgIcon-${props.name}`"></use>
   </svg>
 </template>
 

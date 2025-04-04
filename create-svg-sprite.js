@@ -30,7 +30,7 @@ spriteConfigs.forEach(spriteConfig => {
         // Добавление иконок в спрайт
         svgFiles.forEach(svgFile => {
             const filePath = path.join(iconsFolder, svgFile)
-            const iconName = path.basename(svgFile, '.svg')
+            const iconName = path.basename(`mcSvgIcon-${svgFile}`, '.svg')
             const svgContent = fs.readFileSync(filePath, 'utf8')
             sprites.add(iconName, svgContent, { copyAttrs: true, renameDefs: true })
         })
