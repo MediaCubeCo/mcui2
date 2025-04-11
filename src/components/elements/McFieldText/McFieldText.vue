@@ -737,7 +737,7 @@ watch(
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '../../../assets/styles/mixins' as *;
 @use '../../../assets/tokens/durations' as *;
 @use '../../../assets/tokens/font-families' as *;
