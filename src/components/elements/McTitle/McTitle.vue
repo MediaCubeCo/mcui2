@@ -168,7 +168,7 @@ const contentStyle = computed((): { [key: string]: string } => ({
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '../../../assets/styles/mixins' as *;
 @use '../../../assets/tokens/font-families' as *;
 @use '../../../assets/tokens/letter-spacings' as *;

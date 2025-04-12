@@ -6,7 +6,8 @@ import McSpinDigit from '@/components/elements/McSpinDigit/McSpinDigit.vue'
 
 export type FontSizesUnion = keyof typeof FontSizes
 
-const id = String(Date.now())
+const dateNow = Date.now()
+const id = ref(String(dateNow))
 
 const props = defineProps({
   start: {

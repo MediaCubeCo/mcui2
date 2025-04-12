@@ -28,7 +28,8 @@ const props = defineProps({
 })
 const observer =  ref<IntersectionObserver | null>()
 const el =  ref<HTMLElement | null>()
-const id =  ref<string>(`indicator_${Date.now()}`)
+const dateNow = Date.now()
+const id =  ref<string>(`indicator_${dateNow}`)
 
 onMounted(() => {
   setObserver()

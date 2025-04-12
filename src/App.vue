@@ -1,5 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { McInfinityLoadingTrigger } from '@/components'
+</script>
 
-<template></template>
+<template>
+  <McInfinityLoadingTrigger />
+</template>
 
 <style></style>

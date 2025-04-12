@@ -97,8 +97,9 @@ const computedOptions = computed((): object => {
   if (!props.options.length) return []
   return props.options.map((o: IRadioGroupOption, i: number) => {
     const optionData = typeof o === 'object' ? o : ({ label: o, value: o } as IRadioGroupOption)
+    const dateNow = Date.now()
     return {
-      id: Date.now() + i,
+      id: dateNow + i,
       ...optionData,
       disabled: props.disabled || optionData.disabled,
       value: optionData.value,
