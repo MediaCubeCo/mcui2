@@ -1,6 +1,6 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.78",
+  "version": "0.0.79",
   "license": "MIT",
   "description": "Design system for Mediacube services",
   "keywords": [
@@ -14,6 +14,7 @@
   "module": "./dist/mediacube-ui-v2.js",
   "types": "./dist/types/index.d.ts",
   "style": "./dist/style.css",
+  "sprite": "./dist/assets/iconsSprite.svg",
   "default": "./dist/mediacube-ui-v2.js",
   "exports": {
     ".": {
@@ -21,6 +22,7 @@
       "require": "./dist/mediacube-ui-v2.umd.cjs"
     },
     "./style": "./dist/style.css",
+    "./sprite": "./dist/assets/iconsSprite.svg",
     "./variables": "./dist/assets/variables.scss",
     "./tokens/*": "./dist/assets/tokens/*",
     "./styles/*": "./dist/assets/styles/*"
