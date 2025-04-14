@@ -38,7 +38,7 @@ const props = defineProps({
    */
   tagName: {
     type: String as PropType<string>,
-    default: 'div'
+    default: 'span'
   },
   /**
    * Заглавные буквы
@@ -147,7 +147,7 @@ const style = computed((): { [key: string]: string } => {
 })
 
 const contentStyle = computed((): { [key: string]: string } => ({
-  'max-width': props.maxWidth
+  '--mc-title-text-max-width': props.maxWidth
 }))
 </script>
 
@@ -161,12 +161,14 @@ const contentStyle = computed((): { [key: string]: string } => ({
       :style="contentStyle"
       v-html="props.htmlData"
     /> <!-- DOMPurify.sanitize() -->
-    <span v-else class="mc-title__text" :style="contentStyle"><slot /></span>
+    <component :is="props.tagName" v-else class="mc-title__text" :style="contentStyle">
+      <slot />
+    </component>
 
     <!-- @slot -->
     <slot name="icon-append" />
   </div>
-</template>
+</template>л
 
 <style lang="scss" scoped>
 @use '../../../assets/styles/mixins' as *;
@@ -252,9 +254,6 @@ const contentStyle = computed((): { [key: string]: string } => ({
       }
     }
   }
-
-  margin-top: 0;
-  margin-bottom: 0;
   max-width: 100%;
   width: 100%;
   text-decoration: none;
@@ -266,6 +265,8 @@ const contentStyle = computed((): { [key: string]: string } => ({
   &__text {
     padding-bottom: 1px; // fix overflow
     margin-bottom: -1px; // fix overflow
+    margin-top: 0;
+    max-width: var(--mc-title-text-max-width);
   }
 
   > *:not(:empty):not(:last-child) {

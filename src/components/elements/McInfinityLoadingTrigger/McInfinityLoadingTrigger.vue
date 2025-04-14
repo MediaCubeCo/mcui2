@@ -28,8 +28,7 @@ const props = defineProps({
 })
 const observer =  ref<IntersectionObserver | null>()
 const el =  ref<HTMLElement | null>()
-const dateNow = Date.now()
-const id =  ref<string>(`indicator_${dateNow}`)
+const infinity_loading_ref = ref<HTMLElement | null>()
 
 onMounted(() => {
   setObserver()
@@ -40,7 +39,7 @@ onBeforeUnmount(() => {
 })
 
 const setObserver = (): void => {
-  el.value = document.getElementById(id.value)
+  el.value = infinity_loading_ref.value
   // создаем IntersectionObserver - смотрит за тем когда элемент попадает во viewport
   observer.value = new IntersectionObserver(
     ([entry]) => {
@@ -76,7 +75,7 @@ watch(() => props.active, (value): void => {
 
 <template>
   <section class="el-infinity-loading__wrapper">
-    <div :id="id" class="el-infinity-loading"></div>
+    <div ref="infinity_loading_ref" class="el-infinity-loading"></div>
   </section>
 </template>
 

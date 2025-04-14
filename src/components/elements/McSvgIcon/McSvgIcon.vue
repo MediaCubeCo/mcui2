@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import mediacubeUiSprite from '@/assets/iconsSprite.svg'
+//@ts-ignore
+import mediacubeUiSprite from '@/assets/iconsSprite.svg?raw'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import { computed, onBeforeMount, type PropType } from 'vue'
 import type { DirectionsUnion } from '@/types/IDirections'
 import { type IconsListUnion } from '@/types/styles/Icons'
 import { Directions } from '@/enums/ui/Directions'
-import { FileContentType } from '@/enums/File'
-import { UseFile } from '@/composables/useFile'
 
 const props = defineProps({
   /**
@@ -15,7 +14,7 @@ const props = defineProps({
    * */
   spritePath: {
     type: String,
-    default: mediacubeUiSprite,
+    default: null,
     validator(value: string): boolean {
       return !!value
     }
@@ -80,21 +79,22 @@ onBeforeMount(() => {
   injectSprite()
 })
 
+const computedSpritePath =  computed((): string => {
+  return props.spritePath || '@/assets/iconsSprite.svg?raw'
+})
+
 const spriteId = computed(() => {
-  return props.spritePath.replace(/\//gm, '').substring(0, 50)
+  return computedSpritePath.value.replace(/\//gm, '').substring(0, 50)
 })
 
 const injectSprite = async () => {
   if (document.getElementById(spriteId.value)) return
 
-  const svgSprite = UseFile.loadAsString(props.spritePath, FileContentType.Svg)
-  if (!svgSprite) return
-
   const div = document.createElement('div')
   div.id = spriteId.value
   div.style.display = 'none'
   div.style.visibility = 'hidden'
-  div.innerHTML = svgSprite
+  div.innerHTML = mediacubeUiSprite
 
   document.body.appendChild(div)
 }

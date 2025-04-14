@@ -1,11 +1,11 @@
 <script setup lang="ts">
-//@ts-ignore
-import defaultImage from '@/assets/img/no_user.png'
-import { computed, ref, watch } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { AvatarSizes, type AvatarSizeTypes } from '@/types/styles/AvatarSizes'
 import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import { Sizes } from '@/types/styles/Sizes'
-import { Radiuses } from '@/types'
+import { IDSOptions, Radiuses } from '@/types'
+
+const dsOptions = inject<IDSOptions>('dsOptions', {} as IDSOptions)
 
 const props = defineProps({
   /**
@@ -14,7 +14,7 @@ const props = defineProps({
    */
   src: {
     type: String,
-    default: defaultImage
+    default: '',
   },
   /**
    *  Отложенная подгрузка
@@ -152,7 +152,7 @@ watch(
 const handleOnError = (e: Event): void => {
   if (!e.target) return
   //@ts-ignore
-  e.target.src = defaultImage
+  e.target.src = dsOptions.defaultAvatar
 }
 </script>
 
@@ -160,7 +160,7 @@ const handleOnError = (e: Event): void => {
   <div :class="wrapperClasses" :style="wrapperStyle">
     <div :class="classes" :style="style">
       <img
-        :src="props.src || defaultImage"
+        :src="props.src || dsOptions.defaultAvatar as string"
         :alt="props.alt"
         :draggable="props.draggable"
         :lazy="props.lazy"

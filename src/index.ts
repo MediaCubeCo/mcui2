@@ -1,5 +1,5 @@
 import { App } from 'vue'
-import { IDSOptions } from '@/types/IDSOptions'
+import { IDSOptions } from './types'
 
 export * from './types'
 export * from './enums'
@@ -15,6 +15,7 @@ export default {
       drawerComponents: {},
       modalComponents: {},
       toasts: {},
+      defaultAvatar: '/assets/img/no_user.png',
       router: null
     }
     app.config.globalProperties.$dsOptions = { ...defaultOptions, ...options }

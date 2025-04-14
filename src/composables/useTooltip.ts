@@ -60,8 +60,8 @@ class TooltipInstance {
       tooltipDiv.setAttribute('tooltip-arrow', String(this.arrow))
       document.getElementById('tooltip-container')?.appendChild(tooltipDiv)
 
-      tooltipDiv.onmouseenter = this.showTooltip
-      tooltipDiv.onmouseleave = this.hideTooltip
+      // tooltipDiv.onmouseenter = this.showTooltip
+      // tooltipDiv.onmouseleave = this.hideTooltip
     }
 
     tooltipElement = document.getElementById(String(this.id))

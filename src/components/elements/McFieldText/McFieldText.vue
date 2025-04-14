@@ -2,7 +2,7 @@
 import { IMaskComponent, IMask } from 'vue-imask'
 import { McTitle, McButton, McSvgIcon, McTooltip } from '@/components'
 import { Spaces } from '@/types/styles/Spaces'
-import { computed, onMounted, type PropType, ref, useAttrs, useSlots, watch } from 'vue'
+import { computed, onBeforeMount, onMounted, type PropType, ref, useAttrs, useSlots, watch } from 'vue'
 import type { DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
 import type { InputTypesUnion, InputValue } from '@/types/IInput'
@@ -259,8 +259,8 @@ const props = defineProps({
   }
 })
 
-const prependWidth = ref<number>(0)
-const appendWidth = ref<number>(0)
+const prependWidth = ref<number>(16)
+const appendWidth = ref<number>(16)
 const prettyType = ref<string>(props.type)
 const fieldErrors = useFieldErrors(props.errors)
 
@@ -419,7 +419,7 @@ const inputStyles = computed((): object => {
   }
 })
 
-onMounted(() => {
+onBeforeMount(() => {
   calculatePadding()
 })
 
