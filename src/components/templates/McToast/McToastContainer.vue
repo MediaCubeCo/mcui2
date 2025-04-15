@@ -88,6 +88,7 @@ const bottomRight = computed(() => {
 
 <style lang="scss">
 @use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/z-indexes' as *;
 @use '../../../assets/styles/mixins' as *;
 
 .mc-toasts-container {
@@ -96,6 +97,7 @@ const bottomRight = computed(() => {
   &__top {
     position: fixed;
     top: $top-bottom-indent;
+    z-index: $z-index-toasted;
     @include child-indent-bottom($space-200);
     &--left {
       left: $left-right-indent;
@@ -111,6 +113,7 @@ const bottomRight = computed(() => {
   &__bottom {
     position: fixed;
     bottom: $top-bottom-indent;
+    z-index: $z-index-toasted;
     @include child-indent-bottom($space-200);
     &--left {
       left: $left-right-indent;

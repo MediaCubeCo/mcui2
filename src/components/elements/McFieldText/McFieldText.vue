@@ -2,7 +2,7 @@
 import { IMaskComponent, IMask } from 'vue-imask'
 import { McTitle, McButton, McSvgIcon, McTooltip } from '@/components'
 import { Spaces } from '@/types/styles/Spaces'
-import { computed, onBeforeMount, onMounted, type PropType, ref, useAttrs, useSlots, watch } from 'vue'
+import { computed, type PropType, ref, useAttrs, watch } from 'vue'
 import type { DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
 import type { InputTypesUnion, InputValue } from '@/types/IInput'
@@ -19,7 +19,6 @@ const emit = defineEmits<{
   (e: 'keydown', value: KeyboardEvent): void
   (e: 'copy', value: string): void
 }>()
-const slots = useSlots()
 const attrs = useAttrs()
 const props = defineProps({
   /**
@@ -259,8 +258,6 @@ const props = defineProps({
   }
 })
 
-const prependWidth = ref<number>(16)
-const appendWidth = ref<number>(16)
 const prettyType = ref<string>(props.type)
 const fieldErrors = useFieldErrors(props.errors)
 
@@ -404,7 +401,6 @@ const inputAttrs = computed((): object => {
   }
 })
 const inputStyles = computed((): object => {
-  const space = parseInt(Spaces['150'])
   let bottomStyle = {}
   if (isTextarea.value || isTextareaAutosize.value) {
     const spaceBottomToken = hasCharCounter.value ? '400' : '150'
@@ -412,15 +408,9 @@ const inputStyles = computed((): object => {
     bottomStyle = { paddingBottom: `${+spaceBottomValue.replace('px', '') - 1}px` }
   }
   return {
-    paddingInlineStart: prependWidth.value && `${prependWidth.value + space}px`,
-    paddingInlineEnd: appendWidth.value && `${appendWidth.value + space}px`,
     ...(!isTextarea.value && !isTextareaAutosize.value ? { boxSizing: 'border-box' } : {}),
     ...bottomStyle
   }
-})
-
-onBeforeMount(() => {
-  calculatePadding()
 })
 
 const setDecimalsLimit = (val: string): string => {
@@ -564,38 +554,6 @@ const getAmountFormat = (value: string): string => {
   return formatted_values.filter((v) => !!v).join('.')
 }
 
-const calculatePadding = (): void => {
-  prependWidth.value = +calculateSlotPadding('prepend')
-  appendWidth.value = +calculateSlotPadding('append')
-}
-
-const calculateSlotPadding = (name: string): string => {
-  const tokenSpace = parseInt(Spaces['300'])
-  const hasSlotItems = slots && slots[name] && slots?.[name]?.() && slots?.[name]?.()?.length
-
-  let result = parseInt(Spaces['50'])
-
-  if (hasSlotItems) {
-    // @ts-ignore
-    result = (slots[name]() || []).reduce((acc) => {
-      return acc + tokenSpace
-    }, 0)
-  }
-
-  if (name === 'prepend') return String(result)
-
-  /**
-   *  Также увеличиваем padding при наличии кнопки копирования и если тип password
-   */
-
-  const iconSpace = parseInt(Spaces['300'])
-
-  result = result ? result + tokenSpace : tokenSpace
-  props.copy && (result += iconSpace)
-  isPassword.value && (result += iconSpace)
-  return String(result)
-}
-
 const handlerCopy = (): void => {
   /**
    * Событие по кнопке копирования
@@ -612,10 +570,28 @@ watch(
     fieldErrors.setError(value)
   }
 )
+const handleFocus = (e: MouseEvent): void => {
+  if (!e) return
+
+  const target: HTMLElement = e.target as HTMLElement
+  if (!target) return
+
+  const targetElements: string[] = ['input', 'textarea']
+  if (!targetElements.includes(target.tagName?.toLowerCase())) {
+    const root: HTMLElement | null = target.closest('.mc-field-text')
+    if (!root) return
+
+    const el: HTMLElement | null = root.querySelector(`.mc-field-text__input`)
+    if (!el) return
+
+    el.focus()
+  }
+  return
+}
 </script>
 
 <template>
-  <div :dir="props.dir" :class="classes">
+  <div :dir="props.dir" :class="classes" @click.stop="handleFocus">
     <label :for="name" class="mc-field-text__header">
       <!-- @slot Слот заголовка -->
       <slot name="header">
@@ -624,13 +600,13 @@ watch(
         </mc-title>
       </slot>
     </label>
-    <div class="mc-field-text__inner">
+    <label :for="name" class="mc-field-text__inner">
       <div class="mc-field-text__main">
-        <div v-if="$slots.prepend" class="mc-field-text__prepend">
+        <div v-if="$slots.prepend" class="mc-field-text__prepend" @click.stop>
           <!-- @slot Слот в начале инпута -->
           <slot name="prepend" />
         </div>
-        <label class="mc-field-text__input-wrapper">
+        <div class="mc-field-text__input-wrapper">
           <textarea
             v-if="isTextarea"
             :value="computedValue"
@@ -666,11 +642,12 @@ watch(
               @input="handleInput"
             />
           </template>
-        </label>
+        </div>
         <div
           v-if="$slots.append || copy || isPassword"
           class="mc-field-text__append"
           :class="{ 'mc-field-text__append--indent-bottom': hasCharCounter }"
+          @click.stop
         >
           <!-- @slot Слот в конце инпута -->
           <slot name="append" />
@@ -710,7 +687,7 @@ watch(
         <!-- @slot Слот справа инпута -->
         <slot name="right" />
       </div>
-    </div>
+    </label>
     <div v-if="fieldErrors.errorText.value || props.helpText || $slots.footer" class="mc-field-text__footer">
       <mc-title
         v-if="fieldErrors.errorText.value"
@@ -749,6 +726,7 @@ watch(
 @use '../../../assets/tokens/border-radius' as *;
 .mc-field-text {
   $block-name: &;
+  $total-height: calc(#{$size-500} - 2px);
   display: block;
   * {
     box-sizing: border-box;
@@ -767,6 +745,22 @@ watch(
   &__inner {
     display: flex;
     align-items: center;
+    border: 1px solid $color-outline-gray;
+    border-radius: $radius-100;
+    cursor: text;
+    &:focus,
+    &:focus-within,
+    &:hover {
+      outline: 0;
+      border-color: $color-purple;
+    }
+
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration,
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
   }
 
   &__right {
@@ -774,6 +768,9 @@ watch(
   }
 
   &__main {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
     position: relative;
     width: 100%;
     @include custom-scroll($space-50);
@@ -781,14 +778,14 @@ watch(
 
   &__prepend,
   &__append {
-    @include reset-text-indents();
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    height: $total-height;
+    cursor: default;
+    & > * {
+      max-height: calc(#{$total-height} - #{$space-100});
+    }
 
     &:empty {
       display: none;
@@ -799,14 +796,17 @@ watch(
 
   &__prepend {
     inset-inline-start: 0;
-    padding: $space-100 0;
-    padding-inline: $space-100 $space-50;
+    padding-inline: $space-50 0;
   }
 
   &__append {
     inset-inline-end: $space-100;
+    padding-inline: 0 $space-50;
     &--indent-bottom {
       padding-bottom: $space-400;
+    }
+    .mc-tooltip-target {
+      display: inline-flex;
     }
   }
 
@@ -819,7 +819,7 @@ watch(
   }
 
   &__input-wrapper {
-    display: block;
+    flex-grow: 1;
   }
 
   &__input {
@@ -827,9 +827,10 @@ watch(
     display: inline-block;
     vertical-align: middle;
     width: 100%;
-    height: $size-500;
+    height: $total-height;
     margin: 0;
-    border: 1px solid $color-outline-gray;
+    border: none;
+    outline: 0;
     border-radius: $radius-100;
     padding: $space-150 - 1px $space-150;
     line-height: $line-height-200;
@@ -840,19 +841,6 @@ watch(
       background-color $duration-s ease,
       border-color $duration-s ease;
     color: $color-black;
-
-    &:focus,
-    &:hover {
-      outline: 0;
-      border-color: $color-purple;
-    }
-
-    &::-webkit-search-cancel-button,
-    &::-webkit-search-decoration,
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-    }
 
     @include input-placeholder() {
       color: $color-gray;
@@ -870,7 +858,7 @@ watch(
 
   &--error {
     #{$block-name} {
-      &__input {
+      &__inner {
         border-color: $color-red;
       }
     }
@@ -921,11 +909,11 @@ watch(
 
   &--disabled {
     #{$block-name} {
-      &__input {
+      &__input,
+      &__inner {
         color: $color-gray;
         cursor: not-allowed;
         background-color: $color-hover-gray;
-        border-color: $color-outline-gray;
       }
     }
   }

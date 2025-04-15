@@ -1,9 +1,7 @@
-<script setup lang="ts">
-import { McInfinityLoadingTrigger } from '@/components'
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <McInfinityLoadingTrigger />
+  <div></div>
 </template>
 
-<style></style>
+<style lang="scss"></style>
