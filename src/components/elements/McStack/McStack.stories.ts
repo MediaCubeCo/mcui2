@@ -106,3 +106,36 @@ export const LimitMax4PlusCollapsed: Story = {
     }
   }
 }
+export const OverflowTooltip: Story = {
+  render() {
+    return {
+      data() {
+        return {
+          hiddenCount: 0
+        }
+      },
+      components: {
+        McStack,
+        McChip
+      },
+      computed: {
+        computedCategories() {
+          return categories
+        },
+        computedTooltip() {
+          return [...this.computedCategories].splice(this.hiddenCount * -1).map(c => c.title).join('\n')
+        }
+      },
+      template: `
+        <mc-stack :overflow-tooltip="computedTooltip" @updated:hidden-count="(e) => (hiddenCount = e)">
+          <mc-chip 
+            v-for="category in computedCategories" 
+            :key="category.id" 
+            variation="purple" 
+            :title="category.title"
+          />
+        </mc-stack>
+      `
+    }
+  }
+}

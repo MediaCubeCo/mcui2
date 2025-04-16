@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, h, useSlots, createApp, type PropType } from 'vue'
 import { Spaces } from '@/types'
+import { McTooltip } from '@/components'
 
+const emit = defineEmits<{
+  (e: 'updated:hidden-count', value: number): any[]
+}>()
 const props = defineProps({
   visibleCount: {
     type: Number as PropType<number>,
@@ -10,7 +14,11 @@ const props = defineProps({
   collapsed: {
     type: Boolean as PropType<boolean>,
     default: false
-  }
+  },
+  overflowTooltip: {
+    type: String as PropType<string>,
+    default: null,
+  },
 })
 
 const slots = useSlots()
@@ -72,8 +80,8 @@ const updateChildrenVisible = (): void => {
     app.unmount()
     itemNode.remove()
 
-    const moreContentWidth = +Spaces['300'].replace('px', '')
-    const itemIndent = props.collapsed ? -Spaces['200'].replace('px', '') : +Spaces['150'].replace('px', '')
+    const moreContentWidth = parseInt(Spaces['300'])
+    const itemIndent = props.collapsed ? -parseInt(Spaces['200']) : parseInt(Spaces['150'])
 
     if (
       totalWidth + (itemWidth + itemIndent) <= container.value.clientWidth - moreContentWidth &&
@@ -90,6 +98,7 @@ const updateChildrenVisible = (): void => {
   }
   document.body.removeChild(tempContainer)
   visibleChildren.value = visibleItems
+  emit('updated:hidden-count', +hiddenCount.value)
 }
 </script>
 
@@ -99,7 +108,11 @@ const updateChildrenVisible = (): void => {
       <template v-for="(child, i) in visibleChildren" :key="`mc-stack-item-${i}`">
         <component :is="child" />
       </template>
-      <span v-if="hiddenCount > 0" class="mc-stack__more-label">+{{ hiddenCount }}</span>
+      <span v-if="hiddenCount > 0" class="mc-stack__more-label">
+        <mc-tooltip :content="overflowTooltip || ''">
+          +{{ hiddenCount }}
+        </mc-tooltip>
+      </span>
     </div>
   </div>
 </template>

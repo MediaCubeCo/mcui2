@@ -405,7 +405,7 @@ const inputStyles = computed((): object => {
   if (isTextarea.value || isTextareaAutosize.value) {
     const spaceBottomToken = hasCharCounter.value ? '400' : '150'
     const spaceBottomValue = Spaces[spaceBottomToken]
-    bottomStyle = { paddingBottom: `${+spaceBottomValue.replace('px', '') - 1}px` }
+    bottomStyle = { paddingBottom: `${parseInt(spaceBottomValue) - 1}px` }
   }
   return {
     ...(!isTextarea.value && !isTextareaAutosize.value ? { boxSizing: 'border-box' } : {}),
