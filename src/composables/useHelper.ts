@@ -68,6 +68,32 @@ function deepMerge(target: any, source: any) {
   return target
 }
 
+function pickDeep(object: { [key: string]: any } | object[], keys: string[]): { [key: string]: any } {
+  if (!object) return object
+
+  if (object.constructor === Array) return object.map(item => pickDeep(item, keys))
+  if (object.constructor === Object) {
+    const result: { [key: string]: any } = {}
+    keys.forEach(key => {
+      const [first, ...rest]: string[] = key.split('.')
+
+      if (rest.length === 0) {
+        //@ts-ignore
+        result[first] = object?.[first]
+      } else {
+        result[first] = {
+          ...(result[first] || {}),
+          //@ts-ignore
+          ...pickDeep(object?.[first] ?? {}, [rest.join('.')]),
+        }
+      }
+    })
+
+    return result
+  }
+  return object
+}
+
 function hasProperty(object: object, prop: string) {
   return Object.prototype.hasOwnProperty.call(object, prop)
 }
@@ -81,5 +107,5 @@ function upperFirst(str: string): string {
 }
 
 export function useHelper() {
-  return { isEmpty, isEqual, cloneDeep, uniqWith, deepMerge, hasProperty, isNumber, upperFirst }
+  return { isEmpty, isEqual, cloneDeep, uniqWith, deepMerge, hasProperty, isNumber, upperFirst, pickDeep }
 }

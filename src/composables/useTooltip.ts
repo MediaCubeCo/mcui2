@@ -137,16 +137,6 @@ class TooltipInstance {
   }
 }
 
-onMounted(() => {
-  window.addEventListener('scroll', () => updateAllTooltips)
-  window.addEventListener('resize', () => updateAllTooltips)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', () => updateAllTooltips)
-  window.removeEventListener('resize', () => updateAllTooltips)
-})
-
 const updateAllTooltips = debounce(() => {
   tooltipInstances.value.forEach((instance) => instance.updateTooltipPosition())
 })
@@ -173,10 +163,30 @@ export function useTooltip() {
       if (!content) return
       //@ts-ignore
       tooltip.value = new TooltipInstance(el, binding.value)
+
+      window.addEventListener('scroll', () => updateAllTooltips)
+      window.addEventListener('resize', () => updateAllTooltips)
     },
-    updated() {},
+    updated(el: HTMLElement, binding: { value: ITooltip }) {
+      if (!tooltip.value || !tooltip.value.id) return
+
+      debounce(() => {
+        const check_fields = ['arrow', 'color', 'content', 'placement', 'size', 'textColor']
+        const tooltip_data = helper.pickDeep({ ...tooltip.value }, check_fields)
+        const binding_data = helper.pickDeep(binding.value, check_fields)
+
+        if (!helper.isEqual(tooltip_data, binding_data)) {
+          tooltip.value?.destroy()
+          //@ts-ignore
+          tooltip.value = new TooltipInstance(el, binding.value)
+        }
+      })
+    },
     beforeUnmount() {
       tooltip.value?.destroy()
+
+      window.removeEventListener('scroll', () => updateAllTooltips)
+      window.removeEventListener('resize', () => updateAllTooltips)
     }
   }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, type PropType, reactive, ref, useSlots } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, type PropType, reactive, ref, useSlots } from 'vue'
 import { useHelper } from '@/composables'
 import { ChipSize, Weights } from '@/enums'
 import {
@@ -24,9 +24,10 @@ import {
   McOverlay
 } from '@/components'
 import { useThrottleFn } from '@vueuse/core'
-import type { IconsListUnion } from '@/types'
+import { IconsListUnion, IDSOptions } from '@/types'
 import { default as noTableDataImg } from '@/assets/img/no_table_data.png'
 
+const dsOptions = inject<IDSOptions>('dsOptions', {})
 const defaultPlaceholders = {
   no_data: 'No data',
   loading: 'Loading...',
@@ -395,6 +396,14 @@ const handleSetCardState = (payload: TableCardState) => {
                 </div>
               </div>
             </div>
+            <div v-if="!openCardState.state" class="mc-table__table_body-row mc-table__table_body-row--fake">
+              <div v-for="(column, cI) in computedBodyColumns" :key="cI" :class="column.class" :style="column.style">
+                <div class="mc-table__table_body-cell_content">
+                  <div class="mc-table__table_body-cell_content-left"></div>
+                  <div v-if="slots[`${column.field}-right`]" class="mc-table__table_body-cell_content-right"></div>
+                </div>
+              </div>
+            </div>
           </template>
           <mc-infinity-loading-trigger :active="props.hasLoadMore" @loading="emit('loading')" />
         </div>
@@ -416,7 +425,7 @@ const handleSetCardState = (payload: TableCardState) => {
     <!-- slot для карточки, по дефолту будет вывлдить карточку из вложенного роута -->
     <slot v-bind="computedTableCardProps" @setTableCardState="handleSetCardState">
       <!-- место для рендера карточки, когда она находится по вложенному роуту -->
-      <router-view v-bind="computedTableCardProps" @setTableCardState="handleSetCardState" />
+      <router-view v-if="dsOptions.router" v-bind="computedTableCardProps" @setTableCardState="handleSetCardState" />
     </slot>
     <mc-bottom-loader v-if="bottomLoading" />
     <mc-overlay v-if="loading" />
@@ -546,6 +555,7 @@ const handleSetCardState = (payload: TableCardState) => {
         display: flex;
         flex-wrap: nowrap;
         height: var(--mc-table-header-row-height);
+        min-height: var(--mc-table-header-row-height);
       }
       &-cell {
         position: sticky;
@@ -585,6 +595,7 @@ const handleSetCardState = (payload: TableCardState) => {
         display: flex;
         flex-wrap: nowrap;
         height: var(--mc-table-row-height);
+        min-height: var(--mc-table-row-height);
         cursor: pointer;
         &--active {
           #{$body}-cell {
@@ -603,6 +614,27 @@ const handleSetCardState = (payload: TableCardState) => {
           #{$body}-cell {
             &_content-right {
               display: flex;
+            }
+          }
+        }
+        &--fake {
+          min-height: 0;
+          max-height: 100%;
+          height: 100%;
+          cursor: default;
+          &:hover {
+            #{$body}-cell {
+              background-color: transparent;
+              &_content-right {
+                display: none;
+              }
+            }
+          }
+          @media #{$media-mobile} {
+            #{$body}-cell {
+              &_content-right {
+                display: none;
+              }
             }
           }
         }
@@ -627,6 +659,7 @@ const handleSetCardState = (payload: TableCardState) => {
             padding-right: $space-200;
             padding-left: $space-200;
             height: var(--mc-table-row-height);
+            min-height: var(--mc-table-row-height);
             align-items: center;
             background: linear-gradient(90deg, rgba($color-hover-gray, 0.2) 0%, $color-hover-gray 60%);
             z-index: $z-index-notification;
@@ -648,6 +681,7 @@ const handleSetCardState = (payload: TableCardState) => {
         display: flex;
         flex-wrap: nowrap;
         height: var(--mc-table-footer-row-height);
+        min-height: var(--mc-table-footer-row-height);
       }
       &-cell {
         position: sticky;

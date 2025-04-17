@@ -123,7 +123,7 @@ export const OverflowTooltip: Story = {
           return categories
         },
         computedTooltip() {
-          return [...this.computedCategories].splice(this.hiddenCount * -1).map(c => c.title).join('\n')
+          return [...this.computedCategories].splice(this.hiddenCount * -1).map(c => c.title).join(', ')
         }
       },
       template: `
