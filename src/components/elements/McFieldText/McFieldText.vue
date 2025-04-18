@@ -714,7 +714,7 @@ const handleFocus = (e: MouseEvent): void => {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @use '../../../assets/styles/mixins' as *;
 @use '../../../assets/tokens/durations' as *;
 @use '../../../assets/tokens/font-families' as *;
