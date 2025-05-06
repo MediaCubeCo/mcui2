@@ -7,8 +7,12 @@ import { computed, onBeforeMount, type PropType } from 'vue'
 import type { DirectionsUnion } from '@/types/IDirections'
 import { type IconsListUnion } from '@/types/styles/Icons'
 import { Directions } from '@/enums/ui/Directions'
+import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from '@/utils/mcSvgIconAdaptiveProps'
+import { useHelper } from '@/composables'
 
+const helper = useHelper()
 const props = defineProps({
+  ...adaptiveAdditionalProps,
   /**
    * Путь к спрайту с иконками
    * */
@@ -64,9 +68,23 @@ const props = defineProps({
   }
 })
 
+const responsivePropsClasses = computed((): { [key: string]: boolean } => {
+  const result: { [key: string]: any } = {}
+  adaptivePropsParams.forEach((value) => {
+    adaptivePropsSizes.forEach((size) => {
+      //@ts-ignore
+      const sizeValue: string | undefined | unknown = props[`${value}${helper.upperFirst(size)}`]
+      result[`mc-svg-icon--${value}-${size}-${sizeValue}`] = !!sizeValue
+    })
+  })
+
+  return result
+})
+
 const classes = computed((): { [key: string]: boolean } => ({
   'mc-svg-icon': true,
-  [`mc-svg-icon--dir-${props.dir}`]: !!props.dir
+  [`mc-svg-icon--dir-${props.dir}`]: !!props.dir,
+  ...responsivePropsClasses.value,
 }))
 
 const styles = computed((): { [key: string]: string } => ({
@@ -109,6 +127,7 @@ const injectSprite = async () => {
 <style lang="scss">
 @use '../../../assets/styles/mixins' as *;
 @use '../../../assets/tokens/sizes' as *;
+@use '../../../assets/tokens/media-queries' as *;
 .mc-svg-icon {
   --mc-svg-icon-size: #{$size-250};
   --mc-svg-icon-weight: 1.5;
@@ -125,6 +144,15 @@ const injectSprite = async () => {
   color: var(--mc-svg-icon-color);
   use {
     stroke-width: var(--mc-svg-icon-weight);
+  }
+  @each $media, $value in $token-media-queries {
+    @media #{$value} {
+      @each $size, $sValue in $token-icon-sizes {
+        &--size-#{$media}-#{$size} {
+          @include size($sValue);
+        }
+      }
+    }
   }
   &--dir {
     &-rtl {
