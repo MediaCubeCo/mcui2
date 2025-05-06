@@ -661,7 +661,6 @@ const handleClick = (e: Event): void => {
     top: 0;
     left: 0;
     @include size(100%);
-    max-height: -webkit-fill-available;
     max-width: -webkit-fill-available;
     opacity: 1 !important;
     border: 1px solid $color-transparent;

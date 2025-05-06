@@ -1,4 +1,4 @@
-export enum MediaQueries {
+export enum Media {
   Xs = 'xs',
   S = 's',
   M = 'm',

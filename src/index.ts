@@ -1,13 +1,13 @@
 import { App } from 'vue'
 import { IDSOptions } from './types'
 
-export * as types from './types'
-export * as enums from './enums'
-export * as components from './components'
-export * as composables from './composables'
-export * as consts from './consts'
-export * as utils from './utils'
-export * as tokens from './assets/tokens/json'
+export * from './types'
+export * from './enums'
+export * from './components'
+export * from './composables'
+export * from './consts'
+export * from './utils'
+export * from './assets/tokens/json'
 
 export default {
   install(app: App, options = {}) {

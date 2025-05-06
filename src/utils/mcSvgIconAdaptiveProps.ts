@@ -1,6 +1,6 @@
-import { MediaQueries } from '@/enums/ui/MediaQueries'
+import { Media } from '@/enums/ui/Media'
 export const adaptivePropsParams = ['size']
-export const adaptivePropsSizes = Object.values(MediaQueries)
+export const adaptivePropsSizes = Object.values(Media)
 
 interface ComponentPropType {
   type: StringConstructor,
