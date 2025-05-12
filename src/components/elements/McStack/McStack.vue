@@ -31,7 +31,7 @@ const children =
       slots.default()) || []
 
 //@ts-ignore
-const visibleChildren = ref<any[]>(children || [])
+const visibleChildren = ref<any[]>([])
 const hiddenCount = ref<number>(0)
 const prevHiddenCount = ref<number>(-1)
 
@@ -61,7 +61,7 @@ const updateChildrenVisible = (): void => {
   if (!container.value) return
 
   let totalWidth = 0
-  const visibleItems = []
+  visibleChildren.value = []
   let itemCount = 0
   hiddenCount.value = 0
 
@@ -82,7 +82,7 @@ const updateChildrenVisible = (): void => {
 
     const itemWidth = props.collapsed
       ? itemNode.getBoundingClientRect().width + 6
-      : itemNode.getBoundingClientRect().width
+      : itemNode.getBoundingClientRect().width + 4
     app.unmount()
     itemNode.remove()
 
@@ -94,16 +94,15 @@ const updateChildrenVisible = (): void => {
       itemCount < props.visibleCount
     ) {
       totalWidth += itemWidth + itemIndent
-      visibleItems.push(item)
+      visibleChildren.value.push(item)
       itemCount++
     } else {
       //@ts-ignore
-      hiddenCount.value = children.length - visibleItems.length
+      hiddenCount.value = children.length - visibleChildren.value.length
       break
     }
   }
   document.body.removeChild(tempContainer)
-  visibleChildren.value = visibleItems
   if (+prevHiddenCount.value !== +hiddenCount.value) {
     prevHiddenCount.value = hiddenCount.value
     emit('updated:hidden-count', hiddenCount.value)
