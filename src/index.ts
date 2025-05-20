@@ -15,7 +15,6 @@ export default {
       drawerComponents: {},
       modalComponents: {},
       toasts: {},
-      defaultAvatar: '/assets/img/no_user.png',
       router: null
     }
     app.config.globalProperties.$dsOptions = { ...defaultOptions, ...options }

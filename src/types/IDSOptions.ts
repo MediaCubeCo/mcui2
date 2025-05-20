@@ -6,6 +6,5 @@ export interface IDSOptions {
   drawerComponents?: Partial<VueElement>
   modalComponents?: Partial<VueElement>
   toasts?: Partial<IToast>
-  defaultAvatar?: string | null,
   router?: null | Router
 }
