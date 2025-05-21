@@ -81,6 +81,7 @@ const props = defineProps({
 })
 
 const style = ref<{ [key: string]: string }>({})
+const hasError = ref(false)
 const wrapperStyle = ref<{ [key: string]: string }>({})
 const hasStatus = computed((): boolean => !!props.borderColor || !!props.dotColor)
 
@@ -149,10 +150,11 @@ watch(
   },
   { immediate: true }
 )
+
+watch(() => props.src, () => hasError.value = false)
 const handleOnError = (e: Event): void => {
   if (!e.target) return
-  //@ts-ignore
-  e.target.src = dsOptions.defaultAvatar
+  hasError.value = true
 }
 </script>
 
@@ -160,13 +162,19 @@ const handleOnError = (e: Event): void => {
   <div :class="wrapperClasses" :style="wrapperStyle">
     <div :class="classes" :style="style">
       <img
-        :src="props.src || dsOptions.defaultAvatar as string"
+        v-if="props.src && !hasError"
+        :src="props.src as string"
         :alt="props.alt"
         :draggable="props.draggable"
         :lazy="props.lazy"
         class="mc-avatar__img"
-        @onerror="handleOnError"
+        @error="handleOnError"
       />
+      <svg v-else width="104" height="104" viewBox="0 0 104 104" fill="none" class="mc-avatar__img" xmlns="http://www.w3.org/2000/svg">
+        <rect width="104" height="104" rx="8" fill="currentColor" />
+        <path d="M33.3078 40.2381C33.3078 29.9814 41.6764 21.6667 51.9997 21.6667C62.3229 21.6667 70.6916 29.9814 70.6916 40.2381V42.7143C70.6916 52.971 62.3229 61.2857 51.9997 61.2857C41.6764 61.2857 33.3078 52.971 33.3078 42.7143V40.2381Z" fill="white" />
+        <path d="M86.6663 84.6684C78.021 93.8955 65.6887 99.6667 51.9997 99.6667C38.3107 99.6667 25.9783 93.8955 17.333 84.6684C24.1962 75.69 37.15 69.9524 51.9997 69.9524C66.8493 69.9524 79.8032 75.69 86.6663 84.6684Z" fill="white" />
+      </svg>
     </div>
   </div>
 </template>

@@ -325,11 +325,8 @@ watch(
           <slot />
         </div>
         <!-- @slot Слот футера -->
-        <div class="mc-modal__control">
-          <slot name="footer" />
-          <!-- Блок для телепорта в футер <Teleport to="#mcModalFooter"> -->
-          <div id="mcModalFooter" />
-        </div>
+        <!-- Телепорта в футер <Teleport to="#mcModalFooter"> -->
+        <div class="mc-modal__control" id="mcModalFooter"><slot name="footer" /></div>
       </div>
       <button v-if="arrowVisible" type="button" class="mc-modal__btn-back" @click.prevent="handleBack">
         <mc-svg-icon name="arrow_leftward" class="mc-modal__icon-back" />
@@ -375,6 +372,7 @@ watch(
   position: absolute;
   left: 0;
   top: 0;
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
