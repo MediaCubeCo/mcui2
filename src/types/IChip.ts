@@ -7,6 +7,7 @@ export interface IChipStyleOptions {
 }
 
 export type ChipSizeUnion = (typeof ChipSize)[keyof typeof ChipSize]
+
 export type ChipVariationUnion =
   | ColorTypes
   | `${ColorTypes}-${ChipModifiers.Invert}`

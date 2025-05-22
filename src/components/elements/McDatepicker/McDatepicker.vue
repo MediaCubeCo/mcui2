@@ -16,6 +16,8 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import { McTitle, McSvgIcon, McButton } from '@/components'
 import { useFieldErrors } from '@/composables'
 import { ButtonSize, TitleVariations, Weights } from '@/enums'
+import { useTheme } from '@/composables/useTheme'
+import { ColorTypes } from '@/types'
 
 const attrs = useAttrs()
 const emit = defineEmits(['update:modelValue'])
@@ -200,7 +202,7 @@ const props = defineProps({
     default: () => [] as DatePickerMarker[]
   }
 })
-
+const theme = useTheme('datepicker')
 const fieldErrors = useFieldErrors(props.errors)
 const pickDate = ref<DatePickerValue>(null)
 const input = ref<InstanceType<typeof DatePicker> | null | any>(null)
@@ -209,6 +211,11 @@ const classes = computed((): { [key: string]: boolean } => {
   return {
     'mc-date-picker--error': !!fieldErrors.errorText.value,
     'mc-date-picker--disabled': props.disabled
+  }
+})
+const styles = computed((): { [key: string]: string } => {
+  return {
+    '--mc-datepicker-color': theme.colors[theme.component.color as ColorTypes],
   }
 })
 
@@ -420,7 +427,7 @@ watch(() => props.errors, (value: string[]): void => {
 </script>
 
 <template>
-  <div ref="field" class="mc-date-picker" :class="classes">
+  <div ref="field" class="mc-date-picker" :class="classes" :style="styles">
     <label v-if="$slots.header || !!props.title" :for="name" class="mc-date-picker__header">
       <!-- @slot Слот для заголовка над инпутом -->
       <slot name="title">
@@ -577,7 +584,6 @@ watch(() => props.errors, (value: string[]): void => {
 @use '../../../assets/tokens/font-weights' as *;
 @use '../../../assets/tokens/media-queries' as *;
 @use '../../../assets/tokens/border-radius' as *;
-@use 'sass:color' as sasscolor;
 .mc-date-picker {
   $block-name: &;
   display: block;
@@ -608,7 +614,7 @@ watch(() => props.errors, (value: string[]): void => {
       color: $color-black;
       &:hover,
       &:focus {
-        border-color: $color-purple;
+        border-color: var(--mc-datepicker-color);
       }
       &::placeholder {
         color: $color-gray;
@@ -633,7 +639,7 @@ watch(() => props.errors, (value: string[]): void => {
     color: $color-black;
     &:hover,
     &:focus {
-      border-color: $color-purple;
+      border-color: var(--mc-datepicker-color);
     }
     &::placeholder {
       color: $color-gray;
@@ -710,8 +716,8 @@ watch(() => props.errors, (value: string[]): void => {
             color: $color-black;
             border-radius: $radius-100;
             &:hover {
-              color: $color-purple;
-              background-color: sasscolor.scale($color-purple, $lightness: 80%);
+              color: var(--mc-datepicker-color);
+              background-color: color-mix(in srgb, var(--mc-datepicker-color), white 90%);
               border-radius: $radius-100;
             }
           }
@@ -724,21 +730,21 @@ watch(() => props.errors, (value: string[]): void => {
           }
           &__range_between {
             color: $color-black;
-            background-color: sasscolor.scale($color-purple, $lightness: 90%);
+            background-color: color-mix(in srgb, var(--mc-datepicker-color), white 90%);
             border-radius: 0;
           }
           &__range_start,
           &__range_end,
           &__active_date {
             color: $color-white !important;
-            background-color: $color-purple !important;
-            border-color: $color-purple !important;
+            background-color: var(--mc-datepicker-color) !important;
+            border-color: var(--mc-datepicker-color) !important;
           }
           &__active_date {
             box-shadow: $shadow-s-purple;
           }
           &__today {
-            color: $color-purple;
+            color: var(--mc-datepicker-color);
             border-color: transparent;
             border-radius: $radius-100;
           }
@@ -770,7 +776,7 @@ watch(() => props.errors, (value: string[]): void => {
       font-weight: $font-weight-semi-bold;
       background: transparent;
       &:hover {
-        color: $color-purple;
+        color: var(--mc-datepicker-color);
       }
     }
     &__menu {

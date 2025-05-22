@@ -1,3 +1,5 @@
+import { reactive } from 'vue'
+
 function isEmpty(value: any): boolean {
   if (value == null) return true
   if (Array.isArray(value) || typeof value === 'string') {
@@ -71,10 +73,10 @@ function deepMerge(target: any, source: any) {
 function pickDeep(object: { [key: string]: any } | object[], keys: string[]): { [key: string]: any } {
   if (!object) return object
 
-  if (object.constructor === Array) return object.map(item => pickDeep(item, keys))
+  if (object.constructor === Array) return object.map((item) => pickDeep(item, keys))
   if (object.constructor === Object) {
     const result: { [key: string]: any } = {}
-    keys.forEach(key => {
+    keys.forEach((key) => {
       const [first, ...rest]: string[] = key.split('.')
 
       if (rest.length === 0) {
@@ -84,7 +86,7 @@ function pickDeep(object: { [key: string]: any } | object[], keys: string[]): { 
         result[first] = {
           ...(result[first] || {}),
           //@ts-ignore
-          ...pickDeep(object?.[first] ?? {}, [rest.join('.')]),
+          ...pickDeep(object?.[first] ?? {}, [rest.join('.')])
         }
       }
     })
@@ -106,6 +108,81 @@ function upperFirst(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
+/**
+ *  Для создания корректного реактивного результата, overrides - должен быть реактивным
+ *  На выходе получается реактивный обьект, который при обращении к свойствам, достает значения из overrides или из дефолтных значений
+ * */
+function mergeReactiveDefaults<T>(defaults: T, overrides: Partial<T>) {
+  function isObject(val: any): val is Record<string, any> {
+    return val && val.constructor === Object
+  }
+
+  function createProxy(defaults: any, overrides: any): any {
+    return new Proxy(
+      {},
+      {
+        get(target, key: string) {
+          const default_value = defaults?.[key]
+          const override_value = overrides?.[key]
+
+          if (isObject(default_value) || isObject(override_value)) {
+            return createProxy(default_value || {}, override_value || {})
+          }
+
+          return override_value !== undefined ? override_value : default_value
+        },
+        set(target, key: string, value) {
+          if (!isObject(overrides)) return false
+          overrides[key] = value
+          return true
+        },
+        ownKeys() {
+          return Array.from(new Set([...Object.keys(defaults), ...Object.keys(overrides)]))
+        },
+        getOwnPropertyDescriptor() {
+          return {
+            enumerable: true,
+            configurable: true
+          }
+        }
+      }
+    )
+  }
+
+  return reactive(createProxy(defaults, overrides)) as T
+}
+
+function setNested(object: any, path: string, value: any) {
+  const keys = path.split('.')
+  const last = keys.pop()!
+
+  let current = object
+  for (const k of keys) {
+    if (!(k in current)) current[k] = {}
+    current = current[k]
+  }
+
+  current[last] = value
+}
+
+function getNested(object: any, path: string): any {
+  if (path?.constructor !== String) return undefined
+  return path.split('.').reduce((o, key) => (o ? o[key] : undefined), object)
+}
+
 export function useHelper() {
-  return { isEmpty, isEqual, cloneDeep, uniqWith, deepMerge, hasProperty, isNumber, upperFirst, pickDeep }
+  return {
+    isEmpty,
+    isEqual,
+    cloneDeep,
+    uniqWith,
+    deepMerge,
+    hasProperty,
+    isNumber,
+    upperFirst,
+    pickDeep,
+    mergeReactiveDefaults,
+    setNested,
+    getNested
+  }
 }

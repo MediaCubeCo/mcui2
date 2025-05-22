@@ -405,7 +405,11 @@ const handleSetCardState = (payload: TableCardState) => {
               </div>
             </div>
           </template>
-          <mc-infinity-loading-trigger :active="props.hasLoadMore" @loading="emit('loading')" />
+          <mc-infinity-loading-trigger
+            v-if="props.hasLoadMore"
+            :active="props.hasLoadMore"
+            @loading="emit('loading')"
+          />
         </div>
 
         <!-- FOOTER -->
@@ -423,7 +427,10 @@ const handleSetCardState = (payload: TableCardState) => {
       </div>
     </div>
     <!-- slot для карточки, по дефолту будет выводить карточку из вложенного роута -->
-    <slot v-bind="computedTableCardProps" @setTableCardState="handleSetCardState" />
+    <slot v-bind="computedTableCardProps" @setTableCardState="handleSetCardState">
+      <!-- место для рендера карточки, когда она находится по вложенному роуту -->
+      <router-view v-if="dsOptions.router" v-bind="computedTableCardProps" @setTableCardState="handleSetCardState" />
+    </slot>
     <mc-bottom-loader v-if="bottomLoading" />
     <mc-overlay v-if="loading" />
     <mc-no-data

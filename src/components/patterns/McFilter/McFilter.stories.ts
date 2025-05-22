@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import McFilter from './McFilter.vue'
 import { filters } from '@/mocks/filterMocks'
+import sprite from '../../../assets/iconsSprite.svg?raw'
 
 const meta = {
   title: 'McFilter',
@@ -66,10 +67,16 @@ export const Default: Story = {
       computed: {
         filters() {
           return filters
-        }
+        },
+        sprite() {
+          return sprite
+        },
       },
       template: `
-            <mc-filter :filters="filters" v-model="v" name="mc-filter"></mc-filter>
+        <div>
+          <span v-html="sprite" />
+          <mc-filter :filters="filters" v-model="v" name="mc-filter"></mc-filter>
+        </div>
             `
     }
   }

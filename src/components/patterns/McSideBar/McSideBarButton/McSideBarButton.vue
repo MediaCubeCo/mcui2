@@ -4,6 +4,7 @@ import type { ButtonVariationUnion, ColorTypes, IconsListUnion, ISidebarThemeCon
 import { computed, inject, type PropType, useAttrs } from 'vue'
 import { ButtonSize, HorizontalAlignment, SidebarTheme, TooltipPositions } from '@/enums'
 import { defaultThemes } from '@/mocks/sidebar'
+import { useTheme } from '@/composables/useTheme'
 
 const attrs = useAttrs()
 const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
@@ -102,6 +103,8 @@ const props = defineProps({
   }
 })
 
+const theme = useTheme('sidebar')
+
 const themeConfig = computed(() => {
   return provideData.currentThemeConfig || defaultThemes[SidebarTheme.Black]
 })
@@ -133,10 +136,16 @@ const btnAttrs = computed(() => {
     tooltipPlacement: TooltipPositions.Right
   }
 })
+const styles = computed((): { [key: string]: string } => {
+  return {
+    '--mc-sidebar-button-chip-color': theme.colors[theme.component.chip as ColorTypes],
+    '--mc-sidebar-button-active-link-color': theme.colors[theme.component.activeLink as ColorTypes],
+  }
+})
 </script>
 
 <template>
-  <mc-button v-bind="btnAttrs" :class="classes">
+  <mc-button v-bind="btnAttrs" :class="classes" :style="styles">
     <template #icon-prepend>
       <mc-svg-icon v-if="icon" :fill="iconColor" class="mc-side-bar-button__icon" :name="icon" />
       <span v-if="icon && compact && (info || withIndicator)" class="mc-side-bar-button__dot" />
@@ -145,7 +154,7 @@ const btnAttrs = computed(() => {
     <template v-if="!compact" #icon-append>
       <mc-chip
         v-if="info || withIndicator"
-        variation="purple"
+        :variation="theme.component.chip as ColorTypes"
         class="mc-side-bar-button__chip"
         :class="{ indicator: withIndicator }"
       >
@@ -169,7 +178,7 @@ const btnAttrs = computed(() => {
   &__dot {
     @include position(absolute, $space-100 6px null null);
     @include size($size-100);
-    background-color: $color-purple;
+    background-color: var(--mc-sidebar-button-chip-color);
     border-radius: $radius-circle;
   }
   &__chip {
@@ -221,7 +230,7 @@ const btnAttrs = computed(() => {
   &--white__button {
     &.mc-button--is-active,
     &.mc-button.nuxt-link-active {
-      color: $color-purple;
+      color: var(--mc-sidebar-button-active-link-color);
       background-color: $color-lighter-purple;
       pointer-events: auto;
     }

@@ -9,6 +9,7 @@ import { Directions } from '@/enums/ui/Directions'
 import { type DirectionsUnion } from '@/types/IDirections'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { TitleVariations } from '@/enums'
+import { useTheme } from '@/composables/useTheme'
 
 const slots = useSlots()
 const emit = defineEmits(['update:modelValue'])
@@ -84,7 +85,6 @@ const props = defineProps({
    */
   color: {
     type: String as () => ColorTypes,
-    default: 'purple'
   },
   iconSize: {
     type: String as () => SizeTypes,
@@ -95,7 +95,14 @@ const props = defineProps({
     default: Directions.Ltr
   }
 })
+
+const theme = useTheme('radio')
+
 const fieldErrors = useFieldErrors(props.errors)
+
+const computedColor = computed((): ColorTypes => {
+  return props.color || theme.component.color as ColorTypes
+})
 
 const classes = computed((): { [key: string]: boolean } => {
   return {
@@ -124,7 +131,7 @@ const iconColor = computed((): ColorTypes => {
     case props.disabled:
       return 'outline-gray'
     case inputProps.value.checked:
-      return props.color as ColorTypes
+      return computedColor.value as ColorTypes
     default:
       return 'gray'
   }

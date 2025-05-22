@@ -40,11 +40,13 @@ import type {
   IFilterDateValue,
   IBaseFilter,
   FilterTextValue,
-  IRangeFilter
+  IRangeFilter,
+  ColorTypes
 } from '@/types'
 import { useHelper, UseEncodeDecode } from '@/composables'
 import { ButtonSize, ChipSize, FilterRelations, FilterTypes, TooltipPositions, TooltipSizes } from '@/enums'
 import { useLocalStorage } from '@vueuse/core'
+import { useTheme } from '@/composables/useTheme'
 
 const helper = useHelper()
 const emit = defineEmits<{
@@ -116,6 +118,8 @@ const props = defineProps({
     default: () => ({})
   }
 })
+
+const theme = useTheme('filter')
 
 const isOpen = ref<boolean>(false)
 
@@ -197,7 +201,9 @@ const regularFilters = computed((): ISelectOption[] => {
 })
 
 const visibilityToggleVariation = computed((): ButtonVariationUnion => {
-  return isOpen.value || !isDisableConfirmButton.value ? 'purple-invert' : 'black-flat'
+  return isOpen.value || !isDisableConfirmButton.value
+    ? (`${theme.component.button}-invert` as ColorTypes)
+    : 'black-flat'
 })
 
 // видна ли кнопка добавить фильтр
@@ -553,7 +559,9 @@ const handleCreatePreset = (): void => {
 }
 
 const getPresetButtonVariation = (preset: IFilterPreset): ButtonVariationUnion => {
-  return activePreset.value && activePreset.value.name === preset.name ? 'purple-invert' : 'gray-outline'
+  return activePreset.value && activePreset.value.name === preset.name
+    ? (`${theme.component.button}-invert` as ColorTypes)
+    : 'gray-outline'
 }
 
 watch(
@@ -625,7 +633,7 @@ watch(
             v-for="preset in presets"
             :key="preset.name"
             :variation="getPresetButtonVariation(preset)"
-            secondary-color="purple"
+            :secondary-color="theme.component.button as ColorTypes"
             @mouseup="() => handlePresetMouseUp(preset)"
           >
             {{ preset.name }}
@@ -683,7 +691,11 @@ watch(
                 :use-timezone="props.useTimezone"
                 @update:modelValue="handleConditionChange"
               />
-              <mc-button v-if="hasButtonAdd" variation="purple-outline" @click="handleStoreTag">
+              <mc-button
+                v-if="hasButtonAdd"
+                :variation="`${theme.component.button}-outline` as ColorTypes"
+                @click="handleStoreTag"
+              >
                 {{ placeholders.actions[activeTag ? 'save' : 'add'] }}
               </mc-button>
             </template>
@@ -717,6 +729,7 @@ watch(
             <mc-button
               :disabled="isDisableConfirmButton"
               :loading="buttonConfirmIsLoading"
+              :variation="theme.component.button as ColorTypes"
               :size="ButtonSize.S"
               @click="handleConfirm"
             >
@@ -750,13 +763,14 @@ watch(
             <mc-field-text
               v-model="newPresetName"
               :placeholder="placeholders.enter_preset_name"
-              :max-length="20"
+              :max-length="30"
+              width="250px"
               class="mc-filter__preset-input"
               name="preset_name"
             />
             <mc-button
               :disabled="buttonCreateIsDisable"
-              variation="purple-outline"
+              :variation="`${theme.component.button}-outline` as ColorTypes"
               :size="ButtonSize.S"
               @click="handleCreatePreset"
             >
@@ -877,8 +891,7 @@ watch(
       }
     }
   }
-  &__main-select,
-  &__preset-input {
+  &__main-select {
     width: 270px;
   }
   &__preset-input-title {

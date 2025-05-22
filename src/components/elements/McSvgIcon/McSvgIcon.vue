@@ -1,34 +1,30 @@
 <script setup lang="ts">
-//@ts-ignore
-import mediacubeUiSprite from '@/assets/iconsSprite.svg?raw'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
-import { computed, onBeforeMount, type PropType } from 'vue'
+import { type ColorTypes } from '@/types/styles/Colors'
+import { computed, type PropType } from 'vue'
 import type { DirectionsUnion } from '@/types/IDirections'
 import { type IconsListUnion } from '@/types/styles/Icons'
 import { Directions } from '@/enums/ui/Directions'
 import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from '@/utils/mcSvgIconAdaptiveProps'
 import { useHelper } from '@/composables'
+import { useTheme } from '@/composables/useTheme'
 
 const helper = useHelper()
 const props = defineProps({
   ...adaptiveAdditionalProps,
-  /**
-   * Путь к спрайту с иконками
-   * */
-  spritePath: {
-    type: String,
-    default: null,
-    validator(value: string): boolean {
-      return !!value
-    }
-  },
   /**
    * Имя иконки
    */
   name: {
     type: String as () => IconsListUnion,
     required: true
+  },
+  /**
+   * ID-префикс в названиях иконок, для использлования иконок из стороннего спрайта
+   */
+  spriteId: {
+    type: String as PropType<string>,
+    default: 'mcSvgIconSprite'
   },
   /**
    * Цвет иконки
@@ -67,6 +63,7 @@ const props = defineProps({
     default: Directions.Ltr
   }
 })
+const theme = useTheme()
 
 const responsivePropsClasses = computed((): { [key: string]: boolean } => {
   const result: { [key: string]: any } = {}
@@ -90,37 +87,13 @@ const classes = computed((): { [key: string]: boolean } => ({
 const styles = computed((): { [key: string]: string } => ({
   ['--mc-svg-icon-size']: Sizes[props.size],
   ['--mc-svg-icon-weight']: String(props.weight)?.replace('.', '')?.split('')?.join('.'),
-  ['--mc-svg-icon-color']: props.color && Colors[props.color]
+  ['--mc-svg-icon-color']: props.color && theme.colors[props.color]
 }))
-
-onBeforeMount(() => {
-  injectSprite()
-})
-
-const computedSpritePath =  computed((): string => {
-  return props.spritePath || '@/assets/iconsSprite.svg?raw'
-})
-
-const spriteId = computed(() => {
-  return computedSpritePath.value.replace(/\//gm, '').substring(0, 50)
-})
-
-const injectSprite = async () => {
-  if (document.getElementById(spriteId.value)) return
-
-  const div = document.createElement('div')
-  div.id = spriteId.value
-  div.style.display = 'none'
-  div.style.visibility = 'hidden'
-  div.innerHTML = mediacubeUiSprite
-
-  document.body.appendChild(div)
-}
 </script>
 
 <template>
   <svg :class="classes" :style="styles">
-    <use :xlink:href="`#mcSvgIcon-${props.name}`"></use>
+    <use :xlink:href="`#${props.spriteId}-${props.name}`"></use>
   </svg>
 </template>
 

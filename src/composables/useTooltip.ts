@@ -1,7 +1,7 @@
 import { type ITooltip, type ITooltipInstance, type ITooltipStyles } from '@/types/ITooltip'
 import { useDebounceFn } from '@vueuse/core'
 import { useRandomNumber } from '@/composables/useRandomNumber'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { TooltipPositions, TooltipSizes } from '@/enums'
 import { Colors, type ColorsUnion } from '@/types'
 import { useHelper } from '@/composables/useHelper'

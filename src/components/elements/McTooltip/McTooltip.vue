@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import type { TooltipPositionsUnion, TooltipSizesUnion } from '@/types/ITooltip'
 import { useTooltip } from '@/composables'
 import { computed, type PropType } from 'vue'
 import type { ITooltip } from '@/types/ITooltip'
 import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'
+import { useTheme } from '@/composables/useTheme'
 
 const vTooltip = useTooltip()
 
@@ -28,14 +29,12 @@ const props = defineProps({
    */
   color: {
     type: String as () => ColorTypes,
-    default: Colors.black,
   },
   /**
    *  Цвет текста:
    */
   textColor: {
     type: String as () => ColorTypes,
-    default: Colors.white,
   },
   /**
    * Максимальный размер
@@ -53,14 +52,23 @@ const props = defineProps({
   },
 })
 
+const theme = useTheme('tooltip')
+
+const computedColor = computed((): ColorTypes => {
+  return props.color || theme.component.color as ColorTypes
+})
+const computedTextColor = computed((): ColorTypes => {
+  return props.textColor || theme.component.textColor as ColorTypes
+})
+
 const tooltipProps = computed<ITooltip>((): ITooltip => {
   return {
     content: props.content,
     size: props.size,
     placement: props.placement,
     arrow: props.arrowVisible,
-    color: props.color,
-    textColor: props.textColor,
+    color: computedColor.value,
+    textColor: computedTextColor.value,
   } as ITooltip
 })
 </script>

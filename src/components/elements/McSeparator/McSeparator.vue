@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, type PropType } from 'vue'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import { Spaces, type SpaceTypes } from '@/types/styles/Spaces'
 import type { ColorsUnion } from '@/types/styles/Colors'
 import type { SpacesUnion } from '@/types/styles/Spaces'
+import { useTheme } from '@/composables/useTheme'
 
 const props = defineProps({
   /**
@@ -18,7 +19,6 @@ const props = defineProps({
    */
   color: {
     type: String as () => ColorTypes,
-    default: 'outline-gray',
   },
   /**
    * Отступ слева и справа: 50, 200... ...1000
@@ -64,6 +64,11 @@ const props = defineProps({
   },
 })
 
+const theme = useTheme('separator')
+const computedColor = computed((): ColorTypes => {
+  return props.color || theme.component.color as ColorTypes
+})
+
 const indents = computed((): { [key: string]: SpaceTypes } => ({
   top: props.indentTop || props.indentY,
   bottom: props.indentBottom || props.indentY,
@@ -77,7 +82,7 @@ const classes = computed((): { [key: string]: boolean } => ({
 
 const styles = computed((): { [key: string]: ColorsUnion | SpacesUnion | string } => {
   let style = {} as { [key: string]: ColorsUnion | SpacesUnion | string }
-  if (props.color) style['--mc-separator-color'] = Colors[props.color]
+  if (computedColor.value) style['--mc-separator-color'] = theme.colors[computedColor.value]
   if (indents.value.top) style['--mc-separator-indent-top'] = Spaces[indents.value.top]
   if (indents.value.bottom) style['--mc-separator-indent-bottom'] = Spaces[indents.value.bottom]
   if (indents.value.left) style['--mc-separator-indent-left'] = Spaces[indents.value.left]

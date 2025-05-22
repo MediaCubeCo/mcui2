@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, type PropType, ref, inject, onMounted, useAttrs } from 'vue'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import type { ITab } from '@/types/ITabs'
 import type { IRoute } from '@/types/IRoute'
 import { type IconsListUnion } from '@/types/styles/Icons'
+import { useTheme } from '@/composables/useTheme'
 
 const selfRegisterTabToMcTabs: Function = inject('selfRegisterTabMethod', () => {})
 const attrs = useAttrs()
@@ -46,7 +47,6 @@ const props = defineProps({
   },
   appendCountColor: {
     type: String as () => ColorTypes,
-    default: 'black'
   },
   /**
    *  Отключенное состояние
@@ -108,8 +108,14 @@ const props = defineProps({
   }
 })
 
+const theme = useTheme('tab')
+
 const isActive = ref<boolean>(false)
 const isVisible = ref<boolean>(true)
+
+const computedAppendCountColor = computed((): ColorTypes => {
+  return props.appendCountColor || theme.component.count as ColorTypes
+})
 
 const computedId = computed((): string => {
   return props.id ? props.id : props.name.toLowerCase().replace(/ /g, '-')
@@ -124,7 +130,7 @@ const hasAppendCount = computed((): boolean => {
 })
 
 const appendCountStyles = computed((): string => {
-  return `--mc-tab-append-count-color: ${Colors[props.appendCountColor]}`
+  return `--mc-tab-append-count-color: ${theme.colors[computedAppendCountColor.value]}`
 })
 
 const computedTabName = computed((): string => {
@@ -155,7 +161,7 @@ onMounted(() => {
       iconPrepend: props.iconPrepend,
       visible: props.visible,
       isDisabled: props.isDisabled,
-      appendCountColor: props.appendCountColor,
+      appendCountColor: computedAppendCountColor.value,
       appendCount: props.appendCount,
       suffix: props.suffix,
       prefix: props.prefix,

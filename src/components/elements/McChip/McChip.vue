@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { McSvgIcon } from '@/components'
 import { computed, type PropType } from 'vue'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import type { ChipVariationUnion, IChipStyleOptions } from '@/types/IChip'
 import { type ChipSizeUnion } from '@/types/IChip'
 import type { ColorsUnion } from '@/types/styles/Colors'
 import { ChipModifiers } from '@/enums'
+import { useTheme } from '@/composables/useTheme'
 
+const theme = useTheme('chip')
 const emit = defineEmits(['close', 'click'])
 const props = defineProps({
   /**
@@ -31,7 +33,6 @@ const props = defineProps({
    */
   variation: {
     type: String as () => ChipVariationUnion,
-    default: 'transparent',
   },
   /**
    *  Счетчик
@@ -54,17 +55,23 @@ const props = defineProps({
    */
   textColor: {
     type: String as () => ColorTypes,
-    default: '',
   },
 })
 
+const computedVariation = computed(() => {
+  return props.variation || theme.component.variation as ColorTypes
+})
+const computedTextColor = computed((): ColorTypes => {
+  return props.textColor || theme.component.textColor as ColorTypes
+})
+
 const classes = computed((): { [key: string]: boolean } => ({
-  [`mc-chip--variation-${chipOptions.value.variation}`]: !!props.variation,
+  [`mc-chip--variation-${chipOptions.value.variation}`]: !!computedVariation.value,
   [`mc-chip--size-${props.size}`]: !!props.size,
 }))
 
 const chipOptions = computed((): IChipStyleOptions => {
-  const variationProps = props.variation?.split('-')
+  const variationProps = computedVariation.value?.split('-')
   const currentVariation = variationProps[variationProps.length - 1]
   let color
   let variation
@@ -72,12 +79,12 @@ const chipOptions = computed((): IChipStyleOptions => {
     case ChipModifiers.Outline:
     case ChipModifiers.Invert: {
       variation = currentVariation
-      color = props.variation.replace(`-${currentVariation}`, '')
+      color = computedVariation.value.replace(`-${currentVariation}`, '')
       break
     }
     default: {
       variation = 'default'
-      color = props.variation
+      color = computedVariation.value
       break
     }
   }
@@ -88,10 +95,10 @@ const chipOptions = computed((): IChipStyleOptions => {
 })
 
 const styles = computed((): { [key: string]: ColorsUnion } => {
-  const textColor = props.textColor || 'white'
+  const textColor = computedTextColor.value || 'white'
   return {
-    '--mc-chip-color': Colors[chipOptions.value.color as ColorTypes],
-    '--mc-chip-text-color': Colors[textColor],
+    '--mc-chip-color': theme.colors[chipOptions.value.color as ColorTypes],
+    '--mc-chip-text-color': theme.colors[textColor],
   }
 })
 

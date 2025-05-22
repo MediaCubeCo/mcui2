@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 //@ts-ignore
 import VueCropper from 'vue3-cropperjs'
 import 'vue3-cropperjs/dist/v3cropper.css'
+import { useTheme } from '@/composables/useTheme'
+import { ColorTypes } from '@/types'
 
 const emit = defineEmits(['crop', 'ready'])
 const props = defineProps({
@@ -15,6 +17,9 @@ const props = defineProps({
     default: null
   }
 })
+
+const theme = useTheme('cropper')
+
 const cropper = ref<InstanceType<VueCropper>>(null)
 const timeout = ref<number | null>(null)
 
@@ -48,13 +53,20 @@ const cropImage = (e: any): void => {
     })
   clearDebounce()
 }
+
+const cropperStyle = computed((): { [key: string]: string } => {
+  return {
+    '--mc-cropper-color': theme.colors[theme.component.color as ColorTypes],
+  }
+})
+
 const clearDebounce = (): void => {
   timeout.value && clearTimeout(timeout.value)
 }
 </script>
 
 <template>
-  <section class="mc-cropper">
+  <section class="mc-cropper" :style="cropperStyle">
     <vue-cropper
       ref="cropper"
       background
@@ -80,7 +92,7 @@ const clearDebounce = (): void => {
 .mc-cropper {
   $block-name: &;
 
-  $color-main: $color-purple;
+  $color-main: var(--mc-cropper-color);
 
   .cropper {
     &-modal {

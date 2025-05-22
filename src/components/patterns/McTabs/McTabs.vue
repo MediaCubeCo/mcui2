@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUpdated, type PropType, ref, watch, provide, nextTick, inject } from 'vue'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import type { ColorsUnion } from '@/types/styles/Colors'
 import McWrapScroll from '@/components/patterns/McWrapScroll/McWrapScroll.vue'
 import type { ITab } from '@/types/ITabs'
@@ -8,6 +8,7 @@ import { type TabVariationUnion } from '@/types/ITabs'
 import { TabVariations } from '@/enums/Tab'
 import { McSvgIcon } from '@/components'
 import { IDSOptions } from '@/types'
+import { useTheme } from '@/composables/useTheme'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
@@ -35,14 +36,12 @@ const props = defineProps({
    */
   color: {
     type: String as () => ColorTypes,
-    default: 'black'
   },
   /**
    *  Цвет линии активного таба
    */
   accentColor: {
     type: String as () => ColorTypes,
-    default: 'purple'
   },
   /**
    *  Заглавные буквы
@@ -75,7 +74,15 @@ const props = defineProps({
   }
 })
 
+const theme = useTheme('tabs')
 const tabs = ref<ITab[]>([])
+
+const computedColor = computed((): ColorsUnion => {
+  return props.color || theme.component.color as ColorTypes
+})
+const computedAccentColor = computed((): ColorsUnion => {
+  return props.accentColor || theme.component.accentColor as ColorTypes
+})
 
 const classes = computed((): { [key: string]: boolean } => {
   return {
@@ -86,10 +93,10 @@ const classes = computed((): { [key: string]: boolean } => {
   }
 })
 
-const styles = computed((): { [key: string]: ColorsUnion } => {
+const styles = computed((): { [key: string]: string } => {
   return {
-    '--mc-tabs-color': Colors[props.color],
-    '--mc-tabs-accent-color': Colors[props.accentColor]
+    '--mc-tabs-color': theme.colors[computedColor.value as ColorTypes],
+    '--mc-tabs-accent-color': theme.colors[computedAccentColor.value as ColorTypes]
   }
 })
 
@@ -225,10 +232,6 @@ provide('selfRegisterTabMethod', selfRegisterTabMethod)
 @use '../../../assets/tokens/spacings' as *;
 .mc-tabs {
   $block-name: &;
-
-  --mc-tabs-color: #{$color-black};
-  --mc-tabs-accent-color: #{$color-purple};
-
   @mixin border() {
     &::before {
       @include pseudo();

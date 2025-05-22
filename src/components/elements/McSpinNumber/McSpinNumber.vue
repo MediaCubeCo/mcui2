@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, PropType } from 'vue'
 import { FontSizes } from '@/types/styles/FontSizes'
-import { Colors, ColorTypes } from '@/types'
+import { ColorTypes } from '@/types'
 import McSpinDigit from '@/components/elements/McSpinDigit/McSpinDigit.vue'
+import { useTheme } from '@/composables/useTheme'
 
 export type FontSizesUnion = keyof typeof FontSizes
 
@@ -28,12 +29,16 @@ const props = defineProps({
   },
   color: {
     type: String as () => ColorTypes,
-    default: 'black'
   }
 })
 
+const theme = useTheme('spinNumber')
+
 const current_from = ref<number | null>(null)
 
+const computedColor = computed((): ColorTypes => {
+  return props.color || theme.component.color as ColorTypes
+})
 const currentTo = computed((): (string | number)[] => {
   // @ts-ignore
   return String(props.end).split('').map(v => isNaN(v) ? v : +v)
@@ -46,8 +51,8 @@ const currentFrom = computed((): (string | number)[] => {
 
 const nonDigitStyles = computed((): { [key: string]: string } => {
   return {
-    '--font-size': FontSizes[props.fontSize],
-    '--font-color': Colors[props.color]
+    '--mc-spin-number-font-size': FontSizes[props.fontSize],
+    '--mc-spin-number-font-color': theme.colors[computedColor.value]
   }
 })
 
@@ -70,7 +75,7 @@ const actualizeNumbers = (): void => {
         :start="+currentFrom[i]"
         :duration="props.duration"
         :font-size="props.fontSize"
-        :color="props.color"
+        :color="computedColor"
         class="mc-spin-number__digit"
         @spin-end="actualizeNumbers"
       />
@@ -87,8 +92,8 @@ const actualizeNumbers = (): void => {
     display: flex;
   }
   &__non-digit {
-    font-size: var(--font-size);
-    color: var(--font-color);
+    font-size: var(--mc-spin-number-font-size);
+    color: var(--mc-spin-number-font-color);
     line-height: 1;
   }
 }

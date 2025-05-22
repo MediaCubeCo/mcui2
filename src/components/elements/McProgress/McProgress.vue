@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, type PropType, watch } from 'vue'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import { useFieldErrors } from '@/composables'
+import { useTheme } from '@/composables/useTheme'
 
 const props = defineProps({
   /**
@@ -26,7 +27,6 @@ const props = defineProps({
    */
   color: {
     type: String as () => ColorTypes,
-    default: 'dark-gray'
   },
   /**
    *  Цвет текста
@@ -34,7 +34,6 @@ const props = defineProps({
    */
   helpTextColor: {
     type: String as () => ColorTypes,
-    default: 'gray'
   },
   /**
    *  Вспомогательный текст
@@ -66,7 +65,17 @@ const props = defineProps({
   }
 })
 
+const theme = useTheme('progress')
+
 const fieldErrors = useFieldErrors(props.errors)
+
+const computedColor = computed((): ColorTypes => {
+  return props.color || theme.component.color as ColorTypes
+})
+const computedHelpTextColor = computed((): ColorTypes => {
+  return props.helpTextColor || theme.component.helpText as ColorTypes
+})
+
 const wrapperClasses = computed(() => ({
   'mc-progress': true,
   'mc-progress--error': fieldErrors.errorText.value
@@ -84,12 +93,8 @@ const lineClasses = computed(() => ({
 }))
 const styles = computed((): { [key: string]: string } => {
   return {
-    '--mc-progress-color': Colors[props.color]
-  }
-})
-const helpTextStyles = computed(() => {
-  return {
-    '--mc-progress-help-text-color': Colors[props.helpTextColor]
+    '--mc-progress-color': theme.colors[computedColor.value],
+    '--mc-progress-help-text-color': theme.colors[computedHelpTextColor.value]
   }
 })
 const lineStyles = computed(() => {
@@ -113,7 +118,7 @@ watch(() => props.errors, (value: string[]): void => {
       <div :class="percentClasses">
         {{ percentValue }}
       </div>
-      <div v-if="props.helpText" class="mc-progress__help-text" :style="helpTextStyles">
+      <div v-if="props.helpText" class="mc-progress__help-text">
         {{ props.helpText }}
       </div>
     </div>
@@ -136,8 +141,6 @@ watch(() => props.errors, (value: string[]): void => {
 @use '../../../assets/tokens/sizes' as *;
 .mc-progress {
   $block-name: &;
-  --mc-progress-color: #{$color-dark-gray};
-  --mc-progress-help-text-color: #{$color-gray};
   position: relative;
   width: 100%;
   font-family: $font-family-main;

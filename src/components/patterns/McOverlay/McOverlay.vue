@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Colors, type ColorTypes, Sizes, type SizeTypes } from '@/types'
+import { type ColorTypes, Sizes, type SizeTypes } from '@/types'
 import { computed } from 'vue'
+import { useTheme } from '@/composables/useTheme'
 
 const props = defineProps({
   size: {
@@ -9,12 +10,19 @@ const props = defineProps({
   },
   backgroundColor: {
     type: String as () => ColorTypes,
-    default: 'white'
   }
 })
+
+const theme = useTheme('overlay')
+
+const computedBackground = computed((): ColorTypes => {
+  return props.backgroundColor || theme.component.bg as ColorTypes
+})
+
 const styles = computed((): { [key: string]: string } => {
   return {
-    '--mc-overlay-color': props.backgroundColor && Colors[props.backgroundColor],
+    '--mc-overlay-color': computedBackground.value && theme.colors[computedBackground.value],
+    '--mc-overlay-border-color': theme.colors[theme.component.border as ColorTypes],
     '--mc-overlay-spinner-size': props.size && Sizes[props.size]
   }
 })
@@ -54,7 +62,7 @@ const styles = computed((): { [key: string]: string } => {
   }
   &__spinner {
     display: block;
-    border: 2px solid $color-purple;
+    border: 2px solid var(--mc-overlay-border-color);
     border-inline-start-color: transparent;
     border-radius: 50%;
     animation: rotate 1.5s infinite linear;

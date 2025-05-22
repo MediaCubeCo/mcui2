@@ -2,6 +2,8 @@
 import { McButton, McSvgIcon } from '@/components'
 import { ButtonSize } from '@/enums'
 import type { PropType } from 'vue'
+import { useTheme } from '@/composables/useTheme'
+import { ColorTypes } from '@/types'
 
 const props = defineProps({
   buttonBackText: {
@@ -13,6 +15,8 @@ const props = defineProps({
     default: null
   }
 })
+
+const theme = useTheme('tableCard')
 </script>
 
 <template>
@@ -20,7 +24,12 @@ const props = defineProps({
     <div class="mc-table-card-header__left">
       <!-- @slot Слот контента -->
       <slot>
-        <mc-button :to="props.backTo" exact variation="purple-link" :size="ButtonSize.Xs">
+        <mc-button
+          :to="props.backTo"
+          exact
+          :variation="`${theme.component.backLink}-link` as ColorTypes"
+          :size="ButtonSize.Xs"
+        >
           <template #icon-prepend>
             <mc-svg-icon name="arrow_backward" />
           </template>

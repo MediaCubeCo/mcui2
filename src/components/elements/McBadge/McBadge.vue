@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import { computed } from 'vue'
+import { useTheme } from '@/composables/useTheme'
+
+const theme = useTheme('badge')
 
 interface ISetProperty {
   property?: string | undefined
@@ -15,7 +18,6 @@ const props = defineProps({
    */
   variation: {
     type: String as () => ColorTypes,
-    default: 'purple'
   },
   /**
    *  Вертикальная черта (в таблице, к примеру)
@@ -30,6 +32,10 @@ const props = defineProps({
   }
 })
 
+const computedVariation = computed((): ColorTypes => {
+  return props.variation || theme.component.variation as ColorTypes
+})
+
 const classes = computed((): { [key: string]: boolean } => ({
   'mc-badge': true,
   'mc-badge--vertical-line': props.verticalLine,
@@ -37,14 +43,14 @@ const classes = computed((): { [key: string]: boolean } => ({
 }))
 
 const rootStyles = computed((): { [key: string]: string } => {
-  const variation = `${props.variation}${props.modern ? '-modern' : ''}` as ColorTypes
+  const variation = `${computedVariation.value}${props.modern ? '-modern' : ''}` as ColorTypes
 
   let style = {} as { [key: string]: string }
   const texts = variation.split('-')
   const currentStyle: string = texts[texts.length - 1]
-  const color = (props.variation ? variation.replace(`-${currentStyle}`, '') : variation) as ColorTypes
+  const color = (computedVariation.value ? variation.replace(`-${currentStyle}`, '') : variation) as ColorTypes
   const setProperty = ({ property = '--mc-badge-color', value, newColor = color }: ISetProperty = {}) => {
-    style[property] = value || newColor && Colors[newColor]
+    style[property] = value || newColor && theme.colors[newColor]
   }
 
   switch (currentStyle) {

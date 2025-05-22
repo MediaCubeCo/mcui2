@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { McButton, McTitle, McFieldSelect, McFieldText } from '@/components'
 import { computed, type PropType, ref, watch, nextTick } from 'vue'
-import type {
+import {
   IFilterPlaceholders,
   FilterRelationValue,
   IRelationFilter,
@@ -9,11 +9,12 @@ import type {
   IFilterParsedValueFilter,
   FilterConditionValue,
   FilterRelationName,
-  IFilterCondition
+  IFilterCondition, ColorTypes
 } from '@/types'
 import { FilterRelations } from '@/enums'
 import { useHelper } from '@/composables'
 import { useDebounceFn } from '@vueuse/core'
+import { useTheme } from '@/composables/useTheme'
 
 const helper = useHelper()
 const emit = defineEmits<{
@@ -51,6 +52,9 @@ const props = defineProps({
     default: () => ({})
   }
 })
+
+const theme = useTheme('filter')
+
 const debounce = useDebounceFn((method) => {
   method()
 }, 100)
@@ -207,7 +211,7 @@ watch(
           <mc-button
             v-for="relation in relations"
             :key="relation"
-            :variation="relationType === relation ? 'purple' : 'dark-gray-outline'"
+            :variation="relationType === relation ? theme.component.button as ColorTypes : 'dark-gray-outline'"
             @click="() => changeRelationType(relation)"
           >
             {{ placeholders.actions[`${relation === FilterRelations.Exists ? 'empty' : relation}`] }}

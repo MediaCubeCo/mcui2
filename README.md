@@ -13,27 +13,51 @@ npm install mediacube-ui-v2
 
 # Usage #
 ###  Nuxt@3.X
-```js
+```ts
 //Nuxt plugin
 import { defineNuxtPlugin } from '#app';
 import MediacubeUi from 'mediacube-ui-v2'
-import 'mediacube-ui-v2/style'
+
+//import { IToast } from 'mediacube-ui-v2/types/IToast'
+//import { Themes } from 'mediacube-ui-v2/enums'
+//import { ColorThemes } from 'mediacube-ui-v2/types'
 
 export default defineNuxtPlugin( (nuxtApp) => {
   nuxtApp.vueApp.use(MediacubeUi, {
     drawerComponents: {},
-    modalComponents: {}
+    modalComponents: {},
+    toasts?: Partial<IToast>
+    defaultAvatar?: string | null,
+    router?: null | Router,
+    colors?: Record<string, string>,
+    themes?: ColorThemes,
+    theme?: Themes,
   })
 })
+
+// nuxt.config.ts
+css: ['mediacube-ui-v2/style', 'mediacube-ui-v2/font']
+
 ```
 ###  Vue@3.X
-```js
+```ts
 import MediacubeUi from 'mediacube-ui-v2'
 import 'mediacube-ui-v2/style'
+import 'mediacube-ui-v2/font'
+
+//import { IToast } from 'mediacube-ui-v2/types/IToast'
+//import { Themes } from 'mediacube-ui-v2/enums'
+//import { ColorThemes } from 'mediacube-ui-v2/types'
 
 app.use(MediacubeUi, {
   drawerComponents: {},
-  modalComponents: {}
+  modalComponents: {},
+  toasts?: Partial<IToast>
+  defaultAvatar?: string | null,
+  router?: null | Router,
+  colors?: Record<string, string>,
+  themes?: ColorThemes,
+  theme?: Themes,
 })
 ```
 
@@ -41,54 +65,20 @@ app.use(MediacubeUi, {
 
 TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking.
 
- **CSS example:**
-
- ```css
- /**
-  * @tokens Colors
-  * @presenter Color
-  */
-
- :root {
-   --n0: #fff; /* Token Description */
-   --n100: #fbfbfb;
-   --n200: #edeeef;
-   --n300: #e4e5e7;
-   --primary: var(--n300);
- }
-
- /**
-  * @tokens Border Radius
-  * @presenter BorderRadius
-  */
-
- :root {
-   --border-radius-m: 4px;
-   --border-radius-l: 8px;
- }
- ```
 
  **SCSS example:**
 
  ```scss
  /**
-  * @tokens Colors
-  * @presenter Color
+  * @tokens
+  * @presenter
   */
 
- $n0: #fff; /* Token Description */
- $n100: #fbfbfb;
- $n200: #edeeef;
- $n300: #e4e5e7;
- $primary: $n300;
-
- /**
-  * @tokens Border Radius
-  * @presenter BorderRadius
-  */
-
- $border-radius-m: 4px;
- $border-radius-l: 8px;
+  $color-purple: #8756FF;
+  $font-weight-medium: 500;
+  $media-desktop: "(hover: hover) and (pointer: fine)";  
+  $media-mobile: "(hover: none) and (pointer: coarse)";
+  //and much more...
  ```
 
  **SVG example:**
@@ -181,7 +171,7 @@ The following style files are available:
 
 ## Storybook interface support
 
-![info image storybook interface](/dist/npm_preview.jpg)
+![info image storybook interface](./dist/npm_preview.jpg)
 
 [//]: # (## Available Types)
 [//]: # (&mdash;)

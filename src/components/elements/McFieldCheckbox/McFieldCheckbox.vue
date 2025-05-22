@@ -6,6 +6,8 @@ import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Directions } from '@/enums/ui/Directions'
 import type { SizesUnion } from '@/types/styles/Sizes'
 import { TitleVariations, Weights } from '@/enums'
+import { useTheme } from '@/composables/useTheme'
+import { ColorTypes } from '@/types'
 
 const emit = defineEmits(['update:modelValue'])
 const slots = useSlots()
@@ -108,6 +110,7 @@ const props = defineProps({
   }
 })
 
+const theme = useTheme('checkbox')
 const fieldErrors = useFieldErrors(props.errors)
 
 const rtl = computed((): boolean => {
@@ -123,7 +126,8 @@ const classes = computed((): { [key: string]: boolean } => ({
 }))
 
 const styles = computed((): { [key: string]: SizesUnion | string } => ({
-  '--mc-field-checkbox-size': Sizes[props.checkboxSize as SizeTypes]
+  '--mc-field-checkbox-size': Sizes[props.checkboxSize as SizeTypes],
+  '--mc-field-checkbox-color': theme.colors[theme.component.color as ColorTypes],
 }))
 
 const isChecked = computed((): boolean => {
@@ -175,7 +179,7 @@ watch(() => props.errors, (value: string[]): void => {
         <mc-svg-icon
           class="mc-field-checkbox__icon"
           :name="isChecked ? 'checkbox--checked' : 'checkbox'"
-          :color="isChecked ? 'purple' : 'gray'"
+          :color="isChecked ? theme.component.color as ColorTypes : 'gray'"
           :size="props.checkboxSize"
         />
         <input v-bind="inputProps" @change="handleChange" />
@@ -260,7 +264,7 @@ watch(() => props.errors, (value: string[]): void => {
   &__icon {
     z-index: 1;
     &:hover {
-      color: $color-purple;
+      color: var(--mc-field-checkbox-color);
     }
   }
 

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { default as VueSlider } from 'vue-3-slider-component'
 import { computed, type PropType, reactive, watch } from 'vue'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import type { TooltipPositionsUnion } from '@/types/ITooltip'
 import { McTitle } from '@/components'
 import { useFieldErrors } from '@/composables'
 import { TitleVariations, Weights } from '@/enums'
+import { useTheme } from '@/composables/useTheme'
 
 type RangeValue = string[] | number[] | number | string | null
 
@@ -52,7 +53,6 @@ const props = defineProps({
    */
   color: {
     type: String as () => ColorTypes,
-    default: 'purple'
   },
   /**
    *  Is it lazy to update the value.
@@ -103,6 +103,8 @@ const props = defineProps({
   }
 })
 
+const theme = useTheme('range')
+
 const fieldErrors = useFieldErrors(props.errors)
 
 const tooltipFormatter = (value: string): string => {
@@ -120,17 +122,21 @@ const computedValue = computed({
   }
 })
 
+const computedColor = computed((): ColorTypes => {
+  return props.color || theme.component.color as ColorTypes
+})
+
 const classes = computed((): { [key: string]: boolean } => {
   return {
     'mc-range-slider': true,
-    [`mc-range-slider--color-${props.color}`]: !!props.color,
+    [`mc-range-slider--color-${computedColor.value}`]: !!computedColor.value,
     'mc-range-slider--colored-tooltip': props.coloredTooltip
   }
 })
 
 const styles = computed((): { [key: string]: string } => {
   return {
-    '--mc-range-slider-color': Colors[props.color]
+    '--mc-range-slider-color': theme.colors[computedColor.value]
   }
 })
 
@@ -169,7 +175,7 @@ watch(() => props.errors, (value: string[]): void => {
 </script>
 
 <template>
-  <div :class="classes">
+  <div :class="classes" :style="styles">
     <div class="mc-field-range__header">
       <!-- @slot Слот заголовка -->
       <slot name="header">
@@ -220,7 +226,6 @@ watch(() => props.errors, (value: string[]): void => {
 .mc-range-slider {
   $block-name: &;
   font-family: $font-family-main;
-  --mc-range-slider-color: #{$color-purple};
   &__header {
     @include reset-text-indents();
     display: block;

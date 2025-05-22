@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { McTitle, McSvgIcon, McButton, McPreview } from '@/components'
 import { computed, type PropType } from 'vue'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { Weights } from '@/enums/ui/Weights'
+import { useTheme } from '@/composables/useTheme'
 
 
 const emit = defineEmits(['click'])
@@ -14,7 +15,6 @@ const props = defineProps({
    */
   variation: {
     type: String as () => ColorTypes,
-    default: 'purple' as ColorTypes,
   },
   /**
    * Заголовок блока
@@ -59,9 +59,15 @@ const props = defineProps({
   },
 })
 
+const theme = useTheme('notification')
+
+const computedVariation = computed((): ColorTypes => {
+  return props.variation || theme.component.variation as ColorTypes
+})
+
 const styles = computed((): { [key: string]: string } => {
   return {
-    '--mc-notification-color': Colors[props.variation],
+    '--mc-notification-color': theme.colors[computedVariation.value],
   }
 })
 
@@ -89,7 +95,7 @@ const handleClick = (e: Event):void => {
           <slot name="header">
             <mc-title
               v-if="props.title"
-              :color="props.variation"
+              :color="computedVariation"
               :weight="Weights.SemiBold"
               class="mc-notification__title"
             >
@@ -102,7 +108,7 @@ const handleClick = (e: Event):void => {
           <div class="mc-notification__text">
             <!-- @slot Слот для контента -->
             <slot>
-              <mc-title :color="props.variation">{{ props.content }}</mc-title>
+              <mc-title :color="computedVariation">{{ props.content }}</mc-title>
             </slot>
           </div>
         </template>
@@ -112,7 +118,7 @@ const handleClick = (e: Event):void => {
           <slot name="right">
             <mc-button
               v-if="props.buttonVisible"
-              :variation="props.variation"
+              :variation="computedVariation"
               class="mc-notification__button"
               @click="handleClick"
             >
@@ -136,7 +142,6 @@ const handleClick = (e: Event):void => {
 @use '../../../assets/tokens/border-radius' as *;
 .mc-notification {
   $block-name: &;
-  --mc-notification-color: #{$color-orange};
   position: relative;
   background-color: $color-white;
   border-radius: $radius-150;

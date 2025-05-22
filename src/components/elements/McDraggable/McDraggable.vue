@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useDebounceFn, useDraggable, useLocalStorage, useSessionStorage } from '@vueuse/core'
 import { computed, type PropType, ref, watch } from 'vue'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import { McPreview } from '@/components'
 import type { ColorsUnion } from '@/types/styles/Colors'
+import { useTheme } from '@/composables/useTheme'
 
 interface DraggableInitPayload {
   x: number
@@ -13,6 +14,7 @@ interface DraggableInitPayload {
 type CardIdType = string | number | undefined
 type StorageTypeUnion = 'local' | 'session'
 
+const theme = useTheme('draggable')
 const localStorage = useLocalStorage('McDraggable', {})
 const sessionStorage = useSessionStorage('McDraggable', {})
 const draggable_el = ref<HTMLElement | null>(null)
@@ -27,7 +29,6 @@ const props = defineProps({
    */
   variation: {
     type: String as () => ColorTypes,
-    default: 'purple' as ColorTypes
   },
   initial: {
     type: Object as PropType<DraggableInitPayload>,
@@ -51,6 +52,10 @@ const props = defineProps({
     type: String as PropType<StorageTypeUnion>,
     default: 'session'
   }
+})
+
+const computedVariation = computed((): ColorTypes => {
+  return props.variation || theme.component.variation as ColorTypes
 })
 
 const uniqueId = computed((): CardIdType => {
@@ -92,7 +97,7 @@ const { x, y, style } = useDraggable(draggable_el, {
 
 const styles = computed((): { [key: string]: ColorsUnion | string } => {
   return {
-    '--mc-draggable-color': Colors[props.variation]
+    '--mc-draggable-color': theme.colors[computedVariation.value]
   }
 })
 
@@ -122,7 +127,7 @@ watch(
 </script>
 
 <template>
-  <div ref="draggable_el" class="mc-draggable" :style="style" style="position: fixed">
+  <div ref="draggable_el" class="mc-draggable" :style="style">
     <div class="mc-draggable__inner" :style="styles">
       <mc-preview>
         <template #left>
@@ -149,7 +154,10 @@ watch(
 @use '../../../assets/tokens/sizes' as *;
 @use '../../../assets/tokens/border-radius' as *;
 @use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/z-indexes' as *;
 .mc-draggable {
+  position: fixed;
+  z-index: $z-index-sticky;
   cursor: move;
   font-family: $font-family-main;
   &__inner {

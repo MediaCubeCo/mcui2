@@ -2,9 +2,10 @@
 import { McTitle, McSvgIcon, McButton } from '@/components'
 import { computed, type PropType } from 'vue'
 import { HorizontalAlignment, TitleVariations, Weights } from '@/enums'
-import type { IconsListUnion } from '@/types'
+import { ColorTypes, IconsListUnion } from '@/types'
 
 import { default as noTableDataImg } from '@/assets/img/no_table_data.png'
+import { useTheme } from '@/composables/useTheme'
 
 const emit = defineEmits<{
   (e: 'click'): void
@@ -54,6 +55,8 @@ const props = defineProps({
   }
 })
 
+const theme = useTheme('noData')
+
 const btnAttrs = computed((): { [key: string]: boolean | string } => {
   return {
     class: 'mt-200',
@@ -86,6 +89,12 @@ const classes = computed((): { [key: string]: boolean } => {
   }
 })
 
+const styles = computed((): { [key: string]: string } => {
+  return {
+    '--mc-no-data-link-color': theme.colors[theme.component.link as ColorTypes]
+  }
+})
+
 const handleClick = (): void => {
   emit('click')
 }
@@ -93,7 +102,7 @@ const handleClick = (): void => {
 
 <template>
   <div class="mc-no-data__wrapper">
-    <section :class="classes">
+    <section :class="classes" :style="styles">
       <mc-svg-icon v-if="props.icon" :weight="0.5" :name="props.icon" size="1000" color="outline-gray" />
       <img v-if="props.img" :src="props.img" alt="no_entity" />
       <slot v-if="title || $slots.title" name="title">
@@ -130,7 +139,6 @@ const handleClick = (): void => {
 @use '../../../assets/styles/mixins' as *;
 @use '../../../assets/tokens/spacings' as *;
 @use '../../../assets/tokens/sizes' as *;
-@use '../../../assets/tokens/colors' as *;
 @use '../../../assets/tokens/media-queries' as *;
 .mc-no-data {
   min-width: 100px;
@@ -150,7 +158,7 @@ const handleClick = (): void => {
 
   &__text {
     a {
-      color: $color-purple;
+      color: var(--mc-no-data-link-color);
       text-decoration: none;
     }
   }

@@ -48,6 +48,7 @@ const text = computed({
   <mc-field-text
     v-model="text"
     :placeholder="filter.placeholder || placeholders.enter"
+    width="300px"
     class="mc-filter-type-text"
     name="mc_filter_type_text"
   />
@@ -56,6 +57,5 @@ const text = computed({
 <style lang="scss">
 .mc-filter-type-text {
   $block-name: &;
-  width: 300px;
 }
 </style>

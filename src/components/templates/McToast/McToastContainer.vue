@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import McToast from '@/components/templates/McToast/McToast.vue'
 import { ToastPositions } from '@/enums/Toast'
-import { computed, PropType, reactive } from 'vue'
+import { computed, PropType } from 'vue'
 import { IToast } from '@/types'
 
 const props = defineProps({

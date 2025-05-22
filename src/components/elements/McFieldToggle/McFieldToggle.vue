@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { McTitle } from '@/components'
 import { useFieldErrors } from '@/composables'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import { computed, type PropType, watch } from 'vue'
 import type { HorizontalAlignmentUnion } from '@/types/styles/Alignment'
 import type { HorizontalAlignment } from '@/enums/ui/Alignment'
 import { TitleVariations } from '@/enums'
+import { useTheme } from '@/composables/useTheme'
 
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
@@ -59,7 +60,6 @@ const props = defineProps({
    */
   color: {
     type: String as () => ColorTypes,
-    default: 'purple' as ColorTypes
   },
   /**
    *  Ошибки
@@ -77,7 +77,12 @@ const props = defineProps({
   }
 })
 
+const theme = useTheme('fieldToggle')
 const fieldErrors = useFieldErrors(props.errors)
+
+const computedColor = computed(() => {
+  return props.color || theme.component.color as ColorTypes
+})
 
 const _value = computed((): boolean => {
   return props.modelValue === props.checkedValue
@@ -95,19 +100,20 @@ const classes = computed((): { [key: string]: boolean } => {
 const styles = computed((): { [key: string]: string | undefined } => {
   let disabledColor: ColorTypes
   let saturateValue: string = 'initial'
-  switch (props.color) {
-    case 'purple' as ColorTypes: {
-      disabledColor = 'light-purple' as ColorTypes
+  switch (computedColor.value) {
+    case theme.component.color as ColorTypes: {
+      disabledColor = theme.component.bg as ColorTypes
       break
     }
     default: {
-      disabledColor = props.color
+      disabledColor = computedColor.value
       saturateValue = '50%'
     }
   }
   return {
-    '--mc-field-toggle-color': props.color && Colors[props.color],
-    '--mc-field-toggle-disabled-color': disabledColor && Colors[disabledColor],
+    '--mc-field-toggle-color': computedColor.value && theme.colors[computedColor.value],
+    '--mc-field-toggle-bg-color': theme.colors[theme.component.bg as ColorTypes],
+    '--mc-field-toggle-disabled-color': disabledColor && theme.colors[disabledColor],
     '--mc-field-toggle-saturate-value': saturateValue
   }
 })
@@ -137,8 +143,8 @@ watch(() => props.errors, (value: string[]): void => {
 </script>
 
 <template>
-  <div class="mc-field-toggle__content">
-    <label :class="classes" :style="styles">
+  <div class="mc-field-toggle__content" :style="styles">
+    <label :class="classes">
       <span class="mc-field-toggle__text">
         <!-- @slot Слот для тайтла тогглера -->
         <slot />
@@ -173,11 +179,7 @@ watch(() => props.errors, (value: string[]): void => {
 .mc-field-toggle {
   $block-name: &;
   $toggle-indent: calc(#{$space-50} / 2);
-  --mc-field-toggle-disabled-color: #{$color-purple};
   font-family: $font-family-main;
-  --mc-field-toggle-color: initial;
-  --mc-field-disabled-color: initial;
-  --mc-field-toggle-saturate-value: initial;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -202,7 +204,7 @@ watch(() => props.errors, (value: string[]): void => {
 
     @at-root #{$block-name}--checked#{$block-name}--colored-text {
       #{$block-name}__text {
-        color: $color-purple;
+        color: var(--mc-field-toggle-color);
       }
     }
     @at-root #{$block-name}--disabled#{$block-name}--colored-text {
@@ -212,7 +214,7 @@ watch(() => props.errors, (value: string[]): void => {
     }
     @at-root #{$block-name}--checked#{$block-name}--disabled#{$block-name}--colored-text {
       #{$block-name}__text {
-        color: $color-light-purple;
+        color: var(--mc-field-toggle-bg-color);
       }
     }
   }
@@ -238,7 +240,7 @@ watch(() => props.errors, (value: string[]): void => {
       @include size(0);
 
       &:checked + #{$block-name}__slider {
-        background-color: $color-purple;
+        background-color: var(--mc-field-toggle-bg-color);
 
         &:before {
           inset-inline-start: calc(#{$space-300} + #{$toggle-indent});

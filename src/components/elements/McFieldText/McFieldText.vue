@@ -12,6 +12,7 @@ import type { IconsListUnion } from '@/types/styles/Icons'
 import { type ColorTypes } from '@/types/styles/Colors'
 import { useTextareaAutosize } from '@vueuse/core'
 import { ButtonSize, ButtonType, HorizontalAlignment, TitleVariations, Weights } from '@/enums'
+import { useTheme } from '@/composables/useTheme'
 
 const { textarea } = useTextareaAutosize()
 const emit = defineEmits<{
@@ -255,9 +256,14 @@ const props = defineProps({
   dir: {
     type: String as () => DirectionsUnion,
     default: Directions.Ltr
+  },
+  width: {
+    type: String as PropType<string>,
+    default: '100%'
   }
 })
 
+const theme = useTheme('fieldText')
 const prettyType = ref<string>(props.type)
 const fieldErrors = useFieldErrors(props.errors)
 
@@ -276,6 +282,14 @@ const classes = computed((): { [key: string]: boolean } => {
     'mc-field-text--rtl': isRtl.value
   }
 })
+
+const styles = computed(() => {
+  return {
+    '--mc-field-text-color': theme.colors[theme.component.color as ColorTypes],
+    '--mc-field-text-width': props.width,
+  }
+})
+
 const computedTitle = computed((): string => {
   return `${props.title}${props.required ? ' *' : ''}`
 })
@@ -591,7 +605,7 @@ const handleFocus = (e: MouseEvent): void => {
 </script>
 
 <template>
-  <div :dir="props.dir" :class="classes" @click.stop="handleFocus">
+  <div :dir="props.dir" :class="classes" :style="styles" @click.stop="handleFocus">
     <label :for="name" class="mc-field-text__header">
       <!-- @slot Слот заголовка -->
       <slot name="header">
@@ -752,7 +766,7 @@ const handleFocus = (e: MouseEvent): void => {
     &:focus-within,
     &:hover {
       outline: 0;
-      border-color: $color-purple;
+      border-color: var(--mc-field-text-color);
     }
 
     &::-webkit-search-cancel-button,
@@ -772,7 +786,9 @@ const handleFocus = (e: MouseEvent): void => {
     flex-wrap: nowrap;
     justify-content: space-between;
     position: relative;
-    width: 100%;
+    width: var(--mc-field-text-width);
+    background-color: $color-white;
+    border-radius: $radius-100;
     @include custom-scroll($space-50);
   }
 

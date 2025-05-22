@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed, PropType } from 'vue'
 import { FontSizes } from '@/types/styles/FontSizes'
-import { Colors, ColorTypes } from '@/types'
+import { ColorTypes } from '@/types'
+import { useTheme } from '@/composables/useTheme'
 
 export type FontSizesUnion = keyof typeof FontSizes
 
@@ -38,17 +39,22 @@ const props = defineProps({
   },
   color: {
     type: String as () => ColorTypes,
-    default: 'black'
   }
 })
+
+const theme = useTheme('spinDigit')
 
 const spin_active = ref<boolean>(false)
 const offset = ref<number>(0)
 
+const computedColor = computed((): ColorTypes => {
+  return props.color || theme.component.color as ColorTypes
+})
+
 const containerStyles = computed((): { [key: string]: string } => {
   return {
-    '--font-size': FontSizes[props.fontSize],
-    '--font-color': Colors[props.color]
+    '--mc-spin-digit-font-size': FontSizes[props.fontSize],
+    '--mc-spin-digit-font-color': theme.colors[computedColor.value]
   }
 })
 
@@ -108,14 +114,13 @@ onMounted((): void => {
 @use '../../../assets/tokens/font-sizes' as *;
 @use '../../../assets/tokens/colors' as *;
 .mc-spin-digit-container {
-  --font-size: $font-size-300;
-  --font-color: $color-black;
+  --mc-spin-digit-font-size: $font-size-300;
   font-family: $font-family-main;
   overflow: hidden;
-  height: var(--font-size);
+  height: var(--mc-spin-digit-font-size);
   position: relative;
   &__target {
-    font-size: var(--font-size);
+    font-size: var(--mc-spin-digit-font-size);
     visibility: hidden;
   }
   .mc-spin-digit {
@@ -124,12 +129,12 @@ onMounted((): void => {
     left: 0;
     display: flex;
     flex-direction: column;
-    color: black;
+    color: var(--mc-spin-digit-font-color);
     &__digit {
-      height: var(--font-size);
-      line-height: var(--font-size);
-      font-size: var(--font-size);
-      color: var(--font-color);
+      height: var(--mc-spin-digit-font-size);
+      line-height: var(--mc-spin-digit-font-size);
+      font-size: var(--mc-spin-digit-font-size);
+      color: var(--mc-spin-digit-font-color);
       text-align: center;
     }
   }

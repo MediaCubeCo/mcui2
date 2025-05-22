@@ -39,6 +39,10 @@ export default defineConfig({
           dest: 'assets/tokens'
         },
         {
+          src: 'src/assets/fonts',
+          dest: 'assets'
+        },
+        {
           src: 'src/assets/variables.scss',
           dest: 'assets'
         }

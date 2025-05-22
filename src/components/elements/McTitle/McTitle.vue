@@ -1,6 +1,5 @@
 <script setup lang="ts">
 // import DOMPurify from 'isomorphic-dompurify'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
 import { type HorizontalAlignmentUnion } from '@/types/styles/Alignment'
 import { LineHeights, type LineHeightTypes } from '@/types/styles/LineHeights'
 import { type WeightsUnion } from '@/types/styles/Weights'
@@ -10,6 +9,8 @@ import { FontWeights } from '@/types/styles/FontWeights'
 import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from '@/utils/mcTitleAdaptiveProps'
 import type { TitleVariationsUnion } from '@/types/ITitle'
 import { useHelper } from '@/composables'
+import { ColorTypes } from '@/types'
+import { useTheme } from '@/composables/useTheme'
 
 const helper = useHelper()
 const attrs = useAttrs()
@@ -52,7 +53,6 @@ const props = defineProps({
    */
   color: {
     type: String as () => ColorTypes,
-    default: 'black'
   },
   /**
    *  Позиция текста:
@@ -106,6 +106,11 @@ const props = defineProps({
   }
 })
 
+const theme = useTheme('title')
+const computedColor = computed((): ColorTypes => {
+  return props.color || theme.component.color as ColorTypes
+})
+
 const id = computed(() => {
   return attrs.id as string
 })
@@ -139,7 +144,7 @@ const classes = computed((): { [key: string]: boolean } => ({
 }))
 const style = computed((): { [key: string]: string } => {
   let style: { [key: string]: string } = {}
-  if (props.color) style['--mc-title-color'] = Colors[props.color]
+  if (computedColor.value) style['--mc-title-color'] = theme.colors![computedColor.value]
   if (props.weight) style['--mc-title-weight'] = FontWeights[props.weight]
   if (props.lineHeight) style['--mc-title-line-height'] = LineHeights[props.lineHeight]
 
@@ -155,12 +160,8 @@ const contentStyle = computed((): { [key: string]: string } => ({
   <div :class="classes" :style="style" :id="id">
     <!-- @slot -->
     <slot name="icon-prepend" />
-    <span
-      v-if="props.htmlData"
-      class="mc-title__text"
-      :style="contentStyle"
-      v-html="props.htmlData"
-    /> <!-- DOMPurify.sanitize() -->
+    <span v-if="props.htmlData" class="mc-title__text" :style="contentStyle" v-html="props.htmlData" />
+    <!-- DOMPurify.sanitize() -->
     <component :is="props.tagName" v-else class="mc-title__text" :style="contentStyle">
       <slot />
     </component>
@@ -168,7 +169,8 @@ const contentStyle = computed((): { [key: string]: string } => ({
     <!-- @slot -->
     <slot name="icon-append" />
   </div>
-</template>л
+</template>
+л
 
 <style lang="scss">
 @use '../../../assets/styles/mixins' as *;

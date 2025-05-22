@@ -4,6 +4,8 @@ import { useThrottleFn } from '@vueuse/core'
 import { McDropdownPanel } from '@/components'
 import type { DropdownListPositionsUnion, DropdownPositionsUnion } from '@/types/IDropdown'
 import { DropdownListPositions, DropdownPositions } from '@/enums/Dropdown'
+import { useTheme } from '@/composables/useTheme'
+import { ColorTypes } from '@/types'
 
 const throttle = useThrottleFn((method) => {
   method()
@@ -69,6 +71,8 @@ const props = defineProps({
   }
 })
 
+const theme = useTheme('dropdown')
+
 const dropdownClasses = computed((): { [key: string]: boolean } => {
   return {
     [`mc-dropdown--position-${local_position.value}`]: !!local_position.value,
@@ -79,7 +83,8 @@ const dropdownClasses = computed((): { [key: string]: boolean } => {
 
 const dropdownStyles = computed((): { [key: string]: string | number } => {
   return {
-    '--dropdown-body-min-width': props.listMinWidth
+    '--dropdown-body-min-width': props.listMinWidth,
+    '--dropdown-item-color': theme.component.itemColor as ColorTypes,
   }
 })
 
@@ -184,9 +189,7 @@ watch(
 @use '../../../assets/styles/mixins' as *;
 @use '../../../assets/tokens/z-indexes' as *;
 @use '../../../assets/tokens/durations' as *;
-@use '../../../assets/tokens/colors' as *;
 @use '../../../assets/tokens/spacings' as *;
-@use 'sass:color' as sasscolor;
 .mc-dropdown {
   $block-name: &;
   --dropdown-body-min-width: inherit;
@@ -219,7 +222,7 @@ watch(
     .mc-button {
       &:not(.nuxt-link-active):not(.mc-button--is-active):not(.mc-button--variation-red-flat) {
         &:hover {
-          background-color: sasscolor.scale($color-purple, $lightness: 90%);
+          background-color: color-mix(in srgb, var(--dropdown-item-color), white 90%);
           .mc-button__background {
             opacity: 0 !important;
           }

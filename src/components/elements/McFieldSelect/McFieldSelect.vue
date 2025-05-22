@@ -5,12 +5,13 @@ import { McTitle, McSvgIcon, McAvatar, McTooltip, McPreview } from '@/components
 import type { ISelectGroupOptions, ISelectOption, ISelectOptions } from '@/types/ISelect'
 import { type DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import { useFieldErrors } from '@/composables'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { SelectGroupKeys } from '@/enums/Select'
 import type { SelectListDirectionsUnion } from '@/types/ISelect'
 import { PreviewSizes, TitleVariations, TooltipPositions, Weights } from '@/enums'
+import { useTheme } from '@/composables/useTheme'
 
 const emit = defineEmits<{
   (e: 'original-input', value: ISelectOptions[]): void
@@ -256,7 +257,7 @@ const props = defineProps({
     default: 'value'
   }
 })
-
+const theme = useTheme('select')
 const fieldErrors = useFieldErrors(props.errors)
 const searchValue = ref<string | null>(null)
 const field_select_ref = ref<InstanceType<typeof MultiSelect> | null>(null)
@@ -342,7 +343,7 @@ const styles = computed((): { [key: string]: string } => {
   let backgroundColor: ColorTypes = props.backgroundColor
   let labelColor: ColorTypes = 'black'
   if (!props.backgroundColor || lightColors.includes(props.backgroundColor)) {
-    borderColor = 'purple'
+    borderColor = theme.component.color as ColorTypes
   }
   if (darkColors.includes(props.backgroundColor)) {
     labelColor = 'white'
@@ -354,10 +355,12 @@ const styles = computed((): { [key: string]: string } => {
   }
   return {
     '--mc-field-select-max-height': props.maxHeight,
-    '--mc-field-select-color': backgroundColor && Colors[backgroundColor],
-    '--mc-field-select-border-color': borderColor && Colors[borderColor],
-    '--mc-field-select-label-color': Colors[labelColor],
-    '--mc-field-select-placeholder-color': Colors[placeHolderColor]
+    '--mc-field-select-bg-color': backgroundColor && theme.colors[backgroundColor],
+    '--mc-field-select-color': theme.colors[theme.component.color as ColorTypes],
+    '--mc-field-select-selected-color': theme.colors[theme.component.selected as ColorTypes],
+    '--mc-field-select-border-color': borderColor && theme.colors[borderColor],
+    '--mc-field-select-label-color': theme.colors[labelColor],
+    '--mc-field-select-placeholder-color': theme.colors[placeHolderColor]
   }
 })
 
@@ -605,7 +608,7 @@ watch(() => props.errors, (value: string[]): void => {
 @use '../../../assets/tokens/border-radius' as *;
 .mc-field-select {
   $block-name: &;
-  --mc-field-select-color: initial;
+  --mc-field-select-bg-color: initial;
   --mc-field-select-label-color: #{$color-black};
   --mc-field-select-border-color: initial;
   --mc-field-select-max-height: initial;
@@ -712,7 +715,7 @@ watch(() => props.errors, (value: string[]): void => {
       overflow: hidden;
       text-align: start;
       &:hover {
-        border-color: $color-purple;
+        border-color: var(--mc-field-select-color);
       }
       &:before {
         content: '';
@@ -720,7 +723,7 @@ watch(() => props.errors, (value: string[]): void => {
         left: 0;
         top: 0;
         @include size(100%);
-        background-color: var(--mc-field-select-color);
+        background-color: var(--mc-field-select-bg-color);
         opacity: 0.6;
       }
     }
@@ -743,7 +746,7 @@ watch(() => props.errors, (value: string[]): void => {
       margin-top: $space-50;
       margin-bottom: $space-50;
       margin-right: unset;
-      background-color: $color-lighter-purple;
+      background-color: var(--mc-field-select-selected-color);
       color: $color-black;
       padding: $size-50 $size-50 $size-50 $size-100;
       border-radius: 100px;
@@ -758,7 +761,7 @@ watch(() => props.errors, (value: string[]): void => {
     &__tag-icon {
       @include size($size-200);
       position: relative;
-      background-color: $color-purple;
+      background-color: var(--mc-field-select-color);
       border-radius: $radius-circle;
       flex: 0 0 auto;
       margin-inline-start: $space-100;
@@ -807,7 +810,7 @@ watch(() => props.errors, (value: string[]): void => {
         color: $color-black;
       }
       &--selected {
-        background-color: $color-lighter-purple !important;
+        background-color: var(--mc-field-select-selected-color) !important;
         color: $color-black !important;
         font-weight: $font-weight-medium;
       }
@@ -826,7 +829,7 @@ watch(() => props.errors, (value: string[]): void => {
         }
         &__select {
           &::before {
-            border-color: $color-purple $color-transparent $color-transparent;
+            border-color: var(--mc-field-select-color) $color-transparent $color-transparent;
           }
         }
       }
@@ -834,7 +837,7 @@ watch(() => props.errors, (value: string[]): void => {
     &__spinner {
       &:after,
       &:before {
-        border-top-color: $color-purple;
+        border-top-color: var(--mc-field-select-color);
         @include size($space-300);
         top: calc(50% - 8px);
         left: calc(50% - 3px);

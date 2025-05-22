@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useTheme } from '@/composables/useTheme'
+import { ColorTypes } from '@/types'
 
 const props = defineProps({
   center: {
@@ -8,16 +10,23 @@ const props = defineProps({
   }
 })
 
-const classes = computed(() => {
+const theme = useTheme('bottomLoader')
+
+const classes = computed((): { [key: string]: boolean } => {
   return {
     'mc-bottom-loader': true,
     'mc-bottom-loader--center': props.center
   }
 })
+const styles = computed((): { [key: string]: string } => {
+  return {
+    '--mc-bottom-loader-color': theme.colors[theme.component.border as ColorTypes],
+  }
+})
 </script>
 
 <template>
-  <section :class="classes">
+  <section :class="classes" :style="styles">
     <section class="mc-bottom-loader__spinner"></section>
   </section>
 </template>
@@ -57,7 +66,7 @@ const classes = computed(() => {
     display: block;
     width: $space-300;
     height: $space-300;
-    border: 2px solid $color-purple;
+    border: 2px solid var(--mc-bottom-loader-color);
     border-left-color: transparent;
     border-radius: 50%;
     animation: rotate 1.5s infinite linear;

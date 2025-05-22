@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { TransitionPresets, useTransition } from '@vueuse/core'
-import { computed, onMounted, type PropType, ref } from 'vue'
+import { computed, onMounted, type PropType } from 'vue'
 import type { IconsListUnion } from '@/types/styles/Icons'
-import { Colors, ColorTypes, IToast, IToastAction, ToastPositionsUnion } from '@/types'
+import { ColorTypes, IToast, IToastAction, ToastPositionsUnion } from '@/types'
 import { ToastPositions } from '@/enums/Toast'
 import { McPreview, McSvgIcon, McTitle, McButton } from '@/components'
 import { useTimer } from '@/composables/useTimer'
 import { ButtonSize, PreviewSizes, Weights } from '@/enums'
+import { useTheme } from '@/composables/useTheme'
 
 const emit = defineEmits<{
   (e: 'close', value: IToast): void
@@ -26,7 +26,6 @@ const props = defineProps({
   },
   variation: {
     type: String as () => ColorTypes,
-    default: 'white'
   },
   /**
    * иконка
@@ -74,17 +73,23 @@ const props = defineProps({
   }
 })
 
+const computedVariation = computed((): ColorTypes => {
+  return props.variation || theme.component.variation as ColorTypes
+})
+
+const theme = useTheme('toast')
+
 const timer = useTimer(props.toast.destroy, props.duration)
 
 const toastClasses = computed((): { [key: string]: boolean } => {
   return {
     'mc-toast': true,
-    [`mc-toast--variation-${props.variation}`]: true
+    [`mc-toast--variation-${computedVariation.value}`]: true
   }
 })
 const toastStyles = computed((): { [key: string]: string } => {
   return {
-    '--mc-toast-background-color': Colors[props.variation]
+    '--mc-toast-background-color': theme.colors[computedVariation.value]
   }
 })
 

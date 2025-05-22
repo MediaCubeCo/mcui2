@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, type PropType, ref } from 'vue'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { computed, inject, type PropType, ref } from 'vue'
+import { type ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { useTooltip } from '@/composables'
 import type { ITooltip, TooltipPositionsUnion } from '@/types/ITooltip'
@@ -14,6 +14,7 @@ import type { ColorsUnion } from '@/types/styles/Colors'
 import type { FontWeightsUnion } from '@/types/styles/FontWeights'
 import { ButtonModifiers } from '@/enums'
 import { IDSOptions } from '@/types'
+import { useTheme } from '@/composables/useTheme'
 
 interface ElButtonTagBind {
   to?: string | null
@@ -112,7 +113,6 @@ const props = defineProps({
    */
   variation: {
     type: String as () => ButtonVariationUnion,
-    default: 'purple'
   },
   /**
    *  Размеры:
@@ -243,6 +243,7 @@ const props = defineProps({
   }
 })
 
+const theme = useTheme('button')
 const mcButton = ref(null)
 const emit = defineEmits(['blur', 'click'])
 
@@ -268,8 +269,12 @@ const classes = computed((): { [key: string]: boolean } => {
   }
 })
 
+const computedVariation = computed(() => {
+  return props.variation || theme.component.variation as ColorTypes
+})
+
 const buttonVariation = computed((): IButtonStyleOptions => {
-  const variation = props.variation
+  const variation = computedVariation.value
   const texts = variation.split('-')
   const currentStyle = texts[texts.length - 1]
   let color = variation.replace(`-${currentStyle}`, '')
@@ -320,12 +325,12 @@ const styles = computed((): { [key: string]: ColorsUnion | FontWeightsUnion | st
   }
 
   return {
-    '--mc-button-secondary-color': props.secondaryColor && Colors[props.secondaryColor],
+    '--mc-button-secondary-color': props.secondaryColor && theme.colors[props.secondaryColor],
     '--mc-button-background-color':
-      props.variation && Colors[buttonVariation.value.color as ColorTypes],
+      computedVariation.value && theme.colors[buttonVariation.value.color as ColorTypes],
     '--mc-button-font-weight': props.weight && FontWeights[props.weight],
     '--mc-button-hover-brightness': hoverBrightness,
-    '--mc-button-text-color': textColor && Colors[textColor]
+    '--mc-button-text-color': textColor && theme.colors[textColor]
   }
 })
 
@@ -667,6 +672,7 @@ const handleClick = (e: Event): void => {
     border-radius: inherit;
     background-color: var(--mc-button-background-color);
     transition: all $duration-s;
+    box-sizing: border-box;
   }
   &--type {
     &-outline {
@@ -778,7 +784,7 @@ const handleClick = (e: Event): void => {
 
   &--is-active,
   &.nuxt-link-active {
-    color: $color-purple;
+    color: var(--mc-button-background-color);
     background-color: transparent;
     border-color: transparent;
     pointer-events: none;

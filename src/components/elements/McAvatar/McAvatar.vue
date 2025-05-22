@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { computed, inject, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { AvatarSizes, type AvatarSizeTypes } from '@/types/styles/AvatarSizes'
-import { Colors, type ColorTypes } from '@/types/styles/Colors'
+import { type ColorTypes } from '@/types/styles/Colors'
 import { Sizes } from '@/types/styles/Sizes'
-import { IDSOptions, Radiuses } from '@/types'
-
-const dsOptions = inject<IDSOptions>('dsOptions', {} as IDSOptions)
+import { Radiuses } from '@/types'
+import { useTheme } from '@/composables/useTheme'
 
 const props = defineProps({
   /**
@@ -80,6 +79,7 @@ const props = defineProps({
   }
 })
 
+const theme = useTheme()
 const style = ref<{ [key: string]: string }>({})
 const hasError = ref(false)
 const wrapperStyle = ref<{ [key: string]: string }>({})
@@ -106,7 +106,7 @@ watch(
   () => props.dotColor,
   () => {
     if (hasStatus.value) {
-      if (props.dotColor) wrapperStyle.value['--mc-avatar-dot-color'] = Colors[props.dotColor]
+      if (props.dotColor) wrapperStyle.value['--mc-avatar-dot-color'] = theme.colors[props.dotColor]
     }
   },
   { immediate: true }
@@ -116,7 +116,7 @@ watch(
   () => props.borderColor,
   () => {
     if (hasStatus.value) {
-      if (props.borderColor) style.value['--mc-avatar-border-color'] = Colors[props.borderColor]
+      if (props.borderColor) style.value['--mc-avatar-border-color'] = theme.colors[props.borderColor]
     }
   },
   { immediate: true }
