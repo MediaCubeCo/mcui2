@@ -112,6 +112,9 @@ export const ThemesColors = Colors
 export const UiThemes: ColorThemes = {
   light: {
     components: {
+      avatar: {
+        defaultIcon: 'main'
+      },
       badge: {
         variation: 'main'
       },
@@ -142,14 +145,14 @@ export const UiThemes: ColorThemes = {
       },
       select: {
         color: 'main',
-        selected: 'lighter-main'
+        selected: 'main-lighter'
       },
       fieldText: {
         color: 'main'
       },
       fieldToggle: {
         color: 'main',
-        bg: 'light-main'
+        bg: 'main-light'
       },
       bottomLoader: {
         border: 'main'
@@ -213,6 +216,9 @@ export const UiThemes: ColorThemes = {
   } as ColorTheme,
   dark: {
     components: {
+      avatar: {
+        defaultIcon: 'main'
+      },
       badge: {
         variation: 'main'
       },
@@ -243,14 +249,14 @@ export const UiThemes: ColorThemes = {
       },
       select: {
         color: 'main',
-        selected: 'lighter-main'
+        selected: 'main-lighter'
       },
       fieldText: {
         color: 'main'
       },
       fieldToggle: {
         color: 'main',
-        bg: 'light-main'
+        bg: 'main-light'
       },
       bottomLoader: {
         border: 'main'

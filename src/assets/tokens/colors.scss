@@ -46,11 +46,15 @@ $color-darken-turquoise: #2F8C99; /* Кастомные тултипы */
 $color-transparent: transparent; /* Прозрачный фон */
 
 $color-main: #8756FF;
-$color-light-main: #CBB7FF;
-$color-lighter-main: #EEE8FF;
+$color-main-light: #CBB7FF;
+$color-main-lighter: #EEE8FF;
+$color-main-dark: #EEE8FF;
 
 $token-colors: (
         "main": $color-main,
+        "main-light": $color-main-light,
+        "main-lighter": $color-main-lighter,
+        "main-dark": $color-main-dark,
         "purple": $color-purple,
         "hover-purple": $color-hover-purple,
         "light-purple": $color-light-purple,
