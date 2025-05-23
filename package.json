@@ -1,6 +1,6 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.102",
+  "version": "0.0.103",
   "license": "MIT",
   "description": "Design system for Mediacube services",
   "keywords": [
@@ -64,14 +64,17 @@
     "dayjs": "^1.11.13",
     "isomorphic-dompurify": "^2.15.0",
     "vite-plugin-static-copy": "^2.1.0",
-    "vue": "^3.4.29",
     "vue-3-slider-component": "^1.0.1",
     "vue-imask": "^7.6.1",
     "vue-multiselect": "^3.0.0-beta.3",
     "vue-router": "^4.4.3",
     "vue3-cropperjs": "^1.1.1"
   },
+  "peerDependencies": {
+    "vue": "^3.4.29"
+  },
   "devDependencies": {
+    "vue": "^3.4.29",
     "@chromatic-com/storybook": "^1.6.1",
     "@rushstack/eslint-patch": "^1.8.0",
     "@storybook/addon-essentials": "^8.2.9",
