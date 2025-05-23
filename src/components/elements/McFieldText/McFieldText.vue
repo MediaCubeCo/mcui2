@@ -2,7 +2,7 @@
 import { IMaskComponent, IMask } from 'vue-imask'
 import { McTitle, McButton, McSvgIcon, McTooltip } from '@/components'
 import { Spaces } from '@/types/styles/Spaces'
-import { computed, type PropType, ref, useAttrs, watch } from 'vue'
+import { computed, type PropType, reactive, ref, useAttrs, watch } from 'vue'
 import type { DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
 import type { InputTypesUnion, InputValue } from '@/types/IInput'
@@ -265,6 +265,10 @@ const props = defineProps({
 
 const theme = useTheme('fieldText')
 const prettyType = ref<string>(props.type)
+const copyIcon = reactive<{ name: IconsListUnion, color: ColorTypes }>({
+  name: 'copy',
+  color: 'black'
+})
 const fieldErrors = useFieldErrors(props.errors)
 
 const isRtl = computed((): boolean => {
@@ -569,6 +573,17 @@ const getAmountFormat = (value: string): string => {
 }
 
 const handlerCopy = (): void => {
+  try {
+    navigator.clipboard.writeText(props.modelValue as string)
+    copyIcon.name = 'check'
+    copyIcon.color = 'green'
+    setTimeout(() => {
+      copyIcon.name = 'copy'
+      copyIcon.color = 'black'
+    }, 2000)
+  } catch(e) {
+    console.error('error while copy with navigator', e)
+  }
   /**
    * Событие по кнопке копирования
    */
@@ -667,7 +682,7 @@ const handleFocus = (e: MouseEvent): void => {
           <slot name="append" />
           <mc-button v-if="copy" variation="black-link" :size="ButtonSize.MCompact" @click.prevent="handlerCopy">
             <template #icon-append>
-              <mc-svg-icon name="copy" />
+              <mc-svg-icon :name="copyIcon.name" :color="copyIcon.color" />
             </template>
           </mc-button>
           <mc-tooltip
@@ -926,7 +941,8 @@ const handleFocus = (e: MouseEvent): void => {
   &--disabled {
     #{$block-name} {
       &__input,
-      &__inner {
+      &__inner,
+      &__main {
         color: $color-gray;
         cursor: not-allowed;
         background-color: $color-hover-gray;
@@ -936,7 +952,8 @@ const handleFocus = (e: MouseEvent): void => {
 
   &--copy {
     #{$block-name} {
-      &__input {
+      &__input,
+      &__main {
         color: $color-dark-gray;
         background-color: $color-hover-gray;
         border-color: $color-outline-gray;

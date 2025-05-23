@@ -22,6 +22,11 @@ import MediacubeUi from 'mediacube-ui-v2'
 //import { Themes } from 'mediacube-ui-v2/enums'
 //import { ColorThemes } from 'mediacube-ui-v2/types'
 
+import { ThemesColors, UiThemes } from 'mediacube-ui-v2'
+
+// ThemesColors - JSON wtih all colors in UI
+// UiThemes - JSON wtih all themes in UI
+
 export default defineNuxtPlugin( (nuxtApp) => {
   nuxtApp.vueApp.use(MediacubeUi, {
     drawerComponents: {},
@@ -48,6 +53,11 @@ import 'mediacube-ui-v2/font'
 //import { IToast } from 'mediacube-ui-v2/types/IToast'
 //import { Themes } from 'mediacube-ui-v2/enums'
 //import { ColorThemes } from 'mediacube-ui-v2/types'
+
+import { ThemesColors, UiThemes } from 'mediacube-ui-v2'
+
+// ThemesColors - JSON wtih all colors in UI
+// UiThemes - JSON wtih all themes in UI
 
 app.use(MediacubeUi, {
   drawerComponents: {},

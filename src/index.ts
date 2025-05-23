@@ -1,4 +1,4 @@
-import { App, reactive } from 'vue'
+import { App, shallowReactive } from 'vue'
 import { IDSOptions } from './types'
 import { useHelper } from '@/composables'
 import { Themes } from '@/enums'
@@ -29,7 +29,7 @@ export default {
       theme: Themes.Light,
     }
 
-    const dsOptions = reactive({
+    const dsOptions = shallowReactive({
       ...defaultOptions,
       ...options,
       colors: options.colors ? helpers.mergeReactiveDefaults(defaultOptions.colors!, options.colors) : defaultOptions.colors,
