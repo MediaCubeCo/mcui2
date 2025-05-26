@@ -119,7 +119,8 @@ export const UiThemes: ColorThemes = {
         variation: 'main'
       },
       button: {
-        variation: 'main'
+        variation: 'main',
+        activeTextColor: 'main'
       },
       chip: {
         variation: 'transparent',

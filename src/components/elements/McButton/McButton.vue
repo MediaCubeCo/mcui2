@@ -170,6 +170,9 @@ const props = defineProps({
     type: Boolean as PropType<boolean>,
     default: false
   },
+  activeTextColor: {
+    type: String as () => ColorTypes,
+  },
   /**
    *  exact
    *
@@ -328,6 +331,7 @@ const styles = computed((): { [key: string]: ColorsUnion | FontWeightsUnion | st
     '--mc-button-secondary-color': props.secondaryColor && theme.colors[props.secondaryColor],
     '--mc-button-background-color':
       computedVariation.value && theme.colors[buttonVariation.value.color as ColorTypes],
+    '--mc-button-active-text-color': theme.colors[props.activeTextColor || theme.component.activeTextColor],
     '--mc-button-font-weight': props.weight && FontWeights[props.weight],
     '--mc-button-hover-brightness': hoverBrightness,
     '--mc-button-text-color': textColor && theme.colors[textColor]
@@ -439,6 +443,7 @@ const handleClick = (e: Event): void => {
   $block-name: &;
   @include reset();
   --mc-button-background-color: #{$color-transparent};
+  --mc-button-active-text-color: #{$color-purple};
   --mc-button-font-weight: #{$font-weight-normal};
   --mc-button-text-color: #{$color-black};
   --mc-button-hover-brightness: 0.9;
@@ -784,7 +789,7 @@ const handleClick = (e: Event): void => {
 
   &--is-active,
   &.nuxt-link-active {
-    color: var(--mc-button-background-color);
+    color: var(--mc-button-active-text-color);
     background-color: transparent;
     border-color: transparent;
     pointer-events: none;
