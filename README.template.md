@@ -43,6 +43,7 @@ export default defineNuxtPlugin( (nuxtApp) => {
 // nuxt.config.ts
 css: ['mediacube-ui-v2/style', 'mediacube-ui-v2/font']
 
+
 ```
 ###  Vue@3.X
 ```ts
@@ -69,6 +70,18 @@ app.use(MediacubeUi, {
   themes?: ColorThemes,
   theme?: Themes,
 })
+```
+
+## Svg icons 
+For quick access to the icon sprite, it must be embedded directly into the markup, in the body tag
+
+```vue
+import mediacubeUiIconsSprite from 'mediacube-ui-v2/sprite?raw'
+
+...
+<span v-html="mediacubeUiIconsSprite" id="ui-svg-sprite" />
+...
+
 ```
 
 ## Type Support for `.vue` Imports in TS
