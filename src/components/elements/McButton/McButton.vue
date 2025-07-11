@@ -35,7 +35,7 @@ const buttonTooltip = computed((): ITooltip => {
     payload = {
       content: props.tooltip,
       size: TooltipSizes.M,
-      placement: props.tooltipPlacement || TooltipPositions.Top,
+      placement: props.tooltipPlacement || TooltipPositions.Top
     }
   }
   return payload
@@ -46,14 +46,14 @@ const props = defineProps({
    *  Если нужна ссылка внутри приложения:
    */
   to: {
-    type: String as PropType<string>,
+    type: String as PropType<string>
   },
   /**
    *  Если нужна обычная ссылка:
    * `https://mediacube.agency/`
    */
   href: {
-    type: String as PropType<string>,
+    type: String as PropType<string>
   },
   /**
    *  По умолчанию ожидается использование в `Nuxt`
@@ -65,7 +65,7 @@ const props = defineProps({
   },
   target: {
     type: String as PropType<'_self' | '_blank'>,
-    default: '_self',
+    default: '_self'
   },
   /**
    *  Отключенное состояние
@@ -112,7 +112,7 @@ const props = defineProps({
    *  `purple, red, purple-outline, purple-invert, purple-flat и т.д.`
    */
   variation: {
-    type: String as () => ButtonVariationUnion,
+    type: String as () => ButtonVariationUnion
   },
   /**
    *  Размеры:
@@ -170,6 +170,9 @@ const props = defineProps({
     type: Boolean as PropType<boolean>,
     default: false
   },
+  activeTextColor: {
+    type: String as () => ColorTypes
+  },
   /**
    *  exact
    *
@@ -181,7 +184,7 @@ const props = defineProps({
   /**
    * Заглавные буквы
    */
-    uppercase: {
+  uppercase: {
     type: Boolean as PropType<boolean>,
     default: false
   },
@@ -231,7 +234,7 @@ const props = defineProps({
   },
   tooltipPlacement: {
     type: String as () => TooltipPositionsUnion,
-    default: null,
+    default: null
   },
 
   /**
@@ -270,7 +273,7 @@ const classes = computed((): { [key: string]: boolean } => {
 })
 
 const computedVariation = computed(() => {
-  return props.variation || theme.component.variation as ColorTypes
+  return props.variation || (theme.component.variation as ColorTypes)
 })
 
 const buttonVariation = computed((): IButtonStyleOptions => {
@@ -299,6 +302,7 @@ const buttonVariation = computed((): IButtonStyleOptions => {
 const styles = computed((): { [key: string]: ColorsUnion | FontWeightsUnion | string | undefined } => {
   let hoverBrightness: string | undefined
   let textColor: ColorTypes | undefined
+  let textActiveColor = props.activeTextColor || theme.component.activeTextColor
   switch (buttonVariation.value.type) {
     case ButtonModifiers.Link:
     case ButtonModifiers.Flat:
@@ -326,8 +330,8 @@ const styles = computed((): { [key: string]: ColorsUnion | FontWeightsUnion | st
 
   return {
     '--mc-button-secondary-color': props.secondaryColor && theme.colors[props.secondaryColor],
-    '--mc-button-background-color':
-      computedVariation.value && theme.colors[buttonVariation.value.color as ColorTypes],
+    '--mc-button-background-color': computedVariation.value && theme.colors[buttonVariation.value.color as ColorTypes],
+    '--mc-button-active-text-color': textActiveColor && theme.colors[textActiveColor],
     '--mc-button-font-weight': props.weight && FontWeights[props.weight],
     '--mc-button-hover-brightness': hoverBrightness,
     '--mc-button-text-color': textColor && theme.colors[textColor]
@@ -349,7 +353,7 @@ const isVariationLink = computed((): boolean => {
 })
 
 const tagBind = computed((): ElButtonTagBind => {
-  let result:ElButtonTagBind = {
+  let result: ElButtonTagBind = {
     to: props.to,
     href: props.href,
     disabled: false,
@@ -380,8 +384,7 @@ const handleClick = (e: Event): void => {
     if (dsOptions.router) {
       dsOptions.router.push(props.to)
     }
-  }
-  else window.open(props.href, props.target)
+  } else window.open(props.href, props.target)
   emit('click', e)
 }
 </script>
@@ -439,6 +442,7 @@ const handleClick = (e: Event): void => {
   $block-name: &;
   @include reset();
   --mc-button-background-color: #{$color-transparent};
+  --mc-button-active-text-color: #{$color-purple};
   --mc-button-font-weight: #{$font-weight-normal};
   --mc-button-text-color: #{$color-black};
   --mc-button-hover-brightness: 0.9;
@@ -784,7 +788,7 @@ const handleClick = (e: Event): void => {
 
   &--is-active,
   &.nuxt-link-active {
-    color: var(--mc-button-background-color);
+    color: var(--mc-button-active-text-color);
     background-color: transparent;
     border-color: transparent;
     pointer-events: none;
