@@ -331,7 +331,7 @@ const styles = computed((): { [key: string]: ColorsUnion | FontWeightsUnion | st
   return {
     '--mc-button-secondary-color': props.secondaryColor && theme.colors[props.secondaryColor],
     '--mc-button-background-color': computedVariation.value && theme.colors[buttonVariation.value.color as ColorTypes],
-    '--mc-button-active-text-color': textActiveColor && theme.colors[textActiveColor],
+    '--mc-button-active-text-color': textActiveColor && theme.colors[textActiveColor as ColorTypes],
     '--mc-button-font-weight': props.weight && FontWeights[props.weight],
     '--mc-button-hover-brightness': hoverBrightness,
     '--mc-button-text-color': textColor && theme.colors[textColor]

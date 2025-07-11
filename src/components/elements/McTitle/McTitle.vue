@@ -188,6 +188,7 @@ const contentStyle = computed((): { [key: string]: string } => ({
   --mc-title-line-height: initial;
   color: var(--mc-title-color);
   font-family: $font-family-main;
+  display: inline-flex;
   @mixin variations() {
     &-h1 {
       font-size: $font-size-700;
