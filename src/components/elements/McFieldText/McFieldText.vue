@@ -658,6 +658,7 @@ const handleFocus = (e: MouseEvent): void => {
               v-if="isMaskVisible"
               :value="computedValue"
               v-bind="maskInputAttrs"
+              @keydown="prepareHandleKeyDown"
               @input="handleInput"
             />
             <input
