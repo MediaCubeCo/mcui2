@@ -13,8 +13,7 @@ const props = defineProps({
    *  Если нужна ссылка внутри приложения:
    */
   to: {
-    type: Object as PropType<string>,
-    default: null
+    type: String as PropType<string>
   },
   /**
    *  Если нужна обычная ссылка:

@@ -40,6 +40,7 @@ export interface ISideBarApp {
 }
 export interface ISideBarLink {
   name: string
+  active: boolean,
   icon: IconsListUnion
   iconColor?: ColorTypes
   href: string
@@ -52,7 +53,6 @@ export interface ISideBarMenuItem extends ISideBarLink {
 }
 export interface ISideBarMenuItemEnrichment extends ISideBarMenuItem {
   id: number
-  active: Function,
   indicator: Function
   open: boolean
 }

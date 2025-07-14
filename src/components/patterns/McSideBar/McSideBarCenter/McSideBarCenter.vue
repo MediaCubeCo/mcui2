@@ -8,7 +8,6 @@ import { ButtonSize, SidebarTheme } from '@/enums'
 import McSlideUpDown from '@/components/elements/McSlideUpDown/McSlideUpDown.vue'
 import { defaultThemes } from '@/mocks/sidebar'
 
-const route = useRoute()
 const randomNumber = useRandomNumber()
 const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
 const emit = defineEmits<{
@@ -81,39 +80,16 @@ watch(
   }
 )
 
-// если переходим на роут с вложенным меню, открываем вложенное меню
-watch(
-  () => route,
-  (newRoute, oldRoute): void => {
-    loading.value = true
-    if (oldRoute.path !== newRoute.path) {
-      const target_route = preparedMainMenu.value.find(
-        (r) => r.to === newRoute.path || r.menu?.find((childRoute) => childRoute.to === newRoute.path)
-      )
-      target_route?.menu && !props.compact && (target_route.open = true)
-    }
-    nextTick(() => {
-      preparedMainMenu.value.forEach((mi) => {
-        const exact_route = mi.to === newRoute.path
-        const route_menu_match_new_route =
-          mi.menu && mi.menu.some((mim) => mim.to?.match(newRoute?.path) || newRoute.path?.match(mim.to as string))
-        if (!(exact_route || route_menu_match_new_route)) mi.open = false
-      })
-      loading.value = false
-    })
-  }
-)
-
 const getMenuItemHeadClasses = (menuMainItem: ISideBarMenuItemEnrichment) => {
   return {
     open: menuMainItem.open,
-    active: menuMainItem.active(),
+    active: menuMainItem.active,
     'with-submenu': menuMainItem.menu && menuMainItem.menu.length,
     [`mc-side-bar--${themeConfig.value.mode || 'black'}__button`]: true,
     'purple-hover': themeConfig.value.mainMenuLinks.variable === 'black-flat',
     [`mc-button--variation-${themeConfig.value.mainMenuLinks.variable}`]: !!themeConfig.value.mainMenuLinks.variable,
     ['mc-side-bar--black__button mc-button nuxt-link-active']:
-      menuMainItem.menu && menuMainItem.menu.length && !menuMainItem.open && menuMainItem.active()
+      menuMainItem.menu && menuMainItem.menu.length && !menuMainItem.open && menuMainItem.active
   }
 }
 
@@ -125,16 +101,14 @@ const handlerSidebarItemClick = () => {
 const setMainMenu = (): void => {
   loading.value = true
   preparedMainMenu.value = props.menuMain.map((i: ISideBarMenuItem) => {
-    const active = () => {
-      return (i.menu && i.menu.some((r) => route?.path?.match(r.to as string))) || !!route?.path?.match(i.to as string)
-    }
+    const child_active = i.menu && i.menu.some(im => im.active)
 
     return {
       id: randomNumber.timestamp(5),
       ...i,
-      active,
       indicator: () => i.menu && i.menu.some((r) => !!props.counts?.[r.count_key]),
-      open: !props.compact && active()
+      open: !props.compact && (i.active || child_active),
+      active: i.active || child_active,
     } as ISideBarMenuItemEnrichment
   })
   loading.value = false
@@ -151,7 +125,7 @@ const setMainMenu = (): void => {
       <div
         v-for="menuMainItem in preparedMainMenu"
         :key="menuMainItem.id"
-        :class="{ 'item-active': menuMainItem.active() }"
+        :class="{ 'item-active': menuMainItem.active }"
         class="mc-side-bar-center__content-item item"
       >
         <div class="item__head" :class="getMenuItemHeadClasses(menuMainItem)" @click="handlerSidebarItemClick">
@@ -168,7 +142,7 @@ const setMainMenu = (): void => {
             :icon-color="menuMainItem.iconColor"
             :title="menuMainItem.name"
             :compact="compact"
-            :is-active="menuMainItem.active()"
+            :is-active="menuMainItem.active"
             :with-submenu="menuMainItem.menu && !!menuMainItem.menu.length"
             :with-indicator="menuMainItem.indicator() && !menuMainItem.open"
             with-tooltip
@@ -176,11 +150,11 @@ const setMainMenu = (): void => {
           />
           <mc-button
             v-if="menuMainItem.menu && menuMainItem.menu.length && !compact"
-            :variation="menuMainItem.active() ? 'white-link' : 'gray-link'"
+            :variation="menuMainItem.active ? 'white-link' : 'gray-link'"
             :size="ButtonSize.MCompact"
             class="item__head-arrow"
             :class="{
-              rotate: menuMainItem.active() ? menuMainItem.active() && menuMainItem.open : menuMainItem.open
+              rotate: menuMainItem.active ? menuMainItem.active && menuMainItem.open : menuMainItem.open
             }"
             @click="menuMainItem.open = !menuMainItem.open"
           >
@@ -192,7 +166,7 @@ const setMainMenu = (): void => {
         <mc-slide-up-down
           v-if="menuMainItem.menu && menuMainItem.menu.length"
           class="item__submenu"
-          :active="menuMainItem.active() ? menuMainItem.active() && menuMainItem.open : menuMainItem.open"
+          :active="menuMainItem.active ? menuMainItem.active && menuMainItem.open : menuMainItem.open"
         >
           <mc-side-bar-button
             v-for="(menuItem, i) in menuMainItem.menu"
@@ -204,6 +178,7 @@ const setMainMenu = (): void => {
             :icon-color="menuItem.iconColor"
             :title="menuItem.name"
             :compact="compact"
+            :is-active="menuItem.active"
             with-tooltip
           />
         </mc-slide-up-down>
