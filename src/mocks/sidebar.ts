@@ -49,7 +49,7 @@ const menu = [
     name: 'Users',
     icon: 'group',
     href: 'javascript:void(0);',
-    info: '10k',
+    info: '232',
     menu: [
       {
         name: 'Сеть',
@@ -59,6 +59,7 @@ const menu = [
       {
         name: 'Доходы',
         icon: 'assessment',
+        active: true,
         to: `payment-accounts-partners-revenues-index`,
       },
       {
@@ -72,7 +73,8 @@ const menu = [
     name: 'Roles',
     icon: 'role',
     href: 'javascript:void(0);',
-    count_key: 'roles'
+    count_key: 'roles',
+    info: '231',
   },
   {
     name: 'Transactions',

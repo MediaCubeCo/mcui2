@@ -21,7 +21,6 @@ const props = defineProps({
    */
   href: {
     type: String as PropType<string>,
-    default: null
   },
   /**
    *  Если нужна иконка
@@ -154,6 +153,7 @@ const styles = computed((): { [key: string]: string } => {
       <mc-chip
         v-if="info || withIndicator"
         :variation="theme.component.chip as ColorTypes"
+        text-color="white"
         class="mc-side-bar-button__chip"
         :class="{ indicator: withIndicator }"
       >

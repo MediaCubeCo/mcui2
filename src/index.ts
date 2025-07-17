@@ -21,10 +21,13 @@ export default {
       modalComponents: {},
       toasts: {},
       defaultAvatar,
-      router: null,
       colors: ThemesColors,
       themes: UiThemes,
       theme: Themes.Light,
+      meta: {
+        router: null,
+        isServer: false,
+      },
     }
 
     const dsOptions = shallowReactive({
@@ -32,6 +35,7 @@ export default {
       ...options,
       colors: options.colors ? helpers.mergeReactiveDefaults(defaultOptions.colors!, options.colors) : defaultOptions.colors,
       themes: options.themes ? helpers.mergeReactiveDefaults(defaultOptions.themes!, options.themes) : defaultOptions.themes,
+      meta: options.meta ? helpers.mergeReactiveDefaults(defaultOptions.meta!, options.meta) : defaultOptions.meta,
     })
 
     app.config.globalProperties.$dsOptions = dsOptions

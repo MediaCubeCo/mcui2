@@ -55,30 +55,11 @@ const props = defineProps({
   }
 })
 
-const loading = ref<boolean>(true)
 const preparedMainMenu = ref<ISideBarMenuItemEnrichment[]>([])
 
 const themeConfig = computed(() => {
   return provideData.currentThemeConfig || defaultThemes[SidebarTheme.Black]
 })
-
-onBeforeMount((): void => {
-  setMainMenu()
-})
-
-watch(
-  () => props.menuMain,
-  (): void => {
-    setMainMenu()
-  },
-  { deep: true }
-)
-watch(
-  () => props.compact,
-  (): void => {
-    setMainMenu()
-  }
-)
 
 const getMenuItemHeadClasses = (menuMainItem: ISideBarMenuItemEnrichment) => {
   return {
@@ -99,20 +80,34 @@ const handlerSidebarItemClick = () => {
 
 // заранее формируем меню один раз, так как компьютед излишен и во вторых нужна переменная "open" что бы ее тогглить
 const setMainMenu = (): void => {
-  loading.value = true
   preparedMainMenu.value = props.menuMain.map((i: ISideBarMenuItem) => {
     const child_active = i.menu && i.menu.some(im => im.active)
 
     return {
       id: randomNumber.timestamp(5),
       ...i,
-      indicator: () => i.menu && i.menu.some((r) => !!props.counts?.[r.count_key]),
-      open: !props.compact && (i.active || child_active),
-      active: i.active || child_active,
+      indicator: () => i.menu && i.menu.some((r) => !!props.counts?.[r.count_key] || !!r.info),
+      open: props.compact ? false : i.active || child_active,
+      active: i.active,
+      child_active,
+      classes: getMenuItemHeadClasses(i as ISideBarMenuItemEnrichment),
     } as ISideBarMenuItemEnrichment
   })
-  loading.value = false
 }
+
+watch(
+  () => props.menuMain,
+  (): void => {
+    setMainMenu()
+  },
+  { deep: true, immediate: true }
+)
+watch(
+  () => props.compact,
+  (): void => {
+    setMainMenu()
+  }
+)
 </script>
 
 <template>
@@ -121,14 +116,14 @@ const setMainMenu = (): void => {
       {{ title }}
     </mc-title>
     <!-- v-show hides jumping with child menu opening after locale switch  -->
-    <div v-show="!loading" v-if="preparedMainMenu && preparedMainMenu.length" class="mc-side-bar-center__content">
+    <div v-if="preparedMainMenu && preparedMainMenu.length" class="mc-side-bar-center__content">
       <div
         v-for="menuMainItem in preparedMainMenu"
         :key="menuMainItem.id"
         :class="{ 'item-active': menuMainItem.active }"
         class="mc-side-bar-center__content-item item"
       >
-        <div class="item__head" :class="getMenuItemHeadClasses(menuMainItem)" @click="handlerSidebarItemClick">
+        <div class="item__head" :class="menuMainItem.classes" @click="handlerSidebarItemClick">
           <!-- TODO refactor info -->
           <mc-side-bar-button
             :info="
@@ -145,6 +140,7 @@ const setMainMenu = (): void => {
             :is-active="menuMainItem.active"
             :with-submenu="menuMainItem.menu && !!menuMainItem.menu.length"
             :with-indicator="menuMainItem.indicator() && !menuMainItem.open"
+            :variation="menuMainItem.child_active ? 'white-link' : 'gray-link'"
             with-tooltip
             class="item__head-button--no-hover"
           />
@@ -166,12 +162,12 @@ const setMainMenu = (): void => {
         <mc-slide-up-down
           v-if="menuMainItem.menu && menuMainItem.menu.length"
           class="item__submenu"
-          :active="menuMainItem.active ? menuMainItem.active && menuMainItem.open : menuMainItem.open"
+          :active="menuMainItem.open"
         >
           <mc-side-bar-button
             v-for="(menuItem, i) in menuMainItem.menu"
             :key="i"
-            :info="counts[menuItem.count_key]"
+            :info="menuItem.info || counts[menuItem.count_key]"
             :href="menuItem.href"
             :to="menuItem.to"
             :icon="menuItem.icon"
@@ -203,7 +199,7 @@ const setMainMenu = (): void => {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '../../../../assets/styles/mixins' as *;
 @use '../../../../assets/tokens/spacings' as *;
 @use '../../../../assets/tokens/colors' as *;

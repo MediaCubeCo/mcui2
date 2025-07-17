@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, type PropType, ref, watch } from 'vue'
+import { computed, inject, onMounted, type PropType, ref, watch } from 'vue'
+import { IDSOptions } from '@/types'
 
 interface animationPayload {
   contentHeight: string | number
@@ -47,14 +48,24 @@ const props = defineProps({
     default: true
   }
 })
+const dsOptions = inject<IDSOptions>('dsOptions', {})
 
+const key = ref(Date.now())
 const open = ref<boolean>(props.active)
 const animation_in_progress = ref<boolean>(false)
 const animation = ref<Animation | null>(null)
 const container = ref<HTMLDivElement>()
 
-onMounted((): void => {
-  init()
+const isServer = computed(() => {
+  return dsOptions?.meta?.isServer
+})
+
+const classes = computed(() => {
+  return {
+    'mc-slide-up-down': true,
+    'mc-slide-up-down--server-open': isServer.value && open.value,
+    'mc-slide-up-down--server-close': isServer.value && !open.value,
+  }
 })
 
 const init = (): void => {
@@ -119,16 +130,26 @@ const handleOpen = ({ contentHeight }: animationPayload) => {
   }
 }
 
+onMounted(() => {
+  key.value = Date.now()
+})
+
 watch(
   () => props.active,
   (): void => {
     animate()
   }
 )
+watch(
+  () => container.value,
+  (): void => {
+    init()
+  }
+)
 </script>
 
 <template>
-  <component ref="container" :is="props.tag" class="mc-slide-up-down">
+  <component ref="container" :is="props.tag" :class="classes" :key="`mc-slide-up-down-key-${isServer}-${key}`">
     <slot />
   </component>
 </template>
@@ -138,5 +159,13 @@ watch(
 .mc-slide-up-down {
   overflow: hidden;
   font-family: $font-family-main;
+  &--server {
+    &-open {
+      height: 100% !important;
+    }
+    &-close {
+      height: 0 !important;
+    }
+  }
 }
 </style>

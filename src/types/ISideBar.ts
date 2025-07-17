@@ -47,6 +47,7 @@ export interface ISideBarLink {
   to: string
   info?: string | number | null
   count_key: string
+  classes?: object
 }
 export interface ISideBarMenuItem extends ISideBarLink {
   menu?: ISideBarLink[]
@@ -55,6 +56,7 @@ export interface ISideBarMenuItemEnrichment extends ISideBarMenuItem {
   id: number
   indicator: Function
   open: boolean
+  child_active?: boolean
 }
 
 export interface ISidebarThemeConfig {

@@ -381,8 +381,8 @@ const handleBlur = (e: Event): void => {
 const handleClick = (e: Event): void => {
   e.preventDefault()
   if (props.to) {
-    if (dsOptions.router) {
-      dsOptions.router.push(props.to)
+    if (dsOptions?.meta?.router) {
+      dsOptions.meta.router.push(props.to)
     }
   } else window.open(props.href, props.target)
   emit('click', e)

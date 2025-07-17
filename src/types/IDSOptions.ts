@@ -9,8 +9,11 @@ export interface IDSOptions {
   modalComponents?: Partial<VueElement>
   toasts?: Partial<IToast>
   defaultAvatar?: string | null,
-  router?: null | Router,
   colors?: Record<string, string>,
   themes?: ColorThemes,
   theme?: Themes,
+  meta?: {
+    router?: null | Router,
+    isServer?: boolean
+  }
 }
