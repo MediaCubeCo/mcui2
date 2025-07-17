@@ -194,48 +194,29 @@ const contentStyle = computed((): { [key: string]: string } => ({
       font-size: $font-size-700;
       line-height: $line-height-600;
       font-weight: $font-weight-semi-bold;
-      #{$block-name}__text {
-        max-width: 920px;
-      }
     }
     &-h2 {
       font-size: $font-size-600;
       line-height: $line-height-500;
       font-weight: $font-weight-semi-bold;
-      #{$block-name}__text {
-        max-width: 820px;
-      }
     }
     &-h3 {
       font-size: $font-size-500;
       line-height: $line-height-400;
       font-weight: $font-weight-semi-bold;
-      #{$block-name}__text {
-        max-width: 720px;
-      }
     }
     &-h4 {
       font-size: $font-size-400;
       line-height: $line-height-300;
       font-weight: $font-weight-bold;
-      #{$block-name}__text {
-        max-width: 700px;
-      }
     }
-
     &-subtitle {
       font-size: $font-size-300;
       line-height: $line-height-250;
-      #{$block-name}__text {
-        max-width: 640px;
-      }
     }
     &-article {
       font-size: $font-size-200;
       line-height: $line-height-250;
-      #{$block-name}__text {
-        max-width: 536px;
-      }
     }
     &-info {
       font-size: $font-size-300;
@@ -244,17 +225,11 @@ const contentStyle = computed((): { [key: string]: string } => ({
     &-body {
       font-size: $font-size-200;
       line-height: $line-height-200;
-      #{$block-name}__text {
-        max-width: 330px;
-      }
     }
     &-overline {
       font-size: $font-size-100;
       line-height: $line-height-150;
       font-weight: $font-weight-medium;
-      #{$block-name}__text {
-        max-width: 330px;
-      }
     }
   }
   max-width: 100%;
