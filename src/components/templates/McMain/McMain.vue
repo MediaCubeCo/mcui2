@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, PropType } from 'vue'
+import { onBeforeUnmount, onMounted } from 'vue'
 /**
  * Используется для вёрстки основных страниц
  * на проектах

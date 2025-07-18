@@ -59,6 +59,7 @@ export { default as McWrapScroll } from './patterns/McWrapScroll/McWrapScroll.vu
  * templates
  * */
 export { default as McDrawer } from './templates/McDrawer/McDrawer.vue'
+export { default as McMain } from './templates/McMain/McMain.vue'
 export { default as McDrawerContainer } from './templates/McDrawer/McDrawerContainer.vue'
 export { default as McDrawerContentTemplate } from './templates/McDrawer/McDrawerContentTemplate/McDrawerContentTemplate.vue'
 export { default as McModalContainer } from './templates/McModal/McModalContainer.vue'
