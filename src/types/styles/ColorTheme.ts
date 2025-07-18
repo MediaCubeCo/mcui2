@@ -185,7 +185,8 @@ export const UiThemes: ColorThemes = {
         textColor: 'white'
       },
       dropdown: {
-        itemColor: 'main'
+        itemColor: 'main',
+        itemBgColor: 'lighter-purple'
       },
       filter: {
         color: 'main',
@@ -289,7 +290,8 @@ export const UiThemes: ColorThemes = {
         textColor: 'white'
       },
       dropdown: {
-        itemColor: 'main'
+        itemColor: 'main',
+        itemBgColor: 'lighter-purple'
       },
       filter: {
         color: 'main',

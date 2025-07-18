@@ -85,6 +85,7 @@ const dropdownStyles = computed((): { [key: string]: string | number } => {
   return {
     '--dropdown-body-min-width': props.listMinWidth,
     '--dropdown-item-color': theme.component.itemColor as ColorTypes,
+    '--dropdown-item-background': theme.colors[theme.component.itemBgColor as ColorTypes],
   }
 })
 
@@ -190,6 +191,8 @@ watch(
 @use '../../../assets/tokens/z-indexes' as *;
 @use '../../../assets/tokens/durations' as *;
 @use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/media-queries' as *;
+@use '../../../assets/tokens/border-radius' as *;
 .mc-dropdown {
   $block-name: &;
   --dropdown-body-min-width: inherit;
@@ -288,8 +291,19 @@ watch(
   }
   .mc-dropdown-panel {
     &__item {
+      border-radius: $radius-100;
       & > * {
         width: 100%;
+      }
+      @media #{$media-desktop}{
+        &:hover {
+          background-color: var(--dropdown-item-background);
+        }
+      }
+      @media #{$media-mobile}{
+        &:active {
+          background-color: var(--dropdown-item-background);
+        }
       }
     }
   }
