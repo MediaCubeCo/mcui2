@@ -100,7 +100,7 @@ const handleCloseToastByCloseButton = (toast: IToast) => {
   &__top {
     position: fixed;
     top: $top-bottom-indent;
-    z-index: $z-index-toasted;
+    z-index: $z-index-toasted-container;
     @include child-indent-bottom($space-200);
     &--left {
       left: $left-right-indent;
@@ -116,7 +116,7 @@ const handleCloseToastByCloseButton = (toast: IToast) => {
   &__bottom {
     position: fixed;
     bottom: $top-bottom-indent;
-    z-index: $z-index-toasted;
+    z-index: $z-index-toasted-container;
     @include child-indent-bottom($space-200);
     &--left {
       left: $left-right-indent;

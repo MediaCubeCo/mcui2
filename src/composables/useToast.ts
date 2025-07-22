@@ -1,17 +1,19 @@
 import { useRandomNumber } from '@/composables/useRandomNumber'
-import { h, reactive, render, shallowRef, inject } from 'vue'
+import { h, reactive, render, shallowRef, inject, ref } from 'vue'
 import ToastContainer from '@/components/templates/McToast/McToastContainer.vue'
 import { ToastPositions } from '@/enums/Toast'
 import { ColorTypes, IDSOptions, IToast, IToastAction } from '@/types'
+import { useTheme } from './useTheme'
 
 const toastDefaultOptions = {
   position: ToastPositions.BottomCenter,
   duration: 3000
 }
 
+const theme = ref({})
 const toastOptions = shallowRef<Partial<IToast>>({
   duration: toastDefaultOptions.duration,
-  position: toastDefaultOptions.position
+  position: toastDefaultOptions.position,
 })
 const reactiveProps = reactive<Record<'toasts', IToast[]>>({
   toasts: []
@@ -48,7 +50,7 @@ class Toast {
     this.id = id || useRandomNumber().timestamp(5)
     this.duration = duration || toastOptions.value.duration || toastDefaultOptions.duration
     this.position = position || toastOptions.value.position || toastDefaultOptions.position
-    this.variation = variation
+    this.variation = variation!
     this.icon = icon
     this.title = title
     this.description = description
@@ -74,7 +76,9 @@ class Toast {
 function show(payload: Partial<IToast>) {
   ensureToastContainerExists()
   //@ts-ignore
-  const toast: IToast = new Toast(payload)
+  const variation = theme.value.component.variation
+  //@ts-ignore
+  const toast: IToast = new Toast({ variation, ...payload })
 
   reactiveProps.toasts.push(toast)
 
@@ -114,6 +118,7 @@ const ensureToastContainerExists = () => {
 
 export function useToast() {
   const dsOptions = inject<IDSOptions>('dsOptions', {})
+  theme.value = useTheme('toast')
   if (dsOptions.toasts) {
     toastOptions.value = dsOptions.toasts
   }
