@@ -9,7 +9,7 @@ import { ButtonSize, PreviewSizes, Weights } from '@/enums'
 import { useTheme } from '@/composables/useTheme'
 
 const emit = defineEmits<{
-  (e: 'close', value: IToast): void
+  (e: 'closed', value: IToast): void
 }>()
 
 const props = defineProps({
@@ -79,7 +79,7 @@ const computedVariation = computed((): ColorTypes => {
 
 const theme = useTheme('toast')
 
-const timer = useTimer(props.toast.destroy, props.duration)
+const timer = useTimer(props.toast.timeEnd, props.duration)
 
 const toastClasses = computed((): { [key: string]: boolean } => {
   return {
@@ -94,7 +94,7 @@ const toastStyles = computed((): { [key: string]: string } => {
 })
 
 const handleClose = (): void => {
-  emit('close', props.toast)
+  emit('closed', props.toast)
 }
 
 const handleCustomButtonAction = (handler: Function) => {
@@ -126,14 +126,15 @@ onMounted((): void => {
           :size="ButtonSize.Xs"
           :variation="action.variation || 'gray-outline'"
           :weight="Weights.Normal"
-          @click="() => handleCustomButtonAction(action.handler)"
+          @click.stop="() => handleCustomButtonAction(action.handler)"
         >
           <template v-if="action.icon" #icon-prepend>
             <mc-svg-icon :name="action.icon" />
           </template>
           {{ action.title }}
         </mc-button>
-        <mc-button v-if="props.closable" @click="handleClose" variation="gray-link">
+        <mc-button v-if="props.closable" @click.stop="handleClose" variation="gray-link">
+          a
           <template #icon-append>
             <mc-svg-icon name="close" />
           </template>

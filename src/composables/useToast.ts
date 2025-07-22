@@ -2,16 +2,16 @@ import { useRandomNumber } from '@/composables/useRandomNumber'
 import { h, reactive, render, shallowRef, inject } from 'vue'
 import ToastContainer from '@/components/templates/McToast/McToastContainer.vue'
 import { ToastPositions } from '@/enums/Toast'
-import { IDSOptions, IToast, IToastAction } from '@/types'
+import { ColorTypes, IDSOptions, IToast, IToastAction } from '@/types'
 
 const toastDefaultOptions = {
   position: ToastPositions.BottomCenter,
-  duration: 3000,
+  duration: 3000
 }
 
 const toastOptions = shallowRef<Partial<IToast>>({
   duration: toastDefaultOptions.duration,
-  position: toastDefaultOptions.position,
+  position: toastDefaultOptions.position
 })
 const reactiveProps = reactive<Record<'toasts', IToast[]>>({
   toasts: []
@@ -28,8 +28,23 @@ class Toast {
   closable: boolean
   show_time: boolean
   actions: IToastAction[] | []
+  onClose?: Function
+  onTimeEnd?: Function
 
-  constructor({ id, duration, position, variation= 'white', icon, title = '', description = '', closable, show_time, actions= [] as IToastAction[] }: Partial<IToast>) {
+  constructor({
+    id,
+    duration,
+    position,
+    variation = '' as ColorTypes,
+    icon,
+    title = '',
+    description = '',
+    closable,
+    show_time,
+    actions = [] as IToastAction[],
+    onClose,
+    onTimeEnd
+  }: Partial<IToast>) {
     this.id = id || useRandomNumber().timestamp(5)
     this.duration = duration || toastOptions.value.duration || toastDefaultOptions.duration
     this.position = position || toastOptions.value.position || toastDefaultOptions.position
@@ -40,9 +55,19 @@ class Toast {
     this.closable = closable || false
     this.show_time = show_time || false
     this.actions = actions
+    this.onClose = onClose
+    this.onTimeEnd = onTimeEnd
   }
   destroy = (): void => {
-    reactiveProps.toasts = reactiveProps.toasts.filter(t => t.id !== this.id)
+    reactiveProps.toasts = reactiveProps.toasts.filter((t) => t.id !== this.id)
+  }
+  close = () => {
+    this.destroy()
+    this.onClose?.()
+  }
+  timeEnd = () => {
+    this.destroy()
+    this.onTimeEnd?.()
   }
 }
 
@@ -52,6 +77,8 @@ function show(payload: Partial<IToast>) {
   const toast: IToast = new Toast(payload)
 
   reactiveProps.toasts.push(toast)
+
+  return toast
 }
 
 function info(payload: Partial<IToast>) {
@@ -62,10 +89,12 @@ function info(payload: Partial<IToast>) {
   const toast: IToast = new Toast({ icon, variation, ...payload })
 
   reactiveProps.toasts.push(toast)
+
+  return toast
 }
 
 function hideAll() {
-  reactiveProps.toasts.forEach(t => t.destroy())
+  reactiveProps.toasts.forEach((t) => t.destroy())
 }
 
 const createToastContainer = () => {
@@ -92,6 +121,6 @@ export function useToast() {
   return {
     show,
     info,
-    hideAll,
+    hideAll
   }
 }

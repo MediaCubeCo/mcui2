@@ -26,17 +26,20 @@ const bottomLeft = computed(() => {
   return props.reactiveProps.toasts.filter((t: IToast) => t.position === ToastPositions.BottomLeft)
 })
 const bottomCenter = computed(() => {
-  return props.reactiveProps.toasts.filter((t: IToast) => t.position === 'bottom-center')
+  return props.reactiveProps.toasts.filter((t: IToast) => t.position === ToastPositions.BottomCenter)
 })
 const bottomRight = computed(() => {
   return props.reactiveProps.toasts.filter((t: IToast) => t.position === ToastPositions.BottomRight)
 })
+const handleCloseToastByCloseButton = (toast: IToast) => {
+  toast.close()
+}
 </script>
 
 <template>
   <div class="mc-toasts-container">
     <div v-if="topLeft.length" class="mc-toasts-container__top mc-toasts-container__top--left">
-      <mc-toast v-for="toast in topLeft" :key="toast.id" v-bind="toast" :toast="toast" @close="() => toast.destroy()" />
+      <mc-toast v-for="toast in topLeft" :key="toast.id" v-bind="toast" :toast="toast" @closed="handleCloseToastByCloseButton(toast)" />
     </div>
     <div v-if="topCenter.length" class="mc-toasts-container__top mc-toasts-container__top--center">
       <mc-toast
@@ -44,7 +47,7 @@ const bottomRight = computed(() => {
         :key="toast.id"
         v-bind="toast"
         :toast="toast"
-        @close="() => toast.destroy()"
+        @closed="handleCloseToastByCloseButton(toast)"
       />
     </div>
     <div v-if="topRight.length" class="mc-toasts-container__top mc-toasts-container__top--right">
@@ -53,7 +56,7 @@ const bottomRight = computed(() => {
         :key="toast.id"
         v-bind="toast"
         :toast="toast"
-        @close="() => toast.destroy()"
+        @closed="handleCloseToastByCloseButton(toast)"
       />
     </div>
     <div v-if="bottomLeft.length" class="mc-toasts-container__bottom mc-toasts-container__bottom--left">
@@ -62,7 +65,7 @@ const bottomRight = computed(() => {
         :key="toast.id"
         v-bind="toast"
         :toast="toast"
-        @close="() => toast.destroy()"
+        @closed="handleCloseToastByCloseButton(toast)"
       />
     </div>
     <div v-if="bottomCenter.length" class="mc-toasts-container__bottom mc-toasts-container__bottom--center">
@@ -71,7 +74,7 @@ const bottomRight = computed(() => {
         :key="toast.id"
         v-bind="toast"
         :toast="toast"
-        @close="() => toast.destroy()"
+        @closed="handleCloseToastByCloseButton(toast)"
       />
     </div>
     <div v-if="bottomRight.length" class="mc-toasts-container__bottom mc-toasts-container__bottom--right">
@@ -80,7 +83,7 @@ const bottomRight = computed(() => {
         :key="toast.id"
         v-bind="toast"
         :toast="toast"
-        @close="() => toast.destroy()"
+        @closed="handleCloseToastByCloseButton(toast)"
       />
     </div>
   </div>

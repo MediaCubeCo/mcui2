@@ -15,6 +15,10 @@ export interface IToast {
   show_time?: boolean
   actions?: IToastAction[],
   destroy: Function
+  close: Function
+  onClose?: Function
+  timeEnd: Function
+  onTimeEnd?: Function
   toast: IToast
 }
 
