@@ -52,11 +52,16 @@ const helper = useHelper()
 const emit = defineEmits<{
   (e: 'error', value: string): void
   (e: 'clear', value: string): void
+  (e: 'open', value: boolean): void
   (e: 'delete-preset', value: string): void
   (e: 'update:modelValue', value: IFilterValue): void
   (e: 'confirm', value: IFilterValue): void
 }>()
 const props = defineProps({
+  open: {
+    type: Boolean as PropType<boolean>,
+    default: false,
+  },
   /**
    *  Имя фильтра
    *  (для записи данных в стор)
@@ -85,14 +90,6 @@ const props = defineProps({
    *  Лоадинг кнопки применить фильтр
    */
   buttonConfirmIsLoading: {
-    type: Boolean as PropType<boolean>,
-    default: false
-  },
-  /**
-   *  Использовать ли teleport (для рендеринга вне компонента)
-   *  Если да то необходимо создать блок с id="filterTeleportTarget" в который будет рендериться тело фильтра
-   */
-  useTeleport: {
     type: Boolean as PropType<boolean>,
     default: false
   },
@@ -339,8 +336,8 @@ const getCategoriesWithNewRelation = (): { category: FilterRelationValue; catego
   const relationKeys = Object.keys(currentCondition.value) as FilterRelations[]
   const values = helper.cloneDeep(currentValues.value)
   const valuesName = helper.cloneDeep(currentValuesName.value)
-  const selectedCategory: FilterRelationValue = values[selectedOptionFilter.value as string]
-  const selectedCategoryName: FilterRelationName = valuesName[selectedOptionFilter.value as string]
+  const selectedCategory: FilterRelationValue = values?.[selectedOptionFilter.value as string]
+  const selectedCategoryName: FilterRelationName = valuesName?.[selectedOptionFilter.value as string]
 
   selectedCategory &&
     relationKeys.forEach((k) => {
@@ -609,24 +606,33 @@ watch(
     }
   }
 )
+
+watch(() => props.open, (val) => {
+  isOpen.value = val
+})
+watch(() => isOpen.value, (val) => {
+  emit('open', val)
+})
 </script>
 
 <template>
   <div class="mc-filter">
     <div class="mc-filter__header">
-      <mc-tooltip :content="placeholders.main_tooltip" :placement="TooltipPositions.Top" :size="TooltipSizes.S">
-        <mc-button
-          :variation="visibilityToggleVariation"
-          :disabled="disabledOpen"
-          :bg-flat="isOpen"
-          :size="ButtonSize.MCompact"
-          @click="isOpen = !isOpen"
-        >
-          <template #icon-prepend>
-            <mc-svg-icon name="filter_list" />
-          </template>
-        </mc-button>
-      </mc-tooltip>
+      <slot name="activator">
+        <mc-tooltip :content="placeholders.main_tooltip" :placement="TooltipPositions.Top" :size="TooltipSizes.S">
+          <mc-button
+            :variation="visibilityToggleVariation"
+            :disabled="disabledOpen"
+            :bg-flat="isOpen"
+            :size="ButtonSize.MCompact"
+            @click="isOpen = !isOpen"
+          >
+            <template #icon-prepend>
+              <mc-svg-icon name="filter_list" />
+            </template>
+          </mc-button>
+        </mc-tooltip>
+      </slot>
       <div v-if="presets" class="mc-filter__presets">
         <div class="mc-filter__presets-inner">
           <mc-button
@@ -641,7 +647,7 @@ watch(
         </div>
       </div>
     </div>
-    <component v-if="isOpen" :is="useTeleport ? Teleport : 'div'" to="#filterTeleportTarget">
+    <div v-if="isOpen">
       <div class="mc-filter__body">
         <div class="mc-filter__body-top">
           <div class="mc-filter__body-top-left">
@@ -779,7 +785,7 @@ watch(
           </div>
         </div>
       </div>
-    </component>
+    </div>
   </div>
 </template>
 

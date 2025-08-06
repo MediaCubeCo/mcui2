@@ -391,7 +391,14 @@ const handleSetCardState = (payload: TableCardState) => {
                   </div>
                   <!-- slot срава от контента (по именем колонки + '-right') -->
                   <div v-if="slots[`${column.field}-right`]" class="mc-table__table_body-cell_content-right">
-                    <slot :name="`${column.field}-right`" />
+                    <slot
+                      :name="`${column.field}-right`"
+                      :row="row"
+                      :rowIndex="rI"
+                      :column="column"
+                      :cellIndex="cI"
+                      :cellValue="row[column.field]"
+                    />
                   </div>
                 </div>
               </div>
@@ -429,7 +436,11 @@ const handleSetCardState = (payload: TableCardState) => {
     <!-- slot для карточки, по дефолту будет выводить карточку из вложенного роута -->
     <slot v-bind="computedTableCardProps" @setTableCardState="handleSetCardState">
       <!-- место для рендера карточки, когда она находится по вложенному роуту -->
-      <router-view v-if="dsOptions?.meta?.router" v-bind="computedTableCardProps" @setTableCardState="handleSetCardState" />
+      <router-view
+        v-if="dsOptions?.meta?.router"
+        v-bind="computedTableCardProps"
+        @setTableCardState="handleSetCardState"
+      />
     </slot>
     <mc-bottom-loader v-if="bottomLoading" />
     <mc-overlay v-if="loading" />

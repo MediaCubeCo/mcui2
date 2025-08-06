@@ -77,8 +77,7 @@ const isAjax = computed((): boolean => {
 
 const computedOptions = computed(() => {
   let options: FilterOption[] = isAjax.value ? ajaxOptions.value : props.filter.options || []
-
-  if (props.currentValues[props.filter.value]) {
+  if (props.currentValues?.[props.filter.value]) {
     const category: FilterConditionValue = props.currentValues[props.filter.value] || ({} as FilterRelationValue)
 
     let selected: FilterConditionValue[] = []

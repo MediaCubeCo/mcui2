@@ -606,6 +606,7 @@ watch(() => props.errors, (value: string[]): void => {
 @use '../../../assets/tokens/sizes' as *;
 @use '../../../assets/tokens/font-weights' as *;
 @use '../../../assets/tokens/border-radius' as *;
+@use '../../../assets/tokens/z-indexes' as *;
 .mc-field-select {
   $block-name: &;
   --mc-field-select-bg-color: initial;
@@ -789,6 +790,7 @@ watch(() => props.errors, (value: string[]): void => {
       overflow-y: auto;
       overflow-x: hidden;
       max-height: 300px;
+      z-index: $z-index-toasted;
     }
     &--above {
       .multiselect__content-wrapper {
