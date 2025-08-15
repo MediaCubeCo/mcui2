@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import McFilter from './McFilter.vue'
+import McButton from '../../elements/McButton/McButton.vue'
+import McFilterPresets from './McFilterPresets/McFilterPresets.vue'
 import { filters } from '@/mocks/filterMocks'
 import sprite from '../../../assets/iconsSprite.svg?raw'
 
@@ -10,7 +12,6 @@ const meta = {
   argTypes: {
     name: { control: 'text' },
     buttonConfirmIsLoading: { control: 'boolean' },
-    useTeleport: { control: 'boolean' },
     disabledOpen: { control: 'boolean' },
     useTimezone: { control: 'boolean' }
   },
@@ -18,7 +19,6 @@ const meta = {
     filters: filters,
     name: 'mc-filter',
     buttonConfirmIsLoading: false,
-    useTeleport: false,
     disabledOpen: false,
     useTimezone: false
   },
@@ -58,11 +58,13 @@ export const Default: Story = {
             },
             filter_name:
               'JTdCJTIyZW1haWwlMjI6JTIyTWNQYXklMjIsJTIyY291bnRyaWVzJTIyOiU3QiUyMmlzJTIyOiU3QiUyMjElMjI6JTIyJUQwJTkxJUQwJUI1JUQwJUJCJUQwJUIwJUQxJTgwJUQxJTgzJUQxJTgxJUQxJThDJTIyLCUyMjMlMjI6JTIyJUQwJUEzJUQwJUJBJUQxJTgwJUQwJUIwJUQwJUI4JUQwJUJEJUQwJUIwJTIyJTdEJTdELCUyMnZpZXdzX2NvdW50JTIyOiU3QiUyMm1vcmUlMjI6MSwlMjJsZXNzJTIyOjEwMDAwJTdELCUyMmNyZWF0ZWRfYXQlMjI6JTdCJTIybW9yZSUyMjolMjIyMDI0LTEwLTAxJTIyLCUyMmxlc3MlMjI6JTIyMjAyNC0xMS0zMCUyMiU3RCwlMjJ0YWdzJTIyOiU3QiUyMmlzJTIyOiU3QiUyMlBpZWNlJTIyOiUyMlBpZWNlJTIyJTdEJTdEJTdE'
-          }
+          },
         }
       },
       components: {
-        McFilter
+        McFilter,
+        McButton,
+        McFilterPresets,
       },
       computed: {
         filters() {
@@ -75,7 +77,7 @@ export const Default: Story = {
       template: `
         <div>
           <span v-html="sprite" />
-          <mc-filter :filters="filters" v-model="v" name="mc-filter"></mc-filter>
+          <mc-filter :filters="filters" with-presets with-activator v-model="v" name="mc-filter"></mc-filter>
         </div>
             `
     }

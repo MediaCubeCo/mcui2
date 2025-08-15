@@ -188,6 +188,13 @@ const shadows = reactive({
   lastColHasShadow: false
 })
 
+const containerClasses = computed(() => {
+  return {
+    'mc-table__container': true,
+    'mc-table__container--card-opened': openCardState.value.state
+  }
+})
+
 const tableClasses = computed(() => {
   return {
     'mc-table': true,
@@ -221,6 +228,11 @@ const computedColumns = computed((): ITableColumnEnriched[] => {
   })
 })
 
+const tableFirstColWidth = computed((): number => {
+  const [first] = computedColumns.value
+  return first?.width ? first.width : TABLE.defaultTableFirstColWidth
+})
+
 const computedHeaderColumns = computed((): ITableColumnEnriched[] => {
   return computedColumns.value.map((column) => ({
     ...column,
@@ -229,7 +241,8 @@ const computedHeaderColumns = computed((): ITableColumnEnriched[] => {
       'mc-table__table_header-cell--fixed-first': column.fixedFirst,
       'mc-table__table_header-cell--fixed-last': column.fixedLast,
       'mc-table__table_header-cell--shadow-first': column.fixedFirst && shadows.firstColHasShadow,
-      'mc-table__table_header-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow
+      'mc-table__table_header-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow,
+      [`mc-table__table_header-cell--align-${column.align}`]: !!column.align,
     }
   }))
 })
@@ -242,7 +255,8 @@ const computedBodyColumns = computed((): ITableColumnEnriched[] => {
       'mc-table__table_body-cell--fixed-first': column.fixedFirst,
       'mc-table__table_body-cell--fixed-last': column.fixedLast,
       'mc-table__table_body-cell--shadow-first': column.fixedFirst && shadows.firstColHasShadow,
-      'mc-table__table_body-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow
+      'mc-table__table_body-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow,
+      [`mc-table__table_body-cell--align-${column.align}`]: !!column.align,
     }
   }))
 })
@@ -255,7 +269,8 @@ const computedFooterColumns = computed((): ITableColumnEnriched[] => {
       'mc-table__table_footer-cell--fixed-first': column.fixedFirst,
       'mc-table__table_footer-cell--fixed-last': column.fixedLast,
       'mc-table__table_footer-cell--shadow-first': column.fixedFirst && shadows.firstColHasShadow,
-      'mc-table__table_footer-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow
+      'mc-table__table_footer-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow,
+      [`mc-table__table_footer-cell--align-${column.align}`]: !!column.align,
     }
   }))
 })
@@ -265,7 +280,8 @@ const containerStyle = computed((): { [key: string]: string } => {
     '--mc-table-height': typeof props.height === 'number' ? `${props.height}px` : props.height,
     '--mc-table-header-row-height': helper.isNumber(props.headerRowHeight) ? `${props.headerRowHeight}px` : '40px',
     '--mc-table-row-height': helper.isNumber(props.rowHeight) ? `${props.rowHeight}px` : '40px',
-    '--mc-table-footer-row-height': helper.isNumber(props.footerRowHeight) ? `${props.footerRowHeight}px` : '40px'
+    '--mc-table-footer-row-height': helper.isNumber(props.footerRowHeight) ? `${props.footerRowHeight}px` : '40px',
+    '--mc-table-first-col-width': `${tableFirstColWidth.value}px`,
   }
 })
 
@@ -321,7 +337,7 @@ const handleSetCardState = (payload: TableCardState) => {
 </script>
 
 <template>
-  <div class="mc-table__container" :style="containerStyle">
+  <div :class="containerClasses" :style="containerStyle">
     <div ref="mcTable" :class="tableClasses">
       <div class="mc-table__table">
         <!-- HEADER -->
@@ -552,6 +568,7 @@ const handleSetCardState = (payload: TableCardState) => {
     --mc-table-cell-min-width: auto;
     --mc-table-row-height: 40px;
     --mc-table-footer-row-height: 40px;
+    --mc-table-first-col-width: auto;
 
     position: relative;
     overflow: hidden;
@@ -559,6 +576,11 @@ const handleSetCardState = (payload: TableCardState) => {
     height: var(--mc-table-height);
     border: var(--border-style);
     @include grow;
+    &--card-opened {
+      .mc-bottom-loader {
+        width: var(--mc-table-first-col-width);
+      }
+    }
   }
   &__table {
     @include grow;
@@ -599,6 +621,24 @@ const handleSetCardState = (payload: TableCardState) => {
             display: flex;
             align-items: center;
             @include child-indent-right($space-50);
+          }
+        }
+        &--align-left {
+          justify-content: flex-start;
+          .mc-table__table_header-cell_content {
+            justify-content: flex-start;
+          }
+        }
+        &--align-center {
+          justify-content: center;
+          .mc-table__table_header-cell_content {
+            justify-content: center;
+          }
+        }
+        &--align-right {
+          justify-content: flex-end;
+          .mc-table__table_header-cell_content {
+            justify-content: flex-end;
           }
         }
       }
@@ -686,6 +726,24 @@ const handleSetCardState = (payload: TableCardState) => {
             @include child-indent-right($space-50);
           }
         }
+        &--align-left {
+          text-align: left;
+          .mc-table__table_body-cell_content {
+            text-align: left;
+          }
+        }
+        &--align-center {
+          text-align: center;
+          .mc-table__table_body-cell_content {
+            text-align: center;
+          }
+        }
+        &--align-right {
+          text-align: right;
+          .mc-table__table_body-cell_content {
+            text-align: right;
+          }
+        }
       }
     }
     &_footer {
@@ -710,6 +768,15 @@ const handleSetCardState = (payload: TableCardState) => {
         @include cell-alignment;
         @include fixed-classes;
         @include shadow-classes;
+        &--align-left {
+          justify-content: flex-start;
+        }
+        &--align-center {
+          justify-content: center;
+        }
+        &--align-right {
+          justify-content: flex-end;
+        }
       }
     }
   }

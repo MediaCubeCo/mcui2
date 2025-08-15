@@ -85,7 +85,7 @@ class TooltipInstance {
       setTimeout(() => {
         // Если на момент выхода таймера, его не открыли заново, удаляем
         !this.visible.value && this.destroy()
-      }, 3000)
+      }, 1000)
     }
   }
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Teleport } from 'vue'
 import {
   McSvgIcon,
   McButton,
@@ -12,7 +11,7 @@ import {
   McFilterTypeDate,
   McFilterTypeText,
   McFilterTypeRelation,
-  McChip
+  McChip, McFilterPresets
 } from '@/components'
 import { defaultPlaceholders } from '@/mocks/filterMocks'
 
@@ -113,7 +112,19 @@ const props = defineProps({
   placeholders: {
     type: Object as PropType<Partial<IFilterPlaceholders>>,
     default: () => ({})
-  }
+  },
+  withActivator: {
+    type: Boolean as PropType<boolean>,
+    default: false,
+  },
+  withPresets: {
+    type: Boolean as PropType<boolean>,
+    default: false,
+  },
+  selectedPreset: {
+    type: Object as PropType<IFilterPreset>,
+    default: null
+  },
 })
 
 const theme = useTheme('filter')
@@ -502,15 +513,15 @@ const handleConfirm = (): void => {
  * PRESETS BELOW
  * */
 
-const handlePresetMouseUp = (preset: IFilterPreset) => {
-  if (activePreset.value && activePreset.value.name === preset.name) {
-    activePreset.value = null
-    currentValues.value = {}
-    currentValuesName.value = {}
-  } else {
+const handleSelectPreset = (preset: IFilterPreset) => {
+  if (preset) {
     activePreset.value = preset
     currentValues.value = helper.cloneDeep(preset.filter)
     currentValuesName.value = helper.cloneDeep(preset.filter_name)
+  } else {
+    activePreset.value = null
+    currentValues.value = {}
+    currentValuesName.value = {}
   }
   if (!isOpen.value) {
     handleConfirm()
@@ -613,12 +624,15 @@ watch(() => props.open, (val) => {
 watch(() => isOpen.value, (val) => {
   emit('open', val)
 })
+watch(() => props.selectedPreset, (val: IFilterPreset) => {
+  handleSelectPreset(val)
+})
 </script>
 
 <template>
   <div class="mc-filter">
     <div class="mc-filter__header">
-      <slot name="activator">
+      <slot v-if="props.withActivator" name="activator">
         <mc-tooltip :content="placeholders.main_tooltip" :placement="TooltipPositions.Top" :size="TooltipSizes.S">
           <mc-button
             :variation="visibilityToggleVariation"
@@ -633,18 +647,8 @@ watch(() => isOpen.value, (val) => {
           </mc-button>
         </mc-tooltip>
       </slot>
-      <div v-if="presets" class="mc-filter__presets">
-        <div class="mc-filter__presets-inner">
-          <mc-button
-            v-for="preset in presets"
-            :key="preset.name"
-            :variation="getPresetButtonVariation(preset)"
-            :secondary-color="theme.component.button as ColorTypes"
-            @mouseup="() => handlePresetMouseUp(preset)"
-          >
-            {{ preset.name }}
-          </mc-button>
-        </div>
+      <div v-if="props.withPresets && presets" class="mc-filter__presets">
+        <mc-filter-presets :name="props.name" :selected-preset="activePreset as IFilterPreset" @preset-selected="handleSelectPreset" />
       </div>
     </div>
     <div v-if="isOpen">

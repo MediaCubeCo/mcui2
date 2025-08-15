@@ -30,7 +30,8 @@ const props = defineProps({
    * Если карточка используется как рутовый узел страницы, будет автоматически приходить router.params.id
    * */
   id: {
-    type: [String, Number] as PropType<string | number>
+    type: [String, Number] as PropType<string | number>,
+    required: true,
   },
   tableColumns: {
     type: Array as PropType<ITableColumnWidth[]>,
