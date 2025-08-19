@@ -428,9 +428,10 @@
   }
   img {
     max-width: 100%;
-    max-height: 600px;
-    margin: $space-150 0;
-    border-radius: $radius-200;
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    margin: $space-200 0;
   }
   blockquote {
     border-left: $space-50 solid $color-purple !important;

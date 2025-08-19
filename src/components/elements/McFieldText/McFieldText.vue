@@ -873,7 +873,12 @@ const handleFocus = (e: MouseEvent): void => {
       background-color $duration-s ease,
       border-color $duration-s ease;
     color: $color-black;
-
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration,
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
     @include input-placeholder() {
       color: $color-gray;
     }

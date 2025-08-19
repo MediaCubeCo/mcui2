@@ -46,6 +46,7 @@
     position: relative;
     flex-grow: 1;
     &-inner {
+      display: inline-flex;
       @include position(absolute, 0);
     }
   }
