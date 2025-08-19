@@ -58,6 +58,7 @@ const theme = useTheme('tableCard')
   padding-inline: $space-150 $space-200;
   align-items: center;
   height: 100%;
+  width: 100%;
 
   &__left,
   &__right {
@@ -72,7 +73,8 @@ const theme = useTheme('tableCard')
   }
 
   &__left {
-    margin-inline-end: auto;
+    min-width: max-content;
+    margin-inline-end: $space-150;
   }
 
   &__right {
