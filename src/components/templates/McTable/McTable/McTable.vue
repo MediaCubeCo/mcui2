@@ -558,6 +558,7 @@ const handleSetCardState = (payload: TableCardState) => {
   }
   &--card-opened {
     width: max-content;
+    z-index: $z-index-toasted;
   }
   &__container {
     --border-style: 1px solid #{$color-hover-gray};

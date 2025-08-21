@@ -461,14 +461,14 @@ const getPreparedInputValue = (e: Event): InputValue => {
       let [num] = /-?\d*[\.]?\d*/.exec(String(value)) || []
       num = setDecimalsLimit(num as string)
       num = removeLeadingZero(num)
-      value = num
+      value = +num
       target.value = num
       break
     }
     case InputTypes.Int: {
       let [int] = /-?\d*/.exec(String(target.value)) || []
       int = removeLeadingZero(int as string)
-      value = int
+      value = +int
       target.value = int
       break
     }
