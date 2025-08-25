@@ -256,3 +256,26 @@ export const Copy: Story = {
         }
     },
 };
+export const Disabled: Story = {
+    render() {
+        return {
+            components: { McFieldText },
+            data() {
+                return {
+                    v: 1000000,
+                }
+            },
+            template: `
+                <mc-field-text 
+                  v-model="v" 
+                  type="text"
+                  disabled
+                  title="McFieldText"
+                  placeholder="Copy pls" 
+                  name="InputCopy"
+                  @copy="(payload) => console.log('text for copy: ' + payload)"
+                />
+            `
+        }
+    },
+};

@@ -15,7 +15,7 @@ const props = defineProps({
 })
 
 const containerStyle = computed((): { [key: string]: string | number } => ({
-  zIndex: props.reactiveProps.drawers.length ? 10002 : -1,
+  zIndex: props.reactiveProps.drawers.length ? 10004 : -1,
   visibility: props.reactiveProps.drawers.length ? 'visible' : 'hidden'
 }))
 const closeDrawer = (value: IDrawerState) => {
