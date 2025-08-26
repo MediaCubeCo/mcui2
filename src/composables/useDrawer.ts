@@ -48,7 +48,7 @@ const showDrawer = (
   }
   ensureDrawerContainerExists()
 
-  const id = Date.now()
+  const id = `${componentName}-${Date.now()}`
   const newDrawer: IDrawerState = {
     //@ts-ignore
     component: markRaw(drawerComponents.value[componentName]),
