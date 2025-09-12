@@ -1,12 +1,12 @@
 $radius-square: 0px;
-$radius-50: 4px;
-$radius-100: 8px;
-$radius-150: 12px;
-$radius-200: 16px;
-$radius-300: 24px;
-$radius-400: 32px;
-$radius-1250: 100px;
-$radius-rounded: 300px;
+$radius-50: 0.25rem;       // 4px
+$radius-100: 0.5rem;       // 8px
+$radius-150: 0.75rem;      // 12px
+$radius-200: 1rem;         // 16px
+$radius-300: 1.5rem;       // 24px
+$radius-400: 2rem;         // 32px
+$radius-1250: 6.25rem;     // 100px
+$radius-rounded: 18.75rem; // 300px
 $radius-circle: 50%;
 
 $token-radius: (

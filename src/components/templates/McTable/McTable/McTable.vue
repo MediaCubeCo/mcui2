@@ -481,74 +481,81 @@ const handleSetCardState = (payload: TableCardState) => {
 @use '../../../../assets/tokens/box-shadows' as *;
 @use '../../../../assets/tokens/z-indexes' as *;
 @use '../../../../assets/tokens/media-queries' as *;
-@mixin fixed-first {
-  left: 0;
-  z-index: $z-index-notification;
-  border-right: var(--border-style);
-  background-color: $color-white;
-}
-@mixin fixed-last {
-  right: 0;
-  z-index: $z-index-notification;
-  background-color: $color-white;
-}
-@mixin fixed-classes {
-  &--fixed-first {
-    @include fixed-first;
-  }
-  &--fixed-last {
-    @include fixed-last;
-  }
-}
-@mixin shadow-classes {
-  &--shadow-first {
-    @include shadow-first;
-  }
-  &--shadow-last {
-    @include shadow-last;
-  }
-}
-@mixin shadow-first {
-  border-right-color: $color-transparent;
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background: none;
-    width: 1px;
-    height: 100%;
-    box-shadow: 5px 0 8px $color-black;
-    pointer-events: none;
-  }
-}
-@mixin shadow-last {
-  border-left-color: $color-transparent;
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    background: none;
-    width: 1px;
-    height: 100%;
-    box-shadow: -5px 0 8px $color-black;
-    pointer-events: none;
-  }
-}
-@mixin grow {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-@mixin cell-alignment {
-  display: flex;
-  align-items: center;
-  padding: 0 $space-200;
-}
 .mc-table {
+  --mc-table-z-index-header: 14;
+  --mc-table-z-index-footer: 14;
+  --mc-table-z-index-fixed-col-card-opened: 13;
+  --mc-table-z-index-fixed-col: 12;
+  --mc-table-z-index-cell-right-slot: 11;
+  --mc-table-z-index-cell: 10;
+  @mixin fixed-first {
+    left: 0;
+    z-index: var(--mc-table-z-index-fixed-col);
+    border-right: var(--border-style);
+    background-color: $color-white;
+  }
+  @mixin fixed-last {
+    right: 0;
+    z-index: var(--mc-table-z-index-fixed-col);
+    background-color: $color-white;
+  }
+  @mixin fixed-classes {
+    &--fixed-first {
+      @include fixed-first;
+    }
+    &--fixed-last {
+      @include fixed-last;
+    }
+  }
+  @mixin shadow-classes {
+    &--shadow-first {
+      @include shadow-first;
+    }
+    &--shadow-last {
+      @include shadow-last;
+    }
+  }
+  @mixin shadow-first {
+    border-right-color: $color-transparent;
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      background: none;
+      width: 1px;
+      height: 100%;
+      box-shadow: 5px 0 8px $color-black;
+      pointer-events: none;
+    }
+  }
+  @mixin shadow-last {
+    border-left-color: $color-transparent;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      background: none;
+      width: 1px;
+      height: 100%;
+      box-shadow: -5px 0 8px $color-black;
+      pointer-events: none;
+    }
+  }
+  @mixin grow {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  @mixin cell-alignment {
+    display: flex;
+    align-items: center;
+    padding: 0 $space-200;
+  }
+
   font-family: $font-family-main;
   overflow-y: auto;
   max-height: 100%;
@@ -558,7 +565,7 @@ const handleSetCardState = (payload: TableCardState) => {
   }
   &--card-opened {
     width: max-content;
-    z-index: $z-index-toasted;
+    z-index: var(--mc-table-z-index-fixed-col-card-opened);
   }
   &__container {
     --border-style: 1px solid #{$color-hover-gray};
@@ -588,7 +595,7 @@ const handleSetCardState = (payload: TableCardState) => {
     &_header {
       position: sticky;
       top: 0;
-      z-index: $z-index-overlay;
+      z-index: var(--mc-table-z-index-header);
       &-row {
         display: flex;
         flex-wrap: nowrap;
@@ -599,7 +606,7 @@ const handleSetCardState = (payload: TableCardState) => {
         position: sticky;
         text-align: left;
         top: 0;
-        z-index: 10;
+        z-index: var(--mc-table-z-index-cell);
         width: var(--mc-table-cell-width);
         max-width: var(--mc-table-cell-max-width);
         min-width: var(--mc-table-cell-min-width);
@@ -697,7 +704,7 @@ const handleSetCardState = (payload: TableCardState) => {
       }
       &-cell {
         position: sticky;
-        z-index: 15;
+        z-index: var(--mc-table-z-index-cell);
         text-align: left;
         width: var(--mc-table-cell-width);
         max-width: var(--mc-table-cell-max-width);
@@ -718,7 +725,7 @@ const handleSetCardState = (payload: TableCardState) => {
             min-height: var(--mc-table-row-height);
             align-items: center;
             background: linear-gradient(90deg, rgba($color-hover-gray, 0.2) 0%, $color-hover-gray 60%);
-            z-index: $z-index-notification;
+            z-index: var(--mc-table-z-index-cell-right-slot);
             @include child-indent-right($space-50);
           }
           &-left {
@@ -750,7 +757,7 @@ const handleSetCardState = (payload: TableCardState) => {
     &_footer {
       position: sticky;
       bottom: 0;
-      z-index: $z-index-notification;
+      z-index: var(--mc-table-z-index-footer);
       &-row {
         display: flex;
         flex-wrap: nowrap;
@@ -759,7 +766,7 @@ const handleSetCardState = (payload: TableCardState) => {
       }
       &-cell {
         position: sticky;
-        z-index: 15;
+        z-index: var(--mc-table-z-index-cell);
         text-align: left;
         width: var(--mc-table-cell-width);
         max-width: var(--mc-table-cell-max-width);

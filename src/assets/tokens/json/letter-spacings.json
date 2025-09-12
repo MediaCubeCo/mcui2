@@ -1,4 +1,4 @@
 {
-  "$letter-spacing-m": "0.4px",
-  "$letter-spacing-l": "1px"
+  "$letter-spacing-m": "0.025rem",
+  "$letter-spacing-l": "0.0625rem"
 }

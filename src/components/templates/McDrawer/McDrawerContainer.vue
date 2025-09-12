@@ -2,7 +2,6 @@
 import { computed, type PropType } from 'vue'
 import { McDrawer } from '@/components'
 import type { IDrawerServiceState, IDrawerState } from '@/types/IDrawer'
-import { Mask } from '@/components/elements/McFieldText/McFieldText.stories'
 
 interface IEnrichedDrawerState extends IDrawerState {
   indent_coefficient: number

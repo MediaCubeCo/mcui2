@@ -3,20 +3,20 @@
 * @presenter Spacing
 */
 
-$size-50: 4px; /* Additional token */
-$size-100: 8px;
-$size-150: 12px; /* Additional token */
-$size-200: 16px;
-$size-250: 20px; /* Additional token */
-$size-300: 24px;
-$size-400: 32px;
-$size-500: 40px;
-$size-550: 44px; /* Additional token */
-$size-600: 48px;
-$size-700: 56px;
-$size-800: 64px;
-$size-900: 72px;
-$size-1000: 80px;
+$size-50: 0.25rem;  // 4px
+$size-100: 0.5rem;  // 8px
+$size-150: 0.75rem; // 12px
+$size-200: 1rem;    // 16px
+$size-250: 1.25rem; // 20px
+$size-300: 1.5rem;  // 24px
+$size-400: 2rem;    // 32px
+$size-500: 2.5rem;  // 40px
+$size-550: 2.75rem; // 44px
+$size-600: 3em;     // 48px
+$size-700: 3.5rem;  // 56px
+$size-800: 4rem;    // 64px
+$size-900: 4.5rem;  // 72px
+$size-1000: 5rem;   // 80px
 
 $token-avatar-sizes: (
   300: $size-300,

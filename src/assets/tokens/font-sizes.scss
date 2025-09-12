@@ -3,13 +3,13 @@
   * @presenter FontSize
   */
 
-$font-size-100: 10px;
-$font-size-200: 13px;
-$font-size-300: 16px;
-$font-size-400: 20px;
-$font-size-500: 28px;
-$font-size-600: 32px;
-$font-size-700: 48px;
+$font-size-100: 0.625rem;  // 10px
+$font-size-200: 0.8125rem; // 13px
+$font-size-300: 1rem;      // 16px
+$font-size-400: 1.25rem;   // 20px
+$font-size-500: 1.75rem;   // 28px
+$font-size-600: 2rem;      // 32px
+$font-size-700: 3rem;      // 48px
 
 $token-font-sizes: (
   "100": $font-size-100,

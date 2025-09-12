@@ -180,14 +180,13 @@ watch(
 @use '../../../../assets/tokens/colors' as *;
 @use '../../../../assets/tokens/spacings' as *;
 @use '../../../../assets/tokens/sizes' as *;
-@use '../../../../assets/tokens/z-indexes' as *;
 .mc-table-card {
   $block-name: &;
 
   --table-card-header-height: #{$size-500};
   --table-card-footer-height: #{$size-500};
   @include position(absolute, 0);
-  z-index: $z-index-overlay;
+  z-index: 12;
   background-color: $color-white;
   border-inline-start: 1px solid $color-hover-gray;
   display: flex;

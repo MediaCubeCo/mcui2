@@ -26,10 +26,12 @@ export const Default: Story = {
     return {
       components: { McGridRow, McGridCol },
       template: `
-                <mc-grid-row>
+                <mc-grid-row :gutter-y="16" :gutter-x="12">
                     <mc-grid-col span="12" span-m="1"><div style="background: #e74c3c">1</div></mc-grid-col>
                     <mc-grid-col span="12" span-m="2"><div style="background: #1abc9c">2</div></mc-grid-col>
                     <mc-grid-col span="12" span-m="3"><div style="background: #9b59b6">3</div></mc-grid-col>
+                    <mc-grid-col span="12" span-m="6"><div style="background: #f1c40f">6</div></mc-grid-col>
+                    <mc-grid-col span="12" span-m="6"><div style="background: #f1c40f">6</div></mc-grid-col>
                     <mc-grid-col span="12" span-m="6"><div style="background: #f1c40f">6</div></mc-grid-col>
                 </mc-grid-row>
             `

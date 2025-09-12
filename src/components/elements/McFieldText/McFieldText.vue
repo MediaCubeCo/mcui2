@@ -864,7 +864,7 @@ const handleFocus = (e: MouseEvent): void => {
     border: none;
     outline: 0;
     border-radius: $radius-100;
-    padding: $space-150 - 1px $space-150;
+    padding: calc(#{$space-150} - 1px) $space-150;
     line-height: $line-height-200;
     font-size: $font-size-200;
     background-color: $color-white;

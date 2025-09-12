@@ -4,31 +4,31 @@
  */
 
 $space-zero: 0;
-$space-50: 4px; /* Additional token */
-$space-100: 8px;
-$space-150: 12px; /* Additional token */
-$space-200: 16px;
-$space-250: 20px; /* Additional token */
-$space-300: 24px;
-$space-350: 28px; /* Additional token */
-$space-400: 32px;
-$space-450: 36px; /* Additional token */
-$space-500: 40px;
-$space-600: 48px;
-$space-700: 56px;
-$space-800: 64px;
-$space-900: 72px;
-$space-1000: 80px;
+$space-50: 0.25rem;   // 4px
+$space-100: 0.5rem;   // 8px
+$space-150: 0.75rem;  // 12px
+$space-200: 1rem;     // 16px
+$space-250: 1.25rem;  // 20px
+$space-300: 1.5rem;   // 24px
+$space-350: 1.75rem;  // 28px
+$space-400: 2rem;     // 32px
+$space-450: 2.25rem;  // 36px
+$space-500: 2.5rem;   // 40px
+$space-600: 3rem;     // 48px
+$space-700: 3.5rem;   // 56px
+$space-800: 4rem;     // 64px
+$space-900: 4.5rem;   // 72px
+$space-1000: 5rem;    // 80px
 
 $token-spaces: (
-  50: $space-50, /* Additional token */
+  50: $space-50,
   100: $space-100,
-  150: $space-150, /* Additional token */
+  150: $space-150,
   200: $space-200,
-  250: $space-250, /* Additional token */
+  250: $space-250,
   300: $space-300,
   400: $space-400,
-  450: $space-450, /* Additional token */
+  450: $space-450,
   500: $space-500,
   600: $space-600,
   700: $space-700,

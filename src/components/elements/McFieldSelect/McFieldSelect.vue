@@ -659,8 +659,8 @@ watch(() => props.errors, (value: string[]): void => {
       color: var(--mc-field-select-placeholder-color);
       font-size: $font-size-200;
       line-height: $line-height-200;
-      margin-bottom: $space-150 - 1px;
-      padding-top: $space-150 - 1px;
+      margin-bottom: calc(#{$space-150} - 1px);
+      padding-top: calc(#{$space-150} - 1px);
       padding-inline-start: $space-50;
       width: 100%;
     }
@@ -668,8 +668,8 @@ watch(() => props.errors, (value: string[]): void => {
       font-size: $font-size-200;
       line-height: $line-height-200;
       padding-inline-start: $space-50;
-      margin-bottom: $space-150 - 1px;
-      margin-top: $space-150 - 1px;
+      margin-bottom: calc(#{$space-150} - 1px);
+      margin-top: calc(#{$space-150} - 1px);
       background-color: transparent;
       min-height: auto;
       @include input-placeholder() {
@@ -678,8 +678,8 @@ watch(() => props.errors, (value: string[]): void => {
     }
     &__input {
       padding-inline-start: $space-50;
-      margin-bottom: $space-150 - 2px;
-      padding-top: $space-150 - 1px;
+      margin-bottom: calc(#{$space-150} - 2px);
+      padding-top: calc(#{$space-150} - 1px);
       font-size: $font-size-200;
       line-height: $line-height-200;
       min-height: auto;
@@ -736,7 +736,7 @@ watch(() => props.errors, (value: string[]): void => {
       display: flex;
       flex-wrap: wrap;
       margin-top: -1px;
-      min-height: $size-500 - 2px;
+      min-height: calc(#{$size-500} - 2px);
       @include child-indent-right($space-100);
     }
     &__tag {

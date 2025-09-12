@@ -45,6 +45,10 @@ export default defineConfig({
         {
           src: 'src/assets/variables.scss',
           dest: 'assets'
+        },
+        {
+          src: 'src/assets/base.scss',
+          dest: 'assets'
         }
       ]
     })
