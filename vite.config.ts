@@ -24,31 +24,31 @@ export default defineConfig({
       targets: [
         {
           src: 'src/assets/iconsSprite.svg',
-          dest: 'assets'
+          dest: ''
         },
         {
           src: 'src/assets/img',
-          dest: 'assets'
+          dest: ''
         },
         {
           src: 'src/assets/styles/*.scss',
-          dest: 'assets/styles'
+          dest: 'styles'
         },
         {
           src: 'src/assets/tokens/*.scss',
-          dest: 'assets/tokens'
+          dest: 'tokens'
         },
         {
           src: 'src/assets/fonts',
-          dest: 'assets'
+          dest: ''
         },
         {
           src: 'src/assets/variables.scss',
-          dest: 'assets'
+          dest: ''
         },
         {
           src: 'src/assets/base.scss',
-          dest: 'assets'
+          dest: ''
         }
       ]
     })

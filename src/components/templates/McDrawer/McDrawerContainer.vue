@@ -65,7 +65,7 @@ const closeDrawer = (value: IDrawerState) => {
       :show-overlay="i + 1 === computedDrawers.length"
       @close="() => closeDrawer(drawer)"
       class="mc-drawer-container__item"
-      :class="{ 'mc-drawer-container__item--blur': computedDrawers.length - 1 !== i }"
+      :class="{ 'mc-drawer-container__item--multiple': computedDrawers.length - 1 !== i }"
       :style="{ transform: `translateX(-${drawer.indent}px)` }"
     >
       <component :is="drawer.component" v-bind="drawer.componentProps" @close-drawer="() => closeDrawer(drawer)" />
@@ -82,9 +82,7 @@ const closeDrawer = (value: IDrawerState) => {
   bottom: 0;
   &__item {
     transition: transform 0.25s ease-in-out;
-    &--blur {
-      filter: blur(2px);
-    }
+    &--multiple {}
   }
 }
 </style>
