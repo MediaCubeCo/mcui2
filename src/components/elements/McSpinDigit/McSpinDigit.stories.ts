@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import McSpinDigit from './McSpinDigit.vue'
-import { Colors, type ColorTypes, FontSizes } from '../../../types'
+import { Colors, type ColorTypes, FontSizes, FontWeights } from '../../../types'
 
 const meta = {
     title: 'McSpinDigit',
@@ -12,13 +12,15 @@ const meta = {
         start: { control: 'number' },
         end: { control: 'number' },
         fontSize: { control: 'select', options: Object.keys(FontSizes) },
+        weight: { control: 'select', options: Object.keys(FontWeights) },
     },
     args: {
         color: 'purple' as ColorTypes,
         duration: 500,
         start: 1,
         end: 9,
-        fontSize: '300'
+        fontSize: '300',
+        weight: 'normal',
     },
     parameters: {
         componentSubtitle: 'Status: Ready',

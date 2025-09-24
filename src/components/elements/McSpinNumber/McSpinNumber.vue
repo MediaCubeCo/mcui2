@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, PropType } from 'vue'
-import { FontSizes } from '@/types/styles/FontSizes'
-import { ColorTypes } from '@/types'
+import { ColorTypes, FontWeights, FontSizes } from '@/types'
 import McSpinDigit from '@/components/elements/McSpinDigit/McSpinDigit.vue'
 import { useTheme } from '@/composables/useTheme'
 
 export type FontSizesUnion = keyof typeof FontSizes
+export type FontWeightUnion = keyof typeof FontWeights
 
 const dateNow = Date.now()
 const id = ref(String(dateNow))
@@ -29,6 +29,10 @@ const props = defineProps({
   },
   color: {
     type: String as () => ColorTypes,
+  },
+  weight: {
+    type: String as () => FontWeightUnion,
+    default: 'normal'
   }
 })
 
@@ -75,6 +79,7 @@ const actualizeNumbers = (): void => {
         :start="+currentFrom[i]"
         :duration="props.duration"
         :font-size="props.fontSize"
+        :weight="props.weight"
         :color="computedColor"
         class="mc-spin-number__digit"
         @spin-end="actualizeNumbers"
