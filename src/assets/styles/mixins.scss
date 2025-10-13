@@ -455,7 +455,7 @@
   /*slide-right*/
   .slide-right {
     @include common-slide-styles;
-    &-enter {
+    &-enter-from {
       transform: translateX(50%);
     }
     &-leave-to {
@@ -465,7 +465,7 @@
   /*slide-left*/
   .slide-left {
     @include common-slide-styles;
-    &-enter {
+    &-enter-from {
       transform: translateX(-50%);
     }
     &-leave-to {
