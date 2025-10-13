@@ -249,7 +249,7 @@ const getParams = (): void => {
     if (modalInner.value) {
       Object.keys(styles.value).forEach((attr) => {
         //@ts-ignore
-        const param = parseInt(getComputedStyle(modalInner.value)?.getPropertyValue(attr))
+        const param = parseFloat(getComputedStyle(modalInner.value)?.getPropertyValue(attr)) * parseFloat(getComputedStyle(document.documentElement).fontSize)
         param && (data.modal_params[attr] = param)
       })
     }
