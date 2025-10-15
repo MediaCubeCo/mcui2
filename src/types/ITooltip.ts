@@ -10,8 +10,8 @@ export interface ITooltip {
 }
 
 export interface ITooltipStyles {
-  top: number | null
-  left: number | null
+  top: number
+  left: number
   translate: string
 }
 

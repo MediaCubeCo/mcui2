@@ -131,11 +131,11 @@ const responsivePropsClasses = computed((): { [key: string]: boolean } => {
 
 const classes = computed((): { [key: string]: boolean } => ({
   'mc-title': true,
-  ['mc-title--block']: props.block,
-  ['mc-title--ellipsis']: props.ellipsis,
+  'mc-title--block': props.block,
+  'mc-title--ellipsis': props.ellipsis,
   [`mc-title--text-align-${props.textAlign}`]: !!props.textAlign,
-  [`mc-title--pre-line`]: props.preLine,
-  [`mc-title--nowrap`]: props.nowrap,
+  'mc-title--pre-line': props.preLine,
+  'mc-title--nowrap': props.nowrap,
   'mc-title--uppercase': props.uppercase,
   'mc-title--line-height': !!props.lineHeight,
   'mc-title--weight': !!props.weight,

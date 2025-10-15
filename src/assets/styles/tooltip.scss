@@ -74,7 +74,7 @@
   /* position: Top */
   &[tooltip-placement^="top"]::before {
     top: 100%;
-    left: 50%;
+    left: var(--tooltip-arrow-left, 50%);
     border-bottom-width: 0;
     border-top-color: var(--tooltip-color);
     transform: translate(-50%, 0);
@@ -83,7 +83,7 @@
   /* position: Bottom */
   &[tooltip-placement^="bottom"]::before {
     top: 0;
-    left: 50%;
+    left: var(--tooltip-arrow-left, 50%);
     border-top-width: 0;
     border-bottom-color: var(--tooltip-color);
     transform: translate(-50%, -100%);

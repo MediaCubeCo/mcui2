@@ -18,7 +18,7 @@ class TooltipInstance {
   target: HTMLElement
   content: string | undefined
   visible = ref(false)
-  position = ref<ITooltipStyles>({ top: null, left: null, translate: 'translate(0, 0)' })
+  position = ref<ITooltipStyles>({ top: 0, left: 0, translate: 'translate(0, 0)' })
   placement: TooltipPositions
   size: TooltipSizes
   arrow: boolean
@@ -55,6 +55,7 @@ class TooltipInstance {
       tooltipDiv.innerText = this.content || ''
       tooltipDiv.style.setProperty('--tooltip-color', this.color)
       tooltipDiv.style.setProperty('--tooltip-text-color', this.textColor)
+      tooltipDiv.style.setProperty('--tooltip-arrow-left', '50%')
       tooltipDiv.setAttribute('tooltip-placement', this.placement)
       tooltipDiv.setAttribute('tooltip-size', this.size)
       tooltipDiv.setAttribute('tooltip-arrow', String(this.arrow))
@@ -96,36 +97,108 @@ class TooltipInstance {
     const space = 4
     const arrow = this.arrow ? 4 : 0
 
-    switch (this.placement) {
-      case TooltipPositions.Right:
-        this.position.value = {
-          top: requiredTop,
-          left: requiredLeft + width + (space + arrow),
-          translate: `translate(0, calc(-50% + ${height / 2}px))`
-        }
-        break
-      case TooltipPositions.Left:
-        this.position.value = {
-          top: requiredTop,
-          left: requiredLeft - (space + arrow),
-          translate: `translate(-100%, calc(-50% + ${height / 2}px))`
-        }
-        break
-      case TooltipPositions.Top:
-        this.position.value = {
-          top: requiredTop - (space + arrow),
-          left: requiredLeft + width / 2,
-          translate: 'translate(-50%, -100%)'
-        }
-        break
-      case TooltipPositions.Bottom:
-        this.position.value = {
-          top: requiredTop + height + (space + arrow),
-          left: requiredLeft + width / 2,
-          translate: 'translate(-50%, 0%)'
-        }
-        break
+    let pos = <ITooltipStyles>{ top: 0, left: 0, translate: '' }
+
+    //@ts-ignore
+    const computePosition = (placement: string): ITooltipStyles => {
+      switch (placement) {
+        case TooltipPositions.Right:
+          return  {
+            top: requiredTop,
+            left: requiredLeft + width + (space + arrow),
+            translate: `translate(0, calc(-50% + ${height / 2}px))`
+          }
+        case TooltipPositions.Left:
+          return {
+            top: requiredTop,
+            left: requiredLeft - (space + arrow),
+            translate: `translate(-100%, calc(-50% + ${height / 2}px))`
+          }
+        case TooltipPositions.Top:
+          return {
+            top: requiredTop - (space + arrow),
+            left: requiredLeft + width / 2,
+            translate: 'translate(-50%, -100%)'
+          }
+        case TooltipPositions.Bottom:
+          return  {
+            top: requiredTop + height + (space + arrow),
+            left: requiredLeft + width / 2,
+            translate: 'translate(-50%, 0%)'
+          }
+        default:
+          return { top: 0, left: 0, translate: '' }
+      }
     }
+
+    pos = computePosition(this.placement)
+
+    this.position.value = pos
+
+    setTimeout(() => {
+      const tooltipEl = document.getElementById(String(this.id))
+      if (!tooltipEl) return
+
+      const { width: ttWidth, height: ttHeight } = tooltipEl.getBoundingClientRect()
+      const viewportWidth = window.innerWidth
+      const viewportHeight = window.innerHeight
+
+      const overflowRight = pos.left + ttWidth / 2 > viewportWidth
+      const overflowLeft = pos.left - ttWidth / 2 < 0
+      const overflowTop = pos.top - ttHeight < 0
+      const overflowBottom = pos.top + ttHeight > viewportHeight
+
+      if (this.placement === TooltipPositions.Right && overflowRight) {
+        this.placement = TooltipPositions.Left
+      } else if (this.placement === TooltipPositions.Left && overflowLeft) {
+        this.placement = TooltipPositions.Right
+      } else if (this.placement === TooltipPositions.Top && overflowTop) {
+        this.placement = TooltipPositions.Bottom
+      } else if (this.placement === TooltipPositions.Bottom && overflowBottom) {
+        this.placement = TooltipPositions.Top
+      }
+      pos = computePosition(this.placement)
+
+      let correctedLeft = pos.left
+      let correctedTop = pos.top
+
+      if (this.placement === TooltipPositions.Top || this.placement === TooltipPositions.Bottom) {
+        const halfWidth = ttWidth / 2
+
+        if (correctedLeft - halfWidth < 4) {
+          correctedLeft = halfWidth + 4
+        } else if (correctedLeft + halfWidth > viewportWidth - 4) {
+          correctedLeft = viewportWidth - halfWidth - 4
+        }
+      }
+
+      if (this.placement === TooltipPositions.Left || this.placement === TooltipPositions.Right) {
+        const halfHeight = ttHeight / 2
+
+        if (correctedTop - halfHeight < 4) {
+          correctedTop = halfHeight + 4
+        } else if (correctedTop + halfHeight > viewportHeight - 4) {
+          correctedTop = viewportHeight - halfHeight - 4
+        }
+      }
+
+      const arrowOffset = requiredLeft + width / 2 - correctedLeft
+
+      this.position.value = {
+        ...pos,
+        top: Math.min(correctedTop, pos.top),
+        left: correctedLeft,
+      }
+      for (const key in this.position.value) {
+        if (key && helper.hasProperty(this.position.value, key)) {
+          //@ts-ignore
+          tooltipEl.style[key] = `${this.position.value[key]}px`
+        }
+      }
+      tooltipEl.style.transform = this.position.value.translate
+      tooltipEl.style.setProperty('--tooltip-arrow-left', `calc(50% + ${arrowOffset}px)`)
+      tooltipEl.setAttribute('tooltip-placement', this.placement)
+    }, 1)
   }
 
   destroy = (): void => {
