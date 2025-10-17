@@ -137,6 +137,10 @@ const props = defineProps({
     type: Boolean as PropType<boolean>,
     default: false
   },
+  outlineBorder: {
+    type: Boolean as PropType<boolean>,
+    default: true,
+  },
   /**
    * Оверлей с затемнение на всю таблицу
    * */
@@ -191,7 +195,8 @@ const shadows = reactive({
 const containerClasses = computed(() => {
   return {
     'mc-table__container': true,
-    'mc-table__container--card-opened': openCardState.value.state
+    'mc-table__container--card-opened': openCardState.value.state,
+    'mc-table__container--outline-border': props.outlineBorder,
   }
 })
 
@@ -367,7 +372,7 @@ const handleSetCardState = (payload: TableCardState) => {
                     <mc-chip
                       v-if="column.total"
                       :title="column.total"
-                      variation="hover-gray"
+                      variation="gray-invert"
                       text-color="gray"
                       :size="ChipSize.S"
                     />
@@ -582,8 +587,10 @@ const handleSetCardState = (payload: TableCardState) => {
     overflow: hidden;
     font-size: $font-size-200;
     height: var(--mc-table-height);
-    border: var(--border-style);
     @include grow;
+    &--outline-border {
+      border: var(--border-style);
+    }
     &--card-opened {
       .mc-bottom-loader {
         width: var(--mc-table-first-col-width);

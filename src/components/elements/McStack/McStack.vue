@@ -138,6 +138,7 @@ const updateChildrenVisible = (): void => {
   $block-name: &;
   overflow: hidden;
   white-space: nowrap;
+  width: 100%;
   &__content {
     display: flex;
     flex-wrap: nowrap;

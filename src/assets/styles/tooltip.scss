@@ -40,7 +40,6 @@
   &:hover:before,
   &:hover:after {
     display: block;
-    transition: all 0.3s ease;
   }
   &[tooltip-size="xs"] {
     max-width: 180px;
