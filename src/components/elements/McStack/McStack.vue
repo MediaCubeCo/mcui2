@@ -85,9 +85,9 @@ const updateChildrenVisible = (): void => {
       : itemNode.getBoundingClientRect().width + 4
     app.unmount()
     itemNode.remove()
-
-    const moreContentWidth = parseInt(Spaces['300'])
-    const itemIndent = props.collapsed ? -parseInt(Spaces['200']) : parseInt(Spaces['150'])
+    const getSize = (size) => parseFloat(size) * parseInt(getComputedStyle(document.documentElement).fontSize)
+    const moreContentWidth = getSize(Spaces['300'])
+    const itemIndent = props.collapsed ? -getSize(Spaces['200']) : getSize(Spaces['150'])
 
     if (
       totalWidth + (itemWidth + itemIndent) <= container.value.clientWidth - moreContentWidth &&
