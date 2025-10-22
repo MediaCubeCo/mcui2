@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, h, useSlots, createApp, type PropType, onBeforeMount } from 'vue'
-import { Spaces } from '@/types'
+import { Spaces, SpacesUnion } from '@/types'
 import { McTooltip } from '@/components'
 import { TooltipSizes } from '@/enums'
 
@@ -85,7 +85,7 @@ const updateChildrenVisible = (): void => {
       : itemNode.getBoundingClientRect().width + 4
     app.unmount()
     itemNode.remove()
-    const getSize = (size) => parseFloat(size) * parseInt(getComputedStyle(document.documentElement).fontSize)
+    const getSize = (size: SpacesUnion): number => parseFloat(size) * parseInt(getComputedStyle(document.documentElement).fontSize)
     const moreContentWidth = getSize(Spaces['300'])
     const itemIndent = props.collapsed ? -getSize(Spaces['200']) : getSize(Spaces['150'])
 
