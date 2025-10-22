@@ -21,6 +21,7 @@
 @use '../tokens/font-sizes' as *;
 @use '../tokens/line-heights' as *;
 @use '../tokens/spacings' as *;
+@use '../tokens/media-queries' as *;
 @use '../tokens/font-weights' as *;
 @use '../styles/functions' as *;
 
@@ -662,4 +663,63 @@
   > *:not(:first-child) {
     margin-inline-start: $space;
   }
+}
+
+
+@mixin editor-notification-styles {
+  @include editor-default-styles;
+  h1 {
+    margin-bottom: $space-250;
+    img {
+      object-fit: cover;
+      margin: $space-zero auto $space-50;
+      @media #{$media-query-s} {
+        margin: $space-zero auto $space-250;
+      }
+    }
+  }
+  h2 {
+    margin-bottom: $space-200;
+  }
+  * + h2 {
+    margin-top: $space-300;
+  }
+  h3, strong {
+    margin-bottom: $space-100;
+  }
+  * + h3 {
+    margin-top: $space-250;
+  }
+  img {
+    object-fit: cover;
+    margin: $space-250 $space-zero;
+  }
+  img.horizontal {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+  }
+  img.vertical {
+    display: block;
+    max-height: 180px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  blockquote {
+    margin-top: $space-100;
+    font-size: $font-size-300;
+    font-weight: $font-weight-normal;
+    line-height: $line-height-300;
+  }
+}
+
+@mixin editor-assist-styles {
+  img {
+    max-width: 100%;
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    margin: 16px 0;
+  }
+  @include editor-default-styles;
 }
