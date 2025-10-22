@@ -733,6 +733,9 @@ const handleSetCardState = (payload: TableCardState) => {
             align-items: center;
             @include child-indent-right($space-50);
           }
+          .mc-cell {
+            width: 100%;
+          }
         }
         &--align-left {
           text-align: left;
