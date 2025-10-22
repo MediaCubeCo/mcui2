@@ -260,16 +260,32 @@ const props = defineProps({
   width: {
     type: String as PropType<string>,
     default: '100%'
+  },
+  /**
+   * Убираем ли лидирующий 0 01 -> 1 для числовых инпутов num/int/amount_format
+   */
+  removeLeadingZero: {
+    type: Boolean,
+    default: true
+  },
+  /**
+   * Разрешаем вводить '-' для числовых типов num/amount_format
+   */
+  allowNegative: {
+    type: Boolean,
+    default: false
   }
 })
 
 const theme = useTheme('fieldText')
 const prettyType = ref<string>(props.type)
-const copyIcon = reactive<{ name: IconsListUnion, color: ColorTypes }>({
+const copyIcon = reactive<{ name: IconsListUnion; color: ColorTypes }>({
   name: 'copy',
   color: 'black'
 })
 const fieldErrors = useFieldErrors(props.errors)
+
+const is_backspace = ref<boolean>(false)
 
 const isRtl = computed((): boolean => {
   return props.dir === Directions.Rtl
@@ -290,7 +306,7 @@ const classes = computed((): { [key: string]: boolean } => {
 const styles = computed(() => {
   return {
     '--mc-field-text-color': theme.colors[theme.component.color as ColorTypes],
-    '--mc-field-text-width': props.width,
+    '--mc-field-text-width': props.width
   }
 })
 
@@ -443,7 +459,9 @@ const setDecimalsLimit = (val: string): string => {
 /**
  * Remove leading zero from input if length > 1 && number isn't decimal
  * */
-const removeLeadingZero = (val: string): string => {
+const handleRemoveLeadingZero = (val: string): string => {
+  if (!props.removeLeadingZero) return val
+
   let result = val
   const [first_char] = val || []
   if (val.length > 1 && +first_char === 0 && val.indexOf('.') === -1) result = val.slice(1)
@@ -460,21 +478,21 @@ const getPreparedInputValue = (e: Event): InputValue => {
       //eslint-disable-next-line
       let [num] = /-?\d*[\.]?\d*/.exec(String(value)) || []
       num = setDecimalsLimit(num as string)
-      num = removeLeadingZero(num)
+      num = handleRemoveLeadingZero(num)
       value = num ? +num : num
       target.value = num
       break
     }
     case InputTypes.Int: {
       let [int] = /-?\d*/.exec(String(target.value)) || []
-      int = removeLeadingZero(int as string)
+      int = handleRemoveLeadingZero(int as string)
       value = int ? +int : int
       target.value = int
       break
     }
     case InputTypes.AmountFormat: {
       value = setDecimalsLimit(value)
-      value = removeLeadingZero(value)
+      value = handleRemoveLeadingZero(value)
       prepared_value = formattedToNumber(value)
 
       const float_value = parseFloat(prepared_value)
@@ -523,7 +541,24 @@ const prepareHandleKeyDown = (e: KeyboardEvent): void => {
   switch (props.type) {
     case InputTypes.AmountFormat:
     case InputTypes.Num: {
-      if (e.key === '.' && typeof props.modelValue === 'string' && props.modelValue?.includes('.')) {
+      is_backspace.value = !!e.key?.match(/Backspace/)
+      const is_space = e.code?.match(/Space/)
+
+      const excluded_symbols = ['.', ',']
+      props.allowNegative && excluded_symbols.push('-')
+      const is_excluded_symbol = excluded_symbols.includes(e.key)
+      const is_ctrl_pressed = e.metaKey || e.ctrlKey
+      const is_allowed_symbol = e.key?.match(/Arrow|Backspace|\.,/)
+
+      if ((isNaN(+e.key) && !is_allowed_symbol && !is_excluded_symbol && !is_ctrl_pressed) || is_space) {
+        e.preventDefault()
+      }
+
+      const already_has_symbol =
+        typeof props.modelValue === 'string' &&
+        excluded_symbols.some((symbol) => String(props.modelValue)?.includes(symbol))
+
+      if (is_excluded_symbol && already_has_symbol) {
         e.preventDefault()
       }
       break
@@ -581,7 +616,7 @@ const handlerCopy = (): void => {
       copyIcon.name = 'copy'
       copyIcon.color = 'black'
     }, 2000)
-  } catch(e) {
+  } catch (e) {
     console.error('error while copy with navigator', e)
   }
   /**
