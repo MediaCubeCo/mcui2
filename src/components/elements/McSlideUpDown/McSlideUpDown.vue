@@ -119,12 +119,15 @@ const handleOpen = ({ contentHeight }: animationPayload) => {
     animation.value = container.value.animate([{ height: '0' }, { height: `${contentHeight}px` }], {
       duration: props.duration,
       easing: props.type,
-      fill: 'forwards'
+      // fill: 'forwards'
     })
 
     animation.value.onfinish = () => {
       emit('slide-open-end', open.value)
       animation_in_progress.value = false
+      if (container.value) {
+        container.value.style.height = 'auto'
+      }
       toggleOpenValue()
     }
   }
