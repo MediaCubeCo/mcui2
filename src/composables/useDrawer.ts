@@ -10,6 +10,7 @@ const closeServiceState = () => {
 
 const drawerServiceState = reactive<IDrawerServiceState>({
   isOpen: false,
+  activeDrawer: null,
   closeServiceState: closeServiceState
 })
 
@@ -63,11 +64,13 @@ const showDrawer = (
       drawerToClose && (drawerToClose.modelValue = false)
       setTimeout(() => {
         reactiveProps.drawers = reactiveProps.drawers.filter((d) => d.id !== drawerToClose?.id)
+        drawerServiceState.activeDrawer = reactiveProps.drawers[reactiveProps.drawers.length - 1] || null
       }, drawerProps?.duration || 300)
     }
   }
   reactiveProps.drawers.push(newDrawer)
   drawerServiceState.isOpen = true
+  drawerServiceState.activeDrawer = newDrawer
 }
 
 const closeDrawer = (componentName: string) => {
@@ -90,5 +93,5 @@ export function useDrawer() {
     drawerComponents.value = dsOptions.drawerComponents
   }
 
-  return { showDrawer, closeDrawer, closeAllDrawers }
+  return { showDrawer, closeDrawer, closeAllDrawers, drawerServiceState }
 }

@@ -4,7 +4,7 @@ const tableColumns = [
   { header: 'Канал', field: 'channel', width: 248, total: 424 },
   { header: 'Пользователь', field: 'user', minWidth: 200, sortable: true },
   { header: 'Просмотров', field: 'views_count', width: 130, align: 'right', sortable: true },
-  { header: 'Язык', field: 'language', width: 120 },
+  { header: 'Язык', field: 'language', width: 220, align: 'right' },
   { header: 'Каналы', field: 'channels', width: 120 },
   { header: 'Статус', field: 'status', width: 150 },
   { header: 'Владелец', field: 'owner', width: 150 },

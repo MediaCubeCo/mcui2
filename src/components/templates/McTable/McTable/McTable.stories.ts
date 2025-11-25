@@ -72,6 +72,195 @@ export const Default: Story = {
         },
         totals(): ITableTotals<ITableColumn> {
           return tableTotals
+        },
+        asd() {
+          return [
+            { header: 'Канал', field: 'channel', width: 248, total: 424 },
+            { header: 'Пользователь', field: 'user', minWidth: 200, sortable: true },
+            { header: 'Просмотров', field: 'views_count', width: 130, align: 'right', sortable: true },
+            { header: 'Пользователь', field: 'user', minWidth: 200, sortable: true },
+            { header: 'Просмотров', field: 'views_count', width: 130, align: 'right', sortable: true },
+          ]
+        },
+        qwe() {
+          return [{
+            id: 112268,
+            youtube_id: "UC-lHJZR3Gqxm24_Vd_AJ5Yw",
+            youtube_url: "https://www.youtube.com/channel/UC-lHJZR3Gqxm24_Vd_AJ5Yw",
+            title: "PewDiePie",
+            image:
+              "https://yt3.ggpht.com/a/AGF-l79FVckie4j9WT-4cEW6iu3gPd4GivQf_XNSWg=s800-mo-c-c0xffffffff-rj-k-no",
+            image_small:
+              "https://yt3.ggpht.com/a/AGF-l79FVckie4j9WT-4cEW6iu3gPd4GivQf_XNSWg=s800-mo-c-c0xffffffff-rj-k-no",
+            image_medium:
+              "https://yt3.ggpht.com/a/AGF-l79FVckie4j9WT-4cEW6iu3gPd4GivQf_XNSWg=s800-mo-c-c0xffffffff-rj-k-no",
+            published_at: "2010-04-29T10:54:00+03:00",
+            country_id: 87,
+            country: {
+              id: 87,
+              youtube_id: "US",
+              code: "US",
+              name: "United States",
+              order: null,
+              flag: "https://www.countryflags.io/us/flat/64.png",
+              created_at: "2017-09-27T14:52:00+03:00",
+              updated_at: "2019-01-10T00:00:06+03:00",
+            },
+            language_id: 12,
+            language: {
+              id: 12,
+              youtube_id: "en",
+              name: "English",
+              created_at: "2018-09-14T13:47:16+03:00",
+              updated_at: "2018-09-14T13:47:16+03:00",
+            },
+            social_networks: [
+              {
+                id: 742,
+                network: "instagram",
+                link: "https://www.instagram.com/pewdiepie/",
+                full_link: "https://www.instagram.com/pewdiepie/",
+                icon: "https://cdn.worldvectorlogo.com/logos/instagram-2-1.svg",
+                created_at: "2018-02-23T22:44:55+03:00",
+                updated_at: "2018-02-23T22:44:55+03:00",
+              },
+              {
+                id: 743,
+                network: "twitter",
+                link: "https://twitter.com/pewdiepie",
+                full_link: "https://twitter.com/pewdiepie",
+                icon: "https://cdn.worldvectorlogo.com/logos/twitter-3.svg",
+                created_at: "2018-02-23T22:44:55+03:00",
+                updated_at: "2019-04-19T13:31:28+03:00",
+              },
+              {
+                id: 36705,
+                network: "email",
+                link: "kat@re6l.com",
+                full_link: "mailto:kat@re6l.com",
+                icon: "https://cdn.worldvectorlogo.com/logos/gmail-icon.svg",
+                created_at: "2018-08-07T11:59:48+03:00",
+                updated_at: "2019-04-19T13:31:28+03:00",
+              },
+              {
+                id: 493319,
+                network: "instagram",
+                link: "https://instagram.com/pewdiepie",
+                full_link: "https://instagram.com/pewdiepie",
+                icon: "https://cdn.worldvectorlogo.com/logos/instagram-2-1.svg",
+                created_at: "2018-08-30T12:46:51+03:00",
+                updated_at: "2019-04-19T13:31:28+03:00",
+              },
+            ],
+            categories: [
+              {
+                id: 8,
+                title: "Gaming",
+                youtube_id: "20",
+                created_at: "2017-09-27T14:52:00+03:00",
+                updated_at: "2017-09-27T14:52:00+03:00",
+              },
+              {
+                id: 10,
+                title: "People & Blogs",
+                youtube_id: "22",
+                created_at: "2017-09-27T14:52:00+03:00",
+                updated_at: "2017-09-27T14:52:00+03:00",
+              },
+              {
+                id: 11,
+                title: "Comedy",
+                youtube_id: "23",
+                created_at: "2017-09-27T14:52:00+03:00",
+                updated_at: "2017-09-27T14:52:00+03:00",
+              },
+              {
+                id: 12,
+                title: "Entertainment",
+                youtube_id: "24",
+                created_at: "2017-09-27T14:52:00+03:00",
+                updated_at: "2017-09-27T14:52:00+03:00",
+              },
+            ],
+            latest_contact_statuses: [
+              {
+                id: 30325,
+                type: "marketing",
+                value: 104,
+                title: "Цены получены",
+                user_id: 574,
+                by_user_id: null,
+                created_at: "2019-04-19T13:03:40+03:00",
+                updated_at: "2019-04-19T13:03:40+03:00",
+              },
+              {
+                id: 35663,
+                type: "support",
+                value: null,
+                title: null,
+                user_id: null,
+                by_user_id: null,
+                created_at: "2019-01-23T10:04:07+03:00",
+                updated_at: "2019-01-23T10:04:07+03:00",
+              },
+              {
+                id: 66,
+                type: "recruiting",
+                value: null,
+                title: null,
+                user_id: null,
+                by_user_id: null,
+                created_at: "2019-01-23T10:03:53+03:00",
+                updated_at: "2019-01-23T10:03:53+03:00",
+              },
+            ],
+            owner_id: 443,
+            agency_channels: [
+              {
+                id: 5160,
+                agency_id: 3,
+                channel_id: 112268,
+                type: 0,
+                sum: 1,
+                percent: 0,
+                total: 1,
+                created_at: "2018-12-07T11:56:46+03:00",
+                updated_at: "2018-12-07T11:56:46+03:00",
+              },
+            ],
+            has_contacts: true,
+            daily_dimension_stats_status: 0,
+            demographic_stats_status: 0,
+            views_count: 22103013928,
+            comments_count: 0,
+            subscribers_count: 97352854,
+            videos_count: 3888,
+            average_views_per_video: 5684931.57,
+            hot_rate: 0,
+            hot_at: "2017-10-10T22:34:21+03:00",
+            gender: 0,
+            in_data_labs_stats: {
+              avg_comments: 53201.4285714286,
+              avg_likes: 485851.0171428571,
+              engagement_rate: 0.56807814,
+              total_posts: 3864,
+              percent_sponsored: 0,
+              view_per_post: 6178640.302857143,
+              dislike_per_post: 9577.0514285714,
+              total_view_count: 21782781401,
+              comments_count: 9310250,
+              likes_count: 85023928,
+              dislikes_count: 1675984,
+              possible_sensitive: false,
+              engagement_rate_median: 0.46203724,
+              likes_median: 407623,
+              views_median: 5689107,
+              comments_median: 38608,
+              dislikes_median: 6178,
+            },
+            created_at: "2017-10-10T22:34:21+03:00",
+            updated_at: "2019-07-10T13:28:29+03:00",
+          },]
         }
       },
       methods: {
@@ -101,6 +290,7 @@ export const Default: Story = {
             fixed-last-column 
             :totals="totals"
             :header-row-height="55"
+            height="280px"
             @sort="handleSort"
             @loading="handleLoading"
             @row-click="handleRowClick"
@@ -187,6 +377,9 @@ export const Default: Story = {
                   </mc-table-card-header>
                 </template>
                 Card Content
+                
+                <mc-table :data="qwe" :columns="asd" height="120px"></mc-table>
+                
                 <template #footer>
                   Card Footer
                 </template>

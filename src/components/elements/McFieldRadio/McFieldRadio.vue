@@ -18,16 +18,18 @@ const props = defineProps({
    *  Значение
    */
   modelValue: {
+    type: [String, Number, Boolean] as PropType<string | number | boolean>,
     default: null
   },
   value: {
+    type: [String, Number, Boolean] as PropType<string | number | boolean>,
     default: null
   },
   /**
    *  Name
    */
   name: {
-    type: String,
+    type: String as PropType<string>,
     required: true
   },
   /**
@@ -142,7 +144,7 @@ const inputProps = computed((): { [key: string]: any } => {
     disabled: props.disabled,
     value: props.modelValue,
     name: props.name,
-    checked: props.value && props.value === props.modelValue,
+    checked: props.value || +props.value === 0 && String(props.value) === String(props.modelValue),
     tabindex: props.tabindex,
     class: 'mc-field-radio-button__input',
     type: 'radio'

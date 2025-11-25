@@ -62,7 +62,7 @@ const closeDrawer = (value: IDrawerState) => {
       :key="drawer.id"
       v-model="drawer.modelValue"
       v-bind="drawer.drawerProps"
-      :show-overlay="i + 1 === computedDrawers.length"
+      :show-overlay="drawer.drawerProps?.hasOwnProperty('showOverlay') ? drawer.drawerProps.showOverlay : i + 1 === computedDrawers.length"
       @close="() => closeDrawer(drawer)"
       class="mc-drawer-container__item"
       :class="{ 'mc-drawer-container__item--multiple': computedDrawers.length - 1 !== i }"
@@ -80,6 +80,7 @@ const closeDrawer = (value: IDrawerState) => {
   right: 0;
   left: 0;
   bottom: 0;
+  pointer-events: none;
   &__item {
     transition: transform 0.25s ease-in-out;
     &--multiple {}

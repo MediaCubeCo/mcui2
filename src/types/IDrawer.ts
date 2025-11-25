@@ -3,6 +3,7 @@ import { DrawerPositions } from '@/enums/Drawer'
 
 export interface IDrawerServiceState {
   isOpen: boolean
+  activeDrawer: IDrawerState | null
   closeServiceState: Function
 }
 
@@ -14,6 +15,7 @@ export interface IDrawerProps {
   titleEllipsis?: boolean
   closeVisible?: boolean
   iconClose?: IconsListUnion
+  showOverlay?: boolean
 }
 
 export interface IDrawerState {

@@ -234,7 +234,7 @@ const contentStyle = computed((): { [key: string]: string } => ({
     }
   }
   max-width: 100%;
-  width: 100%;
+  width: auto;
   text-decoration: none;
   //@include child-indent-right($space-50);
   &--block {

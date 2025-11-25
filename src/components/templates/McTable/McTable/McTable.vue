@@ -282,7 +282,8 @@ const computedFooterColumns = computed((): ITableColumnEnriched[] => {
 
 const containerStyle = computed((): { [key: string]: string } => {
   return {
-    '--mc-table-height': typeof props.height === 'number' ? `${props.height}px` : props.height,
+    'height': typeof props.height === 'number' ? `${props.height}px` : props.height,
+    'max-height': typeof props.height === 'number' ? `${props.height}px` : props.height,
     '--mc-table-header-row-height': helper.isNumber(props.headerRowHeight) ? `${props.headerRowHeight}px` : '40px',
     '--mc-table-row-height': helper.isNumber(props.rowHeight) ? `${props.rowHeight}px` : '40px',
     '--mc-table-footer-row-height': helper.isNumber(props.footerRowHeight) ? `${props.footerRowHeight}px` : '40px',
@@ -359,7 +360,7 @@ const handleSetCardState = (payload: TableCardState) => {
                   />
                   <!-- slot для ячейки колонки хедера -->
                   <slot name="header-cell" :column="column" :cellIndex="cI">
-                    <mc-title :text-align="column.align" :weight="Weights.SemiBold" pre-line
+                    <mc-title :text-align="column.align" :weight="Weights.SemiBold" max-width="100%" pre-line
                       >{{ column.header }}
                     </mc-title>
                   </slot>
@@ -407,7 +408,7 @@ const handleSetCardState = (payload: TableCardState) => {
                       :cellIndex="cI"
                       :cellValue="row[column.field]"
                     >
-                      <mc-title :text-align="column.align" ellipsis>{{ row[column.field] }}</mc-title>
+                      <mc-title :text-align="column.align" max-width="100%" ellipsis>{{ row[column.field] }}</mc-title>
                     </slot>
                   </div>
                   <!-- slot срава от контента (по именем колонки + '-right') -->
@@ -445,7 +446,7 @@ const handleSetCardState = (payload: TableCardState) => {
           <div class="mc-table__table_footer-row">
             <div v-for="(column, cI) in computedFooterColumns" :key="cI" :class="column.class" :style="column.style">
               <slot name="footer-cell" :column="column" :cellIndex="cI" :cellValue="totals[column.field]">
-                <mc-title :text-align="column.align" :weight="Weights.SemiBold">
+                <mc-title :text-align="column.align" :weight="Weights.SemiBold" max-width="100%">
                   {{ totals[column.field] }}
                 </mc-title>
               </slot>
@@ -568,6 +569,9 @@ const handleSetCardState = (payload: TableCardState) => {
   * {
     box-sizing: border-box;
   }
+  .mc-title {
+    width: 100%;
+  }
   &--card-opened {
     width: max-content;
     z-index: var(--mc-table-z-index-fixed-col-card-opened);
@@ -575,7 +579,6 @@ const handleSetCardState = (payload: TableCardState) => {
   &__container {
     --border-style: 1px solid #{$color-hover-gray};
     --table-row-hover-background-color: #{$color-hover-gray};
-    --mc-table-height: auto;
     --mc-table-cell-width: auto;
     --mc-table-cell-max-width: auto;
     --mc-table-cell-min-width: auto;
@@ -586,7 +589,6 @@ const handleSetCardState = (payload: TableCardState) => {
     position: relative;
     overflow: hidden;
     font-size: $font-size-200;
-    height: var(--mc-table-height);
     @include grow;
     &--outline-border {
       border: var(--border-style);
@@ -746,20 +748,23 @@ const handleSetCardState = (payload: TableCardState) => {
         }
         &--align-left {
           text-align: left;
-          .mc-table__table_body-cell_content {
+          .mc-table__table_body-cell_content-left {
             text-align: left;
+            justify-content: flex-start;
           }
         }
         &--align-center {
           text-align: center;
-          .mc-table__table_body-cell_content {
+          .mc-table__table_body-cell_content-left {
             text-align: center;
+            justify-content: center;
           }
         }
         &--align-right {
           text-align: right;
-          .mc-table__table_body-cell_content {
+          .mc-table__table_body-cell_content-left {
             text-align: right;
+            justify-content: flex-end;
           }
         }
       }

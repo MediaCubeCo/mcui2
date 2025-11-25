@@ -428,7 +428,7 @@ watch(() => props.errors, (value: string[]): void => {
 
 <template>
   <div ref="field" class="mc-date-picker" :class="classes" :style="styles">
-    <label v-if="$slots.header || !!props.title" :for="name" class="mc-date-picker__header">
+    <label v-if="$slots.title || !!props.title" :for="name" class="mc-date-picker__header">
       <!-- @slot Слот для заголовка над инпутом -->
       <slot name="title">
         <mc-title v-if="props.title" :weight="Weights.Medium">{{ props.title }}</mc-title>

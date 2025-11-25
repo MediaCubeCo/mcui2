@@ -81,7 +81,7 @@ const drawerOverlayNumber = useTransition(overlayStateNumber, {
 const overlayStyle = computed((): { [key: string]: number | string } => {
   return {
     visibility: drawerOverlayNumber.value ? 'visible' : 'hidden',
-    zIndex: drawerOverlayNumber.value ? 1 : -1
+    zIndex: drawerOverlayNumber.value ? 1 : -1,
   }
 })
 
@@ -91,6 +91,13 @@ const drawerStyle = computed((): { [key: string]: number | string } => {
     width: `${props.width}px`,
     [props.position]: 0,
     ...drawerStartStaticPosition.value
+  }
+})
+
+const wrapperClasses = computed((): { [key: string]: boolean } => {
+  return {
+    'mc-drawer__wrapper': true,
+    'mc-drawer__wrapper--hidden': !props.showOverlay
   }
 })
 
@@ -133,8 +140,8 @@ watch(
 </script>
 
 <template>
-  <div class="mc-drawer__wrapper" :style="overlayStyle">
-    <div :class="overlayClasses" :style="overlayStyle" @click.stop="handleOverlayClick" />
+  <div :class="wrapperClasses" :style="overlayStyle">
+    <div v-if="props.showOverlay" :class="overlayClasses" :style="overlayStyle" @click.stop="handleOverlayClick" />
     <div class="mc-drawer" :style="drawerStyle" @click.stop>
       <slot />
       <button v-if="closeVisible" type="button" class="mc-drawer__btn-close" @click.prevent="closeDrawer">
@@ -145,7 +152,7 @@ watch(
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '../../../assets/tokens/box-shadows' as *;
 @use '../../../assets/tokens/spacings' as *;
 @use '../../../assets/tokens/sizes' as *;
@@ -164,6 +171,7 @@ watch(
   flex-direction: column;
   overflow: hidden;
   z-index: 2;
+  pointer-events: all;
   &__overlay {
     position: absolute;
     top: 0;
@@ -173,8 +181,10 @@ watch(
     background: rgba(0, 0, 0, 0.15);
     display: flex;
     justify-content: flex-start;
+    pointer-events: all;
     &--hidden {
       background: transparent;
+      pointer-events: none;
     }
   }
   &__wrapper {
@@ -185,6 +195,10 @@ watch(
     bottom: 0;
     z-index: 1;
     overflow: hidden;
+    &--hidden {
+      background: transparent;
+      pointer-events: none;
+    }
   }
   &__btn-close {
     z-index: 1;

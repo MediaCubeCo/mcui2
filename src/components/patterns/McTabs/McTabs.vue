@@ -207,9 +207,9 @@ provide('selfRegisterTabMethod', selfRegisterTabMethod)
             @click="(e) => handleSelectTab(tab, e)"
           >
             <span class="tabs-component-tab__tab-name">
-              <mc-svg-icon v-if="tab.iconPrepend" :name="tab.iconPrepend" :color="tab.iconPrependColor" />
+              <mc-svg-icon v-if="tab.iconPrepend" :name="tab.iconPrepend" :color="tab.iconPrependColor" size="200" />
               <span>{{ tab.header }}</span>
-              <mc-svg-icon v-if="tab.iconAppend" :name="tab.iconAppend" :color="tab.iconAppendColor" />
+              <mc-svg-icon v-if="tab.iconAppend" :name="tab.iconAppend" :color="tab.iconAppendColor" size="200" />
             </span>
           </a>
         </li>

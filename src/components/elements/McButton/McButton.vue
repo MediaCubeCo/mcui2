@@ -379,6 +379,9 @@ const handleBlur = (e: Event): void => {
   emit('blur', e)
 }
 const handleClick = (e: Event): void => {
+  //@ts-ignore
+  if ((props.to || props.href) && (e.metaKey || e.ctrlKey)) return
+
   e.preventDefault()
   if (props.to) {
     if (dsOptions?.meta?.router) {

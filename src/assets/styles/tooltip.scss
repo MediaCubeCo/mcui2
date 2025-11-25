@@ -24,7 +24,7 @@
   padding: $space-100 $space-150;
   background: var(--tooltip-color);
   color: var(--tooltip-text-color);
-  z-index: $z-index-toasted;
+  z-index: $z-index-tooltip;
   white-space: normal;
   word-break: break-word;
   width: max-content;
