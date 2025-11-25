@@ -329,7 +329,8 @@ const init = () => {
 
 const handlerPreselectRange = (period: string[]): void => {
   const [start, end] = period
-  input.value && (input.value.currentValue = dayjs ? [dayjs(start).toDate(), dayjs(end).toDate()] : period)
+  // input.value.currentValue = dayjs ? [dayjs(start).toDate(), dayjs(end).toDate()] : period
+  input.value.updateInternalModelValue(dayjs ? [dayjs(start).toDate(), dayjs(end).toDate()] : period)
 }
 
 /**

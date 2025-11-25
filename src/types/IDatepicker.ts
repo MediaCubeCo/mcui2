@@ -14,14 +14,9 @@ export interface IDatepickerPlaceholders {
   confirm?: string
 }
 
-export interface IDatepickerPresetPeriod {
-  start_date: string
-  end_date: string
-}
-
 export interface IDatepickerPreset {
   title: string
-  period: IDatepickerPresetPeriod[]
+  period: string[] // Date in YYYY-MM-DD
 }
 
 export type DatePickerValue = null | string | string[]
