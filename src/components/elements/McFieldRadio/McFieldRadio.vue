@@ -144,7 +144,7 @@ const inputProps = computed((): { [key: string]: any } => {
     disabled: props.disabled,
     value: props.modelValue,
     name: props.name,
-    checked: props.value || +props.value === 0 && String(props.value) === String(props.modelValue),
+    checked: String(props.value) === String(props.modelValue),
     tabindex: props.tabindex,
     class: 'mc-field-radio-button__input',
     type: 'radio'
