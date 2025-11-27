@@ -270,22 +270,24 @@ watch(() => props.comments, (newVal, prevVal) => {
   $block-name: &;
   height: 100%;
 
-  .mc-drawer__header {
-    padding-top: calc(#{$space-150} - 1px);
-    padding-bottom: $space-150;
-    z-index: 12;
+  .mc-drawer-content-template {
+    &__body-inner {
+      display: flex;
+      flex-direction: column-reverse;
+      padding-left: $space-150;
+      padding-right: $space-150;
+    }
   }
-
-  .mc-drawer__btn-close {
-    @include position(absolute, 0 0 null null);
-    z-index: 12;
-  }
-
-  .mc-drawer__body-inner {
-    display: flex;
-    flex-direction: column-reverse;
-    padding-left: $space-150;
-    padding-right: $space-150;
+  .mc-drawer {
+    &__header {
+      padding-top: calc(#{$space-150} - 1px);
+      padding-bottom: $space-150;
+      z-index: 12;
+    }
+    &__btn-close {
+      @include position(absolute, 0 0 null null);
+      z-index: 12;
+    }
   }
 
   &__comments {

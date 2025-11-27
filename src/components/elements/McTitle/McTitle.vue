@@ -170,7 +170,6 @@ const contentStyle = computed((): { [key: string]: string } => ({
     <slot name="icon-append" />
   </div>
 </template>
-л
 
 <style lang="scss">
 @use '../../../assets/styles/mixins' as *;
@@ -239,6 +238,7 @@ const contentStyle = computed((): { [key: string]: string } => ({
   //@include child-indent-right($space-50);
   &--block {
     display: inline-flex;
+    width: 100%;
   }
 
   &__text {
