@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { McTitle, McSideBarButton, McSeparator, McButton, McSvgIcon } from '@/components'
 import { useRandomNumber } from '@/composables'
-import { computed, inject, nextTick, onBeforeMount, type PropType, ref, watch } from 'vue'
+import { computed, inject, nextTick, onBeforeMount, type PropType, ref, watch, useSlots } from 'vue'
 import { useRoute } from 'vue-router'
 import type { ISideBarChatra, ISideBarMenuItem, ISideBarMenuItemEnrichment, ISidebarThemeConfigProvide } from '@/types'
 import { ButtonSize, SidebarTheme } from '@/enums'
@@ -9,6 +9,7 @@ import McSlideUpDown from '@/components/elements/McSlideUpDown/McSlideUpDown.vue
 import { defaultThemes } from '@/mocks/sidebar'
 
 const randomNumber = useRandomNumber()
+const slots = useSlots()
 const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
 const emit = defineEmits<{
   (e: 'open-side-bar'): void
@@ -59,6 +60,10 @@ const preparedMainMenu = ref<ISideBarMenuItemEnrichment[]>([])
 
 const themeConfig = computed(() => {
   return provideData.currentThemeConfig || defaultThemes[SidebarTheme.Black]
+})
+
+const hasContentAppend = computed(() => {
+  return props.chatraConfig || slots['content-append']
 })
 
 const getMenuItemHeadClasses = (menuMainItem: ISideBarMenuItemEnrichment) => {
@@ -181,21 +186,24 @@ watch(
       </div>
     </div>
     <mc-separator
-      v-if="chatraConfig.title"
+      v-if="hasContentAppend"
       color="dark-gray"
       indent-top="150"
       indent-bottom="150"
       :indent-left="compact ? '50' : '100'"
       :indent-right="compact ? '50' : '100'"
     />
-    <mc-side-bar-button
-      v-if="chatraConfig.title"
-      icon="chat_messages"
-      :title="chatraConfig.title"
-      :compact="compact"
-      with-tooltip
-      @click="emit('handlerChatraClick')"
-    />
+    <div v-if="hasContentAppend" class="mc-side-bar-center__content-append">
+      <slot name="content-append" :compact="compact" />
+      <mc-side-bar-button
+        v-if="chatraConfig.title"
+        icon="chat_messages"
+        :title="chatraConfig.title"
+        :compact="compact"
+        with-tooltip
+        @click="emit('handlerChatraClick')"
+      />
+    </div>
   </div>
 </template>
 
@@ -302,6 +310,9 @@ watch(
         &.open {
           max-height: 230px;
         }
+      }
+      &-append {
+        @include child-indent-bottom($space-50);
       }
     }
   }
