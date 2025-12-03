@@ -110,6 +110,7 @@ const handleClick = (): void => {
           v-if="props.title"
           v-bind="titleExtraProps"
           color="gray"
+          block
           :text-align="HorizontalAlignment.Center"
           :html-data="props.title"
         />
@@ -118,6 +119,7 @@ const handleClick = (): void => {
         <slot name="text">
           <mc-title
             color="gray"
+            block
             :variation="TitleVariations.Article"
             :text-align="HorizontalAlignment.Center"
             :html-data="text"

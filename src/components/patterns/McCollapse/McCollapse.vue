@@ -144,6 +144,11 @@ const slideCloseEnd = (value: boolean): void => {
    */
   emit('collapse-close-end', payload)
 }
+defineExpose({
+  open,
+  close,
+  toggle,
+})
 </script>
 
 <template>

@@ -19,6 +19,14 @@ import { ButtonSize, TitleVariations, Weights } from '@/enums'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types'
 
+const default_placeholders: IDatepickerPlaceholders = {
+  week: 'Week',
+  month: 'Month',
+  quarter: 'Quarter',
+  year: 'Year',
+  confirm: 'Confirm'
+}
+
 const attrs = useAttrs()
 const emit = defineEmits(['update:modelValue'])
 
@@ -215,7 +223,7 @@ const classes = computed((): { [key: string]: boolean } => {
 })
 const styles = computed((): { [key: string]: string } => {
   return {
-    '--mc-datepicker-color': theme.colors[theme.component.color as ColorTypes],
+    '--mc-date-picker-color': theme.colors[theme.component.color as ColorTypes],
   }
 })
 
@@ -477,8 +485,8 @@ watch(() => props.errors, (value: string[]): void => {
         >
           <!-- @slot Слот для вставки в футер попапа календаря -->
           <template v-if="isFooterVisible" #action-row>
-            <div class="mc-datepicker__footer-popup">
-              <div class="mc-datepicker__footer-popup-periods">
+            <div class="mc-date-picker__footer-popup">
+              <div class="mc-date-picker__footer-popup-periods">
                 <template v-if="customPresets && customPresets.length">
                   <mc-button
                     v-for="preset in customPresets"
@@ -526,12 +534,11 @@ watch(() => props.errors, (value: string[]): void => {
                 </template>
               </div>
               <mc-button
-                v-if="placeholders.confirm"
                 variation="purple-outline"
                 :size="ButtonSize.Xs"
                 @click="handleSubmit"
               >
-                {{ placeholders.confirm }}
+                {{ placeholders.confirm || default_placeholders.confirm }}
               </mc-button>
             </div>
           </template>
@@ -615,7 +622,7 @@ watch(() => props.errors, (value: string[]): void => {
       color: $color-black;
       &:hover,
       &:focus {
-        border-color: var(--mc-datepicker-color);
+        border-color: var(--mc-date-picker-color);
       }
       &::placeholder {
         color: $color-gray;
@@ -626,6 +633,24 @@ watch(() => props.errors, (value: string[]): void => {
     margin-top: $space-50;
     &:empty {
       display: none;
+    }
+    &-popup {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      &-periods {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        @include child-indent-right($space-200);
+        > * {
+          @include child-indent-right($space-300);
+        }
+        .mc-button {
+          @include child-indent-right($space-zero);
+        }
+      }
     }
   }
   .dp__input {
@@ -640,7 +665,7 @@ watch(() => props.errors, (value: string[]): void => {
     color: $color-black;
     &:hover,
     &:focus {
-      border-color: var(--mc-datepicker-color);
+      border-color: var(--mc-date-picker-color);
     }
     &::placeholder {
       color: $color-gray;
@@ -717,8 +742,8 @@ watch(() => props.errors, (value: string[]): void => {
             color: $color-black;
             border-radius: $radius-100;
             &:hover {
-              color: var(--mc-datepicker-color);
-              background-color: color-mix(in srgb, var(--mc-datepicker-color), white 90%);
+              color: var(--mc-date-picker-color);
+              background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
               border-radius: $radius-100;
             }
           }
@@ -731,21 +756,21 @@ watch(() => props.errors, (value: string[]): void => {
           }
           &__range_between {
             color: $color-black;
-            background-color: color-mix(in srgb, var(--mc-datepicker-color), white 90%);
+            background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
             border-radius: 0;
           }
           &__range_start,
           &__range_end,
           &__active_date {
             color: $color-white !important;
-            background-color: var(--mc-datepicker-color) !important;
-            border-color: var(--mc-datepicker-color) !important;
+            background-color: var(--mc-date-picker-color) !important;
+            border-color: var(--mc-date-picker-color) !important;
           }
           &__active_date {
             box-shadow: $shadow-s-purple;
           }
           &__today {
-            color: var(--mc-datepicker-color);
+            color: var(--mc-date-picker-color);
             border-color: transparent;
             border-radius: $radius-100;
           }
@@ -777,7 +802,7 @@ watch(() => props.errors, (value: string[]): void => {
       font-weight: $font-weight-semi-bold;
       background: transparent;
       &:hover {
-        color: var(--mc-datepicker-color);
+        color: var(--mc-date-picker-color);
       }
     }
     &__menu {
@@ -799,26 +824,9 @@ watch(() => props.errors, (value: string[]): void => {
       z-index: -1;
     }
     &__action_row {
-      padding: 0;
-      margin: 0;
-      .mc-datepicker__footer-popup {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        &-periods {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          @include child-indent-right($space-200);
-          > * {
-            @include child-indent-right($space-300);
-          }
-          .mc-button {
-            @include child-indent-right($space-zero);
-          }
-        }
-      }
+      padding: $space-150 0 0 0;
+      margin-top: $space-200;
+      border-top: 1px solid #e8e8e8;
     }
   }
   @at-root {
