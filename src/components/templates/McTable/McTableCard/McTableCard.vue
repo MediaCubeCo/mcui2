@@ -212,9 +212,9 @@ watch(
 
   &__footer {
     border-top: 1px solid $color-hover-gray;
-    height: var(--table-card-footer-height);
+    //height: var(--table-card-footer-height);
     flex-shrink: 0;
-    padding: 0 $space-200;
+    padding: $space-200;
     display: flex;
     align-items: center;
     @include child-indent-right($space-150);

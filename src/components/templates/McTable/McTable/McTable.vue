@@ -458,11 +458,11 @@ const handleSetCardState = (payload: TableCardState) => {
     <!-- slot для карточки, по дефолту будет выводить карточку из вложенного роута -->
     <slot v-bind="computedTableCardProps" @setTableCardState="handleSetCardState">
       <!-- место для рендера карточки, когда она находится по вложенному роуту -->
-      <router-view
-        v-if="dsOptions?.meta?.router"
-        v-bind="computedTableCardProps"
-        @setTableCardState="handleSetCardState"
-      />
+<!--      <router-view-->
+<!--        v-if="dsOptions?.meta?.router"-->
+<!--        v-bind="computedTableCardProps"-->
+<!--        @setTableCardState="handleSetCardState"-->
+<!--      />-->
     </slot>
     <mc-bottom-loader v-if="bottomLoading" />
     <mc-overlay v-if="loading" />

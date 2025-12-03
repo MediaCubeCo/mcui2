@@ -20,7 +20,7 @@ const meta = {
     color: 'black',
     textColor: 'white',
     arrowVisible: true,
-    content: 'Boost your channel growth!',
+    content: '<b>Boost your channel growth!</b><br/>Use McPay Advance to get instant access to funds and invest in your channel today.',
     default: 'McPay Advance'
   },
   parameters: {

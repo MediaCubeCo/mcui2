@@ -52,7 +52,7 @@ class TooltipInstance {
       const tooltipDiv = document.createElement('div')
       tooltipDiv.classList.add('mc-tooltip')
       tooltipDiv.id = String(this.id)
-      tooltipDiv.innerText = this.content || ''
+      tooltipDiv.innerHTML = this.content || ''
       tooltipDiv.style.setProperty('--tooltip-color', this.color)
       tooltipDiv.style.setProperty('--tooltip-text-color', this.textColor)
       tooltipDiv.style.setProperty('--tooltip-arrow-left', '50%')
