@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, type PropType, ref } from 'vue'
+import { computed, getCurrentInstance, inject, onMounted, type PropType, ref } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { useTooltip } from '@/composables'
@@ -248,6 +248,7 @@ const props = defineProps({
 
 const theme = useTheme('button')
 const mcButton = ref(null)
+const has_click = ref(false)
 const emit = defineEmits(['blur', 'click'])
 
 const classes = computed((): { [key: string]: boolean } => {
@@ -383,13 +384,25 @@ const handleClick = (e: Event): void => {
   if ((props.to || props.href) && (e.metaKey || e.ctrlKey)) return
 
   e.preventDefault()
+
+  if (has_click.value) return emit('click', e, props)
+
   if (props.to) {
     if (dsOptions?.meta?.router) {
       dsOptions.meta.router.push(props.to)
     }
   } else window.open(props.href, props.target)
-  emit('click', e)
 }
+
+const checkHasClickListener = (): void => {
+  const instance = getCurrentInstance()
+  const parentVNode = instance?.vnode
+  has_click.value = !!parentVNode?.props?.onClick
+}
+
+onMounted(() => {
+  checkHasClickListener()
+})
 </script>
 
 <template>

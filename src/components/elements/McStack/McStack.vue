@@ -90,8 +90,8 @@ const updateChildrenVisible = (): void => {
     const itemIndent = props.collapsed ? -getSize(Spaces['200']) : getSize(Spaces['150'])
 
     if (
-      totalWidth + (itemWidth + itemIndent) <= container.value.clientWidth - moreContentWidth &&
-      itemCount < props.visibleCount
+      (totalWidth + (itemWidth + itemIndent) <= container.value.clientWidth - moreContentWidth &&
+      itemCount < props.visibleCount) || itemCount === 0
     ) {
       totalWidth += itemWidth + itemIndent
       visibleChildren.value.push(item)

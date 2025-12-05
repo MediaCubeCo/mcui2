@@ -1,6 +1,7 @@
 // Types
 export * from './IButton'
 export * from './ICell'
+export * from './ICheckbox'
 export * from './IChip'
 export * from './ICollapse'
 export * from './IComment'

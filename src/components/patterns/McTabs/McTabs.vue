@@ -6,9 +6,10 @@ import McWrapScroll from '@/components/patterns/McWrapScroll/McWrapScroll.vue'
 import type { ITab } from '@/types/ITabs'
 import { type TabVariationUnion } from '@/types/ITabs'
 import { TabVariations } from '@/enums/Tab'
-import { McSvgIcon } from '@/components'
+import { McChip, McSvgIcon } from '@/components'
 import { IDSOptions } from '@/types'
 import { useTheme } from '@/composables/useTheme'
+import { ChipSize } from '@/enums'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
@@ -210,6 +211,13 @@ provide('selfRegisterTabMethod', selfRegisterTabMethod)
               <mc-svg-icon v-if="tab.iconPrepend" :name="tab.iconPrepend" :color="tab.iconPrependColor" size="200" />
               <span>{{ tab.header }}</span>
               <mc-svg-icon v-if="tab.iconAppend" :name="tab.iconAppend" :color="tab.iconAppendColor" size="200" />
+              <mc-chip
+                v-if="tab.hasAppendCount"
+                :title="tab.appendCount"
+                :text-color="tab.appendCountColor as ColorTypes"
+                :size="ChipSize.S"
+                class="tabs-component-tab__tab-name_append-count"
+              />
             </span>
           </a>
         </li>
@@ -349,6 +357,13 @@ provide('selfRegisterTabMethod', selfRegisterTabMethod)
         height: 0;
         overflow: hidden;
         visibility: hidden;
+      }
+      &_append-count {
+        padding: 0;
+        height: auto;
+        &::before {
+          display: none;
+        }
       }
     }
     &__icon {

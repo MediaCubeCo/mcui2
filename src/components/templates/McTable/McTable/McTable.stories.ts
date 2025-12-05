@@ -60,7 +60,9 @@ export const Default: Story = {
             sort_column: 'views_count',
             sort_direction: 'desc'
           },
-          cardId: null
+          cardId: null,
+          checkboxes: true,
+          zzz: [ 112268, 112903, 715043 ],
         }
       },
       computed: {
@@ -73,7 +75,7 @@ export const Default: Story = {
         totals(): ITableTotals<ITableColumn> {
           return tableTotals
         },
-        asd() {
+        miniTableCols() {
           return [
             { header: 'Канал', field: 'channel', width: 248, total: 424 },
             { header: 'Пользователь', field: 'user', minWidth: 200, sortable: true },
@@ -82,7 +84,7 @@ export const Default: Story = {
             { header: 'Просмотров', field: 'views_count', width: 130, align: 'right', sortable: true },
           ]
         },
-        qwe() {
+        miniTableData() {
           return [{
             id: 112268,
             youtube_id: "UC-lHJZR3Gqxm24_Vd_AJ5Yw",
@@ -291,9 +293,12 @@ export const Default: Story = {
             :totals="totals"
             :header-row-height="55"
             height="280px"
+            :with-checkboxes="checkboxes"
+            :selected-rows="zzz"
             @sort="handleSort"
             @loading="handleLoading"
             @row-click="handleRowClick"
+            @update:selected-rows="zzz = $event"
           >
             <template #channel="{ column, cellValue, row }">
               <mc-preview>
@@ -378,7 +383,7 @@ export const Default: Story = {
                 </template>
                 Card Content
                 
-                <mc-table :data="qwe" :columns="asd" height="120px"></mc-table>
+                <mc-table :data="miniTableData" :columns="miniTableCols" height="120px"></mc-table>
                 
                 <template #footer>
                   Card Footer

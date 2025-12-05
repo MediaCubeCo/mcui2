@@ -3,6 +3,7 @@ import McTabs from '@/components/patterns/McTabs/McTabs.vue'
 import McTab from '@/components/patterns/McTab/McTab.vue'
 import { TabVariations } from '@/enums/Tab'
 import { Colors } from '@/types/styles/Colors'
+import sprite from '@/assets/iconsSprite.svg?raw'
 
 const meta = {
     title: 'McTabs',
@@ -44,10 +45,16 @@ export const Default: Story = {
                     v: null,
                 }
             },
+            computed: {
+                iconsSprite() {
+                    return sprite
+                }
+            },
             methods: {
                 handleChange(payload) {},
             },
             template: `
+                <div v-html="iconsSprite"></div>
             <mc-tabs v-model="v" color="black" accent-color="purple" tab-variation="caption" @tab-changed="handleChange">
                 <mc-tab id="custom" name="Custom fragment">Custom fragment content</mc-tab>
                 <mc-tab 

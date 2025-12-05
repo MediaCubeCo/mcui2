@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onBeforeUnmount, onMounted, type PropType, reactive, ref, useSlots } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, type PropType, reactive, ref, useSlots, watch } from 'vue'
 import { useHelper } from '@/composables'
 import { ChipSize, Weights } from '@/enums'
 import {
@@ -21,10 +21,11 @@ import {
   McTableSkeletonLoading,
   McNoData,
   McBottomLoader,
-  McOverlay
+  McOverlay,
+  McFieldCheckbox
 } from '@/components'
 import { useThrottleFn } from '@vueuse/core'
-import { IconsListUnion, IDSOptions } from '@/types'
+import { ICheckboxMainCheckbox, IconsListUnion, IDSOptions } from '@/types'
 import { default as noTableDataImg } from '@/assets/img/no_table_data.png'
 
 const dsOptions = inject<IDSOptions>('dsOptions', {})
@@ -40,6 +41,7 @@ const emit = defineEmits<{
   (e: 'row-click', value: any): void
   (e: 'sort', value: ITableSort): void
   (e: 'table-card-opened', value: TableCardState): void
+  (e: 'update:selected-rows', value: Array<number | string>): void
 }>()
 
 /**
@@ -139,7 +141,21 @@ const props = defineProps({
   },
   outlineBorder: {
     type: Boolean as PropType<boolean>,
-    default: true,
+    default: true
+  },
+  /**
+   * Есть ли у таблицы чекбоксы, которыми можно выбирать строки
+   * */
+  withCheckboxes: {
+    type: Boolean as PropType<boolean>,
+    default: false
+  },
+  /**
+   * Сами выбранные строки - массив ID
+   * */
+  selectedRows: {
+    type: Array as PropType<Array<number | string>>,
+    default: () => [],
   },
   /**
    * Оверлей с затемнение на всю таблицу
@@ -175,6 +191,7 @@ const props = defineProps({
 const openCardState = ref<TableCardState>({ state: false })
 
 const mcTable = ref<null | HTMLElement>(null)
+const checkedRows = ref<Array<any>>(props.selectedRows)
 
 const hasData = computed((): boolean => {
   return !helper.isEmpty(props.data)
@@ -196,7 +213,7 @@ const containerClasses = computed(() => {
   return {
     'mc-table__container': true,
     'mc-table__container--card-opened': openCardState.value.state,
-    'mc-table__container--outline-border': props.outlineBorder,
+    'mc-table__container--outline-border': props.outlineBorder
   }
 })
 
@@ -205,6 +222,10 @@ const tableClasses = computed(() => {
     'mc-table': true,
     'mc-table--card-opened': openCardState.value.state
   }
+})
+
+const allDataIds = computed(() => {
+  return props.data.map((item) => item.id)
 })
 
 const computedColumns = computed((): ITableColumnEnriched[] => {
@@ -247,7 +268,7 @@ const computedHeaderColumns = computed((): ITableColumnEnriched[] => {
       'mc-table__table_header-cell--fixed-last': column.fixedLast,
       'mc-table__table_header-cell--shadow-first': column.fixedFirst && shadows.firstColHasShadow,
       'mc-table__table_header-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow,
-      [`mc-table__table_header-cell--align-${column.align}`]: !!column.align,
+      [`mc-table__table_header-cell--align-${column.align}`]: !!column.align
     }
   }))
 })
@@ -261,7 +282,7 @@ const computedBodyColumns = computed((): ITableColumnEnriched[] => {
       'mc-table__table_body-cell--fixed-last': column.fixedLast,
       'mc-table__table_body-cell--shadow-first': column.fixedFirst && shadows.firstColHasShadow,
       'mc-table__table_body-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow,
-      [`mc-table__table_body-cell--align-${column.align}`]: !!column.align,
+      [`mc-table__table_body-cell--align-${column.align}`]: !!column.align
     }
   }))
 })
@@ -275,19 +296,19 @@ const computedFooterColumns = computed((): ITableColumnEnriched[] => {
       'mc-table__table_footer-cell--fixed-last': column.fixedLast,
       'mc-table__table_footer-cell--shadow-first': column.fixedFirst && shadows.firstColHasShadow,
       'mc-table__table_footer-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow,
-      [`mc-table__table_footer-cell--align-${column.align}`]: !!column.align,
+      [`mc-table__table_footer-cell--align-${column.align}`]: !!column.align
     }
   }))
 })
 
 const containerStyle = computed((): { [key: string]: string } => {
   return {
-    'height': typeof props.height === 'number' ? `${props.height}px` : props.height,
+    height: typeof props.height === 'number' ? `${props.height}px` : props.height,
     'max-height': typeof props.height === 'number' ? `${props.height}px` : props.height,
     '--mc-table-header-row-height': helper.isNumber(props.headerRowHeight) ? `${props.headerRowHeight}px` : '40px',
     '--mc-table-row-height': helper.isNumber(props.rowHeight) ? `${props.rowHeight}px` : '40px',
     '--mc-table-footer-row-height': helper.isNumber(props.footerRowHeight) ? `${props.footerRowHeight}px` : '40px',
-    '--mc-table-first-col-width': `${tableFirstColWidth.value}px`,
+    '--mc-table-first-col-width': `${tableFirstColWidth.value}px`
   }
 })
 
@@ -336,10 +357,22 @@ const handleRowClick = (row: any): void => {
   emit('row-click', row)
 }
 
+const handleCheckAll = () => {
+  if (checkedRows.value.length === props.data.length) {
+    checkedRows.value = []
+  } else {
+    checkedRows.value = allDataIds.value
+  }
+}
+
 const handleSetCardState = (payload: TableCardState) => {
   openCardState.value = payload
   emit('table-card-opened', payload)
 }
+
+watch(() => checkedRows.value, () => {
+  emit('update:selected-rows', checkedRows.value)
+})
 </script>
 
 <template>
@@ -352,6 +385,12 @@ const handleSetCardState = (payload: TableCardState) => {
             <div v-for="(column, cI) in computedHeaderColumns" :key="cI" :class="column.class" :style="column.style">
               <div class="mc-table__table_header-cell_content">
                 <div class="mc-table__table_header-cell_content-left">
+                  <mc-field-checkbox
+                    v-if="!cI && props.withCheckboxes"
+                    :main-checkbox="{ selected: checkedRows, all: allDataIds } as ICheckboxMainCheckbox"
+                    checkbox-size="200"
+                    @update:modelValue="handleCheckAll"
+                  />
                   <mc-table-sort
                     v-if="column.sortable"
                     :column="column.field"
@@ -359,7 +398,7 @@ const handleSetCardState = (payload: TableCardState) => {
                     @change="(val) => emit('sort', val)"
                   />
                   <!-- slot для ячейки колонки хедера -->
-                  <slot name="header-cell" :column="column" :cellIndex="cI">
+                  <slot :name="`${column.field}-header-cell`" :column="column" :cellIndex="cI">
                     <mc-title :text-align="column.align" :weight="Weights.SemiBold" max-width="100%" pre-line
                       >{{ column.header }}
                     </mc-title>
@@ -399,6 +438,14 @@ const handleSetCardState = (payload: TableCardState) => {
               <div v-for="(column, cI) in computedBodyColumns" :key="cI" :class="column.class" :style="column.style">
                 <div class="mc-table__table_body-cell_content">
                   <div class="mc-table__table_body-cell_content-left">
+                    <mc-field-checkbox
+                      v-if="!cI && props.withCheckboxes"
+                      v-model="checkedRows"
+                      multiple
+                      :checked-value="row.id"
+                      checkbox-size="200"
+                      @click.stop
+                    />
                     <!-- slot для контента ячейки (по именем колонки) -->
                     <slot
                       :name="column.field"
@@ -445,7 +492,7 @@ const handleSetCardState = (payload: TableCardState) => {
         <div v-if="hasTotals" class="mc-table__table_footer">
           <div class="mc-table__table_footer-row">
             <div v-for="(column, cI) in computedFooterColumns" :key="cI" :class="column.class" :style="column.style">
-              <slot name="footer-cell" :column="column" :cellIndex="cI" :cellValue="totals[column.field]">
+              <slot :name="`${column.field}-footer-cell`" :column="column" :cellIndex="cI" :cellValue="totals[column.field]">
                 <mc-title :text-align="column.align" :weight="Weights.SemiBold" max-width="100%">
                   {{ totals[column.field] }}
                 </mc-title>
@@ -458,11 +505,11 @@ const handleSetCardState = (payload: TableCardState) => {
     <!-- slot для карточки, по дефолту будет выводить карточку из вложенного роута -->
     <slot v-bind="computedTableCardProps" @setTableCardState="handleSetCardState">
       <!-- место для рендера карточки, когда она находится по вложенному роуту -->
-<!--      <router-view-->
-<!--        v-if="dsOptions?.meta?.router"-->
-<!--        v-bind="computedTableCardProps"-->
-<!--        @setTableCardState="handleSetCardState"-->
-<!--      />-->
+      <!--      <router-view-->
+      <!--        v-if="dsOptions?.meta?.router"-->
+      <!--        v-bind="computedTableCardProps"-->
+      <!--        @setTableCardState="handleSetCardState"-->
+      <!--      />-->
     </slot>
     <mc-bottom-loader v-if="bottomLoading" />
     <mc-overlay v-if="loading" />
@@ -635,6 +682,7 @@ const handleSetCardState = (payload: TableCardState) => {
             @include child-indent-right($space-50);
           }
           &-right {
+            margin-inline-start: $space-50;
             display: flex;
             align-items: center;
             @include child-indent-right($space-50);
@@ -657,6 +705,11 @@ const handleSetCardState = (payload: TableCardState) => {
           .mc-table__table_header-cell_content {
             justify-content: flex-end;
           }
+        }
+        .mc-table-sort,
+        .mc-tooltip-target{
+          display: inline-flex;
+          align-items: center;
         }
       }
     }

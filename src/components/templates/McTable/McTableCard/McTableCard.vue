@@ -68,6 +68,10 @@ const props = defineProps({
   footerBlur: {
     type: Boolean,
     default: false
+  },
+  withLeftMargin: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -97,7 +101,7 @@ const cardStyle = computed((): { [key: string]: string } => {
     '--table-card-footer-height': helper.isNumber(props.tableFooterRowHeight)
       ? `${props.tableFooterRowHeight + borderCompensations}px`
       : `${TABLE.defaultFooterRowHeight}px`,
-    marginLeft: `${tableFirstColWidth.value}px`
+    marginLeft: props.withLeftMargin ? `${tableFirstColWidth.value}px` : '0px'
   }
 })
 

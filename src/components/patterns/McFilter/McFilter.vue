@@ -889,6 +889,8 @@ watch(() => props.selectedPreset, (val: IFilterPreset) => {
       }
     }
     &-fast-tags-wrapper {
+      display: flex;
+      flex-wrap: wrap;
       margin: -($space-50);
       & > .mc-tooltip-target {
         .mc-chip {

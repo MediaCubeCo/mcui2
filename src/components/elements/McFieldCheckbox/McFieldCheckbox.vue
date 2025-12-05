@@ -8,6 +8,7 @@ import type { SizesUnion } from '@/types/styles/Sizes'
 import { TitleVariations, Weights } from '@/enums'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types'
+import { ICheckboxMainCheckbox } from '@/types/ICheckbox'
 
 const emit = defineEmits(['update:modelValue'])
 const slots = useSlots()
@@ -107,6 +108,10 @@ const props = defineProps({
   dir: {
     type: String as () => Directions,
     default: Directions.Ltr
+  },
+  mainCheckbox: {
+    type: Object as () => ICheckboxMainCheckbox | null,
+    default: null
   }
 })
 
@@ -127,8 +132,41 @@ const classes = computed((): { [key: string]: boolean } => ({
 
 const styles = computed((): { [key: string]: SizesUnion | string } => ({
   '--mc-field-checkbox-size': Sizes[props.checkboxSize as SizeTypes],
-  '--mc-field-checkbox-color': theme.colors[theme.component.color as ColorTypes],
+  '--mc-field-checkbox-color': theme.colors[theme.component.color as ColorTypes]
 }))
+
+const isMainCheckbox = computed((): boolean => {
+  return (
+    !!props.mainCheckbox &&
+    props.mainCheckbox.all?.constructor === Array &&
+    props.mainCheckbox.selected?.constructor === Array
+  )
+})
+
+const isAllCheckboxesSelected = computed((): boolean => {
+  if (props.mainCheckbox) {
+    return JSON.stringify(props.mainCheckbox.all) === JSON.stringify(props.mainCheckbox.selected)
+  }
+  return false
+})
+
+const checkboxIcon = computed((): string => {
+  if (isMainCheckbox.value) {
+    return isAllCheckboxesSelected.value
+      ? 'checkbox--checked'
+      : props.mainCheckbox.selected?.length > 0
+        ? 'checkbox--indeterminate'
+        : 'checkbox'
+  }
+  return isChecked.value ? 'checkbox--checked' : 'checkbox'
+})
+const checkboxColor = computed((): string => {
+  if (isMainCheckbox.value) {
+    const color: ColorTypes = theme.component.color as ColorTypes
+    return isAllCheckboxesSelected.value ? color : props.mainCheckbox.selected?.length > 0 ? color : 'gray'
+  }
+  return isChecked.value ? (theme.component.color as ColorTypes) : 'gray'
+})
 
 const isChecked = computed((): boolean => {
   return props.multiple && props.modelValue
@@ -161,9 +199,12 @@ const handleChange = (e: Event): void => {
   emit('update:modelValue', payload)
 }
 
-watch(() => props.errors, (value: string[]): void => {
-  fieldErrors.setError(value)
-})
+watch(
+  () => props.errors,
+  (value: string[]): void => {
+    fieldErrors.setError(value)
+  }
+)
 </script>
 
 <template>
@@ -178,8 +219,8 @@ watch(() => props.errors, (value: string[]): void => {
       <label class="mc-field-checkbox__name">
         <mc-svg-icon
           class="mc-field-checkbox__icon"
-          :name="isChecked ? 'checkbox--checked' : 'checkbox'"
-          :color="isChecked ? theme.component.color as ColorTypes : 'gray'"
+          :name="checkboxIcon"
+          :color="checkboxColor"
           :size="props.checkboxSize"
         />
         <input v-bind="inputProps" @change="handleChange" />
