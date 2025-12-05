@@ -21,7 +21,7 @@ export interface ITab {
   iconPrepend: IconsListUnion
   visible: boolean
   isDisabled: boolean
-  appendCountColor: string
+  appendCountColor: string | ColorTypes
   appendCount: string | number
   suffix: string
   prefix: string
