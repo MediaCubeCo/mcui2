@@ -12,7 +12,7 @@ export interface ITab {
   appendCountStyles: string
   header: string
   href?: string
-  to?: IRoute
+  to?: string
   id: string
   name: string
   iconAppendColor: ColorTypes

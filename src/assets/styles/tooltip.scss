@@ -13,11 +13,10 @@
   --tooltip-text-color: #{$color-white};
   font-family: $font-family-main;
   text-transform: none;
-  font-size: $font-size-200;
-  line-height: $line-height-200;
   position: absolute;
   font-weight: $font-weight-normal;
-  text-align: center;
+  line-height: $line-height-250;
+  font-size: $font-size-300;
 
   border-radius: $radius-100;
   box-shadow: $shadow-s;
@@ -30,6 +29,10 @@
   width: max-content;
   & > * {
     display: inline-block;
+  }
+  ul {
+    margin: 0;
+    padding-left: $space-150;
   }
   &[tooltip-arrow="true"]::before {
     content: "";

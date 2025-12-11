@@ -16,6 +16,7 @@ export interface IDrawerProps {
   closeVisible?: boolean
   iconClose?: IconsListUnion
   showOverlay?: boolean
+  disableBgClick?: boolean
 }
 
 export interface IDrawerState {

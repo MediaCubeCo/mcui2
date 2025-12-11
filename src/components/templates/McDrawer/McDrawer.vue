@@ -37,6 +37,10 @@ const props = defineProps({
     type: Boolean as PropType<boolean>,
     default: true
   },
+  disableBgClick: {
+    type: Boolean as PropType<boolean>,
+    default: false
+  },
   /**
    * Тип иконки
    * закрытия в шапке
@@ -126,7 +130,7 @@ const closeDrawer = () => {
 }
 
 const handleOverlayClick = () => {
-  if (!props.showOverlay) return
+  if (!props.showOverlay || props.disableBgClick) return
   closeDrawer()
 }
 

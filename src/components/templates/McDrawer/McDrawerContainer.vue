@@ -7,6 +7,7 @@ interface IEnrichedDrawerState extends IDrawerState {
   indent_coefficient: number
   real_coefficient: number
   indent: number
+  can_show_overlay: boolean
 }
 
 const props = defineProps({
@@ -16,11 +17,11 @@ const props = defineProps({
   },
   drawersCascadeIndent: {
     type: Number as PropType<number>,
-    default: 50,
+    default: 50
   },
   drawersMaxInCascade: {
     type: Number as PropType<number>,
-    default: 7,
+    default: 7
   },
   reactiveProps: {
     type: Object as () => { drawers: IDrawerState[] },
@@ -32,11 +33,19 @@ const computedDrawers = computed((): IEnrichedDrawerState[] => {
   return props.reactiveProps.drawers.map((cDrawer, i) => {
     const indent_coefficient = props.reactiveProps.drawers.length - 1 - i
     const real_coefficient = Math.min(indent_coefficient, props.drawersMaxInCascade - 1)
+
+    const last_drawer_has_overlay = props.reactiveProps.drawers.findLastIndex(
+      // @ts-ignore
+      // eslint-disable-next-line no-prototype-builtins
+      (drawer) => !drawer?.drawerProps.hasOwnProperty('showOverlay') || drawer.drawerProps?.showOverlay
+    )
+
     return {
       ...cDrawer,
       indent_coefficient,
       real_coefficient,
       indent: real_coefficient * props.drawersCascadeIndent,
+      can_show_overlay: i === last_drawer_has_overlay
     }
   })
 })
@@ -45,6 +54,7 @@ const containerStyle = computed((): { [key: string]: string | number } => ({
   zIndex: computedDrawers.value.length ? 10004 : -1,
   visibility: computedDrawers.value.length ? 'visible' : 'hidden'
 }))
+
 const closeDrawer = (value: IDrawerState) => {
   value.close()
   setTimeout(() => {
@@ -62,7 +72,7 @@ const closeDrawer = (value: IDrawerState) => {
       :key="drawer.id"
       v-model="drawer.modelValue"
       v-bind="drawer.drawerProps"
-      :show-overlay="drawer.drawerProps?.hasOwnProperty('showOverlay') ? drawer.drawerProps.showOverlay : i + 1 === computedDrawers.length"
+      :show-overlay="drawer.can_show_overlay"
       @close="() => closeDrawer(drawer)"
       class="mc-drawer-container__item"
       :class="{ 'mc-drawer-container__item--multiple': computedDrawers.length - 1 !== i }"
@@ -83,7 +93,8 @@ const closeDrawer = (value: IDrawerState) => {
   pointer-events: none;
   &__item {
     transition: transform 0.25s ease-in-out;
-    &--multiple {}
+    &--multiple {
+    }
   }
 }
 </style>

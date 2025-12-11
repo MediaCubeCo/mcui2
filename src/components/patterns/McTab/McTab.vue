@@ -92,11 +92,10 @@ const props = defineProps({
   },
   /**
    *  Если нужна ссылка внутри приложения:
-   * `{name: 'test', params: { id: test.id }}`
    */
   to: {
-    type: Object as PropType<IRoute>,
-    default: null
+    type: String as PropType<string>,
+    default: ''
   },
   /**
    *  Если нужна обычная ссылка:

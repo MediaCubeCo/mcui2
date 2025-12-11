@@ -1,4 +1,5 @@
 @use 'tokens/font-families' as *;
+@use 'tokens/font-sizes' as *;
 @use 'tokens/spacings' as *;
 @use 'tokens/media-queries' as *;
 @use 'tokens/colors' as *;
@@ -17,6 +18,7 @@ html {
 
 body {
   overflow-y: hidden;
+  font-size: $font-size-200;
 }
 
 body,

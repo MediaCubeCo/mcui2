@@ -13,7 +13,7 @@ import { ChipSize } from '@/enums'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
-  (e: 'tab-changed', value: { tab: ITab }): void
+  (e: 'tab-changed', value: { tab: ITab, event?: Event }): void
   (e: 'clicked', value: { tab: ITab }): void
 }>()
 
@@ -145,8 +145,8 @@ const handleCheckInitTab = (): void => {
   handleSelectTab(tab)
 }
 
-const handleEmitChange = (tab: ITab): void => {
-  emit('tab-changed', { tab } as { tab: ITab })
+const handleEmitChange = (tab: ITab, event?: Event): void => {
+  emit('tab-changed', { tab, event } as { tab: ITab, event?: Event })
 }
 
 const watchDisableTab = (): void => {
@@ -158,9 +158,12 @@ const watchDisableTab = (): void => {
 }
 
 const handleSelectTab = (tab: ITab, event?: Event): void | undefined => {
+  //@ts-ignore
+  if ((tab.to || tab.href) && (event?.metaKey || event?.ctrlKey)) return
+
   event?.preventDefault()
   if (tab.isDisabled) return
-  if (tab.onClick && typeof tab.onClick === 'function') return tab.onClick(tab)
+  if (tab.onClick && typeof tab.onClick === 'function') return tab.onClick(tab, event)
   if (tab.href) {
     window.open(tab.href, '_blank')
     return
@@ -169,7 +172,7 @@ const handleSelectTab = (tab: ITab, event?: Event): void | undefined => {
     dsOptions.meta.router.push(tab.to)
     return
   }
-  handleEmitChange(tab)
+  handleEmitChange(tab, event)
   updateTabsState(tab.computedId)
   //@ts-ignore
   computedValue.value = tab.computedId
@@ -202,7 +205,7 @@ provide('selfRegisterTabMethod', selfRegisterTabMethod)
           <a
             :aria-controls="tab.hash"
             :aria-selected="tab.isActive"
-            :href="tab.href || tab.hash || 'javascript:void(0)'"
+            :href="tab.href || tab.to || tab.hash || 'javascript:void(0)'"
             class="tabs-component-tab-a"
             role="tab"
             @click="(e) => handleSelectTab(tab, e)"
