@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type PropType } from 'vue'
+import { computed, onBeforeUnmount, onMounted, type PropType } from 'vue'
 import { McDrawer } from '@/components'
 import type { IDrawerServiceState, IDrawerState } from '@/types/IDrawer'
 
@@ -63,6 +63,21 @@ const closeDrawer = (value: IDrawerState) => {
     }
   }, value?.drawerProps?.duration || 300)
 }
+
+const handleKeyUp = (e: KeyboardEvent) => {
+  if(e.code === 'Escape' && computedDrawers.value?.length) {
+    const last_drawer = computedDrawers.value[computedDrawers.value.length - 1]
+    if (last_drawer.drawerProps?.disableBgClick) return
+    last_drawer.close()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keyup', handleKeyUp)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('keyup', handleKeyUp)
+})
 </script>
 
 <template>
@@ -76,7 +91,7 @@ const closeDrawer = (value: IDrawerState) => {
       @close="() => closeDrawer(drawer)"
       class="mc-drawer-container__item"
       :class="{ 'mc-drawer-container__item--multiple': computedDrawers.length - 1 !== i }"
-      :style="{ transform: `translateX(-${drawer.indent}px)` }"
+      :style="drawer.indent ? { transform: `translateX(-${drawer.indent}px)` } : {}"
     >
       <component :is="drawer.component" v-bind="drawer.componentProps" @close-drawer="() => closeDrawer(drawer)" />
     </mc-drawer>

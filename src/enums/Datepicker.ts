@@ -17,7 +17,7 @@ export enum DatepickerFormat {
   DateTimePicker = 'dd.MM.yyyy HH:mm',
   DatePicker = 'dd.MM.yyyy',
   WeekPicker = 'ww.yyyy',
-  MonthPicker = 'MM.yyyy',
+  MonthPicker = 'MMM yyyy',
   YearPicker = 'yyyy'
 }
 export enum DayjsFormat {
@@ -25,7 +25,7 @@ export enum DayjsFormat {
   DateTimePicker = 'DD.MM.YYYY HH:mm',
   DatePicker = 'DD.MM.YYYY',
   WeekPicker = 'WW.YYYY',
-  MonthPicker = 'MM.YYYY',
+  MonthPicker = 'MMM YYYY',
   YearPicker = 'YYYY'
 }
 export enum DatepickerOutputFormat {

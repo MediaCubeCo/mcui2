@@ -511,7 +511,7 @@ watch(() => checkedRows.value, () => {
       <!--        @setTableCardState="handleSetCardState"-->
       <!--      />-->
     </slot>
-    <mc-bottom-loader v-if="bottomLoading" />
+    <mc-bottom-loader v-if="bottomLoading" class="mc-table__table-bottom-loader" />
     <mc-overlay v-if="loading" />
     <mc-no-data
       v-if="!hasData"
@@ -641,7 +641,7 @@ watch(() => checkedRows.value, () => {
       border: var(--border-style);
     }
     &--card-opened {
-      .mc-bottom-loader {
+      & > .mc-table__table-bottom-loader {
         width: var(--mc-table-first-col-width);
       }
     }

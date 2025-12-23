@@ -49,6 +49,9 @@ const props = defineProps({
     type: String as () => IconsListUnion,
     default: 'close'
   },
+  /**
+   * If prop less than or equal 100, this will be a percentage. All above will be in pixels
+   * */
   width: {
     type: Number as PropType<number>,
     default: 400
@@ -91,10 +94,10 @@ const overlayStyle = computed((): { [key: string]: number | string } => {
 
 const drawerStyle = computed((): { [key: string]: number | string } => {
   return {
-    transform: `translateX(${drawerNumber.value}%)`,
-    width: `${props.width}px`,
+    width: props.width <= 100 ? `${props.width}%` : `${props.width}px`,
     [props.position]: 0,
-    ...drawerStartStaticPosition.value
+    ...drawerStartStaticPosition.value,
+    ...(drawerNumber.value ? {transform: `translateX(${drawerNumber.value}%)`} : {}),
   }
 })
 

@@ -7,6 +7,8 @@ import { Colors } from '@/types/styles/Colors'
 import { SelectListDirections } from '@/enums/Select'
 const iconsArrayList = Object.keys(iconsList)
 
+import sprite from '../../../assets/iconsSprite.svg?raw'
+
 const meta = {
     title: 'McFieldSelect',
     component: McFieldSelect,
@@ -177,7 +179,13 @@ export const Multiple: Story = {
           }
         },
         components: { McFieldSelect },
+        computed: {
+          sprite() {
+            return sprite
+          }
+        },
         template: `
+          <div v-html="sprite"></div>
           <mc-field-select 
             v-model="v"
             placeholder="Select McPay benefits"

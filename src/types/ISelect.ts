@@ -5,6 +5,7 @@ export interface ISelectOption {
   value?: string | number
   text?: string
   icon?: string
+  is_closable?: boolean
   [key: string]: any;
 }
 

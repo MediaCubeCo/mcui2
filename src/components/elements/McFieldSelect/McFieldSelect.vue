@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, type PropType, ref, watch } from 'vue'
 import { default as MultiSelect } from 'vue-multiselect'
-import { McTitle, McSvgIcon, McAvatar, McTooltip, McPreview } from '@/components'
+import { McTitle, McSvgIcon, McAvatar, McTooltip, McPreview, McChip } from '@/components'
 import type { ISelectGroupOptions, ISelectOption, ISelectOptions } from '@/types/ISelect'
 import { type DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
@@ -10,7 +10,7 @@ import { useFieldErrors } from '@/composables'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { SelectGroupKeys } from '@/enums/Select'
 import type { SelectListDirectionsUnion } from '@/types/ISelect'
-import { PreviewSizes, TitleVariations, TooltipPositions, Weights } from '@/enums'
+import { PreviewSizes, TitleVariations, TooltipPositions, Weights, ChipSize } from '@/enums'
 import { useTheme } from '@/composables/useTheme'
 
 const emit = defineEmits<{
@@ -385,11 +385,13 @@ const computedModelValue = computed({
         ? computedOptions.value.map((co) => co[SelectGroupKeys.Values]).flat()
         : computedOptions.value
       const item = options.find((co) => String(co[props.valueField]) === String(pv))
+
       return {
         [props.titleField]: item?.[props.titleField],
         [props.valueField]: item?.[props.valueField],
         text: item?.text,
-        icon: item?.icon
+        icon: item?.icon,
+        is_closable: !Object.prototype.hasOwnProperty.call(item, 'is_closable') || item.is_closable,
       }
     })
 
@@ -479,9 +481,12 @@ watch(
   { immediate: true, deep: true }
 )
 
-watch(() => props.errors, (value: string[]): void => {
-  fieldErrors.setError(value)
-})
+watch(
+  () => props.errors,
+  (value: string[]): void => {
+    fieldErrors.setError(value)
+  }
+)
 </script>
 
 <template>
@@ -563,6 +568,23 @@ watch(() => props.errors, (value: string[]): void => {
           <slot name="noResult">
             <span>{{ props.noResultsText }}</span>
           </slot>
+        </template>
+
+        <!-- multiselect selected tag -->
+        <template #tag="asd">
+          {{ asd }}
+          <mc-chip
+            :size="ChipSize.Xs"
+            class="multiselect__tag"
+            variation="main-invert"
+            :closable="!asd.option.hasOwnProperty('is_closable') || asd.option.is_closable"
+            @close="asd.remove(asd.option)"
+          >
+            {{ asd.option[props.titleField] }}
+            <template #button>
+              <mc-svg-icon size="250" name="cancel" />
+            </template>
+          </mc-chip>
         </template>
       </multi-select>
     </div>
@@ -748,8 +770,7 @@ watch(() => props.errors, (value: string[]): void => {
       margin-bottom: $space-50;
       margin-right: unset;
       background-color: var(--mc-field-select-selected-color);
-      color: $color-black;
-      padding: $size-50 $size-50 $size-50 $size-100;
+      padding: $size-50;
       border-radius: 100px;
       font-size: $font-size-200;
       line-height: $line-height-200;
@@ -757,6 +778,19 @@ watch(() => props.errors, (value: string[]): void => {
         @include ellipsis();
         flex: 1 1 auto;
         //overflow: visible;
+      }
+      .mc-chip__button {
+        opacity: 1;
+        border-radius: 50%;
+        background-color: $color-white;
+        .mc-svg-icon {
+          color: var(--mc-field-select-color);
+        }
+        &:hover {
+          .mc-svg-icon {
+            color: $color-red;
+          }
+        }
       }
     }
     &__tag-icon {

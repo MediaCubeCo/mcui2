@@ -208,7 +208,23 @@ const props = defineProps({
   markers: {
     type: Array as () => DatePickerMarker[],
     default: () => [] as DatePickerMarker[]
-  }
+  },
+  hideCalendarIcon: {
+    type: Boolean as PropType<boolean>,
+    default: false
+  },
+  /**
+   * Рендерить ли календарь в ином месте (props.teleportTo) body - default
+   * */
+  teleport: {
+    type: Boolean as PropType<boolean>,
+    default: false
+  },
+  // acceptable - tag name, or id (#id)
+  teleportTo: {
+    type: String as PropType<string>,
+    default: 'body'
+  },
 })
 const theme = useTheme('datepicker')
 const fieldErrors = useFieldErrors(props.errors)
@@ -218,12 +234,14 @@ const input = ref<InstanceType<typeof DatePicker> | null | any>(null)
 const classes = computed((): { [key: string]: boolean } => {
   return {
     'mc-date-picker--error': !!fieldErrors.errorText.value,
-    'mc-date-picker--disabled': props.disabled
+    'mc-date-picker--disabled': props.disabled,
+    'mc-date-picker--without-icon': props.hideCalendarIcon
   }
 })
 const styles = computed((): { [key: string]: string } => {
   return {
-    '--mc-date-picker-color': theme.colors[theme.component.color as ColorTypes],
+    '--mc-date-picker-color': theme.colors[theme.component.color as ColorTypes]
+    // '--dp-primary-color': theme.colors[theme.component.color as ColorTypes],
   }
 })
 
@@ -267,6 +285,9 @@ const dateFormat = reactive<DatepickerFormatsObjectFormat>(formats[computedType.
 const isTimePicker = computed((): boolean => {
   return computedType.value === DatepickerTypes.TimePicker
 })
+const isTimeRangePicker = computed((): boolean => {
+  return computedType.value === DatepickerTypes.TimePicker && props.range
+})
 const isDateTimePicker = computed((): boolean => {
   return computedType.value === DatepickerTypes.DateTimePicker
 })
@@ -288,7 +309,7 @@ const pickerType = computed((): Partial<Record<DatepickerTypes, boolean>> => {
   }
 })
 const isAutoApply = computed((): boolean => {
-  return !isTimePicker.value && !isDateTimePicker.value && !isFooterVisible.value
+  return !isTimePicker.value && !isDateTimePicker.value && !isPeriodsVisible.value
 })
 const weekNumbers = computed((): string | null => {
   return isWeekPicker.value ? 'local' : null
@@ -305,7 +326,7 @@ const minutesOptions = computed((): object => {
 const secondsOptions = computed((): object => {
   return props.seconds && props.seconds.length ? { 'second-options': props.seconds } : {}
 })
-const isFooterVisible = computed((): boolean => {
+const isPeriodsVisible = computed((): boolean => {
   return (
     props.range &&
     (props.customPresets?.length || !!props.placeholders) &&
@@ -430,9 +451,12 @@ watch(
   { immediate: true }
 )
 
-watch(() => props.errors, (value: string[]): void => {
-  fieldErrors.setError(value)
-})
+watch(
+  () => props.errors,
+  (value: string[]): void => {
+    fieldErrors.setError(value)
+  }
+)
 </script>
 
 <template>
@@ -481,11 +505,13 @@ watch(() => props.errors, (value: string[]): void => {
           :min-date="minDate"
           :max-date="maxDate"
           :disabled-times="disabledTime"
+          :teleport="props.teleport"
+          :teleport-to="props.teleportTo"
           @range-start="handlePickDate"
         >
           <!-- @slot Слот для вставки в футер попапа календаря -->
-          <template v-if="isFooterVisible" #action-row>
-            <div class="mc-date-picker__footer-popup">
+          <template #action-row>
+            <div v-if="isPeriodsVisible" class="mc-date-picker__footer-popup">
               <div class="mc-date-picker__footer-popup-periods">
                 <template v-if="customPresets && customPresets.length">
                   <mc-button
@@ -536,14 +562,29 @@ watch(() => props.errors, (value: string[]): void => {
               <mc-button
                 variation="purple-outline"
                 :size="ButtonSize.Xs"
+                class="mc-date-picker__confirm-button"
                 @click="handleSubmit"
               >
                 {{ placeholders.confirm || default_placeholders.confirm }}
               </mc-button>
             </div>
+            <mc-button
+              v-if="(isTimeRangePicker || isTimePicker || isDateTimePicker) && !isPeriodsVisible"
+              variation="purple-outline"
+              :size="ButtonSize.Xs"
+              class="mc-date-picker__confirm-button"
+              @click="handleSubmit"
+            >
+              {{ placeholders.confirm || default_placeholders.confirm }}
+            </mc-button>
           </template>
           <template #input-icon>
-            <mc-svg-icon name="calendar" size="300" :color="props.disabled ? 'outline-gray' : 'black'" />
+            <mc-svg-icon
+              v-if="!props.hideCalendarIcon"
+              name="calendar"
+              size="300"
+              :color="props.disabled ? 'outline-gray' : 'black'"
+            />
           </template>
           <template v-if="$slots.header" #header>
             <div>
@@ -593,6 +634,25 @@ watch(() => props.errors, (value: string[]): void => {
 @use '../../../assets/tokens/media-queries' as *;
 @use '../../../assets/tokens/border-radius' as *;
 .mc-date-picker {
+  --dp-menu-min-width: calc(256px - 32px);
+  --dp-border-radius: #{$radius-100};
+  --dp-cell-border-radius: #{$radius-100};
+  --dp-cell-size: 32px;
+  --dp-cell-padding: 12px;
+  --dp-overlay-col-padding: 0;
+  --dp-button-icon-height: 16px;
+  --dp-common-padding: 12px;
+  --dp-time-inc-dec-button-size: 16px;
+
+  //--dp-menu-padding: 50px;
+  //--dp-button-height: 50px;
+  --dp-month-year-row-height: 32px;
+  --dp-month-year-row-button-size: 32px;
+  //--dp-action-buttons-padding: 50px;
+  //--dp-time-inc-dec-button-size: 50px;
+  //--dp-action-button-height: 50px;
+  //--dp-action-row-padding: 50px;
+
   $block-name: &;
   display: block;
   font-family: $font-family-main;
@@ -607,6 +667,9 @@ watch(() => props.errors, (value: string[]): void => {
   &__inner {
     display: flex;
     align-items: center;
+  }
+  &__confirm-button {
+    margin-left: auto;
   }
   &__input-wrapper {
     width: 100%;
@@ -690,13 +753,17 @@ watch(() => props.errors, (value: string[]): void => {
       }
     }
   }
+  &--without-icon {
+    .dp__input {
+      padding: $space-100 $space-300 $space-100 $space-100;
+    }
+  }
   // Input to top
   // Calendar below
   .dp + .dp {
     border-left: none;
   }
   .dp {
-    width: 256px;
     padding: $space-200;
     font-size: $font-size-200;
     &--header-wrap {
@@ -730,6 +797,61 @@ watch(() => props.errors, (value: string[]): void => {
         }
       }
     }
+    &__overlay_col {
+      font-size: $font-size-200;
+      line-height: $line-height-200;
+      font-weight: $font-weight-normal;
+      color: $color-black;
+      border-radius: $radius-100;
+    }
+    &__menu {
+      .dp__btn {
+        &:not(.dp__month_year_select) {
+          padding: 0;
+        }
+        .dp__inner_nav {
+          &:hover {
+            background-color: transparent;
+            color: var(--mc-date-picker-color);
+          }
+        }
+      }
+      .dp__overlay_cell {
+        &:hover {
+          color: var(--mc-date-picker-color);
+          background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
+        }
+        &_active {
+          background-color: var(--mc-date-picker-color);
+        }
+      }
+      .dp__overlay,
+      .dp__overlay_container {
+        overflow-y: auto;
+        .dp__overlay_action {
+          display: none;
+        }
+      }
+      .dp__selection_grid_header {
+        .dp__inner_nav {
+          background: none;
+          color: #202427;
+          &:hover {
+            color: var(--mc-date-picker-color);
+          }
+        }
+      }
+      .dp__inner_nav {
+        width: 24px;
+        height: 24px;
+      }
+      .dp__flex_row {
+        //flex-grow: 0;
+      }
+      .dp--menu--inner-stretched {
+        padding: 0;
+      }
+    }
     &__calendar {
       &_item {
         flex-grow: unset;
@@ -741,10 +863,12 @@ watch(() => props.errors, (value: string[]): void => {
             font-weight: $font-weight-normal;
             color: $color-black;
             border-radius: $radius-100;
-            &:hover {
-              color: var(--mc-date-picker-color);
-              background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
-              border-radius: $radius-100;
+            &:not(.dp__week_num .dp__cell_inner) {
+              &:hover {
+                color: var(--mc-date-picker-color);
+                background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
+                border-radius: $radius-100;
+              }
             }
           }
           &__cell_disabled {
@@ -764,6 +888,22 @@ watch(() => props.errors, (value: string[]): void => {
           &__active_date {
             color: $color-white !important;
             background-color: var(--mc-date-picker-color) !important;
+            border-color: var(--mc-date-picker-color) !important;
+          }
+          &__cell_auto_range {
+            border: none;
+            color: var(--mc-date-picker-color);
+            background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
+            &_start,
+            &_end {
+              color: var(--mc-date-picker-color);
+              background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
+              border: none;
+            }
+          }
+          &__range_between_week {
+            color: $color-white !important;
+            background: var(--mc-date-picker-color) !important;
             border-color: var(--mc-date-picker-color) !important;
           }
           &__active_date {

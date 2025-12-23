@@ -163,7 +163,7 @@ export const DateTimePicker: Story = {
             }),
             template: `
                 <div> 
-                    <mc-datepicker v-model="v" type="date-picker" name="DateTimePicker"></mc-datepicker>
+                    <mc-datepicker v-model="v" type="date-time-picker" name="DateTimePicker"></mc-datepicker>
                     <p>Output: {{ v }}</p>
                 </div>
             `

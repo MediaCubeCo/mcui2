@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type PropType } from 'vue'
+import { computed, onBeforeUnmount, onMounted, type PropType } from 'vue'
 import type { IModalServiceState, IModalState } from '@/types/IModal'
 
 const props = defineProps({
@@ -25,6 +25,25 @@ const closeModal = (value: IModalState) => {
     }
   }, 300)
 }
+
+const handleKeyUp = (e: KeyboardEvent) => {
+  const modals = props.reactiveProps?.modals
+  if(e.code === 'Escape' && modals?.length) {
+    const last_modal = modals[modals.length - 1]
+    //@ts-ignore
+    // eslint-disable-next-line no-prototype-builtins
+    const clickBackdropToClose = !last_modal?.componentProps?.hasOwnProperty('clickBackdropToClose') || last_modal?.componentProps?.clickBackdropToClose
+    if (!clickBackdropToClose) return
+    last_modal.close()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keyup', handleKeyUp)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('keyup', handleKeyUp)
+})
 </script>
 
 <template>
