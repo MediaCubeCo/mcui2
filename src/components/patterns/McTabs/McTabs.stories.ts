@@ -61,6 +61,7 @@ export const Default: Story = {
                     name="With icon prep" 
                     icon-prepend="close" 
                     icon-prepend-color="red"
+                    :visible="false"
                 >
                     With icon prepend.
                 </mc-tab>

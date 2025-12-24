@@ -198,7 +198,7 @@ provide('selfRegisterTabMethod', selfRegisterTabMethod)
           v-for="(tab, i) in tabs"
           v-show="tab.isVisible"
           :key="i"
-          :class="{ 'is-active': tab.isActive, 'is-disabled': tab.isDisabled }"
+          :class="{ 'is-active': tab.isActive, 'is-disabled': tab.isDisabled, 'is-hidden': !tab.visible }"
           class="tabs-component-tab"
           role="presentation"
         >
@@ -346,6 +346,15 @@ provide('selfRegisterTabMethod', selfRegisterTabMethod)
       .tabs-component-tab-a {
         cursor: not-allowed;
         color: $color-outline-gray;
+      }
+    }
+    &.is-hidden {
+      .tabs-component-tab-a {
+        display: none;
+        visibility: hidden;
+        z-index: -1;
+        pointer-events: none;
+        user-select: none;
       }
     }
 

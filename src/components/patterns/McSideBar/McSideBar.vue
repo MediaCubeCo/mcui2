@@ -310,7 +310,11 @@ provide('provideData', reactive<ISidebarThemeConfigProvide>({ currentThemeConfig
             :compact="pretty_compact"
             @handlerChatraClick="emit('chatraClick')"
             @open-side-bar="openSideBar"
-          />
+          >
+            <template #content-append>
+              <slot name="content-append" v-bind="{ compact: pretty_compact }" />
+            </template>
+          </mc-side-bar-center>
           <mc-side-bar-bottom
             :hide-text="hideText"
             :compact="pretty_compact"

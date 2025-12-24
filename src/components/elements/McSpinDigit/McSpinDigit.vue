@@ -70,6 +70,14 @@ const containerStyles = computed(() => {
 
 const triggerSpin = () => {
   emit('spin-start', props.start)
+
+  // делаем проверку, если duration = 0 то скипаем анимацию
+  if (!props.duration) {
+    offset.value = props.end
+    emit('spin-end', props.end)
+    return
+  }
+
   spin_active.value = true
   nextTick(() => {
     offset.value = props.end

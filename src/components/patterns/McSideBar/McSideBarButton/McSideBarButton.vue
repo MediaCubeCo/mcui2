@@ -20,7 +20,7 @@ const props = defineProps({
    * `https://mcpay.io/`
    */
   href: {
-    type: String as PropType<string>,
+    type: String as PropType<string>
   },
   /**
    *  Если нужна иконка
@@ -137,13 +137,13 @@ const btnAttrs = computed(() => {
 const styles = computed((): { [key: string]: string } => {
   return {
     '--mc-sidebar-button-chip-color': theme.colors[theme.component.chip as ColorTypes],
-    '--mc-sidebar-button-active-link-color': theme.colors[theme.component.activeLink as ColorTypes],
+    '--mc-sidebar-button-active-link-color': theme.colors[theme.component.activeLink as ColorTypes]
   }
 })
 </script>
 
 <template>
-  <mc-button v-bind="btnAttrs" :class="classes" :style="styles">
+  <mc-button v-bind="btnAttrs" :target="props.href ? '_blank' : '_self'" :class="classes" :style="styles">
     <template #icon-prepend>
       <mc-svg-icon v-if="icon" :fill="iconColor" class="mc-side-bar-button__icon" :name="icon" />
       <span v-if="icon && compact && (info || withIndicator)" class="mc-side-bar-button__dot" />
@@ -159,6 +159,13 @@ const styles = computed((): { [key: string]: string } => {
       >
         {{ withIndicator ? '' : info }}
       </mc-chip>
+      <mc-svg-icon
+        v-if="href"
+        :fill="iconColor"
+        size="200"
+        name="link_external_new"
+        class="mc-side-bar-button__icon-append"
+      />
     </template>
   </mc-button>
 </template>
@@ -186,6 +193,11 @@ const styles = computed((): { [key: string]: string } => {
       padding: 0 !important;
       width: $size-150;
       min-height: $size-150;
+    }
+  }
+  &__icon {
+    &-append {
+      @include size($size-250 !important);
     }
   }
   &.mc-button {
