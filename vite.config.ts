@@ -75,7 +75,7 @@ export default defineConfig({
      * Управление зависимостями
      * */
     rollupOptions: {
-      external: ['isomorphic-dompurify', 'vue', 'src/mocks'],
+      external: ['vue', 'src/mocks'],
       output: {
         exports: 'named',
         globals: {

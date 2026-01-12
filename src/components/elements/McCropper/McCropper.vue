@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-//@ts-ignore
-import VueCropper from 'vue3-cropperjs'
+
+let VueCropper: any = null
+
+if (typeof window !== 'undefined') {
+  //@ts-ignore
+  VueCropper = (await import('vue3-cropperjs')).default
+}
 import 'vue3-cropperjs/dist/v3cropper.css'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types'
@@ -20,15 +25,21 @@ const props = defineProps({
 
 const theme = useTheme('cropper')
 
+//@ts-ignore
 const cropper = ref<InstanceType<VueCropper>>(null)
 const timeout = ref<number | null>(null)
 
-watch(
-  () => props.imgSrc,
-  (value) => {
-    setImage(value)
+
+const cropperStyle = computed((): { [key: string]: string } => {
+  return {
+    '--mc-cropper-color': theme.colors[theme.component.color as ColorTypes],
   }
-)
+})
+
+const isClient = computed((): boolean => {
+  return typeof window !== 'undefined'
+})
+
 const setImage = (value: string): void => {
   cropper.value.replace(props.imgSrc || value)
 }
@@ -54,20 +65,22 @@ const cropImage = (e: any): void => {
   clearDebounce()
 }
 
-const cropperStyle = computed((): { [key: string]: string } => {
-  return {
-    '--mc-cropper-color': theme.colors[theme.component.color as ColorTypes],
-  }
-})
-
 const clearDebounce = (): void => {
   timeout.value && clearTimeout(timeout.value)
 }
+
+watch(
+  () => props.imgSrc,
+  (value) => {
+    setImage(value)
+  }
+)
 </script>
 
 <template>
   <section class="mc-cropper" :style="cropperStyle">
     <vue-cropper
+      v-if="isClient"
       ref="cropper"
       background
       alt="Avatar"

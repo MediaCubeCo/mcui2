@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type HorizontalAlignmentUnion } from '@/types/styles/Alignment'
-import DOMPurify from 'isomorphic-dompurify'
+import { sanitize } from '@/utils/sanitize'
 import { LineHeights, type LineHeightTypes } from '@/types/styles/LineHeights'
 import { type WeightsUnion } from '@/types/styles/Weights'
 
@@ -154,8 +154,7 @@ const style = computed((): { [key: string]: string } => {
 const contentStyle = computed((): { [key: string]: string } => ({
   '--mc-title-text-max-width': props.maxWidth
 }))
-
-const computedData = computed(() => (props.htmlData ? DOMPurify.sanitize(props.htmlData) : null))
+const computedData = computed(() => (props.htmlData ? sanitize(props.htmlData) : null))
 </script>
 
 <template>
@@ -163,7 +162,7 @@ const computedData = computed(() => (props.htmlData ? DOMPurify.sanitize(props.h
     <!-- @slot -->
     <slot name="icon-prepend" />
     <span v-if="props.htmlData" class="mc-title__text" :style="contentStyle" v-html="computedData" />
-    <!-- DOMPurify.sanitize() -->
+    <!-- sanitize() -->
     <component :is="props.tagName" v-else class="mc-title__text" :style="contentStyle">
       <slot />
     </component>
