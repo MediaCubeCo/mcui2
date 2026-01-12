@@ -16,6 +16,7 @@ import McTableCard from '../McTableCard/McTableCard.vue'
 import McTableCardHeader from '../McTableCard/McTableCardHeader/McTableCardHeader.vue'
 import { tableData, tableColumns, tableTotals } from '@/mocks/tableData'
 import type { ITableColumn, ITableData, ITableSort, ITableTotals } from '@/types/ITable'
+import icons from '../../../../assets/iconsSprite.svg?raw'
 
 const meta = {
   title: 'McTable',
@@ -263,7 +264,10 @@ export const Default: Story = {
             created_at: "2017-10-10T22:34:21+03:00",
             updated_at: "2019-07-10T13:28:29+03:00",
           },]
-        }
+        },
+        icons() {
+          return icons
+        },
       },
       methods: {
         handleLoading() {
@@ -285,6 +289,7 @@ export const Default: Story = {
       },
       template: `
         <div style="height: 500px; display: flex">
+          <div v-html="icons" style="width: 0; height: 0"></div>
           <mc-table 
             :data="data" 
             :columns="columns"

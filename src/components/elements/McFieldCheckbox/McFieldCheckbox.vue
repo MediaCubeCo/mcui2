@@ -145,7 +145,7 @@ const isMainCheckbox = computed((): boolean => {
 
 const isAllCheckboxesSelected = computed((): boolean => {
   if (props.mainCheckbox) {
-    return JSON.stringify(props.mainCheckbox.all) === JSON.stringify(props.mainCheckbox.selected)
+    return props.mainCheckbox.all.every((id: number | string) => props.mainCheckbox.selected.includes(id))
   }
   return false
 })
