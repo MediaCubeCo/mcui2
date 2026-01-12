@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// import DOMPurify from 'isomorphic-dompurify'
 import { type HorizontalAlignmentUnion } from '@/types/styles/Alignment'
+import DOMPurify from 'isomorphic-dompurify'
 import { LineHeights, type LineHeightTypes } from '@/types/styles/LineHeights'
 import { type WeightsUnion } from '@/types/styles/Weights'
 
@@ -52,7 +52,7 @@ const props = defineProps({
    * Цвет
    */
   color: {
-    type: String as () => ColorTypes,
+    type: String as () => ColorTypes
   },
   /**
    *  Позиция текста:
@@ -108,7 +108,7 @@ const props = defineProps({
 
 const theme = useTheme('title')
 const computedColor = computed((): ColorTypes => {
-  return props.color || theme.component.color as ColorTypes
+  return props.color || (theme.component.color as ColorTypes)
 })
 
 const id = computed(() => {
@@ -154,13 +154,15 @@ const style = computed((): { [key: string]: string } => {
 const contentStyle = computed((): { [key: string]: string } => ({
   '--mc-title-text-max-width': props.maxWidth
 }))
+
+const computedData = computed(() => (props.htmlData ? DOMPurify.sanitize(props.htmlData) : null))
 </script>
 
 <template>
   <div :class="classes" :style="style" :id="id">
     <!-- @slot -->
     <slot name="icon-prepend" />
-    <span v-if="props.htmlData" class="mc-title__text" :style="contentStyle" v-html="props.htmlData" />
+    <span v-if="props.htmlData" class="mc-title__text" :style="contentStyle" v-html="computedData" />
     <!-- DOMPurify.sanitize() -->
     <component :is="props.tagName" v-else class="mc-title__text" :style="contentStyle">
       <slot />
