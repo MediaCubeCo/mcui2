@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, ref, watch } from 'vue'
 
-let VueCropper: any = null
+const VueCropper =
+  typeof window !== 'undefined'
+    ? defineAsyncComponent(() =>
+        //@ts-ignore
+        import('vue3-cropperjs').then((m) => m.default)
+      )
+    : null
 
-if (typeof window !== 'undefined') {
-  //@ts-ignore
-  VueCropper = (await import('vue3-cropperjs')).default
-}
 import 'vue3-cropperjs/dist/v3cropper.css'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types'
@@ -29,10 +31,9 @@ const theme = useTheme('cropper')
 const cropper = ref<InstanceType<VueCropper>>(null)
 const timeout = ref<number | null>(null)
 
-
 const cropperStyle = computed((): { [key: string]: string } => {
   return {
-    '--mc-cropper-color': theme.colors[theme.component.color as ColorTypes],
+    '--mc-cropper-color': theme.colors[theme.component.color as ColorTypes]
   }
 })
 

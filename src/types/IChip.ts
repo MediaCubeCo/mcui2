@@ -1,4 +1,4 @@
-import { ChipModifiers, ChipSize } from '@/enums/Chip'
+import { ChipModifiers, ChipSize, ChipSizeModifiers } from '@/enums/Chip'
 import type { ColorTypes } from '@/types/styles/Colors'
 
 export interface IChipStyleOptions {
@@ -7,6 +7,7 @@ export interface IChipStyleOptions {
 }
 
 export type ChipSizeUnion = (typeof ChipSize)[keyof typeof ChipSize]
+export type ChipSizeModifiersUnion = ChipSizeUnion | `${ChipSizeUnion}-${ChipSizeModifiers.Compact}`
 
 export type ChipVariationUnion =
   | ColorTypes

@@ -75,6 +75,10 @@ const props = defineProps({
     type: Object as PropType<ITableTotals<ITableColumn>>,
     default: () => ({})
   },
+  totalLoading: {
+    type: Boolean as PropType<boolean>,
+    default: false
+  },
   sort: {
     type: Object as PropType<ITableSort>,
     default: () => ({})
@@ -414,8 +418,12 @@ watch(() => checkedRows.value, () => {
                       :title="column.total"
                       variation="gray-invert"
                       text-color="gray"
-                      :size="ChipSize.S"
-                    />
+                      size="s-compact"
+                    >
+                      <template v-if="totalLoading" #icon>
+                        <mc-overlay v-if="totalLoading" size="200" />
+                      </template>
+                    </mc-chip>
                   </slot>
                 </div>
               </div>
@@ -685,7 +693,13 @@ watch(() => checkedRows.value, () => {
             margin-inline-start: $space-50;
             display: flex;
             align-items: center;
+            font-weight: $font-weight-semi-bold;
             @include child-indent-right($space-50);
+          }
+          &_total-loading {
+            .mc-chip__icon {
+              margin: 0 !important;
+            }
           }
         }
         &--align-left {

@@ -2,8 +2,7 @@
 import { McSvgIcon } from '@/components'
 import { computed, type PropType } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
-import type { ChipVariationUnion, IChipStyleOptions } from '@/types/IChip'
-import { type ChipSizeUnion } from '@/types/IChip'
+import { ChipSizeModifiersUnion, ChipVariationUnion, IChipStyleOptions } from '@/types/IChip'
 import type { ColorsUnion } from '@/types/styles/Colors'
 import { ChipModifiers } from '@/enums'
 import { useTheme } from '@/composables/useTheme'
@@ -46,7 +45,7 @@ const props = defineProps({
    *  Размер
    */
   size: {
-    type: String as () => ChipSizeUnion,
+    type: String as () => ChipSizeModifiersUnion,
     default: 'm',
   },
   /**

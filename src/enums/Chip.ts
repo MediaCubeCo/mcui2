@@ -4,7 +4,11 @@ export enum ChipSize {
   M = 'm'
 }
 
+export enum ChipSizeModifiers {
+  Compact = 'compact',
+}
+
 export enum ChipModifiers {
   Invert = 'invert',
-  Outline = 'outline'
+  Outline = 'outline',
 }
