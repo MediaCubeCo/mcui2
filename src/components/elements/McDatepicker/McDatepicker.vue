@@ -239,6 +239,9 @@ const classes = computed((): { [key: string]: boolean } => {
   }
 })
 const styles = computed((): { [key: string]: string } => {
+  if (document) {
+    document.documentElement.style.setProperty('--mc-date-picker-color', theme.colors[theme.component.color as ColorTypes])
+  }
   return {
     '--mc-date-picker-color': theme.colors[theme.component.color as ColorTypes]
     // '--dp-primary-color': theme.colors[theme.component.color as ColorTypes],
@@ -633,29 +636,270 @@ watch(
 @use '../../../assets/tokens/font-weights' as *;
 @use '../../../assets/tokens/media-queries' as *;
 @use '../../../assets/tokens/border-radius' as *;
+@use '../../../assets/tokens/durations' as *;
+
 .mc-date-picker {
-  --dp-menu-min-width: calc(256px - 32px);
-  --dp-border-radius: #{$radius-100};
-  --dp-cell-border-radius: #{$radius-100};
-  --dp-cell-size: 32px;
-  --dp-cell-padding: 12px;
-  --dp-overlay-col-padding: 0;
-  --dp-button-icon-height: 16px;
-  --dp-common-padding: 12px;
-  --dp-time-inc-dec-button-size: 16px;
-
-  //--dp-menu-padding: 50px;
-  //--dp-button-height: 50px;
-  --dp-month-year-row-height: 32px;
-  --dp-month-year-row-button-size: 32px;
-  //--dp-action-buttons-padding: 50px;
-  //--dp-time-inc-dec-button-size: 50px;
-  //--dp-action-button-height: 50px;
-  //--dp-action-row-padding: 50px;
-
   $block-name: &;
   display: block;
   font-family: $font-family-main;
+  //TODO refactor structure to normal
+  // стили вынесены в рут, для кейса когда клендарь телепортируется в бади
+  @at-root {
+    .dp {
+      padding: $space-200;
+      font-size: $font-size-200;
+      &--header-wrap {
+        margin-bottom: $space-200;
+      }
+      &__month_year_wrap {
+        justify-content: center;
+      }
+      &__month_year_select {
+        font-size: $font-size-200;
+        line-height: $line-height-200;
+        font-weight: $font-weight-semi-bold;
+        color: $color-black;
+        width: max-content;
+        height: auto;
+      }
+      &__input_icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        left: 8px;
+      }
+      &--clear-btn {
+        margin-right: $space-100;
+        svg {
+          padding: 0;
+        }
+        &:hover {
+          svg {
+            color: $color-black;
+          }
+        }
+      }
+      &__overlay_col {
+        font-size: $font-size-200;
+        line-height: $line-height-200;
+        font-weight: $font-weight-normal;
+        color: $color-black;
+        border-radius: $radius-100;
+      }
+      &__menu {
+        .dp__btn {
+          &:not(.dp__month_year_select) {
+            padding: 0;
+          }
+          .dp__inner_nav {
+            &:hover {
+              background-color: transparent;
+              color: var(--mc-date-picker-color);
+            }
+          }
+        }
+        .dp__overlay_cell {
+          &:hover {
+            color: var(--mc-date-picker-color);
+            background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
+          }
+          &_active {
+            background-color: var(--mc-date-picker-color);
+          }
+        }
+        .dp__overlay,
+        .dp__overlay_container {
+          overflow-y: auto;
+          .dp__overlay_action {
+            display: none;
+          }
+        }
+        .dp__selection_grid_header {
+          .dp__inner_nav {
+            background: none;
+            color: #202427;
+            &:hover {
+              color: var(--mc-date-picker-color);
+            }
+          }
+        }
+        .dp__inner_nav {
+          width: 24px;
+          height: 24px;
+        }
+        .dp__flex_row {
+          //flex-grow: 0;
+        }
+        .dp--menu--inner-stretched {
+          padding: 0;
+        }
+      }
+      &__calendar {
+        &_item {
+          flex-grow: unset;
+          .dp {
+            &__cell_inner {
+              @include size($size-400);
+              font-size: $font-size-200;
+              line-height: $line-height-200;
+              font-weight: $font-weight-normal;
+              color: $color-black;
+              border-radius: $radius-100;
+              &:not(.dp__week_num .dp__cell_inner) {
+                &:hover {
+                  color: var(--mc-date-picker-color);
+                  background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
+                  border-radius: $radius-100;
+                }
+              }
+            }
+            &__cell_disabled {
+              background-color: $color-hover-gray !important;
+              border-radius: 0 !important;
+            }
+            &__cell_offset {
+              color: $color-hover-gray;
+            }
+            &__range_between {
+              color: $color-black;
+              background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
+              border-radius: 0;
+            }
+            &__range_start,
+            &__range_end,
+            &__active_date {
+              color: $color-white !important;
+              background-color: var(--mc-date-picker-color) !important;
+              border-color: var(--mc-date-picker-color) !important;
+            }
+            &__cell_auto_range {
+              border: none;
+              color: var(--mc-date-picker-color);
+              background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
+              transition: all $duration-s ease;
+              &_start,
+              &_end {
+                color: var(--mc-date-picker-color);
+                background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
+                border: none;
+              }
+            }
+            &__range_between_week {
+              color: $color-white !important;
+              background: var(--mc-date-picker-color) !important;
+              border-color: var(--mc-date-picker-color) !important;
+            }
+            &__active_date {
+              box-shadow: $shadow-s-purple;
+            }
+            &__today {
+              color: var(--mc-date-picker-color);
+              border-color: transparent;
+              border-radius: $radius-100;
+            }
+          }
+        }
+        &_header {
+          &_item {
+            @include size($space-400);
+            font-size: $font-size-200;
+            line-height: $line-height-200;
+            font-weight: $font-weight-normal;
+            color: $color-dark-gray;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          &_separator {
+            display: none;
+          }
+        }
+        &_row {
+          margin: 0;
+        }
+      }
+      &__btn {
+        font-size: $font-size-200;
+        line-height: $line-height-200;
+        font-weight: $font-weight-semi-bold;
+        background: transparent;
+        &:hover {
+          color: var(--mc-date-picker-color);
+        }
+      }
+      &__menu {
+        border-radius: $radius-150;
+        box-shadow: $shadow-s;
+        z-index: 12222;
+        border: transparent;
+        padding: $space-200;
+        &_inner {
+          padding: 0;
+        }
+        &:focus {
+          border: none;
+        }
+      }
+      &__arrow_top,
+      &__arrow_bottom,
+      &__arrow_left,
+      &__arrow_right {
+        border: none;
+        box-shadow: $shadow-s;
+        z-index: -1;
+      }
+      &__arrow_top {
+        box-shadow: 8px -8px 16px rgba(0, 0, 0, 0.16);
+      }
+      &__action_row {
+        padding: $space-150 0 0 0;
+        margin-top: $space-200;
+        border-top: 1px solid #e8e8e8;
+      }
+      &__theme_light {
+        --dp-menu-min-width: calc(256px - 32px);
+        --dp-border-radius: #{$radius-100};
+        --dp-cell-border-radius: #{$radius-100};
+        --dp-cell-size: 32px;
+        --dp-cell-padding: 12px;
+        --dp-overlay-col-padding: 0;
+        --dp-button-icon-height: 16px;
+        --dp-common-padding: 12px;
+        --dp-time-inc-dec-button-size: 16px;
+
+        //--dp-menu-padding: 50px;
+        //--dp-button-height: 50px;
+        --dp-month-year-row-height: 32px;
+        --dp-month-year-row-button-size: 32px;
+        //--dp-action-buttons-padding: 50px;
+        //--dp-time-inc-dec-button-size: 50px;
+        //--dp-action-button-height: 50px;
+        //--dp-action-row-padding: 50px;
+      }
+
+      &__input {
+        font-family: $font-family-main;
+        font-size: $font-size-200;
+        line-height: $line-height-200;
+        height: $size-500;
+        padding: $space-100 $space-300 $space-100 36px;
+        border-color: $color-outline-gray;
+        border-radius: $radius-100;
+        cursor: pointer;
+        color: $color-black;
+
+        &:hover,
+        &:focus {
+          border-color: var(--mc-date-picker-color);
+        }
+
+        &::placeholder {
+          color: $color-gray;
+        }
+      }
+    }
+  }
   &__header {
     @include reset-text-indents();
     display: block;
@@ -673,24 +917,6 @@ watch(
   }
   &__input-wrapper {
     width: 100%;
-    .dp__input {
-      font-family: $font-family-main;
-      font-size: $font-size-200;
-      line-height: $line-height-200;
-      height: $size-500;
-      padding: $space-100 $space-300 $space-100 36px;
-      border-color: $color-outline-gray;
-      border-radius: $radius-100;
-      cursor: pointer;
-      color: $color-black;
-      &:hover,
-      &:focus {
-        border-color: var(--mc-date-picker-color);
-      }
-      &::placeholder {
-        color: $color-gray;
-      }
-    }
   }
   &__footer {
     margin-top: $space-50;
@@ -716,25 +942,6 @@ watch(
       }
     }
   }
-  .dp__input {
-    font-family: $font-family-main;
-    font-size: $font-size-200;
-    line-height: $line-height-200;
-    height: $size-500;
-    padding: $space-100 $space-300 $space-100 36px;
-    border-color: $color-outline-gray;
-    border-radius: $radius-100;
-    cursor: pointer;
-    color: $color-black;
-    &:hover,
-    &:focus {
-      border-color: var(--mc-date-picker-color);
-    }
-    &::placeholder {
-      color: $color-gray;
-    }
-  }
-
   &--error {
     .dp__input {
       border-color: $color-red !important;
@@ -762,212 +969,6 @@ watch(
   // Calendar below
   .dp + .dp {
     border-left: none;
-  }
-  .dp {
-    padding: $space-200;
-    font-size: $font-size-200;
-    &--header-wrap {
-      margin-bottom: $space-200;
-    }
-    &__month_year_wrap {
-      justify-content: center;
-    }
-    &__month_year_select {
-      font-size: $font-size-200;
-      line-height: $line-height-200;
-      font-weight: $font-weight-semi-bold;
-      color: $color-black;
-      width: max-content;
-      height: auto;
-    }
-    &__input_icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      left: 8px;
-    }
-    &--clear-btn {
-      margin-right: $space-100;
-      svg {
-        padding: 0;
-      }
-      &:hover {
-        svg {
-          color: $color-black;
-        }
-      }
-    }
-    &__overlay_col {
-      font-size: $font-size-200;
-      line-height: $line-height-200;
-      font-weight: $font-weight-normal;
-      color: $color-black;
-      border-radius: $radius-100;
-    }
-    &__menu {
-      .dp__btn {
-        &:not(.dp__month_year_select) {
-          padding: 0;
-        }
-        .dp__inner_nav {
-          &:hover {
-            background-color: transparent;
-            color: var(--mc-date-picker-color);
-          }
-        }
-      }
-      .dp__overlay_cell {
-        &:hover {
-          color: var(--mc-date-picker-color);
-          background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
-        }
-        &_active {
-          background-color: var(--mc-date-picker-color);
-        }
-      }
-      .dp__overlay,
-      .dp__overlay_container {
-        overflow-y: auto;
-        .dp__overlay_action {
-          display: none;
-        }
-      }
-      .dp__selection_grid_header {
-        .dp__inner_nav {
-          background: none;
-          color: #202427;
-          &:hover {
-            color: var(--mc-date-picker-color);
-          }
-        }
-      }
-      .dp__inner_nav {
-        width: 24px;
-        height: 24px;
-      }
-      .dp__flex_row {
-        //flex-grow: 0;
-      }
-      .dp--menu--inner-stretched {
-        padding: 0;
-      }
-    }
-    &__calendar {
-      &_item {
-        flex-grow: unset;
-        .dp {
-          &__cell_inner {
-            @include size($size-400);
-            font-size: $font-size-200;
-            line-height: $line-height-200;
-            font-weight: $font-weight-normal;
-            color: $color-black;
-            border-radius: $radius-100;
-            &:not(.dp__week_num .dp__cell_inner) {
-              &:hover {
-                color: var(--mc-date-picker-color);
-                background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
-                border-radius: $radius-100;
-              }
-            }
-          }
-          &__cell_disabled {
-            background-color: $color-hover-gray !important;
-            border-radius: 0 !important;
-          }
-          &__cell_offset {
-            color: $color-hover-gray;
-          }
-          &__range_between {
-            color: $color-black;
-            background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
-            border-radius: 0;
-          }
-          &__range_start,
-          &__range_end,
-          &__active_date {
-            color: $color-white !important;
-            background-color: var(--mc-date-picker-color) !important;
-            border-color: var(--mc-date-picker-color) !important;
-          }
-          &__cell_auto_range {
-            border: none;
-            color: var(--mc-date-picker-color);
-            background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
-            &_start,
-            &_end {
-              color: var(--mc-date-picker-color);
-              background-color: color-mix(in srgb, var(--mc-date-picker-color), white 90%);
-              border: none;
-            }
-          }
-          &__range_between_week {
-            color: $color-white !important;
-            background: var(--mc-date-picker-color) !important;
-            border-color: var(--mc-date-picker-color) !important;
-          }
-          &__active_date {
-            box-shadow: $shadow-s-purple;
-          }
-          &__today {
-            color: var(--mc-date-picker-color);
-            border-color: transparent;
-            border-radius: $radius-100;
-          }
-        }
-      }
-      &_header {
-        &_item {
-          @include size($space-400);
-          font-size: $font-size-200;
-          line-height: $line-height-200;
-          font-weight: $font-weight-normal;
-          color: $color-dark-gray;
-          padding: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        &_separator {
-          display: none;
-        }
-      }
-      &_row {
-        margin: 0;
-      }
-    }
-    &__btn {
-      font-size: $font-size-200;
-      line-height: $line-height-200;
-      font-weight: $font-weight-semi-bold;
-      background: transparent;
-      &:hover {
-        color: var(--mc-date-picker-color);
-      }
-    }
-    &__menu {
-      border-radius: $radius-150;
-      box-shadow: $shadow-s;
-      z-index: 12222;
-      border: transparent;
-      padding: $space-200;
-      &_inner {
-        padding: 0;
-      }
-    }
-    &__arrow_top,
-    &__arrow_bottom,
-    &__arrow_left,
-    &__arrow_right {
-      border: none;
-      box-shadow: $shadow-s;
-      z-index: -1;
-    }
-    &__action_row {
-      padding: $space-150 0 0 0;
-      margin-top: $space-200;
-      border-top: 1px solid #e8e8e8;
-    }
   }
   @at-root {
     html[dir='rtl'] {

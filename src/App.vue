@@ -1,11 +1,7 @@
-<script setup lang="ts">
-import { McCropper } from '@/components'
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div>
-    <mc-cropper></mc-cropper>
-  </div>
+  <div></div>
 </template>
 
 <style lang="scss"></style>

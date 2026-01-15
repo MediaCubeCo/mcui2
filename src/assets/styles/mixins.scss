@@ -61,8 +61,12 @@
 
 @mixin responsive-font($responsive, $min, $max: false, $fallback: false) {
   $responsive-unitless: calc(#{$responsive} / (#{$responsive} - #{$responsive} + 1));
-  $dimension: if(unit($responsive) == 'vh', 'height', 'width');
-  $min-breakpoint: calc(#{$min} / #{$responsive}-unitless * 100);
+  @if unit($responsive) == 'vh' {
+    $dimension: 'height';
+  } @else {
+    $dimension: 'width';
+  }
+  $min-breakpoint: calc(#{$min} / #{$responsive-unitless} * 100);
 
   @media (max-#{$dimension}: #{$min-breakpoint}) {
     font-size: $min;
@@ -218,14 +222,26 @@
 
 @mixin default-link($main-color: $color-black, $second-color: $color-purple, $is-important: false) {
   & {
-    color: $main-color if($is-important, !important, null);
+    @if $is-important {
+      color: $main-color !important;
+    } @else {
+      color: $main-color;
+    }
   }
   &:hover,
   &:focus {
-    color: $second-color if($is-important, !important, null);
+    @if $is-important {
+      color: $second-color !important;
+    } @else {
+      color: $second-color;
+    }
   }
   &:active {
-    color: sasscolor.adjust($second-color, $lightness: 8%) if($is-important, !important, null);
+    @if $is-important {
+      color: sasscolor.adjust($second-color, $lightness: 8%) !important;
+    } @else {
+      color: sasscolor.adjust($second-color, $lightness: 8%);
+    }
   }
 }
 

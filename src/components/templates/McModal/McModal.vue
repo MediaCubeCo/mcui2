@@ -369,23 +369,16 @@ watch(
   --mc-modal-min-width: 768px;
   --mc-modal-state-number: 0;
 
-  position: absolute;
-  left: 0;
-  top: 0;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   opacity: var(--mc-modal-state-number);
-  z-index: 2;
 
   @media #{$media-query-s} {
     --modal-scale: calc(var(--mc-modal-state-number) * 0.1 + 0.9);
     padding: 12px 0;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%) scale(var(--modal-scale));
     height: auto;
     max-height: 80%;
     max-width: var(--mc-modal-max-width);
@@ -412,6 +405,9 @@ watch(
     bottom: 0;
     z-index: 1;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   &__btn-close,
   &__btn-back {

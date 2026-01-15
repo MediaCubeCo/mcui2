@@ -8,7 +8,7 @@ import { Directions } from '@/enums/ui/Directions'
 import { type ColorTypes } from '@/types/styles/Colors'
 import { useFieldErrors } from '@/composables'
 import type { IconsListUnion } from '@/types/styles/Icons'
-import { SelectGroupKeys } from '@/enums/Select'
+import { SelectGroupKeys, SelectListDirections } from '@/enums/Select'
 import type { SelectListDirectionsUnion } from '@/types/ISelect'
 import { PreviewSizes, TitleVariations, TooltipPositions, Weights, ChipSize } from '@/enums'
 import { useTheme } from '@/composables/useTheme'
@@ -263,6 +263,9 @@ const searchValue = ref<string | null>(null)
 const field_select_ref = ref<InstanceType<typeof MultiSelect> | null>(null)
 const field_select_wrapper_ref = ref<InstanceType<typeof HTMLDivElement> | null>(null)
 const local_options = ref<ISelectOptions>([])
+const closest_scroll_element = ref<HTMLElement>(document.documentElement)
+const scroll_resize_observer = ref<ResizeObserver>()
+const field_key = ref(`field-${props.name}`)
 
 const isGroupedOptions = computed((): boolean => {
   return props.options.some(
@@ -303,6 +306,7 @@ const tagBind = computed(() => {
     internalSearch: props.internalSearch,
     tabindex: +props.tabindex,
     groupSelect: props.groupSelect && props.multiple,
+    appendToBody: props.renderAbsoluteList,
     ...(isGroupedOptions.value ? { groupLabel: SelectGroupKeys.Label } : {}),
     ...(isGroupedOptions.value ? { groupValues: SelectGroupKeys.Values } : {})
   }
@@ -391,7 +395,7 @@ const computedModelValue = computed({
         [props.valueField]: item?.[props.valueField],
         text: item?.text,
         icon: item?.icon,
-        is_closable: !Object.prototype.hasOwnProperty.call(item, 'is_closable') || item.is_closable,
+        is_closable: !Object.prototype.hasOwnProperty.call(item, 'is_closable') || item.is_closable
       }
     })
 
@@ -420,6 +424,82 @@ const actualizeSavedOptions = (): void => {
   local_options.value = local_options.value.filter(
     (v, i, a) => a.findIndex((afi) => String(afi[props.valueField]) === String(v[props.valueField])) === i
   )
+}
+
+const findClosestScrollElement = (element: HTMLElement): HTMLElement => {
+  if (!element) return document.documentElement
+  //@ts-ignore
+  const { overflow, overflowY } = getComputedStyle(element as HTMLElement)
+  const scrollableVariants = ['auto', 'scroll']
+  return scrollableVariants.some((v) => [overflow, overflowY].includes(v))
+    ? element
+    : findClosestScrollElement(element.parentNode as HTMLElement)
+}
+const repositionDropDown = () => {
+  const {
+    top = 0,
+    bottom = 0,
+    height = 0,
+    width = 0,
+    left = 0
+  } = field_select_wrapper_ref.value?.getBoundingClientRect() || {}
+  const scrollElementRect = closest_scroll_element.value.getBoundingClientRect()
+  const ref = field_select_ref.value
+  if (!ref) return
+  const ios_devices = ['iPhone', 'iPad']
+  // Добавляем к позиции отступ visualViewport?.offsetTop, который добавляет iOs при открытии вирутальной клавиатуры
+  const iosViewportIndent = ios_devices?.some((device) => navigator?.platform?.includes(device))
+    ? window.visualViewport?.offsetTop || 0
+    : 0
+  // Высчитываем реальную позицию селекта относительно первого скроллящегося родителя
+  const actualTop = top - scrollElementRect.top
+  const actualBottom = bottom - scrollElementRect.bottom
+  // if field hides under scrolled element borders -> blur select to prevent overlap
+  if (actualTop >= -height && actualBottom < height) {
+    //@ts-ignore
+    const { list } = ref.$refs
+    list.style.width = `${width}px`
+    list.style.position = 'fixed'
+    list.style.left = `${left}px`
+    //@ts-ignore
+    const title_height = document.querySelector('.mc-field-select__header')?.offsetHeight
+    const title_margin = 8
+    let openDir = props.openDirection
+    //@ts-ignore
+    if (openDir === SelectListDirections.Auto) openDir = ref?.isAbove ? 'top' : 'bottom'
+    switch (openDir) {
+      //@ts-ignore
+      case 'top':
+        list.style.top = `${
+          top +
+          (hasTitle.value ? title_height + title_margin : 0) +
+          iosViewportIndent -
+          list.getBoundingClientRect().height -
+          8
+        }px`
+        list.style.bottom = 'auto'
+        break
+      //@ts-ignore
+      case 'bottom':
+        list.style.bottom = 'auto'
+        list.style.top = `${top + iosViewportIndent + height}px`
+        break
+    }
+    // Для андроидов не прячем селект при оверлапе, так как там работает все криво
+    //  при открытии из нижней позиции клавиатура его перекрывает и он сразу сам закрывается
+  } else if (!/Android/i.test(navigator.userAgent)) {
+    // прячем селект, если его не видно юзеру
+    return ref.deactivate()
+  }
+}
+
+const initScroll = () => {
+  // looking for closest scroll elemen to track select list position dynamically
+  //@ts-ignore
+  closest_scroll_element.value = findClosestScrollElement(field_select_ref.value.$el)
+  closest_scroll_element.value.addEventListener('scroll', repositionDropDown)
+  scroll_resize_observer.value = new ResizeObserver(repositionDropDown)
+  scroll_resize_observer.value.observe(closest_scroll_element.value)
 }
 
 const handleTag = (value: string): void => {
@@ -458,6 +538,7 @@ const emitOriginalInput = (value: ISelectOptions[]): void => {
 
 const handleOpen = (): void => {
   emit('handle-open')
+  props.renderAbsoluteList && initScroll()
 }
 const handleClose = (): void => {
   emit('handle-close')
