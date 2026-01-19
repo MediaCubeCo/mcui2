@@ -356,6 +356,7 @@ watch(
 
 .mc-modal {
   $block-name: &;
+  position: relative;
   $border-color: #dee1e9;
   $box-shadow-color: #20008c28;
   $border-color: $color-hover-gray;
