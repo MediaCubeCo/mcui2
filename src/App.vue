@@ -1,7 +1,17 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { McButton } from '@/components'
+import { useModal } from '@/composables'
+
+const modal = useModal()
+const asd = () => {
+  modal.showModal('asd')
+}
+</script>
 
 <template>
-  <div></div>
+  <div>
+    <mc-button @click="asd">asd</mc-button>
+  </div>
 </template>
 
 <style lang="scss"></style>
