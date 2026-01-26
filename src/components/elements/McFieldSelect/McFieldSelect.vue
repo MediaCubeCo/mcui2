@@ -263,7 +263,7 @@ const searchValue = ref<string | null>(null)
 const field_select_ref = ref<InstanceType<typeof MultiSelect> | null>(null)
 const field_select_wrapper_ref = ref<InstanceType<typeof HTMLDivElement> | null>(null)
 const local_options = ref<ISelectOptions>([])
-const closest_scroll_element = ref<HTMLElement>(document.documentElement)
+const closest_scroll_element = ref<HTMLElement>(document?.documentElement)
 const scroll_resize_observer = ref<ResizeObserver>()
 const field_key = ref(`field-${props.name}`)
 
@@ -395,7 +395,7 @@ const computedModelValue = computed({
         [props.valueField]: item?.[props.valueField],
         text: item?.text,
         icon: item?.icon,
-        is_closable: !Object.prototype.hasOwnProperty.call(item, 'is_closable') || item.is_closable
+        is_closable: item && (!Object.prototype.hasOwnProperty.call(item, 'is_closable') || item.is_closable)
       }
     })
 
@@ -427,7 +427,7 @@ const actualizeSavedOptions = (): void => {
 }
 
 const findClosestScrollElement = (element: HTMLElement): HTMLElement => {
-  if (!element) return document.documentElement
+  if (!element) return document?.documentElement
   //@ts-ignore
   const { overflow, overflowY } = getComputedStyle(element as HTMLElement)
   const scrollableVariants = ['auto', 'scroll']
@@ -652,16 +652,15 @@ watch(
         </template>
 
         <!-- multiselect selected tag -->
-        <template #tag="asd">
-          {{ asd }}
+        <template #tag="multiselectTag">
           <mc-chip
             :size="ChipSize.Xs"
             class="multiselect__tag"
             variation="main-invert"
-            :closable="!asd.option.hasOwnProperty('is_closable') || asd.option.is_closable"
-            @close="asd.remove(asd.option)"
+            :closable="!multiselectTag?.option?.hasOwnProperty('is_closable') || multiselectTag?.option?.is_closable"
+            @close="multiselectTag.remove(multiselectTag.option)"
           >
-            {{ asd.option[props.titleField] }}
+            {{ multiselectTag.option[props.titleField] }}
             <template #button>
               <mc-svg-icon size="250" name="cancel" />
             </template>

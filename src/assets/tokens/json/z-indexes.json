@@ -9,6 +9,6 @@
   "$z-index-notification": "10001",
   "$z-index-overlay": "10002",
   "$z-index-toasted": "10003",
-  "$z-index-tooltip": "10005",
-  "$z-index-toasted-container": "100000"
+  "$z-index-toasted-container": "100000",
+  "$z-index-tooltip": "100005"
 }
