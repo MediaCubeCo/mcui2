@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { McTitle, McSideBarButton, McSeparator, McButton, McSvgIcon } from '@/components'
-import { useRandomNumber } from '@/composables'
+import { useRandomNumber, useHasSlot } from '@/composables'
 import { computed, inject, type PropType, ref, useSlots, watch } from 'vue'
 import type { ISideBarChatra, ISideBarMenuItem, ISideBarMenuItemEnrichment, ISidebarThemeConfigProvide } from '@/types'
 import { ButtonSize, SidebarTheme } from '@/enums'
@@ -10,6 +10,7 @@ import { defaultThemes } from '@/mocks/sidebar'
 const randomNumber = useRandomNumber()
 const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
 const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 const emit = defineEmits<{
   (e: 'open-side-bar'): void
   (e: 'handlerChatraClick'): void
@@ -62,7 +63,7 @@ const themeConfig = computed(() => {
 })
 
 const hasContentAppend = computed(() => {
-  return !!props.chatraConfig.title || slots['content-append']
+  return !!props.chatraConfig.title || hasSlot('content-append')
 })
 
 const getMenuItemHeadClasses = (menuMainItem: ISideBarMenuItemEnrichment) => {

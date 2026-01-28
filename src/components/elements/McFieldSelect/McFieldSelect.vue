@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, type PropType, ref, watch } from 'vue'
+import { computed, type PropType, ref, useSlots, watch } from 'vue'
 import { default as MultiSelect } from 'vue-multiselect'
 import { McTitle, McSvgIcon, McAvatar, McTooltip, McPreview, McChip } from '@/components'
 import type { ISelectGroupOptions, ISelectOption, ISelectOptions } from '@/types/ISelect'
 import { type DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
 import { type ColorTypes } from '@/types/styles/Colors'
-import { useFieldErrors } from '@/composables'
+import { useFieldErrors, useHasSlot } from '@/composables'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { SelectGroupKeys, SelectListDirections } from '@/enums/Select'
 import type { SelectListDirectionsUnion } from '@/types/ISelect'
@@ -21,6 +21,8 @@ const emit = defineEmits<{
   (e: 'handle-open'): void
   (e: 'handle-close'): void
 }>()
+const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 const props = defineProps({
   /**
    *  Значение
@@ -668,7 +670,7 @@ watch(
         </template>
       </multi-select>
     </div>
-    <div v-if="fieldErrors.errorText.value || props.helpText || $slots.footer" class="mc-field-select__footer">
+    <div v-if="fieldErrors.errorText.value || props.helpText || hasSlot('footer')" class="mc-field-select__footer">
       <mc-title
         v-if="fieldErrors.errorText.value"
         tag-name="div"

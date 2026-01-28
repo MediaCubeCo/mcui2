@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, type PropType, reactive, ref, useSlots, watch } from 'vue'
-import { useHelper } from '@/composables'
+import { useHelper, useHasSlot } from '@/composables'
 import { ChipSize, Weights } from '@/enums'
 import {
   type ITableColumn,
@@ -57,6 +57,7 @@ const emit = defineEmits<{
 
 const helper = useHelper()
 const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 const props = defineProps({
   columns: {
     type: Array as PropType<ITableColumn[]>,
@@ -467,7 +468,7 @@ watch(() => checkedRows.value, () => {
                     </slot>
                   </div>
                   <!-- slot срава от контента (по именем колонки + '-right') -->
-                  <div v-if="slots[`${column.field}-right`]" class="mc-table__table_body-cell_content-right">
+                  <div v-if="hasSlot(`${column.field}-right`)" class="mc-table__table_body-cell_content-right">
                     <slot
                       :name="`${column.field}-right`"
                       :row="row"
@@ -484,7 +485,7 @@ watch(() => checkedRows.value, () => {
               <div v-for="(column, cI) in computedBodyColumns" :key="cI" :class="column.class" :style="column.style">
                 <div class="mc-table__table_body-cell_content">
                   <div class="mc-table__table_body-cell_content-left"></div>
-                  <div v-if="slots[`${column.field}-right`]" class="mc-table__table_body-cell_content-right"></div>
+                  <div v-if="hasSlot(`${column.field}-right`)" class="mc-table__table_body-cell_content-right"></div>
                 </div>
               </div>
             </div>

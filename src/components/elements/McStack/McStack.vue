@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted, computed, h, useSlots, createApp, type Pro
 import { Spaces, SpacesUnion } from '@/types'
 import { McTooltip } from '@/components'
 import { TooltipSizes } from '@/enums'
+import { useHasSlot } from '@/composables'
 
 const emit = defineEmits<{
   (e: 'updated:hidden-count', value: number): any[]
@@ -23,9 +24,10 @@ const props = defineProps({
 })
 
 const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 const container = ref<HTMLElement | null>(null)
 const children =
-  (slots.default && slots.default()[0].children?.length
+  (hasSlot('default') && slots.default && slots.default()[0].children?.length
     ? slots.default()[0].children
     : //@ts-ignore
       slots.default()) || []

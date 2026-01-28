@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { McTitle, McSvgIcon, McButton } from '@/components'
-import { computed, type PropType } from 'vue'
+import { computed, type PropType, useSlots } from 'vue'
+import { useHasSlot } from '@/composables'
 import { HorizontalAlignment, TitleVariations, Weights } from '@/enums'
 import { ColorTypes, IconsListUnion } from '@/types'
 
@@ -10,6 +11,8 @@ import { useTheme } from '@/composables/useTheme'
 const emit = defineEmits<{
   (e: 'click'): void
 }>()
+const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 
 const props = defineProps({
   img: {
@@ -105,7 +108,7 @@ const handleClick = (): void => {
     <section :class="classes" :style="styles">
       <mc-svg-icon v-if="props.icon" :weight="0.5" :name="props.icon" size="1000" color="outline-gray" />
       <img v-if="props.img" :src="props.img" alt="no_entity" />
-      <slot v-if="title || $slots.title" name="title">
+      <slot v-if="title || hasSlot('title')" name="title">
         <mc-title
           v-if="props.title"
           v-bind="titleExtraProps"
@@ -115,7 +118,7 @@ const handleClick = (): void => {
           :html-data="props.title"
         />
       </slot>
-      <div v-if="text || $slots.text" class="mc-no-data__text">
+      <div v-if="text || hasSlot('text')" class="mc-no-data__text">
         <slot name="text">
           <mc-title
             color="gray"
@@ -126,7 +129,7 @@ const handleClick = (): void => {
           />
         </slot>
       </div>
-      <div v-if="(btnName && !noAction) || $slots.action" class="mc-no-data__actions">
+      <div v-if="(btnName && !noAction) || hasSlot('action')" class="mc-no-data__actions">
         <slot name="action">
           <mc-button v-bind="btnAttrs" v-on="btnListeners">
             {{ btnName }}

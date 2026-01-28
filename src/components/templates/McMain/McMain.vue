@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted } from 'vue'
+import { onBeforeUnmount, onMounted, useSlots } from 'vue'
+import { useHasSlot } from '@/composables'
 /**
  * Используется для вёрстки основных страниц
  * на проектах
  */
+
+const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 
 const vhFix = () => {
   const vh = window.innerHeight * 0.01
@@ -22,7 +26,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="mc-main">
-    <div v-if="$slots['left-bar']" class="mc-main__left">
+    <div v-if="hasSlot('left-bar')" class="mc-main__left">
       <!-- @slot Слот сайдбара -->
       <slot name="left-bar" />
     </div>

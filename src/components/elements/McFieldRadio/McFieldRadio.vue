@@ -3,7 +3,7 @@ import { McTitle, McSvgIcon } from '@/components'
 import { computed, type PropType, useSlots, watch } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { SizeTypes } from '@/types/styles/Sizes'
-import { useFieldErrors } from '@/composables'
+import { useFieldErrors, useHasSlot } from '@/composables'
 import type { RadioVariationUnion } from '@/types/IRadio'
 import { Directions } from '@/enums/ui/Directions'
 import { type DirectionsUnion } from '@/types/IDirections'
@@ -12,6 +12,7 @@ import { TitleVariations } from '@/enums'
 import { useTheme } from '@/composables/useTheme'
 
 const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
   /**
@@ -109,7 +110,7 @@ const computedColor = computed((): ColorTypes => {
 const classes = computed((): { [key: string]: boolean } => {
   return {
     'mc-field-radio-button--disabled': props.disabled,
-    'mc-field-radio-button--empty': !props.label && !slots.default,
+    'mc-field-radio-button--empty': !props.label && !hasSlot('default'),
     'mc-field-radio-button--rtl': rtl.value
   }
 })
@@ -178,7 +179,7 @@ const handleChange = () => {
         class="mc-field-radio-button__icon"
       />
     </span>
-    <span v-if="label || $slots.default" class="mc-field-radio-button__text">
+    <span v-if="label || hasSlot('default')" class="mc-field-radio-button__text">
       <!-- @slot Слот для пользовательской подписи радио -->
       <slot>
         <mc-title>{{ label }}</mc-title>

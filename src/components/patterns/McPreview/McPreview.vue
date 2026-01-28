@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useSlots } from 'vue'
 import type { PreviewSizesUnion } from '@/types/IPreview'
+import { useHasSlot } from '@/composables'
+
+const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 
 const props = defineProps({
   /**
@@ -22,7 +26,7 @@ const classes = computed((): { [key: string]: boolean } => {
 
 <template>
   <section :class="classes">
-    <div v-if="$slots.left" class="mc-preview__left">
+    <div v-if="hasSlot('left')" class="mc-preview__left">
       <!-- @slot Слот слева -->
       <slot name="left" />
     </div>
@@ -31,12 +35,12 @@ const classes = computed((): { [key: string]: boolean } => {
         <!-- @slot Слот сверху -->
         <slot name="top" />
       </div>
-      <div v-if="$slots.bottom" class="mc-preview__bottom">
+      <div v-if="hasSlot('bottom')" class="mc-preview__bottom">
         <!-- @slot Слот внизу -->
         <slot name="bottom" />
       </div>
     </div>
-    <div v-if="$slots.right" class="mc-preview__right">
+    <div v-if="hasSlot('right')" class="mc-preview__right">
       <!-- @slot Слот справа -->
       <slot name="right" />
     </div>

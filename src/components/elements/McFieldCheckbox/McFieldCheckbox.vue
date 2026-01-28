@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { McTitle, McSvgIcon } from '@/components'
-import { useFieldErrors } from '@/composables'
+import { useFieldErrors, useHasSlot } from '@/composables'
 import { computed, type PropType, useSlots, watch } from 'vue'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Directions } from '@/enums/ui/Directions'
@@ -12,6 +12,7 @@ import { ICheckboxMainCheckbox } from '@/types/ICheckbox'
 
 const emit = defineEmits(['update:modelValue'])
 const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 const props = defineProps({
   //@ts-ignore
   modelValue: {
@@ -126,7 +127,7 @@ const classes = computed((): { [key: string]: boolean } => ({
   'mc-field-checkbox': true,
   'mc-field-checkbox--error': props.errors,
   'mc-field-checkbox--disabled': props.disabled,
-  'mc-field-checkbox--empty': !props.mainText && !slots.default,
+  'mc-field-checkbox--empty': !props.mainText && !hasSlot('default'),
   'mc-field-checkbox--rtl': rtl.value
 }))
 
@@ -209,7 +210,7 @@ watch(
 
 <template>
   <div :dir="props.dir" :class="classes" :style="styles">
-    <div v-if="props.title || $slots.header" class="mc-field-text__header">
+    <div v-if="props.title || hasSlot('header')" class="mc-field-text__header">
       <!-- @slot Слот заголовка -->
       <slot name="header">
         <mc-title :weight="Weights.Medium">{{ props.title }}</mc-title>
@@ -224,7 +225,7 @@ watch(
           :size="props.checkboxSize"
         />
         <input v-bind="inputProps" @change="handleChange" />
-        <span v-if="props.mainText || $slots.default" class="mc-field-checkbox__name-text">
+        <span v-if="props.mainText || hasSlot('default')" class="mc-field-checkbox__name-text">
           <!-- @slot Слот для пользовательской подписи чекбокса -->
           <slot>
             <mc-title tag-name="div">{{ props.mainText }}</mc-title>

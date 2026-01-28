@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { McSvgIcon } from '@/components'
-import { computed, type PropType } from 'vue'
+import { computed, type PropType, useSlots } from 'vue'
+import { useHasSlot } from '@/composables'
 import { type ColorTypes } from '@/types/styles/Colors'
 import { ChipSizeModifiersUnion, ChipVariationUnion, IChipStyleOptions } from '@/types/IChip'
 import type { ColorsUnion } from '@/types/styles/Colors'
@@ -8,6 +9,8 @@ import { ChipModifiers } from '@/enums'
 import { useTheme } from '@/composables/useTheme'
 
 const theme = useTheme('chip')
+const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 const emit = defineEmits(['close', 'click'])
 const props = defineProps({
   /**
@@ -111,11 +114,11 @@ const handleClick = (e: Event): void => {
 
 <template>
   <section class="mc-chip" tabindex="0" :class="classes" :style="styles" @click="handleClick">
-    <div v-if="$slots.icon" class="mc-chip__icon">
+    <div v-if="hasSlot('icon')" class="mc-chip__icon">
       <!-- @slot Слот для иконки -->
       <slot name="icon" />
     </div>
-    <div v-if="title || $slots.default" class="mc-chip__title">
+    <div v-if="title || hasSlot('default')" class="mc-chip__title">
       <!-- @slot Слот для контента -->
       <slot>
         {{ title }}

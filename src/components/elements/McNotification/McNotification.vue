@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { McTitle, McSvgIcon, McButton, McPreview } from '@/components'
-import { computed, type PropType } from 'vue'
+import { computed, type PropType, useSlots } from 'vue'
+import { useHasSlot } from '@/composables'
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { Weights } from '@/enums/ui/Weights'
@@ -8,6 +9,8 @@ import { useTheme } from '@/composables/useTheme'
 
 
 const emit = defineEmits(['click'])
+const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 const props = defineProps({
   /**
    * Дизайн:
@@ -83,14 +86,14 @@ const handleClick = (e: Event):void => {
   <div class="mc-notification" :style="styles">
     <div class="mc-notification__inner">
       <mc-preview>
-        <template v-if="props.iconVisible && ($slots.left || props.iconName)" #left>
+        <template v-if="props.iconVisible && (hasSlot('left') || props.iconName)" #left>
           <!-- @slot Слот для иконки -->
           <slot name="left">
             <mc-svg-icon :name="props.iconName" size="300" />
           </slot>
         </template>
 
-        <template v-if="$slots.header || props.title" #top>
+        <template v-if="hasSlot('header') || props.title" #top>
           <!-- @slot Слот заголовка -->
           <slot name="header">
             <mc-title
@@ -104,7 +107,7 @@ const handleClick = (e: Event):void => {
           </slot>
         </template>
 
-        <template v-if="props.content || $slots.default" #bottom>
+        <template v-if="props.content || hasSlot('default')" #bottom>
           <div class="mc-notification__text">
             <!-- @slot Слот для контента -->
             <slot>
@@ -113,7 +116,7 @@ const handleClick = (e: Event):void => {
           </div>
         </template>
 
-        <template v-if="$slots.right || props.buttonVisible" #right>
+        <template v-if="hasSlot('right') || props.buttonVisible" #right>
           <!-- @slot Слот для кнопок -->
           <slot name="right">
             <mc-button

@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { default as VueSlider } from 'vue-3-slider-component'
-import { computed, type PropType, reactive, watch } from 'vue'
+import { computed, type PropType, reactive, useSlots, watch } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { TooltipPositionsUnion } from '@/types/ITooltip'
 import { McTitle } from '@/components'
-import { useFieldErrors } from '@/composables'
+import { useFieldErrors, useHasSlot } from '@/composables'
 import { TitleVariations, Weights } from '@/enums'
 import { useTheme } from '@/composables/useTheme'
 
 type RangeValue = string[] | number[] | number | string | null
 
 const emit = defineEmits(['update:modelValue', 'dragging'])
+const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 const props = defineProps({
   /**
    *  Значение
@@ -185,10 +187,10 @@ watch(() => props.errors, (value: string[]): void => {
       </slot>
     </div>
     <vue-slider v-model="computedValue" v-bind="sliderProps" @change="handleInput" @dragging="handleDrag" />
-    <template v-if="(fieldErrors.errorText.value || props.helpText || $slots.footer) && props.showLabels">
+    <template v-if="(fieldErrors.errorText.value || props.helpText || hasSlot('footer')) && props.showLabels">
       <br />
     </template>
-    <div v-if="fieldErrors.errorText.value || props.helpText || $slots.footer" class="mc-field-range__footer">
+    <div v-if="fieldErrors.errorText.value || props.helpText || hasSlot('footer')" class="mc-field-range__footer">
       <template v-if="fieldErrors.errorText.value">
         <mc-title
           tag-name="div"

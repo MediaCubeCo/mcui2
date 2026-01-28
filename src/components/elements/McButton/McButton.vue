@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, onMounted, type PropType, ref } from 'vue'
+import { computed, getCurrentInstance, inject, onMounted, type PropType, ref, useSlots } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
-import { useTooltip } from '@/composables'
+import { useTooltip, useHasSlot } from '@/composables'
 import type { ITooltip, TooltipPositionsUnion } from '@/types/ITooltip'
 import type { ButtonVariationUnion, IButtonStyleOptions } from '@/types/IButton'
 import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'
@@ -247,6 +247,8 @@ const props = defineProps({
 })
 
 const theme = useTheme('button')
+const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 const mcButton = ref(null)
 const has_click = ref(false)
 const emit = defineEmits(['blur', 'click'])
@@ -418,18 +420,18 @@ onMounted(() => {
     @blur="handleBlur"
     @click="handleClick"
   >
-    <span v-if="$slots['icon-prepend']" class="mc-button__prepend">
+    <span v-if="hasSlot('icon-prepend')" class="mc-button__prepend">
       <!-- @slot Слот для вставки в начало -->
       <slot name="icon-prepend" />
     </span>
     <span v-if="loading" class="mc-button__loader">
       <mc-svg-icon class="mc-button__loader-icon" type="div" name="loader" />
     </span>
-    <span v-if="$slots.default" class="mc-button__text">
+    <span v-if="hasSlot('default')" class="mc-button__text">
       <!-- @slot Слот по умолчанию -->
       <slot />
     </span>
-    <span v-if="$slots['icon-append']" class="mc-button__append">
+    <span v-if="hasSlot('icon-append')" class="mc-button__append">
       <!-- @slot Слот для вставки в конец -->
       <slot name="icon-append" />
     </span>

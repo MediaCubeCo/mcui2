@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, type PropType, reactive, ref, useAttrs, watch } from 'vue'
+import { computed, onMounted, type PropType, reactive, ref, useAttrs, useSlots, watch } from 'vue'
 import {
   DatepickerFormat,
   DatepickerTypes,
@@ -14,7 +14,7 @@ import { dayjs, dayjsLocales } from '@/utils'
 import { default as DatePicker, type DatePickerMarker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { McTitle, McSvgIcon, McButton } from '@/components'
-import { useFieldErrors } from '@/composables'
+import { useFieldErrors, useHasSlot } from '@/composables'
 import { ButtonSize, TitleVariations, Weights } from '@/enums'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types'
@@ -28,6 +28,8 @@ const default_placeholders: IDatepickerPlaceholders = {
 }
 
 const attrs = useAttrs()
+const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps({
@@ -464,7 +466,7 @@ watch(
 
 <template>
   <div ref="field" class="mc-date-picker" :class="classes" :style="styles">
-    <label v-if="$slots.title || !!props.title" :for="name" class="mc-date-picker__header">
+    <label v-if="hasSlot('title') || !!props.title" :for="name" class="mc-date-picker__header">
       <!-- @slot Слот для заголовка над инпутом -->
       <slot name="title">
         <mc-title v-if="props.title" :weight="Weights.Medium">{{ props.title }}</mc-title>
@@ -589,13 +591,13 @@ watch(
               :color="props.disabled ? 'outline-gray' : 'black'"
             />
           </template>
-          <template v-if="$slots.header" #header>
+          <template v-if="hasSlot('header')" #header>
             <div>
               <!-- @slot Слот для вставки в хедер попапа календаря -->
               <slot name="header" />
             </div>
           </template>
-          <template v-if="$slots.sidebar" #sidebar>
+          <template v-if="hasSlot('sidebar')" #sidebar>
             <div>
               <!-- @slot Слот для вставки в сайдбар попапа календаря  -->
               <slot name="sidebar" />
@@ -608,11 +610,11 @@ watch(
         </date-picker>
       </div>
     </div>
-    <div v-if="!!fieldErrors.errorText.value || !!props.helpText || !!$slots.bottom" class="mc-date-picker__footer">
+    <div v-if="!!fieldErrors.errorText.value || !!props.helpText || !!hasSlot('bottom')" class="mc-date-picker__footer">
       <mc-title v-if="!!fieldErrors.errorText.value" tag-name="div" color="red" :variation="TitleVariations.Overline">
         {{ fieldErrors.errorText.value }}
       </mc-title>
-      <br v-if="!!fieldErrors.errorText.value && (!!props.helpText || !!$slots.bottom)" />
+      <br v-if="!!fieldErrors.errorText.value && (!!props.helpText || !!hasSlot('bottom'))" />
       <!-- @slot Слот для доп. текста под инпутом -->
       <slot name="bottom">
         <mc-title v-if="!!props.helpText" tag-name="div" :variation="TitleVariations.Overline">

@@ -9,9 +9,10 @@ import {
   type TableCardState
 } from '@/types/ITable'
 import { TABLE } from '@/consts/table'
-import { useHelper } from '@/composables'
+import { useHelper, useHasSlot } from '@/composables'
 
 const slots = useSlots()
+const { hasSlot } = useHasSlot(slots)
 const emit = defineEmits<{
   (e: 'set-table-card-state', value: TableCardState): void
   (e: 'card-id-updated', value: TableCardState): void
@@ -87,7 +88,7 @@ const body_scrolled_to_bottom = ref(true)
 
 const computedFooterClasses = computed((): { [key: string]: boolean } => {
   return {
-    'mc-table-card__footer': !!slots.footer,
+    'mc-table-card__footer': !!hasSlot('footer'),
     'mc-table-card__footer--with-blur': props.footerBlur && !body_scrolled_to_bottom.value
   }
 })
@@ -161,7 +162,7 @@ watch(
 
 <template>
   <div class="mc-table-card" :style="cardStyle">
-    <div v-if="$slots.header" class="mc-table-card__header">
+    <div v-if="hasSlot('header')" class="mc-table-card__header">
       <!-- @slot Слот заголовка -->
       <slot name="header" />
     </div>
@@ -169,7 +170,7 @@ watch(
       <!-- @slot Слот контента -->
       <slot v-bind="props" />
     </div>
-    <div v-if="$slots.footer || footerBlur" :class="computedFooterClasses">
+    <div v-if="hasSlot('footer') || footerBlur" :class="computedFooterClasses">
       <!-- @slot Слот футера -->
       <slot name="footer" />
     </div>
