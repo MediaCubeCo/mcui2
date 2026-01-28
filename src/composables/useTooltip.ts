@@ -210,9 +210,10 @@ class TooltipInstance {
   }
 }
 
-const updateAllTooltips = debounce(() => {
+const updateAllTooltipsFn = () => {
   tooltipInstances.value.forEach((instance) => instance.updateTooltipPosition())
-})
+}
+const updateAllTooltips = useDebounceFn(updateAllTooltipsFn, 150)
 
 const createTooltipContainer = () => {
   const modalContainerElement = document.createElement('div')
@@ -226,6 +227,10 @@ const ensureTooltipContainerExists = () => {
   }
 }
 
+let activeTooltipCount = 0
+const handleScroll = () => updateAllTooltips()
+const handleResize = () => updateAllTooltips()
+
 export function useTooltip() {
   const tooltip = ref<ITooltipInstance | null>(null)
   return {
@@ -237,8 +242,12 @@ export function useTooltip() {
       //@ts-ignore
       tooltip.value = new TooltipInstance(el, binding.value)
 
-      window.addEventListener('scroll', () => updateAllTooltips)
-      window.addEventListener('resize', () => updateAllTooltips)
+      // Добавляем обработчики только один раз
+      if (activeTooltipCount === 0) {
+        window.addEventListener('scroll', handleScroll)
+        window.addEventListener('resize', handleResize)
+      }
+      activeTooltipCount++
     },
     updated(el: HTMLElement, binding: { value: ITooltip }) {
       if (!tooltip.value || !tooltip.value.id) return
@@ -257,9 +266,13 @@ export function useTooltip() {
     },
     beforeUnmount() {
       tooltip.value?.destroy()
-
-      window.removeEventListener('scroll', () => updateAllTooltips)
-      window.removeEventListener('resize', () => updateAllTooltips)
+      activeTooltipCount--
+      
+      // Удаляем обработчики только когда больше нет активных tooltip'ов
+      if (activeTooltipCount === 0) {
+        window.removeEventListener('scroll', handleScroll)
+        window.removeEventListener('resize', handleResize)
+      }
     }
   }
 }

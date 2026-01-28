@@ -34,6 +34,7 @@ const children =
 const visibleChildren = ref<any[]>([])
 const hiddenCount = ref<number>(0)
 const prevHiddenCount = ref<number>(-1)
+let resizeObserver: any = null
 
 const classes = computed((): { [key: string]: boolean } => {
   return {
@@ -47,14 +48,14 @@ onBeforeMount(() => {
 })
 
 onMounted(() => {
-  const resizeObserver = new ResizeObserver(updateChildrenVisible)
+  resizeObserver = new ResizeObserver(updateChildrenVisible)
   if (container.value) resizeObserver.observe(container.value)
 
   updateChildrenVisible()
+})
 
-  onUnmounted(() => {
-    resizeObserver.disconnect()
-  })
+onUnmounted(() => {
+  resizeObserver && resizeObserver.disconnect()
 })
 
 const updateChildrenVisible = (): void => {

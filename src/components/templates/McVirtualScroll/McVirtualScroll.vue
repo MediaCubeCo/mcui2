@@ -117,7 +117,6 @@ watch(
   overflow-y: auto;
   &__item {
     position: absolute;
-    transition: all 0.3s ease;
     width: 100%;
   }
 }

@@ -56,12 +56,17 @@ const showModal = (
     modelValue: true,
     id,
     close: () => {
-      //@ts-ignore
-      const modalToClose = reactiveProps.modals.findLast((d) => d.id === id)
-      modalToClose && (modalToClose.modelValue = false)
-      setTimeout(() => {
-        reactiveProps.modals = reactiveProps.modals.filter((d) => d.id !== modalToClose?.id)
-      }, 300)
+      const modals = reactiveProps.modals
+      const modalToClose = modals.length > 0 
+        ? modals.find((d) => d.id === id) || modals[modals.length - 1]
+        : null
+      
+      if (modalToClose) {
+        modalToClose.modelValue = false
+        setTimeout(() => {
+          reactiveProps.modals = reactiveProps.modals.filter((d) => d.id !== modalToClose?.id)
+        }, 300)
+      }
     }
   }
   reactiveProps.modals.push(newModal)
@@ -69,9 +74,14 @@ const showModal = (
 }
 
 const closeModal = (componentName: string) => {
-  //@ts-ignore
-  const modalToClose = reactiveProps.modals.findLast((d) => d.componentName === componentName)
-  modalToClose && modalToClose.close()
+  const modals = reactiveProps.modals
+  const modalToClose = modals.length > 0
+    ? modals.find((d) => d.componentName === componentName) || modals[modals.length - 1]
+    : null
+  
+  if (modalToClose) {
+    modalToClose.close()
+  }
 }
 
 const closeAllModals = () => {

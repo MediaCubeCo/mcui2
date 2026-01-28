@@ -88,10 +88,19 @@ const computedOptions = computed(() => {
       selected = [...selected, ...(Array.isArray(val) ? val : [[val]])]
     }
 
-    options = options.filter((o) => !selected.includes(String(o.value)))
+    const selectedSet = new Set(selected.flat(Infinity).map((s) => String(s)))
+    options = options.filter((o) => !selectedSet.has(String(o.value)))
   }
 
   return options
+})
+
+const computedOptionsByValue = computed(() => {
+  const map = new Map<string, FilterOption>()
+  for (const opt of computedOptions.value) {
+    map.set(String(opt.value), opt)
+  }
+  return map
 })
 
 const selectedOptionValue = computed<FilterRelationValue>({
@@ -148,7 +157,7 @@ const setValue = (value: FilterRelationValue): void => {
   if (relationType.value !== FilterRelations.Exists && hasVal) {
     const name = props.filter.is_text
       ? value
-      : computedOptions.value.find((o) => String(o.value) === String(value))?.name
+      : computedOptionsByValue.value.get(String(value))?.name
     currentValue = { [relationType.value]: [String(value)] }
     currentValueName = { [relationType.value]: { [String(value)]: name } }
   }
@@ -211,7 +220,7 @@ watch(
             v-for="relation in relations"
             :key="relation"
             :variation="relationType === relation ? theme.component.button as ColorTypes : 'dark-gray-outline'"
-            @click="() => changeRelationType(relation)"
+            @click="changeRelationType(relation)"
           >
             {{ placeholders.actions[`${relation === FilterRelations.Exists ? 'empty' : relation}`] }}
           </mc-button>

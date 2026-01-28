@@ -145,11 +145,8 @@ const handleEmitTableCardState = (payload: TableCardState) => {
 watch(
   () => props.footerBlur,
   (val) => {
-    if (val) {
-      initBlur()
-    } else {
-      bodyEl.value && bodyEl.value.removeEventListener('scroll', handlerScroll)
-    }
+    bodyEl.value && bodyEl.value.removeEventListener('scroll', handlerScroll)
+    val && initBlur()
   }
 )
 watch(

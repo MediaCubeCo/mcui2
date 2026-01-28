@@ -180,9 +180,17 @@ const computedModelValue = computed({
   }
 })
 
+const filtersByValueMap = computed(() => {
+  const map = new Map<string, IFilter>()
+  for (const filter of props.filters) {
+    map.set(String(filter.value), filter)
+  }
+  return map
+})
+
 // выбранный фильтр из списка фильтров
 const currentFilter = computed((): IFilter => {
-  return props.filters.find((f) => String(f.value) === String(selectedOptionFilter.value)) || ({} as IFilter)
+  return filtersByValueMap.value.get(String(selectedOptionFilter.value)) || ({} as IFilter)
 })
 const isCurrentComponentIsRelation = computed((): boolean => {
   return currentFilter.value?.type === FilterTypes.Relation
@@ -199,8 +207,9 @@ const isCurrentComponentIsRange = computed((): boolean => {
 
 // отфильтрованные быстрые фильтры
 const fastFilters = computed((): IFastFilter[] => {
-  const selected = (currentValues.value && Object.keys(currentValues.value)) || []
-  return props.filters.filter((f) => f.type === FilterTypes.Fast && !selected.includes(f.value)) as IFastFilter[]
+  const selectedKeys = (currentValues.value && Object.keys(currentValues.value)) || []
+  const selectedSet = new Set(selectedKeys.map(String))
+  return props.filters.filter((f) => f.type === FilterTypes.Fast && !selectedSet.has(String(f.value))) as IFastFilter[]
 })
 
 // отфильтрованные фильтры кроме быстрых
@@ -602,9 +611,10 @@ watch(
 watch(
   () => currentValues.value,
   (): void => {
-    if (activePreset.value) {
+    if (activePreset.value && filterLocalStorage.value[props.name]) {
+      const presetName = activePreset.value.name
       const mappedPresets = filterLocalStorage.value[props.name].map((p) => {
-        if (activePreset.value && p.name === activePreset.value.name) {
+        if (p.name === presetName) {
           return {
             name: p.name,
             filter: helper.cloneDeep(currentValues.value),
@@ -615,7 +625,8 @@ watch(
       })
       filterLocalStorage.value[props.name] = [...mappedPresets]
     }
-  }
+  },
+  { deep: true }
 )
 
 watch(() => props.open, (val) => {
@@ -749,7 +760,7 @@ watch(() => props.selectedPreset, (val: IFilterPreset) => {
               v-if="activePreset"
               variation="red-outline"
               :size="ButtonSize.S"
-              @click="() => handleDeletePreset(activePreset)"
+              @click="handleDeletePreset(activePreset)"
             >
               {{ placeholders.actions.delete_preset }}
               <template #icon-append>

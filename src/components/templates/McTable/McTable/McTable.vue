@@ -438,10 +438,10 @@ watch(() => checkedRows.value, () => {
           <template v-if="hasData">
             <div
               v-for="(row, rI) in data"
-              :key="rI"
+              :key="`${rI}-${row.id ?? ''}`"
               class="mc-table__table_body-row"
               :class="{ 'mc-table__table_body-row--active': String(openCardState.id) === String(row.id) }"
-              @click="() => handleRowClick(row)"
+              @click="handleRowClick(row)"
             >
               <div v-for="(column, cI) in computedBodyColumns" :key="cI" :class="column.class" :style="column.style">
                 <div class="mc-table__table_body-cell_content">

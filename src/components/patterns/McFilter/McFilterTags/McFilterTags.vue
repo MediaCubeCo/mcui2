@@ -65,6 +65,14 @@ const simpleValues = ref<IFilterParsedValueFilterName>({})
 const relationValues = ref<IFilterParsedValueFilterName>({})
 const prettyActiveTag = ref<IFilterTag | null>(null)
 
+const filtersMap = computed(() => {
+  const map = new Map<string, IFilter>()
+  for (const filter of props.filters) {
+    map.set(String(filter.value), filter)
+  }
+  return map
+})
+
 const fastFilterTags = computed((): IFilterTag[] => {
   return simpleTags.value.filter((st) => st && st.type === FilterTypes.Fast)
 })
@@ -75,12 +83,14 @@ const tagsWithoutFast = computed(() => {
 
 const simpleTags = computed((): IFilterTag[] => {
   const tags: IFilterTag[] = []
+  const map = filtersMap.value
+  
   !helper.isEmpty(simpleValues.value) &&
     Object.entries(simpleValues.value).forEach(([key, value]) => {
       const _key = key as string
       let _value = value as FilterConditionName
 
-      const filter: IFilter = props.filters.find((f) => f.value === _key) || ({} as IFilter)
+      const filter: IFilter = map.get(_key) || ({} as IFilter)
       if (filter && filter.type === FilterTypes.Fast) {
         tags.push({
           id: randomNumber.timestamp(5),
@@ -124,9 +134,11 @@ const relationRows = computed((): IFilterTag[][] => {
       const _relationKey = relationKey as string
       const _relationVal = relationVal as IFilterParsedValueFilterName
 
+      const map = filtersMap.value
+      
       if (relationKey === FilterRelations.Exists) {
         const empties: IFilterTag[] = Object.keys(_relationVal).map((key) => {
-          const filter = props.filters.find((f) => f.value === key)
+          const filter = map.get(key) || ({} as IFilter)
           return {
             id: randomNumber.timestamp(5),
             categoryName: filter?.name,
@@ -149,7 +161,7 @@ const relationRows = computed((): IFilterTag[][] => {
         const _categoryKey = categoryKey as string
         const _categoryVal = categoryVal as FilterConditionName
 
-        const filter: IFilter = props.filters.find((f) => f.value === _categoryKey) || ({} as IFilter)
+        const filter: IFilter = map.get(_categoryKey) || ({} as IFilter)
         Object.entries(_categoryVal).forEach(([key, val]) => {
           values.push({
             id: randomNumber.timestamp(5),
@@ -201,7 +213,7 @@ const addInitTags = (parentVal: FilterConditionName, parentKey?: string) => {
       simpleValues.value[parentKey] = parentVal
       continue
     }
-    const filter = props.filters.find((f) => f.value === key)
+    const filter = filtersMap.value.get(key)
     if (filter && filter.type === FilterTypes.Fast) {
       simpleValues.value[key] = { value: key } as FilterConditionName
       continue
@@ -299,8 +311,8 @@ watch(
               :tag="tag"
               :is-active="checkTagIsActive(tag)"
               closable
-              @click="() => onTagClick(tag)"
-              @close="() => onTagClose(tag)"
+              @click="onTagClick(tag)"
+              @close="onTagClose(tag)"
             />
           </mc-grid-col>
         </mc-grid-row>
@@ -311,8 +323,8 @@ watch(
                 :tag="tag"
                 :is-active="checkTagIsActive(tag)"
                 :closable="tag.closable"
-                @click="() => onTagClick(tag)"
-                @close="() => onTagClose(tag, row[0].relationKey)"
+                @click="onTagClick(tag)"
+                @close="onTagClose(tag, row[0].relationKey)"
               />
             </mc-grid-col>
           </mc-grid-row>

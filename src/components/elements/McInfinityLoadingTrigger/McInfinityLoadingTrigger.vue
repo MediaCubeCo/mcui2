@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, watch, ref, onBeforeUnmount } from 'vue'
+import { onMounted, watch, ref, onBeforeUnmount, nextTick } from 'vue'
 
 const emit = defineEmits(['loading', 'hide'])
 const props = defineProps({
@@ -68,7 +68,7 @@ const clearAllListeners = (): void => {
 watch(() => props.active, (value): void => {
   clearAllListeners()
   if (value) {
-    setObserver()
+    nextTick(() => setObserver())
   }
 })
 </script>

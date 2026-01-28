@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { McGridRow } from '@/components'
 import { computed, onBeforeUnmount, onMounted, type PropType, reactive, ref } from 'vue'
+import { useThrottleFn } from '@vueuse/core'
 import { Spaces, type SpaceTypes } from '@/types/styles/Spaces'
 import type { SpacesUnion } from '@/types/styles/Spaces'
 import type { ColumnJustifyAlignmentUnion } from '@/types/styles/Grid'
@@ -124,7 +125,7 @@ const init = () => {
     if (props.withBlur) createMutationObserver()
   }
 }
-const handlerScroll = () => {
+const handlerScroll = useThrottleFn(() => {
   emit('content-scrolled')
   if (!props.withBlur) return
   if (scrollContainer.value) {
@@ -145,7 +146,7 @@ const handlerScroll = () => {
       show_right_blur.value = false
     }
   }
-}
+}, 16) // ~60fps
 
 const createMutationObserver = () => {
   if (scrollContainer.value) {
