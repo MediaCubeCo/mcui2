@@ -4,7 +4,7 @@ export enum SelectGroupKeys {
 }
 
 export enum SelectListDirections {
-  Top = 'above',
-  Bottom = 'below',
+  Top = 'top',
+  Bottom = 'bottom',
   Auto = 'auto'
 }

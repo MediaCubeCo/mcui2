@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type PropType, ref, useSlots, watch } from 'vue'
+import { computed, type PropType, ref, useSlots, watch, nextTick, onBeforeUnmount } from 'vue'
 import { default as MultiSelect } from 'vue-multiselect'
 import { McTitle, McSvgIcon, McAvatar, McTooltip, McPreview, McChip } from '@/components'
 import type { ISelectGroupOptions, ISelectOption, ISelectOptions } from '@/types/ISelect'
@@ -84,7 +84,7 @@ const props = defineProps({
    */
   hideSelected: {
     type: Boolean as PropType<boolean>,
-    default: true
+    default: false
   },
   /**
    *  Допустимо ли
@@ -133,7 +133,7 @@ const props = defineProps({
   },
   /**
    * Направление открытия списка:
-   * `above (top), below (bottom), auto`
+   * `top, bottom, auto`
    */
   openDirection: {
     type: String as () => SelectListDirectionsUnion,
@@ -268,6 +268,10 @@ const local_options = ref<ISelectOptions>([])
 const closest_scroll_element = ref<HTMLElement>(document?.documentElement)
 const scroll_resize_observer = ref<ResizeObserver>()
 const field_key = ref(`field-${props.name}`)
+const list_teleported_to_body = ref(false)
+const list_original_parent = ref<Element | null>(null)
+const list_original_next_sibling = ref<ChildNode | null>(null)
+const list_portal_wrapper = ref<HTMLElement | null>(null)
 
 const isGroupedOptions = computed((): boolean => {
   return props.options.some(
@@ -437,6 +441,29 @@ const findClosestScrollElement = (element: HTMLElement): HTMLElement => {
     ? element
     : findClosestScrollElement(element.parentNode as HTMLElement)
 }
+
+/**
+ * Находит предка, который является containing block для position: fixed
+ * (contain: layout/paint, transform, filter, perspective и т.д.).
+ * Нужно для корректного позиционирования списка в модалках с contain: layout paint.
+ */
+const getFixedContainingBlock = (element: HTMLElement): DOMRect | null => {
+  let el: HTMLElement | null = element.parentElement
+  while (el && el !== document.body) {
+    const style = getComputedStyle(el)
+    const contain = style.contain
+    if (contain && (contain.includes('layout') || contain.includes('paint'))) {
+      return el.getBoundingClientRect()
+    }
+    if (style.transform !== 'none') return el.getBoundingClientRect()
+    if (style.filter !== 'none') return el.getBoundingClientRect()
+    if (style.perspective !== 'none') return el.getBoundingClientRect()
+    if (style.willChange === 'transform') return el.getBoundingClientRect()
+    el = el.parentElement
+  }
+  return null
+}
+
 const repositionDropDown = () => {
   const {
     top = 0,
@@ -460,9 +487,13 @@ const repositionDropDown = () => {
   if (actualTop >= -height && actualBottom < height) {
     //@ts-ignore
     const { list } = ref.$refs
+    const cbRect = getFixedContainingBlock(list as HTMLElement)
+    const offsetX = cbRect ? cbRect.left : 0
+    const offsetY = cbRect ? cbRect.top : 0
+
     list.style.width = `${width}px`
     list.style.position = 'fixed'
-    list.style.left = `${left}px`
+    list.style.left = `${left - offsetX}px`
     //@ts-ignore
     const title_height = document.querySelector('.mc-field-select__header')?.offsetHeight
     const title_margin = 8
@@ -471,20 +502,21 @@ const repositionDropDown = () => {
     if (openDir === SelectListDirections.Auto) openDir = ref?.isAbove ? 'top' : 'bottom'
     switch (openDir) {
       //@ts-ignore
-      case 'top':
-        list.style.top = `${
+      case 'top': {
+        const viewportTop =
           top +
           (hasTitle.value ? title_height + title_margin : 0) +
           iosViewportIndent -
           list.getBoundingClientRect().height -
           8
-        }px`
+        list.style.top = `${viewportTop - offsetY}px`
         list.style.bottom = 'auto'
         break
+      }
       //@ts-ignore
       case 'bottom':
         list.style.bottom = 'auto'
-        list.style.top = `${top + iosViewportIndent + height}px`
+        list.style.top = `${top + iosViewportIndent + height - offsetY}px`
         break
     }
     // Для андроидов не прячем селект при оверлапе, так как там работает все криво
@@ -538,13 +570,60 @@ const emitOriginalInput = (value: ISelectOptions[]): void => {
   emit('original-input', value)
 }
 
+const moveListToBody = (): void => {
+  const ref = field_select_ref.value
+  // @ts-ignore
+  if (!ref?.$refs?.list) return
+  // @ts-ignore
+  const list = ref.$refs.list as HTMLElement
+  if (list.parentNode?.nodeName === 'BODY' || list_portal_wrapper.value?.contains(list)) return
+
+  list_original_parent.value = list.parentElement
+  list_original_next_sibling.value = list.nextSibling
+
+  const wrapper = document.createElement('div')
+  wrapper.className = 'mc-field-select mc-field-select--list-portal'
+  const multiselectWrap = document.createElement('div')
+  multiselectWrap.className = 'multiselect'
+  multiselectWrap.appendChild(list)
+  wrapper.appendChild(multiselectWrap)
+  document.body.appendChild(wrapper)
+  list_portal_wrapper.value = wrapper
+  list_teleported_to_body.value = true
+  nextTick(repositionDropDown)
+}
+
+const moveListBack = (): void => {
+  if (!list_teleported_to_body.value || !list_original_parent.value) return
+  const ref = field_select_ref.value
+  // @ts-ignore
+  const list = ref?.$refs?.list as HTMLElement | undefined
+  const wrapper = list_portal_wrapper.value
+  if (list && wrapper?.contains(list)) {
+    list_original_parent.value.insertBefore(list, list_original_next_sibling.value)
+  }
+  wrapper?.remove()
+  list_teleported_to_body.value = false
+  list_original_parent.value = null
+  list_original_next_sibling.value = null
+  list_portal_wrapper.value = null
+}
+
 const handleOpen = (): void => {
   emit('handle-open')
-  props.renderAbsoluteList && initScroll()
+  if (props.renderAbsoluteList) {
+    initScroll()
+    nextTick(moveListToBody)
+  }
 }
 const handleClose = (): void => {
+  if (list_teleported_to_body.value) moveListBack()
   emit('handle-close')
 }
+
+onBeforeUnmount(() => {
+  if (list_teleported_to_body.value) moveListBack()
+})
 
 watch(
   () => props.options,
@@ -720,6 +799,31 @@ watch(
   --mc-field-select-placeholder-color: #{$color-gray};
   font-family: $font-family-main;
   @include custom-scroll($space-100);
+
+  // Портал выпадающего списка в body (renderAbsoluteList): поверх модалок, drawer и т.д.
+  &--list-portal {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: $z-index-tooltip + 1;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+
+    .multiselect {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .multiselect__content-wrapper {
+      position: fixed;
+      z-index: $z-index-tooltip + 1;
+      pointer-events: auto;
+    }
+  }
+
   &__header {
     @include reset-text-indents();
     display: block;
@@ -1007,15 +1111,82 @@ watch(
     .mc-preview {
       align-items: center;
     }
-    .multiselect {
-      &__select {
-        display: none;
+
+    &#{$block-name} {
+      &--grouped {
+        .multiselect {
+          &__content {
+            padding: $space-200;
+          }
+        }
       }
-      &__tags {
+
+      &--empty {
+        .multiselect {
+          &__tags {
+            padding: 0;
+            border-radius: $radius-100 !important;
+          }
+
+          &__placeholder {
+            padding-inline-start: $space-150;
+          }
+
+          &__select {
+            display: block;
+          }
+        }
+      }
+    }
+
+    .multiselect {
+      &__content {
         padding: 0;
-        padding-inline: $space-100;
+      }
+
+      &--active {
+        .multiselect__select {
+          transform: translateY(-50%) rotate(180deg);
+        }
+      }
+
+      &__select {
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      &__single {
+        margin: 0;
+      }
+
+      &__tags {
+        padding: $space-200 0;
+        padding-inline: $space-150;
         cursor: pointer;
         border-color: $color-outline-light;
+      }
+
+      &__option,
+      &__content-wrapper,
+      &__tags {
+        border-radius: $radius-200 !important;
+      }
+
+      &__option {
+        padding: $space-200 $space-150;
+
+        &--group {
+          padding: 0 0 $space-100 0;
+          min-height: auto;
+        }
+      }
+
+      &__element {
+        &:not([role='option']) {
+          &:not(:first-of-type) {
+            margin-top: $space-300;
+          }
+        }
       }
     }
   }
