@@ -329,7 +329,9 @@ watch(
         </div>
         <!-- @slot Слот футера -->
         <!-- Телепорта в футер <Teleport to="#mcModalFooter"> -->
-        <div class="mc-modal__control" id="mcModalFooter"><slot name="footer" /></div>
+        <div v-if="hasSlot('footer')" class="mc-modal__control" id="mcModalFooter">
+          <slot name="footer" />
+        </div>
       </div>
       <button v-if="arrowVisible" type="button" class="mc-modal__btn-back" @click.prevent="handleBack">
         <mc-svg-icon name="arrow_leftward" class="mc-modal__icon-back" />

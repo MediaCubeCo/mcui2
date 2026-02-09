@@ -696,7 +696,7 @@ const handleFocus = (e: MouseEvent): void => {
               :value="computedValue"
               v-bind="maskInputAttrs"
               @keydown="prepareHandleKeyDown"
-              @input="handleInput"
+              @update:modelValue="(v: string, e: Event) => handleInput(e)"
             />
             <input
               v-else
