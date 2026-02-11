@@ -2,20 +2,23 @@ import xss from 'xss'
 
 // more https://jsxss.com/en/index.html
 
+const commonAttrs = ['class', 'id', 'style', 'title']
+
 const whiteList = {
-  a: ['href', 'title', 'target', 'rel', 'data-*'],
-  b: [],
-  i: [],
-  em: [],
-  strong: [],
-  p: [],
-  br: [],
-  ul: [],
-  ol: [],
-  li: [],
-  div: ['data-*'],
-  span: ['style'],
-  img: ['src', 'alt', 'title', 'width', 'height'],
+  a: [...commonAttrs, 'href', 'title', 'target', 'rel', 'data-*'],
+  b: [...commonAttrs],
+  i: [...commonAttrs],
+  s: [...commonAttrs],
+  em: [...commonAttrs],
+  strong: [...commonAttrs],
+  p: [...commonAttrs],
+  br: [...commonAttrs],
+  ul: [...commonAttrs],
+  ol: [...commonAttrs],
+  li: [...commonAttrs],
+  div: [...commonAttrs, 'data-*'],
+  span: [...commonAttrs],
+  img: [...commonAttrs, 'src', 'alt', 'title', 'width', 'height'],
 }
 
 const sanitize = (html: string) => {
