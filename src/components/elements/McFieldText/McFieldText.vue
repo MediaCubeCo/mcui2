@@ -470,6 +470,8 @@ const handleRemoveLeadingZero = (val: string): string => {
   return result
 }
 const getPreparedInputValue = (e: Event): InputValue => {
+  if(!e) return props.modelValue
+
   const target = e.target as HTMLInputElement
   let value: InputValue = isDate.value && target && target.value ? target.value?.substring(0, 10) : target.value
   let cursor_position: number = getCaretPos(target)?.start

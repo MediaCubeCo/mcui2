@@ -27,6 +27,7 @@ export type ITableColumnEnriched = ITableColumn & {
   fixedLast: boolean
   style?: { [key: string]: undefined | string | number }
   class?: { [key: string]: boolean }
+  hasRightSlot?: boolean
 }
 
 export type ITableTotals<T extends ITableColumnBase> = {

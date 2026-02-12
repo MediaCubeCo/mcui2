@@ -339,7 +339,8 @@ const classes = computed((): { [key: string]: boolean } => {
     'mc-field-select--is-empty-options-list': isEmptyOptionsList.value || props.loading,
     'mc-field-select--with-preview': props.optionWithPreview,
     'mc-field-select--max-height': !!props.maxHeight,
-    'mc-field-select--rtl': rtl.value
+    'mc-field-select--rtl': rtl.value,
+    'mc-field-select--hide-arrow': hasSlot('arrow'),
   }
 })
 const computedTitle = computed(() => {
@@ -1071,6 +1072,16 @@ watch(
     .multiselect {
       &__tags {
         border-color: $color-red !important;
+      }
+    }
+  }
+
+
+
+  &--hide-arrow {
+    .multiselect {
+      &__select {
+        display: none !important;
       }
     }
   }

@@ -3,7 +3,13 @@
 @use 'tokens/spacings' as *;
 @use 'tokens/media-queries' as *;
 @use 'tokens/colors' as *;
+@use 'tokens/border-radius' as *;
+@use 'tokens/box-shadows' as *;
+@use 'tokens/sizes' as *;
+@use 'tokens/font-weights' as *;
+@use 'tokens/line-heights' as *;
 @use 'sass:color' as sasscolor;
+@use 'sass:math' as math;
 
 $system-color: #8756FF;
 
@@ -229,5 +235,39 @@ pre {
     &--#{$name} {
       color: $color;
     }
+  }
+}
+
+:root {
+  @each $name, $radius in $token-radius {
+    #{'--radius-'}#{$name}: #{$radius};
+  }
+  @each $name, $color in $token-colors {
+    #{'--color-'}#{$name}: #{$color};
+  }
+  // Default main project colors
+  --color-main: #{$color-purple};
+  --color-main-dark: #{$color-hover-purple};
+  --color-main-light: #{$color-light-purple};
+
+  @for $i from 1 through 10 {
+    #{'--color-main-alpha-'}#{$i * 10}: #{rgba($color-purple, math.div($i, 10))};
+  }
+  @each $name, $size in $token-icon-sizes {
+    #{'--size-'}#{$name}: #{$size};
+  }
+  @each $name, $space in $token-spaces {
+    #{'--space-'}#{$name}: #{$space};
+  }
+  @each $name, $shadow in $token-shadows {
+    #{'--shadow-'}#{$name}: #{$shadow};
+  }
+  --font-weight-normal: #{$font-weight-normal};
+  --font-weight-medium: #{$font-weight-medium};
+  --font-weight-semi-bold: #{$font-weight-semi-bold};
+  --font-weight-bold: #{$font-weight-bold};
+
+  @each $name, $height in $token-line-heights {
+    #{'--line-height-'}#{$name}: #{$height};
   }
 }

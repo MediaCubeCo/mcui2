@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, type PropType, reactive, ref, useSlots, watch } from 'vue'
 import { useHelper, useHasSlot } from '@/composables'
-import { ChipSize, Weights } from '@/enums'
+import { Weights } from '@/enums'
 import {
   type ITableColumn,
   type ITableColumnEnriched,
@@ -24,11 +24,10 @@ import {
   McOverlay,
   McFieldCheckbox
 } from '@/components'
-import { useThrottleFn } from '@vueuse/core'
-import { ICheckboxMainCheckbox, IconsListUnion, IDSOptions } from '@/types'
+import { ICheckboxMainCheckbox, IconsListUnion } from '@/types'
 import { default as noTableDataImg } from '@/assets/img/no_table_data.png'
+import { useRafFn } from '@vueuse/core'
 
-const dsOptions = inject<IDSOptions>('dsOptions', {})
 const defaultPlaceholders = {
   no_data: 'No data',
   loading: 'Loading...',
@@ -160,7 +159,7 @@ const props = defineProps({
    * */
   selectedRows: {
     type: Array as PropType<Array<number | string>>,
-    default: () => [],
+    default: () => []
   },
   /**
    * Оверлей с затемнение на всю таблицу
@@ -194,9 +193,10 @@ const props = defineProps({
 })
 
 const openCardState = ref<TableCardState>({ state: false })
-
 const mcTable = ref<null | HTMLElement>(null)
 const checkedRows = ref<Array<any>>(props.selectedRows)
+
+const activeRowId = computed(() => String(openCardState.value.id))
 
 const hasData = computed((): boolean => {
   return !helper.isEmpty(props.data)
@@ -242,19 +242,7 @@ const computedColumns = computed((): ITableColumnEnriched[] => {
     return {
       ...column,
       fixedFirst,
-      fixedLast,
-      style: {
-        ...(column.width
-          ? {
-              '--mc-table-cell-width': `${column.width}px`,
-              '--mc-table-cell-max-width': `${column.width}px`,
-              '--mc-table-cell-min-width': `${column.width}px`
-            }
-          : {
-              '--mc-table-cell-min-width': column.minWidth && `${column.minWidth}px`,
-              '--mc-table-cell-width': '100%'
-            })
-      }
+      fixedLast
     }
   })
 })
@@ -273,7 +261,8 @@ const computedHeaderColumns = computed((): ITableColumnEnriched[] => {
       'mc-table__table_header-cell--fixed-last': column.fixedLast,
       'mc-table__table_header-cell--shadow-first': column.fixedFirst && shadows.firstColHasShadow,
       'mc-table__table_header-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow,
-      [`mc-table__table_header-cell--align-${column.align}`]: !!column.align
+      [`mc-table__table_header-cell--align-${column.align}`]: !!column.align,
+      ...(column.class ? { [String(column.class)]: true } : {})
     }
   }))
 })
@@ -281,13 +270,15 @@ const computedHeaderColumns = computed((): ITableColumnEnriched[] => {
 const computedBodyColumns = computed((): ITableColumnEnriched[] => {
   return computedColumns.value.map((column) => ({
     ...column,
+    hasRightSlot: hasSlot(`${column.field}-right`),
     class: {
       'mc-table__table_body-cell': true,
       'mc-table__table_body-cell--fixed-first': column.fixedFirst,
       'mc-table__table_body-cell--fixed-last': column.fixedLast,
       'mc-table__table_body-cell--shadow-first': column.fixedFirst && shadows.firstColHasShadow,
       'mc-table__table_body-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow,
-      [`mc-table__table_body-cell--align-${column.align}`]: !!column.align
+      [`mc-table__table_body-cell--align-${column.align}`]: !!column.align,
+      ...(column.class ? { [String(column.class)]: true } : {})
     }
   }))
 })
@@ -301,7 +292,8 @@ const computedFooterColumns = computed((): ITableColumnEnriched[] => {
       'mc-table__table_footer-cell--fixed-last': column.fixedLast,
       'mc-table__table_footer-cell--shadow-first': column.fixedFirst && shadows.firstColHasShadow,
       'mc-table__table_footer-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow,
-      [`mc-table__table_footer-cell--align-${column.align}`]: !!column.align
+      [`mc-table__table_footer-cell--align-${column.align}`]: !!column.align,
+      ...(column.class ? { [String(column.class)]: true } : {})
     }
   }))
 })
@@ -332,21 +324,38 @@ const computedTableCardProps = computed((): ITableCardProps => {
 
 onMounted((): void => {
   addListeners()
+  rafResume()
 })
 onBeforeUnmount((): void => {
   removeListeners()
+  rafPause()
 })
 
-const onBodyScroll = useThrottleFn((): void => {
-  if (mcTable.value) {
-    const { scrollLeft, scrollWidth, clientWidth } = mcTable.value
-    const firstColShadow = props.fixedFirstColumn && scrollLeft > 0
-    const lastColShadow = props.fixedLastColumn && scrollLeft + clientWidth < scrollWidth
-
-    if (shadows.firstColHasShadow !== firstColShadow) shadows.firstColHasShadow = firstColShadow
-    if (shadows.lastColHasShadow !== lastColShadow) shadows.lastColHasShadow = lastColShadow
+const getColumnStyle = (column: ITableColumnEnriched): { [key: string]: string | number | undefined } => {
+  return {
+    ...(column.width
+      ? {
+          '--mc-table-cell-width': `${column.width}px`,
+          '--mc-table-cell-max-width': `${column.width}px`,
+          '--mc-table-cell-min-width': `${column.width}px`
+        }
+      : {
+          '--mc-table-cell-min-width': column.minWidth && `${column.minWidth}px`,
+          '--mc-table-cell-width': '100%'
+        })
   }
-}, 5)
+}
+
+const onBodyScroll = () => {
+  if (!mcTable.value) return
+  const { scrollLeft, scrollWidth, clientWidth } = mcTable.value
+  const firstColShadow = props.fixedFirstColumn && scrollLeft > 0
+  const lastColShadow = props.fixedLastColumn && scrollLeft + clientWidth < scrollWidth
+  if (shadows.firstColHasShadow !== firstColShadow) shadows.firstColHasShadow = firstColShadow
+  if (shadows.lastColHasShadow !== lastColShadow) shadows.lastColHasShadow = lastColShadow
+}
+
+const { pause: rafPause, resume: rafResume } = useRafFn(onBodyScroll, { immediate: false })
 
 const addListeners = (): void => {
   if (hasFixedColumn.value && mcTable.value) {
@@ -375,9 +384,12 @@ const handleSetCardState = (payload: TableCardState) => {
   emit('table-card-opened', payload)
 }
 
-watch(() => checkedRows.value, () => {
-  emit('update:selected-rows', checkedRows.value)
-})
+watch(
+  () => checkedRows.value,
+  () => {
+    emit('update:selected-rows', checkedRows.value)
+  }
+)
 </script>
 
 <template>
@@ -387,7 +399,12 @@ watch(() => checkedRows.value, () => {
         <!-- HEADER -->
         <div class="mc-table__table_header">
           <div class="mc-table__table_header-row">
-            <div v-for="(column, cI) in computedHeaderColumns" :key="cI" :class="column.class" :style="column.style">
+            <div
+              v-for="(column, cI) in computedHeaderColumns"
+              :key="column.field"
+              :class="column.class"
+              :style="getColumnStyle(column)"
+            >
               <div class="mc-table__table_header-cell_content">
                 <div class="mc-table__table_header-cell_content-left">
                   <mc-field-checkbox
@@ -438,13 +455,21 @@ watch(() => checkedRows.value, () => {
           <mc-table-skeleton-loading v-if="props.skeletonLoading" :columns="computedBodyColumns" />
           <template v-if="hasData">
             <div
-              v-for="(row, rI) in data"
-              :key="`${rI}-${row.id ?? ''}`"
+              v-for="(row, rI) in props.data"
+              :key="row.id ?? `${rI}-row`"
               class="mc-table__table_body-row"
-              :class="{ 'mc-table__table_body-row--active': String(openCardState.id) === String(row.id) }"
+              :class="{
+                'mc-table__table_body-row--active': activeRowId === String(row.id),
+                [row.metadata?.class]: !!row.metadata?.class
+              }"
               @click="handleRowClick(row)"
             >
-              <div v-for="(column, cI) in computedBodyColumns" :key="cI" :class="column.class" :style="column.style">
+              <div
+                v-for="(column, cI) in computedBodyColumns"
+                :key="column.field"
+                :class="column.class"
+                :style="getColumnStyle(column)"
+              >
                 <div class="mc-table__table_body-cell_content">
                   <div class="mc-table__table_body-cell_content-left">
                     <mc-field-checkbox
@@ -468,7 +493,7 @@ watch(() => checkedRows.value, () => {
                     </slot>
                   </div>
                   <!-- slot срава от контента (по именем колонки + '-right') -->
-                  <div v-if="hasSlot(`${column.field}-right`)" class="mc-table__table_body-cell_content-right">
+                  <div v-if="column.hasRightSlot" class="mc-table__table_body-cell_content-right">
                     <slot
                       :name="`${column.field}-right`"
                       :row="row"
@@ -482,10 +507,15 @@ watch(() => checkedRows.value, () => {
               </div>
             </div>
             <div v-if="!openCardState.state" class="mc-table__table_body-row mc-table__table_body-row--fake">
-              <div v-for="(column, cI) in computedBodyColumns" :key="cI" :class="column.class" :style="column.style">
+              <div
+                v-for="(column, cI) in computedBodyColumns"
+                :key="column.field"
+                :class="column.class"
+                :style="column.style"
+              >
                 <div class="mc-table__table_body-cell_content">
                   <div class="mc-table__table_body-cell_content-left"></div>
-                  <div v-if="hasSlot(`${column.field}-right`)" class="mc-table__table_body-cell_content-right"></div>
+                  <div v-if="column.hasRightSlot" class="mc-table__table_body-cell_content-right"></div>
                 </div>
               </div>
             </div>
@@ -500,8 +530,18 @@ watch(() => checkedRows.value, () => {
         <!-- FOOTER -->
         <div v-if="hasTotals" class="mc-table__table_footer">
           <div class="mc-table__table_footer-row">
-            <div v-for="(column, cI) in computedFooterColumns" :key="cI" :class="column.class" :style="column.style">
-              <slot :name="`${column.field}-footer-cell`" :column="column" :cellIndex="cI" :cellValue="totals[column.field]">
+            <div
+              v-for="(column, cI) in computedFooterColumns"
+              :key="column.field"
+              :class="column.class"
+              :style="getColumnStyle(column)"
+            >
+              <slot
+                :name="`${column.field}-footer-cell`"
+                :column="column"
+                :cellIndex="cI"
+                :cellValue="totals[column.field]"
+              >
                 <mc-title :text-align="column.align" :weight="Weights.SemiBold" max-width="100%">
                   {{ totals[column.field] }}
                 </mc-title>
@@ -512,14 +552,7 @@ watch(() => checkedRows.value, () => {
       </div>
     </div>
     <!-- slot для карточки, по дефолту будет выводить карточку из вложенного роута -->
-    <slot v-bind="computedTableCardProps" @setTableCardState="handleSetCardState">
-      <!-- место для рендера карточки, когда она находится по вложенному роуту -->
-      <!--      <router-view-->
-      <!--        v-if="dsOptions?.meta?.router"-->
-      <!--        v-bind="computedTableCardProps"-->
-      <!--        @setTableCardState="handleSetCardState"-->
-      <!--      />-->
-    </slot>
+    <slot v-bind="computedTableCardProps" @setTableCardState="handleSetCardState"></slot>
     <mc-bottom-loader v-if="bottomLoading" class="mc-table__table-bottom-loader" />
     <mc-overlay v-if="loading" />
     <mc-no-data
@@ -722,7 +755,7 @@ watch(() => checkedRows.value, () => {
           }
         }
         .mc-table-sort,
-        .mc-tooltip-target{
+        .mc-tooltip-target {
           display: inline-flex;
           align-items: center;
         }
