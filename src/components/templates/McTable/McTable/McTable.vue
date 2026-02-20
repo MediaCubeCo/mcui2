@@ -197,9 +197,6 @@ const checkedRows = ref<Array<any>>(props.selectedRows)
 
 const activeRowId = computed(() => String(openCardState.value.id))
 
-const hasData = computed((): boolean => {
-  return !helper.isEmpty(props.data)
-})
 const hasTotals = computed((): boolean => {
   return !helper.isEmpty(props.totals)
 })
@@ -211,6 +208,17 @@ const placeholders = reactive<ITablePlaceholders>(helper.deepMerge(defaultPlaceh
 const shadows = reactive({
   firstColHasShadow: false,
   lastColHasShadow: false
+})
+
+const computedData = computed((): ITableData => {
+  return props.data.map((d, i) => ({
+    ...d,
+    id: d.id || `row-id-${i + 1}`
+  }))
+})
+
+const hasData = computed((): boolean => {
+  return !helper.isEmpty(computedData.value)
 })
 
 const containerClasses = computed(() => {
@@ -229,7 +237,7 @@ const tableClasses = computed(() => {
 })
 
 const allDataIds = computed(() => {
-  return props.data.map((item) => item.id)
+  return computedData.value.map((item) => item.id)
 })
 
 const computedColumns = computed((): ITableColumnEnriched[] => {
@@ -322,7 +330,7 @@ const containerStyle = computed((): { [key: string]: string } => {
 const computedTableCardProps = computed((): ITableCardProps => {
   return {
     tableColumns: props.columns,
-    tableData: props.data,
+    tableData: computedData.value,
     tableTotals: props.totals,
     tableSort: props.sort,
     tableHeaderRowHeight: props.headerRowHeight,
@@ -367,7 +375,7 @@ const handleRowClick = (row: any): void => {
 }
 
 const handleCheckAll = () => {
-  if (checkedRows.value.length === props.data.length) {
+  if (checkedRows.value.length === computedData.value.length) {
     checkedRows.value = []
   } else {
     checkedRows.value = allDataIds.value
@@ -450,7 +458,7 @@ watch(
           <mc-table-skeleton-loading v-if="props.skeletonLoading" :columns="computedBodyColumns" />
           <template v-if="hasData">
             <div
-              v-for="(row, rI) in props.data"
+              v-for="(row, rI) in computedData"
               :key="row.id ?? `${rI}-row`"
               class="mc-table__table_body-row"
               :class="{
