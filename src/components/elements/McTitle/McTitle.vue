@@ -253,8 +253,8 @@ const computedData = computed(() => (props.htmlData ? sanitize(props.htmlData) :
     margin-inline-end: $space-50;
   }
 
-  .mc-svg-icon,
-  .mc-button {
+  //.mc-button,
+  .mc-svg-icon {
     @include reset-text-indents();
   }
 

@@ -25,6 +25,8 @@ export { default as McNotification } from './elements/McNotification/McNotificat
 export { default as McProgress } from './elements/McProgress/McProgress.vue'
 export { default as McSeparator } from './elements/McSeparator/McSeparator.vue'
 export { default as McSlideUpDown } from './elements/McSlideUpDown/McSlideUpDown.vue'
+export { default as McSpinDigit } from './elements/McSpinDigit/McSpinDigit.vue'
+export { default as McSpinNumber } from './elements/McSpinNumber/McSpinNumber.vue'
 export { default as McStack } from './elements/McStack/McStack.vue'
 export { default as McSvgIcon } from './elements/McSvgIcon/McSvgIcon.vue'
 export { default as McTitle } from './elements/McTitle/McTitle.vue'

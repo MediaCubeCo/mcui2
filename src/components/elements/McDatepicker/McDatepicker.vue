@@ -964,7 +964,8 @@ watch(
   }
   &--without-icon {
     .dp__input {
-      padding: $space-100 $space-300 $space-100 $space-100;
+      padding: $space-100;
+      //padding: $space-100 $space-300 $space-100 $space-100;
     }
   }
   // Input to top
