@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.208](https://github.com/MediaCubeCo/mcui2/compare/v0.0.207...v0.0.208) (2026-02-20)
+
+
+### Bug Fixes
+
+* fix mc-drawer async setup components ([d267f8b](https://github.com/MediaCubeCo/mcui2/commit/d267f8b3399f9dfa1c94ae15c79992455ba2a444))
+
 ### [0.0.207](https://github.com/MediaCubeCo/mcui2/compare/v0.0.206...v0.0.207) (2026-02-19)
 
 ### [0.0.206](https://github.com/MediaCubeCo/mcui2/compare/v0.0.205...v0.0.206) (2026-02-17)
