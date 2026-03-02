@@ -2,14 +2,13 @@
 import { McSvgIcon, McSlideUpDown } from '@/components'
 import { computed, type PropType, ref, useSlots, watch, inject, onMounted } from 'vue'
 import type { ICollapse, ICollapseEmitPayload } from '@/types/ICollapse'
-import { useRandomNumber, useHasSlot } from '@/composables'
+import { useRandomNumber } from '@/composables'
 
 const randomNumber = useRandomNumber()
 const selfRegisterCollapseMethod: Function = inject('selfRegisterCollapseMethod', () => {})
 const accordionTriggerMethod: Function = inject('accordionTriggerMethod', () => {})
 
 const slots = useSlots()
-const { hasSlot } = useHasSlot(slots)
 const emit = defineEmits<{
   (e: 'toggle', value: ICollapseEmitPayload): void
   (e: 'open', value: ICollapseEmitPayload): void
@@ -63,7 +62,7 @@ const classes = computed((): { [key: string]: boolean } => {
   }
 })
 const isEmpty = computed((): boolean => {
-  return !hasSlot('body')
+  return !slots['body']
 })
 
 const iCollapseParams = computed((): ICollapse => {
@@ -162,10 +161,10 @@ defineExpose({
         :color="isDisabled ? 'outline-gray' : 'black'"
       />
       <!-- @slot Слот для элемента по которому будет меняться состояние компонента -->
-      <div v-if="hasSlot('activator')" @click="toggle">
+      <div v-if="$slots.activator" @click="toggle">
         <slot name="activator" />
       </div>
-      <a v-if="hasSlot('body')" class="mc-collapse__link" href="#" @click.prevent="toggle" />
+      <a v-if="$slots.body" class="mc-collapse__link" href="#" @click.prevent="toggle" />
     </div>
     <mc-slide-up-down
       class="mc-collapse__body"
@@ -181,7 +180,7 @@ defineExpose({
         <slot name="body" />
       </div>
     </mc-slide-up-down>
-    <div v-if="hasSlot('bottom')" class="mc-collapse__bottom">
+    <div v-if="$slots.bottom" class="mc-collapse__bottom">
       <!-- @slot Общий нижний слот -->
       <slot name="bottom" />
     </div>

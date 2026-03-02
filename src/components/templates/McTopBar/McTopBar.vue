@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { McAvatar, McButton, McSvgIcon, McSeparator, McDropdown } from '@/components'
 import { type PropType, ref, useSlots } from 'vue'
-import { useHasSlot } from '@/composables'
 import { ButtonSize, DropdownPositions, HorizontalAlignment } from '@/enums'
 import type { IconsListUnion } from '@/types'
 
 const slots = useSlots()
-const { hasSlot } = useHasSlot(slots)
 
 const props = defineProps({
   /**
@@ -51,7 +49,7 @@ const userDropdownOpen = ref(false)
 <template>
   <div class="mc-top-bar">
     <div class="mc-top-bar__inner">
-      <div v-if="hasSlot('left')" class="mc-top-bar__left">
+      <div v-if="$slots.left" class="mc-top-bar__left">
         <slot name="left" />
       </div>
       <div class="mc-top-bar__right">

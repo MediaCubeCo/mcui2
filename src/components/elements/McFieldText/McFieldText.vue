@@ -6,7 +6,7 @@ import { computed, type PropType, reactive, ref, useAttrs, useSlots, watch } fro
 import type { DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
 import type { InputTypesUnion, InputValue } from '@/types/IInput'
-import { useFieldErrors, useHasSlot } from '@/composables'
+import { useFieldErrors } from '@/composables'
 import { InputTypes, Autocomplete } from '@/enums/Input'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { type ColorTypes } from '@/types/styles/Colors'
@@ -22,7 +22,6 @@ const emit = defineEmits<{
 }>()
 const attrs = useAttrs()
 const slots = useSlots()
-const { hasSlot } = useHasSlot(slots)
 const props = defineProps({
   /**
    *  Значение
@@ -670,7 +669,7 @@ const handleFocus = (e: MouseEvent): void => {
     </label>
     <label :for="name" class="mc-field-text__inner">
       <div class="mc-field-text__main">
-        <div v-if="hasSlot('prepend')" class="mc-field-text__prepend" @click.stop>
+        <div v-if="$slots.prepend" class="mc-field-text__prepend" @click.stop>
           <!-- @slot Слот в начале инпута -->
           <slot name="prepend" />
         </div>
@@ -713,7 +712,7 @@ const handleFocus = (e: MouseEvent): void => {
           </template>
         </div>
         <div
-          v-if="hasSlot('append') || copy || isPassword"
+          v-if="$slots.append || copy || isPassword"
           class="mc-field-text__append"
           :class="{ 'mc-field-text__append--indent-bottom': hasCharCounter }"
           @click.stop
@@ -752,12 +751,12 @@ const handleFocus = (e: MouseEvent): void => {
           {{ charCounterTitle }}
         </mc-title>
       </div>
-      <div v-if="hasSlot('right')" class="mc-field-text__right">
+      <div v-if="$slots.right" class="mc-field-text__right">
         <!-- @slot Слот справа инпута -->
         <slot name="right" />
       </div>
     </label>
-    <div v-if="fieldErrors.errorText.value || props.helpText || hasSlot('footer')" class="mc-field-text__footer">
+    <div v-if="fieldErrors.errorText.value || props.helpText || $slots.footer" class="mc-field-text__footer">
       <mc-title
         v-if="fieldErrors.errorText.value"
         tag-name="div"

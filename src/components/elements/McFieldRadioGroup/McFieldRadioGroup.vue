@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { McTitle, McFieldRadio } from '@/components'
 import { computed, type PropType, useSlots, watch } from 'vue'
-import { useFieldErrors, useHasSlot } from '@/composables'
+import { useFieldErrors } from '@/composables'
 import type { IRadioGroupOptions, IRadioGroupOption } from '@/types/IRadioGroup'
 import { type DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
@@ -12,7 +12,6 @@ import { TitleVariations } from '@/enums'
 
 const emit = defineEmits(['update:modelValue', 'change'])
 const slots = useSlots()
-const { hasSlot } = useHasSlot(slots)
 //@ts-ignore
 const props = defineProps({
   modelValue: [String, Number],
@@ -151,7 +150,7 @@ watch(() => props.errors, (value: string[]): void => {
         @update:modelValue="handleInput"
       />
     </div>
-    <div v-if="fieldErrors.errorText.value || props.helpText || hasSlot('footer')" class="mc-field-radio-group__footer">
+    <div v-if="fieldErrors.errorText.value || props.helpText || $slots.footer" class="mc-field-radio-group__footer">
       <mc-title
         v-if="fieldErrors.errorText.value"
         tag-name="div"

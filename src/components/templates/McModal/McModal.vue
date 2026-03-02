@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { McSvgIcon } from '@/components'
 import { computed, nextTick, type PropType, reactive, ref, useSlots, watch } from 'vue'
-import { useHasSlot } from '@/composables'
 import { LineHeights, type LineHeightTypes, Sizes, type SizeTypes, Spaces, type SpaceTypes } from '@/types'
 import { HorizontalAlignment } from '@/enums'
 import { TransitionPresets, useTransition } from '@vueuse/core'
@@ -16,7 +15,6 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
 }>()
 const slots = useSlots()
-const { hasSlot } = useHasSlot(slots)
 
 const props = defineProps({
   modelValue: {
@@ -317,7 +315,7 @@ watch(
     <div v-if="props.showOverlay" class="mc-modal__overlay" @click.stop="handleOverlayClick" />
     <div class="mc-modal" :class="classes" :style="styles">
       <div ref="modalInner" class="mc-modal__inner">
-        <div v-if="hasSlot('title')" class="mc-modal__header">
+        <div v-if="$slots.title" class="mc-modal__header">
           <div class="mc-modal__title">
             <!-- @slot Слот заголовка -->
             <slot name="title" />
@@ -329,7 +327,7 @@ watch(
         </div>
         <!-- @slot Слот футера -->
         <!-- Телепорта в футер <Teleport to="#mcModalFooter"> -->
-        <div v-if="hasSlot('footer')" class="mc-modal__control" id="mcModalFooter">
+        <div v-if="$slots.footer" class="mc-modal__control" id="mcModalFooter">
           <slot name="footer" />
         </div>
       </div>

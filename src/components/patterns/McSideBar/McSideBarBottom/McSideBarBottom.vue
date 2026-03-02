@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { McSideBarButton } from '@/components'
 import { computed, inject, type PropType, useSlots } from 'vue'
-import { useHasSlot } from '@/composables'
 import type { ButtonVariationUnion, ColorTypes, ISidebarThemeConfigProvide } from '@/types'
 import { defaultThemes } from '@/mocks/sidebar'
 import { SidebarTheme } from '@/enums'
 
 const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
 const slots = useSlots()
-const { hasSlot } = useHasSlot(slots)
 const emit = defineEmits<{
   (e: 'toggle-size', value: boolean): void
 }>()
@@ -65,7 +63,7 @@ const handleClick = (): void => {
 
 <template>
   <div class="mc-side-bar-bottom" :class="classes">
-    <div v-if="!compact && hasSlot('bottom-message')" class="mc-side-bar-bottom__slot-message" :style="messageStyles">
+    <div v-if="!compact && $slots['bottom-message']" class="mc-side-bar-bottom__slot-message" :style="messageStyles">
       <slot name="bottom-message" />
     </div>
     <mc-side-bar-button

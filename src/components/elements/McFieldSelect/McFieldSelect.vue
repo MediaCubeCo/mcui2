@@ -6,7 +6,7 @@ import type { ISelectGroupOptions, ISelectOption, ISelectOptions } from '@/types
 import { type DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
 import { type ColorTypes } from '@/types/styles/Colors'
-import { useFieldErrors, useHasSlot } from '@/composables'
+import { useFieldErrors } from '@/composables'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { SelectGroupKeys, SelectListDirections } from '@/enums/Select'
 import type { SelectListDirectionsUnion } from '@/types/ISelect'
@@ -22,7 +22,6 @@ const emit = defineEmits<{
   (e: 'handle-close'): void
 }>()
 const slots = useSlots()
-const { hasSlot } = useHasSlot(slots)
 const props = defineProps({
   /**
    *  Значение
@@ -340,7 +339,7 @@ const classes = computed((): { [key: string]: boolean } => {
     'mc-field-select--with-preview': props.optionWithPreview,
     'mc-field-select--max-height': !!props.maxHeight,
     'mc-field-select--rtl': rtl.value,
-    'mc-field-select--hide-arrow': hasSlot('arrow'),
+    'mc-field-select--hide-arrow': !!slots['arrow'],
   }
 })
 const computedTitle = computed(() => {
@@ -750,7 +749,7 @@ watch(
         </template>
       </multi-select>
     </div>
-    <div v-if="fieldErrors.errorText.value || props.helpText || hasSlot('footer')" class="mc-field-select__footer">
+    <div v-if="fieldErrors.errorText.value || props.helpText || $slots.footer" class="mc-field-select__footer">
       <mc-title
         v-if="fieldErrors.errorText.value"
         tag-name="div"

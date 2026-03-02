@@ -4,10 +4,8 @@ import { Weights } from '@/enums/ui/Weights'
 import { McTitle } from '@/components'
 import type { PropType } from 'vue'
 import { useSlots } from 'vue'
-import { useHasSlot } from '@/composables'
 
 const slots = useSlots()
-const { hasSlot } = useHasSlot(slots)
 
 const props = defineProps({
   /**
@@ -26,7 +24,7 @@ const props = defineProps({
 
 <template>
   <div class="mc-drawer-content-template">
-    <div v-if="hasSlot('title') || props.title" class="mc-drawer-content-template__header">
+    <div v-if="$slots.title || props.title" class="mc-drawer-content-template__header">
       <!-- @slot Слот заголовка -->
       <slot name="title">
         <mc-title :variation="TitleVariations.Subtitle" :ellipsis="props.titleEllipsis" :weight="Weights.SemiBold">
@@ -41,7 +39,7 @@ const props = defineProps({
         <slot />
       </div>
     </div>
-    <div v-if="hasSlot('footer')" class="mc-drawer-content-template__footer">
+    <div v-if="$slots.footer" class="mc-drawer-content-template__footer">
       <!-- @slot Слот футера -->
       <slot name="footer" />
     </div>
