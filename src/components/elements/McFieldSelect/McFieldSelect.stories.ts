@@ -6,7 +6,6 @@ import iconsList from '@/mocks/icons.json'
 import { Colors } from '@/types/styles/Colors'
 import { SelectListDirections } from '@/enums/Select'
 const iconsArrayList = Object.keys(iconsList)
-
 import sprite from '../../../assets/iconsSprite.svg?raw'
 
 const meta = {
@@ -151,6 +150,11 @@ export const SingleWithPreview: Story = {
           }
         },
         components: { McFieldSelect },
+        computed: {
+          sprite() {
+            return sprite
+          },
+        },
         template: `
           <mc-field-select 
             v-model="v"
@@ -161,6 +165,7 @@ export const SingleWithPreview: Story = {
             option-with-preview
             :options="options"
           />
+          <span v-html="sprite" style="display: none" />
           <br />
           Output: {{ v }}
         `
@@ -257,6 +262,46 @@ export const Grouped: Story = {
             :value-field="valueField"
             :options="options"
           />
+          <br />
+          Output: {{ v }}
+        `
+      }
+    }
+}
+export const GroupedWithOptions: Story = {
+    render() {
+      return {
+        data() {
+          return {
+            v: null,
+            titleField: 'title',
+            valueField: 'id',
+            options: [
+              {
+                label: 'McPay benefits',
+                values: selectOptions,
+              },
+            ]
+          }
+        },
+        computed: {
+          sprite() {
+            return sprite
+          }
+        },
+        components: { McFieldSelect },
+        template: `
+          <mc-field-select 
+            v-model="v"
+            placeholder="Select McPay features from group"
+            multiple
+            option-with-preview
+            name="McFieldSelectGrouped"
+            :title-field="titleField"
+            :value-field="valueField"
+            :options="options"
+          />
+          <span v-html="sprite" style="display: none" />
           <br />
           Output: {{ v }}
         `

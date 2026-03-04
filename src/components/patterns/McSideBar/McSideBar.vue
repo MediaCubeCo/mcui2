@@ -2,11 +2,12 @@
 import { computed, onBeforeUnmount, onMounted, type PropType, provide, reactive, ref, watch } from 'vue'
 import { McSideBarTop, McSideBarCenter, McSideBarBottom } from '@/components'
 
-import type {
+import {
   IconsListUnion,
   ISideBarApp,
   ISideBarChatra,
   ISideBarMenuItem,
+  ISideBarMenuItemEnrichment,
   ISidebarThemeConfig,
   ISidebarThemeConfigProvide,
   TitleVariationsUnion
@@ -19,6 +20,7 @@ const emit = defineEmits<{
   (e: 'hidden-mode', value: boolean): void
   (e: 'compact', value: boolean): void
   (e: 'chatraClick'): void
+  (e: 'item-selected', value: ISideBarMenuItemEnrichment): void
 }>()
 const props = defineProps({
   /**
@@ -245,17 +247,9 @@ const resize = (): void => {
 watch(
   () => has_compact_class.value,
   (value: boolean): void => {
-    if (value) {
-      setTimeout((): void => {
-        pretty_compact.value = value
-      }, 280)
-    } else {
-      pretty_compact.value = value
-    }
+    pretty_compact.value = value
     is_hidden.value = true
-    setTimeout((): void => {
-      is_hidden.value = false
-    }, 280)
+    is_hidden.value = false
   }
 )
 
@@ -310,6 +304,7 @@ provide('provideData', reactive<ISidebarThemeConfigProvide>({ currentThemeConfig
             :compact="pretty_compact"
             @handlerChatraClick="emit('chatraClick')"
             @open-side-bar="openSideBar"
+            @item-selected="($event) => emit('item-selected', $event)"
           >
             <template #content-append>
               <slot name="content-append" v-bind="{ compact: pretty_compact }" />

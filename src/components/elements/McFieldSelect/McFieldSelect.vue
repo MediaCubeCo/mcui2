@@ -290,6 +290,10 @@ const hasPrepend = computed(() => {
 const isValueMustBeArray = computed(() => {
   return props.multiple
 })
+const hasValue = computed((): boolean => {
+  // @ts-ignore
+  return isValueMustBeArray.value ? !!(props.modelValue || [])?.length : !!props.modelValue
+})
 
 const tagBind = computed(() => {
   return {
@@ -336,10 +340,10 @@ const classes = computed((): { [key: string]: boolean } => {
     'mc-field-select--disabled': props.disabled,
     [`mc-field-select--bg-${props.backgroundColor}`]: !!props.backgroundColor,
     'mc-field-select--is-empty-options-list': isEmptyOptionsList.value || props.loading,
-    'mc-field-select--with-preview': props.optionWithPreview,
+    'mc-field-select--with-preview': props.optionWithPreview && hasValue.value,
     'mc-field-select--max-height': !!props.maxHeight,
     'mc-field-select--rtl': rtl.value,
-    'mc-field-select--hide-arrow': !!slots['arrow'],
+    'mc-field-select--hide-arrow': !!slots['arrow']
   }
 })
 const computedTitle = computed(() => {
@@ -674,7 +678,7 @@ watch(
         <template #singleLabel="{ option }">
           <mc-preview v-if="props.optionWithPreview" class="option__desc" :size="PreviewSizes.L">
             <template v-if="!!option.icon" #left>
-              <mc-svg-icon :name="option.icon" size="400" />
+              <mc-svg-icon :name="option.icon" :color="option.iconColor || 'main'" size="400" />
             </template>
             <template #top>
               <mc-title :weight="Weights.SemiBold" :html-data="option[props.titleField]" />
@@ -691,7 +695,7 @@ watch(
           <div v-else class="mc-field-select__single-label">
             <div v-if="hasPrepend" class="mc-field-select__prepend">
               <mc-avatar v-if="avatar" :src="avatar" />
-              <mc-svg-icon v-else :name="props.icon" />
+              <mc-svg-icon v-else :color="option.iconColor || 'main'" :name="props.icon" />
             </div>
             <div
               class="mc-field-select__label-text"
@@ -701,11 +705,11 @@ watch(
             </div>
           </div>
         </template>
-
         <template v-if="optionsTooltip || props.optionWithPreview" #option="{ option }">
+          <mc-title v-if="option.$isLabel" color="gray">{{ option.$groupLabel }}</mc-title>
           <mc-preview v-if="props.optionWithPreview" class="option__desc" :size="PreviewSizes.L">
             <template v-if="!!option.icon" #left>
-              <mc-svg-icon :name="option.icon" size="400" />
+              <mc-svg-icon :name="option.icon" :color="option.iconColor || 'main'" size="400" />
             </template>
             <template #top>
               <mc-title :weight="Weights.SemiBold" :html-data="option[props.titleField]" />
@@ -1075,8 +1079,6 @@ watch(
     }
   }
 
-
-
   &--hide-arrow {
     .multiselect {
       &__select {
@@ -1116,12 +1118,19 @@ watch(
       }
     }
   }
-
+  .multiselect__option,
+  .multiselect__single {
+    .mc-preview {
+      &__left {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
   &--with-preview {
     .mc-preview {
       align-items: center;
     }
-
     &#{$block-name} {
       &--grouped {
         .multiselect {
@@ -1150,10 +1159,6 @@ watch(
     }
 
     .multiselect {
-      &__content {
-        padding: 0;
-      }
-
       &--active {
         .multiselect__select {
           transform: translateY(-50%) rotate(180deg);
@@ -1186,7 +1191,7 @@ watch(
         padding: $space-200 $space-150;
 
         &--group {
-          padding: 0 0 $space-100 0;
+          //padding: 0 0 $space-100 0;
           min-height: auto;
         }
       }

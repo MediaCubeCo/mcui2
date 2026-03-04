@@ -48,7 +48,6 @@ const menu = [
   {
     name: 'Users',
     icon: 'group',
-    href: 'javascript:void(0);',
     info: '232',
     menu: [
       {
@@ -59,32 +58,29 @@ const menu = [
       {
         name: 'Доходы',
         icon: 'assessment',
-        active: true,
         to: `payment-accounts-partners-revenues-index`,
       },
       {
         name: 'Объекты',
         icon: 'subscriptions',
         to: `payment-accounts-partners-assets-index`,
+        active: true,
       },
     ],
   },
   {
     name: 'Roles',
     icon: 'role',
-    href: 'javascript:void(0);',
     count_key: 'roles',
     info: '231',
   },
   {
     name: 'Transactions',
     icon: 'swap_horizontal_circle',
-    href: 'javascript:void(0);',
   },
   {
     name: 'Transfers',
     icon: 'dollar',
-    href: 'javascript:void(0);',
     iconColor: 'red',
     info: '232',
   },
@@ -92,12 +88,10 @@ const menu = [
     name: 'Report',
     icon: 'download',
     iconColor: 'green',
-    href: 'javascript:void(0);',
   },
   {
-    name: 'Settings',
-    icon: 'settings_solid',
-    href: 'javascript:void(0);',
+    name: 'Google',
+    href: 'https://google.com',
   },
 ] as ISideBarMenuItem[]
 

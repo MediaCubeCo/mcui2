@@ -39,12 +39,13 @@ export interface ISideBarApp {
   isActive: boolean
 }
 export interface ISideBarLink {
+  id?: string
   name: string
   active: boolean,
   icon: IconsListUnion
   iconColor?: ColorTypes
-  href: string
-  to: string
+  href?: string
+  to?: string
   info?: string | number | null
   count_key: string
   classes?: object
@@ -53,9 +54,9 @@ export interface ISideBarMenuItem extends ISideBarLink {
   menu?: ISideBarLink[]
 }
 export interface ISideBarMenuItemEnrichment extends ISideBarMenuItem {
-  id: number
+  id: string
   indicator: Function
-  open: boolean
+  open?: boolean
   child_active?: boolean
 }
 

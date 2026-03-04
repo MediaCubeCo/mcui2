@@ -14,6 +14,5 @@ export interface IDSOptions {
   theme?: Themes,
   meta?: {
     router?: null | Router,
-    isServer?: boolean
   }
 }

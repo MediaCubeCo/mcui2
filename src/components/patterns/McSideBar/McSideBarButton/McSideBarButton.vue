@@ -110,6 +110,7 @@ const themeConfig = computed(() => {
 const classes = computed(() => {
   return {
     'mc-side-bar-button': true,
+    'mc-side-bar-button__compact': props.compact,
     [`mc-side-bar--${themeConfig.value.mode || 'black'}__button`]: true,
     'purple-hover': !props.secondaryColor && themeConfig.value.mainMenuLinks.variable === 'black-flat',
     //@ts-ignore
@@ -149,9 +150,9 @@ const styles = computed((): { [key: string]: string } => {
       <span v-if="icon && compact && (info || withIndicator)" class="mc-side-bar-button__dot" />
     </template>
     <template v-if="!compact">{{ title }}</template>
-    <template v-if="!compact" #icon-append>
+    <template #icon-append>
       <mc-chip
-        v-if="info || withIndicator"
+        v-if="(info || withIndicator) && !compact"
         :variation="theme.component.chip as ColorTypes"
         text-color="white"
         class="mc-side-bar-button__chip"
@@ -162,7 +163,7 @@ const styles = computed((): { [key: string]: string } => {
       <mc-svg-icon
         v-if="href"
         :fill="iconColor"
-        size="200"
+        size="250"
         name="link_external_new"
         class="mc-side-bar-button__icon-append"
       />
@@ -195,11 +196,6 @@ const styles = computed((): { [key: string]: string } => {
       min-height: $size-150;
     }
   }
-  &__icon {
-    &-append {
-      @include size($size-250 !important);
-    }
-  }
   &.mc-button {
     padding: $space-100;
     opacity: 1;
@@ -212,7 +208,6 @@ const styles = computed((): { [key: string]: string } => {
     &.purple-hover:hover {
       background-color: $color-lighter-purple;
     }
-
     .mc-button__text {
       margin-inline-end: $space-100;
     }

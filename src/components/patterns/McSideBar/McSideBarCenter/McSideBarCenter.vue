@@ -1,18 +1,23 @@
 <script setup lang="ts">
 import { McTitle, McSideBarButton, McSeparator, McButton, McSvgIcon } from '@/components'
-import { useRandomNumber } from '@/composables'
-import { computed, inject, type PropType, ref, useSlots, watch } from 'vue'
-import type { ISideBarChatra, ISideBarMenuItem, ISideBarMenuItemEnrichment, ISidebarThemeConfigProvide } from '@/types'
+import { computed, inject, type PropType, reactive, ref, useSlots, watch } from 'vue'
+import {
+  ISideBarChatra,
+  ISideBarLink,
+  ISideBarMenuItem,
+  ISideBarMenuItemEnrichment,
+  ISidebarThemeConfigProvide
+} from '@/types'
 import { ButtonSize, SidebarTheme } from '@/enums'
 import McSlideUpDown from '@/components/elements/McSlideUpDown/McSlideUpDown.vue'
 import { defaultThemes } from '@/mocks/sidebar'
 
-const randomNumber = useRandomNumber()
 const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
 const slots = useSlots()
 const emit = defineEmits<{
   (e: 'open-side-bar'): void
   (e: 'handlerChatraClick'): void
+  (e: 'item-selected', value: ISideBarMenuItemEnrichment): void
 }>()
 const props = defineProps({
   /**
@@ -56,6 +61,8 @@ const props = defineProps({
 })
 
 const preparedMainMenu = ref<ISideBarMenuItemEnrichment[]>([])
+const opened_menus = reactive(new Set())
+const active_menu = ref<string | null>(null)
 
 const themeConfig = computed(() => {
   return provideData.currentThemeConfig || defaultThemes[SidebarTheme.Black]
@@ -67,50 +74,127 @@ const hasContentAppend = computed(() => {
 
 const getMenuItemHeadClasses = (menuMainItem: ISideBarMenuItemEnrichment) => {
   return {
-    open: menuMainItem.open,
-    active: menuMainItem.active,
-    'with-submenu': menuMainItem.menu && menuMainItem.menu.length,
+    open: isMenuItemOpen(menuMainItem),
+    active: isMenuItemActive(menuMainItem),
+    'with-submenu': !!menuMainItem.menu?.length,
     [`mc-side-bar--${themeConfig.value.mode || 'black'}__button`]: true,
     'purple-hover': themeConfig.value.mainMenuLinks.variable === 'black-flat',
     [`mc-button--variation-${themeConfig.value.mainMenuLinks.variable}`]: !!themeConfig.value.mainMenuLinks.variable,
     ['mc-side-bar--black__button mc-button nuxt-link-active']:
-      menuMainItem.menu && menuMainItem.menu.length && !menuMainItem.open && menuMainItem.active
+      menuMainItem.menu?.length && !isMenuItemOpen(menuMainItem) && isMenuItemActive(menuMainItem)
   }
 }
 
+// клик по основному пункту меню
 const handlerSidebarItemClick = () => {
   props.compact && emit('open-side-bar')
 }
 
-// заранее формируем меню один раз, так как компьютед излишен и во вторых нужна переменная "open" что бы ее тогглить
-const setMainMenu = (): void => {
-  preparedMainMenu.value = props.menuMain.map((i: ISideBarMenuItem) => {
-    const child_active = i.menu && i.menu.some(im => im.active)
+// важно что бы id были уникальными! не править метод, или править очень аккуратно, на id много логики завязано
+function getStableId(i: any, salt?: string): string {
+  return [salt || i?.name, i?.to, i?.href, i?.icon].filter(Boolean).join(':')
+}
+
+// если у пункта меню есть подменю, есть ли там активные элементы
+const isChildActive = (menu_item: ISideBarMenuItem | ISideBarMenuItemEnrichment): boolean => {
+  if (!menu_item) return false
+  return menu_item.menu ? menu_item.menu.some((mim) => active_menu.value === mim.id) : false
+}
+
+// активен ли пункт меню
+const isMenuItemActive = (menu_item: ISideBarMenuItemEnrichment | ISideBarLink): boolean => {
+  // @ts-ignore
+  return active_menu.value === menu_item.id || isChildActive(menu_item)
+}
+
+// открыто ли подменб пункта меню
+const isMenuItemOpen = (menu_item: ISideBarMenuItemEnrichment): boolean => {
+  if (!menu_item) return false
+  return props.compact ? false : opened_menus.has(menu_item.id)
+}
+
+// устанавливаем активный пункт меню который будет подсвечиваться
+const handleSetActiveMenuItem = (menu_item: ISideBarMenuItemEnrichment) => {
+  opened_menus.clear()
+  active_menu.value = menu_item.id
+}
+
+// открыть подменю пункта меню
+const handleMenuItemOpen = (menu_item: ISideBarMenuItemEnrichment) => {
+  !opened_menus.has(menu_item.id) && opened_menus.add(menu_item.id)
+}
+
+// тоггл подменю пункта меню
+const handleToggleMenuItemOpen = (menu_item: ISideBarMenuItemEnrichment): void => {
+  opened_menus.has(menu_item.id) ? opened_menus.delete(menu_item.id) : opened_menus.add(menu_item.id)
+}
+
+// обработка клика по пункту в подменю
+const handleSubItemClick = (sub_item: any, menu_item: ISideBarMenuItemEnrichment) => {
+  handleSetActiveMenuItem(sub_item)
+  handleMenuItemOpen(menu_item)
+}
+
+// обработка клика по пункту в меню
+const handleItemClick = (menu_item: ISideBarMenuItemEnrichment) => {
+  if (!menu_item.href) {
+    if (menu_item.menu?.length) {
+      const [target] = menu_item.menu
+      handleSubItemClick(target, menu_item)
+    } else {
+      handleSetActiveMenuItem(menu_item)
+      handleMenuItemOpen(menu_item)
+    }
+  }
+// вместо обработки разных кейсов, просто отдаем наружу клик по элементу
+  emit('item-selected', menu_item)
+}
+
+// установка актинвного пункта меню / подменю
+const setActiveMenuItem = (prepared_menu: ISideBarMenuItemEnrichment[]) => {
+  prepared_menu.forEach(i => {
+    if (i.active) {
+      handleSetActiveMenuItem(i)
+      handleMenuItemOpen(i)
+    }
+    if (i.menu && i.menu.some((pim) => pim.active)) {
+      const target = i.menu.find((pim) => pim.active)
+      handleSubItemClick(target, i)
+    }
+  })
+}
+
+// небольшая подготовка меню
+const getPreparedMainMenu = (): ISideBarMenuItemEnrichment[] => {
+  return props.menuMain.map((i: ISideBarMenuItem) => {
+    const id = getStableId(i)
 
     return {
-      id: randomNumber.timestamp(5),
+      id,
       ...i,
       indicator: () => i.menu && i.menu.some((r) => !!props.counts?.[r.count_key] || !!r.info),
-      open: props.compact ? false : i.active || child_active,
-      active: i.active,
-      child_active,
-      classes: getMenuItemHeadClasses(i as ISideBarMenuItemEnrichment),
+      menu: i.menu ? i.menu.map((im) => ({ ...im, id: getStableId(im, id) })) : []
     } as ISideBarMenuItemEnrichment
   })
 }
 
+// заранее формируем меню один раз
+const setMainMenu = (): void => {
+  const prepared_menu = getPreparedMainMenu()
+  preparedMainMenu.value = prepared_menu
+  setActiveMenuItem(prepared_menu)
+}
+
+setMainMenu()
+
+// следим за меню и обновляем только активное ссостояние, без переформирования меню, что бы избежать ререндеров
 watch(
   () => props.menuMain,
   (): void => {
-    setMainMenu()
+    const prepared_menu = getPreparedMainMenu()
+    setActiveMenuItem(prepared_menu)
   },
-  { deep: true, immediate: true }
-)
-watch(
-  () => props.compact,
-  (): void => {
-    setMainMenu()
-  }
+  { deep: true }
 )
 </script>
 
@@ -119,19 +203,17 @@ watch(
     <mc-title v-if="title" class="mc-side-bar-center__title" :color="compact ? 'transparent' : 'dark-gray'">
       {{ title }}
     </mc-title>
-    <!-- v-show hides jumping with child menu opening after locale switch  -->
     <div v-if="preparedMainMenu && preparedMainMenu.length" class="mc-side-bar-center__content">
       <div
         v-for="menuMainItem in preparedMainMenu"
         :key="menuMainItem.id"
-        :class="{ 'item-active': menuMainItem.active }"
+        :class="{ 'item-active': isMenuItemActive(menuMainItem) }"
         class="mc-side-bar-center__content-item item"
       >
-        <div class="item__head" :class="menuMainItem.classes" @click="handlerSidebarItemClick">
-          <!-- TODO refactor info -->
+        <div class="item__head" :class="getMenuItemHeadClasses(menuMainItem)" @click="handlerSidebarItemClick">
           <mc-side-bar-button
             :info="
-              !(menuMainItem.menu && !!menuMainItem.menu.length)
+              !menuMainItem.menu?.length
                 ? menuMainItem.info || props.counts[menuMainItem.count_key] || null
                 : null
             "
@@ -141,22 +223,21 @@ watch(
             :icon-color="menuMainItem.iconColor"
             :title="menuMainItem.name"
             :compact="compact"
-            :is-active="menuMainItem.active"
-            :with-submenu="menuMainItem.menu && !!menuMainItem.menu.length"
-            :with-indicator="menuMainItem.indicator() && !menuMainItem.open"
-            :variation="menuMainItem.child_active ? 'white-link' : 'gray-link'"
+            :is-active="isChildActive(menuMainItem) ? compact : isMenuItemActive(menuMainItem)"
+            :with-submenu="!!menuMainItem.menu?.length"
+            :with-indicator="menuMainItem.indicator() && !isMenuItemOpen(menuMainItem)"
+            :variation="isChildActive(menuMainItem) ? 'white-link' : 'gray-link'"
             with-tooltip
             class="item__head-button--no-hover"
+            @click="handleItemClick(menuMainItem)"
           />
           <mc-button
-            v-if="menuMainItem.menu && menuMainItem.menu.length && !compact"
-            :variation="menuMainItem.active ? 'white-link' : 'gray-link'"
+            v-if="menuMainItem.menu?.length && !compact"
+            :variation="isMenuItemActive(menuMainItem) ? 'white-link' : 'gray-link'"
             :size="ButtonSize.MCompact"
             class="item__head-arrow"
-            :class="{
-              rotate: menuMainItem.active ? menuMainItem.active && menuMainItem.open : menuMainItem.open
-            }"
-            @click="menuMainItem.open = !menuMainItem.open"
+            :class="{ rotate: isMenuItemOpen(menuMainItem) }"
+            @click="handleToggleMenuItemOpen(menuMainItem)"
           >
             <template #icon-prepend>
               <mc-svg-icon name="arrow_forward" />
@@ -164,13 +245,13 @@ watch(
           </mc-button>
         </div>
         <mc-slide-up-down
-          v-if="menuMainItem.menu && menuMainItem.menu.length"
+          v-if="menuMainItem.menu?.length"
           class="item__submenu"
-          :active="menuMainItem.open"
+          :active="isMenuItemOpen(menuMainItem)"
         >
           <mc-side-bar-button
-            v-for="(menuItem, i) in menuMainItem.menu"
-            :key="i"
+            v-for="menuItem in menuMainItem.menu"
+            :key="menuItem.id"
             :info="menuItem.info || counts[menuItem.count_key]"
             :href="menuItem.href"
             :to="menuItem.to"
@@ -178,8 +259,9 @@ watch(
             :icon-color="menuItem.iconColor"
             :title="menuItem.name"
             :compact="compact"
-            :is-active="menuItem.active"
+            :is-active="isMenuItemActive(menuItem)"
             with-tooltip
+            @click="handleSubItemClick(menuItem, menuMainItem)"
           />
         </mc-slide-up-down>
       </div>
@@ -193,7 +275,7 @@ watch(
       :indent-right="compact ? '50' : '100'"
     />
     <div v-if="hasContentAppend" class="mc-side-bar-center__content-append">
-      <slot name="content-append" :compact="compact"/>
+      <slot name="content-append" :compact="compact" />
       <mc-side-bar-button
         v-if="chatraConfig.title"
         icon="chat_messages"

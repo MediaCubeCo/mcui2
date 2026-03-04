@@ -20,6 +20,7 @@
   {
     "id": 14,
     "title": "Express Payouts",
+    "text": "Additional text",
     "youtube_id": "26",
     "created_at": "2017-09-27T14:52:00+03:00",
     "updated_at": "2019-06-04T20:20:08+03:00"
@@ -27,6 +28,7 @@
   {
     "id": 7,
     "title": "Withdrawal to e-wallets",
+    "icon": "fly_euro",
     "youtube_id": "19",
     "created_at": "2017-09-27T14:52:00+03:00",
     "updated_at": "2019-06-04T20:20:08+03:00"

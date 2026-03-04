@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, type PropType, ref, watch } from 'vue'
-import { IDSOptions } from '@/types'
+import { computed, nextTick, onMounted, type PropType, ref, watch } from 'vue'
 
 interface animationPayload {
   contentHeight: string | number
@@ -48,23 +47,19 @@ const props = defineProps({
     default: true
   }
 })
-const dsOptions = inject<IDSOptions>('dsOptions', {})
 
 const key = ref(Date.now())
 const open = ref<boolean>(props.active)
+const is_hydrated = ref(false)
 const animation_in_progress = ref<boolean>(false)
 const animation = ref<Animation | null>(null)
 const container = ref<HTMLDivElement>()
 
-const isServer = computed(() => {
-  return dsOptions?.meta?.isServer
-})
-
 const classes = computed(() => {
   return {
     'mc-slide-up-down': true,
-    'mc-slide-up-down--server-open': isServer.value && open.value,
-    'mc-slide-up-down--server-close': isServer.value && !open.value,
+    'mc-slide-up-down--server-open': !is_hydrated.value && open.value,
+    'mc-slide-up-down--server-close': !is_hydrated.value && !open.value,
   }
 })
 
@@ -135,6 +130,9 @@ const handleOpen = ({ contentHeight }: animationPayload) => {
 
 onMounted(() => {
   key.value = Date.now()
+  nextTick(() => {
+    is_hydrated.value = true
+  })
 })
 
 watch(
@@ -152,7 +150,7 @@ watch(
 </script>
 
 <template>
-  <component ref="container" :is="props.tag" :class="classes" :key="`mc-slide-up-down-key-${isServer}-${key}`">
+  <component ref="container" :is="props.tag" :class="classes" :key="`mc-slide-up-down-key-${key}`">
     <slot />
   </component>
 </template>

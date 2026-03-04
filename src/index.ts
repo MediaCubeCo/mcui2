@@ -27,7 +27,6 @@ export default {
       theme: Themes.Light,
       meta: {
         router: null,
-        isServer: false,
       },
     }
 
