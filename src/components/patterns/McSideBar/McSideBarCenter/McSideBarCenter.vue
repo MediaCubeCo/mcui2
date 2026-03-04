@@ -116,6 +116,7 @@ const isMenuItemOpen = (menu_item: ISideBarMenuItemEnrichment): boolean => {
 // устанавливаем активный пункт меню который будет подсвечиваться
 const handleSetActiveMenuItem = (menu_item: ISideBarMenuItemEnrichment) => {
   opened_menus.clear()
+  if (active_menu.value && active_menu.value !== menu_item.id) emit('item-selected', menu_item)
   active_menu.value = menu_item.id
 }
 
@@ -126,7 +127,7 @@ const handleMenuItemOpen = (menu_item: ISideBarMenuItemEnrichment) => {
 
 // тоггл подменю пункта меню
 const handleToggleMenuItemOpen = (menu_item: ISideBarMenuItemEnrichment): void => {
-  opened_menus.has(menu_item.id) ? opened_menus.delete(menu_item.id) : opened_menus.add(menu_item.id)
+  opened_menus.has(menu_item.id) ? opened_menus.delete(menu_item.id) : handleMenuItemOpen(menu_item)
 }
 
 // обработка клика по пункту в подменю
@@ -140,41 +141,37 @@ const handleItemClick = (menu_item: ISideBarMenuItemEnrichment) => {
   if (!menu_item.href) {
     if (menu_item.menu?.length) {
       const [target] = menu_item.menu
-      handleSubItemClick(target, menu_item)
+      return handleSubItemClick(target, menu_item)
     } else {
       handleSetActiveMenuItem(menu_item)
       handleMenuItemOpen(menu_item)
     }
   }
-// вместо обработки разных кейсов, просто отдаем наружу клик по элементу
-  emit('item-selected', menu_item)
 }
 
 // установка актинвного пункта меню / подменю
-const setActiveMenuItem = (prepared_menu: ISideBarMenuItemEnrichment[]) => {
-  prepared_menu.forEach(i => {
+const initialSetActiveMenuItem = (prepared_menu: ISideBarMenuItemEnrichment[]) => {
+  for (const i of prepared_menu) {
+    if (i.menu && i.menu.some((pim) => pim.active)) {
+      const target = i.menu.find((pim) => pim.active)
+      handleSubItemClick(target, i)
+      continue
+    }
     if (i.active) {
       handleSetActiveMenuItem(i)
       handleMenuItemOpen(i)
     }
-    if (i.menu && i.menu.some((pim) => pim.active)) {
-      const target = i.menu.find((pim) => pim.active)
-      handleSubItemClick(target, i)
-    }
-  })
+  }
 }
 
 // небольшая подготовка меню
 const getPreparedMainMenu = (): ISideBarMenuItemEnrichment[] => {
   return props.menuMain.map((i: ISideBarMenuItem) => {
     const id = getStableId(i)
+    const indicator = () => i.menu && i.menu.some((r) => !!props.counts?.[r.count_key] || !!r.info)
+    const menu = i.menu ? i.menu.map((im) => ({ ...im, id: im.id || getStableId(im, id) })) : []
 
-    return {
-      id,
-      ...i,
-      indicator: () => i.menu && i.menu.some((r) => !!props.counts?.[r.count_key] || !!r.info),
-      menu: i.menu ? i.menu.map((im) => ({ ...im, id: getStableId(im, id) })) : []
-    } as ISideBarMenuItemEnrichment
+    return { id: i.id || id, ...i, indicator, menu } as ISideBarMenuItemEnrichment
   })
 }
 
@@ -182,7 +179,7 @@ const getPreparedMainMenu = (): ISideBarMenuItemEnrichment[] => {
 const setMainMenu = (): void => {
   const prepared_menu = getPreparedMainMenu()
   preparedMainMenu.value = prepared_menu
-  setActiveMenuItem(prepared_menu)
+  initialSetActiveMenuItem(prepared_menu)
 }
 
 setMainMenu()
@@ -192,7 +189,7 @@ watch(
   () => props.menuMain,
   (): void => {
     const prepared_menu = getPreparedMainMenu()
-    setActiveMenuItem(prepared_menu)
+    initialSetActiveMenuItem(prepared_menu)
   },
   { deep: true }
 )
@@ -210,12 +207,10 @@ watch(
         :class="{ 'item-active': isMenuItemActive(menuMainItem) }"
         class="mc-side-bar-center__content-item item"
       >
-        <div class="item__head" :class="getMenuItemHeadClasses(menuMainItem)" @click="handlerSidebarItemClick">
+        <div class="item__head" :class="getMenuItemHeadClasses(menuMainItem)" @click="handlerSidebarItemClick()">
           <mc-side-bar-button
             :info="
-              !menuMainItem.menu?.length
-                ? menuMainItem.info || props.counts[menuMainItem.count_key] || null
-                : null
+              !menuMainItem.menu?.length ? menuMainItem.info || props.counts[menuMainItem.count_key] || null : null
             "
             :href="menuMainItem.href"
             :to="menuMainItem.to"
@@ -229,13 +224,13 @@ watch(
             :variation="isChildActive(menuMainItem) ? 'white-link' : 'gray-link'"
             with-tooltip
             class="item__head-button--no-hover"
-            @click="handleItemClick(menuMainItem)"
+            @click.stop="handleItemClick(menuMainItem)"
           />
           <mc-button
             v-if="menuMainItem.menu?.length && !compact"
+            class="item__head-arrow"
             :variation="isMenuItemActive(menuMainItem) ? 'white-link' : 'gray-link'"
             :size="ButtonSize.MCompact"
-            class="item__head-arrow"
             :class="{ rotate: isMenuItemOpen(menuMainItem) }"
             @click="handleToggleMenuItemOpen(menuMainItem)"
           >
@@ -244,11 +239,7 @@ watch(
             </template>
           </mc-button>
         </div>
-        <mc-slide-up-down
-          v-if="menuMainItem.menu?.length"
-          class="item__submenu"
-          :active="isMenuItemOpen(menuMainItem)"
-        >
+        <mc-slide-up-down v-if="menuMainItem.menu?.length" class="item__submenu" :active="isMenuItemOpen(menuMainItem)">
           <mc-side-bar-button
             v-for="menuItem in menuMainItem.menu"
             :key="menuItem.id"
@@ -261,7 +252,7 @@ watch(
             :compact="compact"
             :is-active="isMenuItemActive(menuItem)"
             with-tooltip
-            @click="handleSubItemClick(menuItem, menuMainItem)"
+            @click.stop="handleSubItemClick(menuItem, menuMainItem)"
           />
         </mc-slide-up-down>
       </div>
