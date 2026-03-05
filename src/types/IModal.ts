@@ -3,6 +3,7 @@ import { ModalVariation } from '@/enums/Modal'
 
 export interface IModalServiceState {
   isOpen: boolean
+  activeModal: IModalState | null
   closeServiceState: Function
 }
 

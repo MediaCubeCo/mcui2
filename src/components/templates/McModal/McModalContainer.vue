@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, type PropType } from 'vue'
+import { computed, onBeforeUnmount, onMounted, type PropType, watch } from 'vue'
 import type { IModalServiceState, IModalState } from '@/types/IModal'
+import McDrawerSafeComponent from '@/components/templates/McDrawer/McDrawerSafeComponent.vue'
 
 const props = defineProps({
   modalServiceState: {
@@ -38,8 +39,21 @@ const handleKeyUp = (e: KeyboardEvent) => {
   }
 }
 
+const lockBodyScroll = (val: boolean) => {
+  if (typeof window === 'undefined') return
+
+  document.body.style.overflow = val ? 'hidden' : ''
+  document.body.style.paddingRight = val ? '15px' : ''
+}
+
 onMounted(() => {
   document.addEventListener('keyup', handleKeyUp)
+
+  watch(
+    () => props.reactiveProps.modals.length,
+    (val) => lockBodyScroll(!!val),
+    { immediate: true }
+  )
 })
 onBeforeUnmount(() => {
   document.removeEventListener('keyup', handleKeyUp)
@@ -49,12 +63,16 @@ onBeforeUnmount(() => {
 <template>
   <div class="mc-modal-container" :style="containerStyle">
     <div v-for="modal in props.reactiveProps.modals" :key="modal.id" @close="() => closeModal(modal)">
-      <component
-        v-model="modal.modelValue"
-        :is="modal.component"
-        v-bind="modal.componentProps"
-        @closed="() => closeModal(modal)"
-      />
+      <mc-drawer-safe-component @error-captured="() => closeModal(modal)">
+        <Suspense>
+          <component
+            v-model="modal.modelValue"
+            :is="modal.component"
+            v-bind="modal.componentProps"
+            @closed="() => closeModal(modal)"
+          />
+        </Suspense>
+      </mc-drawer-safe-component>
     </div>
   </div>
 </template>

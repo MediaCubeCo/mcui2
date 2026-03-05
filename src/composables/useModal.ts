@@ -1,105 +1,151 @@
-import { reactive, h, render, shallowRef, markRaw, inject } from 'vue'
+import { reactive, h, render, shallowRef, markRaw, inject, defineAsyncComponent } from 'vue'
+
 import ModalContainer from '@/components/templates/McModal/McModalContainer.vue'
 import { getStoredAppContext } from '@/storedAppContext'
 import type { IModalServiceState, IModalState } from '@/types/IModal'
 import { IDSOptions } from '@/types'
+import { useHelper } from '@/composables/useHelper'
 
-const closeServiceState = () => {
-  modalServiceState.isOpen = false
-  reactiveProps.modals = []
-}
+const helper = useHelper()
+
+const componentCache: Record<string, any> = {}
+const modalInstanceCache: Record<string, any> = {}
 
 const modalServiceState = reactive<IModalServiceState>({
   isOpen: false,
-  closeServiceState: closeServiceState
+  activeModal: null,
+  closeServiceState: () => {
+    modalServiceState.isOpen = false
+    reactiveProps.modals = []
+  }
 })
 
-const modalComponents = shallowRef({})
+const modalComponents = shallowRef<Record<string, any>>({})
 const reactiveProps = reactive<{ modals: IModalState[] }>({ modals: [] })
+
+/**
+ * Normalize ANY import style into Vue component
+ */
+const normalizeComponent = (comp: any) => {
+  if (!comp) return comp
+
+  const compKey = comp.toString()
+
+  if (componentCache[compKey]) {
+    return componentCache[compKey]
+  }
+
+  let resolved = comp
+
+  if (typeof comp === 'function') {
+    resolved = defineAsyncComponent({
+      loader: comp,
+      timeout: 10000,
+      suspensible: false
+    })
+  }
+
+  componentCache[compKey] = resolved
+
+  return resolved
+}
 
 const createModalContainer = () => {
   if (typeof window === 'undefined') return
-  const modalContainerElement = document.createElement('div')
-  modalContainerElement.id = 'modal-container'
-  document.body.appendChild(modalContainerElement)
 
-  const vnode = h(ModalContainer, { modalServiceState, reactiveProps })
+  if (document.getElementById('modal-container')) return
+
+  const el = document.createElement('div')
+  el.id = 'modal-container'
+  document.body.appendChild(el)
+
+  const vnode = h(ModalContainer, {
+    modalServiceState,
+    reactiveProps
+  })
+
   vnode.appContext = getStoredAppContext()
-  render(vnode, modalContainerElement)
+  render(vnode, el)
 }
 
 const ensureModalContainerExists = () => {
-  if (document.getElementById('modal-container')) return
-  if (getStoredAppContext()) {
-    createModalContainer()
-  } else {
-    console.warn(
-      'Mediacube UI Modal: app context not available. Ensure MediacubeUI is installed with app.use(MediacubeUI, { modalComponents: {...} }) so the modal container can be created.'
-    )
-  }
+  if (getStoredAppContext()) createModalContainer()
 }
 
-const showModal = (
-  componentName: string, // Component name from modalComponents: {...}
-  componentProps = {}
-) => {
-  //@ts-ignore
-  if (!modalComponents.value[componentName]) {
-    return console.warn(
-      'The component is not provided in Mediacube-ui DS\n' +
-        'Check and add to app.use(MediacubeUI, { modalComponents: {...} })'
-    )
+const showModal = (componentName: string, componentProps: any = {}) => {
+  const loader = modalComponents.value[componentName]
+
+  if (!loader) {
+    return console.warn(`Modal ${componentName} not registered`)
   }
+
   ensureModalContainerExists()
 
-  const id = Date.now()
-  const newModal: IModalState = {
-    //@ts-ignore
-    component: markRaw(modalComponents.value[componentName]),
-    componentName: componentName,
-    componentProps: componentProps,
+  const existing = helper.findLastSafe(reactiveProps.modals, (m) => m.componentName === componentName)
+
+  if (existing) {
+    existing.modelValue = true
+    modalServiceState.activeModal = existing
+    return
+  }
+
+  const component = markRaw(normalizeComponent(loader))
+
+  const id = componentName
+
+  const modal: IModalState = {
+    component,
+    componentName,
+    componentProps,
     modelValue: true,
     id,
+
     close: () => {
-      const modals = reactiveProps.modals
-      const modalToClose = modals.length > 0 
-        ? modals.find((d) => d.id === id) || modals[modals.length - 1]
-        : null
-      
-      if (modalToClose) {
-        modalToClose.modelValue = false
-        setTimeout(() => {
-          reactiveProps.modals = reactiveProps.modals.filter((d) => d.id !== modalToClose?.id)
-        }, 300)
-      }
+      const modalToClose =
+        helper.findLastSafe(reactiveProps.modals, (m) => m.id === id) ||
+        reactiveProps.modals[reactiveProps.modals.length - 1]
+
+      if (!modalToClose) return
+
+      modalToClose.modelValue = false
+
+      setTimeout(() => {
+        reactiveProps.modals = reactiveProps.modals.filter((m) => m.id !== modalToClose.id)
+        modalServiceState.activeModal = reactiveProps.modals[reactiveProps.modals.length - 1] || null
+      }, 300)
     }
   }
-  reactiveProps.modals.push(newModal)
+
+  modalInstanceCache[id] = modal
+
+  reactiveProps.modals.push(modal)
+
   modalServiceState.isOpen = true
+  modalServiceState.activeModal = modal
 }
 
 const closeModal = (componentName: string) => {
-  const modals = reactiveProps.modals
-  const modalToClose = modals.length > 0
-    ? modals.find((d) => d.componentName === componentName) || modals[modals.length - 1]
-    : null
-  
-  if (modalToClose) {
-    modalToClose.close()
-  }
+  const modal =
+    helper.findLastSafe(reactiveProps.modals, (m) => m.componentName === componentName) ||
+    reactiveProps.modals[reactiveProps.modals.length - 1]
+
+  modal?.close()
 }
 
 const closeAllModals = () => {
-  reactiveProps.modals.forEach((d) => {
-    d.close()
-  })
+  reactiveProps.modals.forEach((m) => m.close())
 }
 
 export function useModal() {
   const dsOptions = inject<IDSOptions>('dsOptions', {})
+
   if (dsOptions.modalComponents) {
     modalComponents.value = dsOptions.modalComponents
   }
 
-  return { showModal, closeModal, closeAllModals }
+  return {
+    showModal,
+    closeModal,
+    closeAllModals
+  }
 }

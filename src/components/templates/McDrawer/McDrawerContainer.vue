@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, type PropType } from 'vue'
 import { McDrawer } from '@/components'
 import type { IDrawerServiceState, IDrawerState } from '@/types/IDrawer'
+import McDrawerSafeComponent from '@/components/templates/McDrawer/McDrawerSafeComponent.vue'
 
 interface IEnrichedDrawerState extends IDrawerState {
   indent_coefficient: number
@@ -93,9 +94,11 @@ onBeforeUnmount(() => {
       :class="{ 'mc-drawer-container__item--multiple': computedDrawers.length - 1 !== i }"
       :style="drawer.indent ? { transform: `translateX(-${drawer.indent}px)` } : {}"
     >
-      <Suspense>
-        <component :is="drawer.component" v-bind="drawer.componentProps" @close-drawer="() => closeDrawer(drawer)" />
-      </Suspense>
+      <mc-drawer-safe-component @error-captured="() => closeDrawer(drawer)">
+        <Suspense>
+          <component :is="drawer.component" v-bind="drawer.componentProps" @close-drawer="() => closeDrawer(drawer)" />
+        </Suspense>
+      </mc-drawer-safe-component>
     </mc-drawer>
   </div>
 </template>

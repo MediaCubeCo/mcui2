@@ -170,6 +170,13 @@ function getNested(object: any, path: string): any {
   return path.split('.').reduce((o, key) => (o ? o[key] : undefined), object)
 }
 
+function findLastSafe<T>(arr: T[], predicate: (value: T, index: number, array: T[]) => boolean) {
+  for (let i = arr.length - 1; i >= 0; i--) {
+    if (predicate(arr[i], i, arr)) return arr[i]
+  }
+  return undefined
+}
+
 export function useHelper() {
   return {
     isEmpty,
@@ -183,6 +190,7 @@ export function useHelper() {
     pickDeep,
     mergeReactiveDefaults,
     setNested,
-    getNested
+    getNested,
+    findLastSafe,
   }
 }
