@@ -284,7 +284,7 @@ const formats = reactive<DatepickerFormatsObject>({
 const computedType = computed((): DatepickerTypes => {
   return (props.type as DatepickerTypes) || DatepickerTypes.DatePicker
 })
-const dateFormat = reactive<DatepickerFormatsObjectFormat>(formats[computedType.value])
+const dateFormat = computed((): DatepickerFormatsObjectFormat => formats[computedType.value])
 
 const isTimePicker = computed((): boolean => {
   return computedType.value === DatepickerTypes.TimePicker
@@ -349,7 +349,12 @@ const localValue = computed({
     return getFormattedPickerDate(props.modelValue)
   },
   set(value) {
-    if (!value) value = props.range ? [] : null
+    const empty = value == null || (props.range && Array.isArray(value) && value.length === 0)
+    if (empty) {
+      fieldErrors.toggleErrorVisible()
+      emit('update:modelValue', props.range ? [] : null)
+      return
+    }
     const date = getFormattedOutputDate(value)
     fieldErrors.toggleErrorVisible()
     emit('update:modelValue', date)
@@ -380,7 +385,7 @@ const handlePreselectToday = (): void => {
   if (!hasValue) {
     let today = props.toIsoFormat
       ? dayjs().toISOString()
-      : dayjs().format(dateFormat[DatepickerFormatsVariations.Output])
+      : dayjs().format(dateFormat.value[DatepickerFormatsVariations.Output])
     localValue.value = props.range ? getFormattedPickerDate([today, today]) : getFormattedPickerDate(today)
   }
 }
@@ -389,28 +394,53 @@ const handlePreselectToday = (): void => {
  * Prepare dates for datepicker
  * */
 const getFormattedPickerDate = (value: DatePickerValue): DatePickerValue => {
-  if (isWeekPicker.value) return value
-  let preparedValue = props.range ? (Array.isArray(value) ? value : []) : [value]
+  if (isWeekPicker.value) {
+    if (value == null || value === '') return props.range ? [] : null
+    return value
+  }
+  const empty = value == null || value === '' || (props.range && Array.isArray(value) && value.length === 0)
+  if (empty) return props.range ? [] : null
+
+  let preparedValue = (props.range ? (Array.isArray(value) ? value : []) : [value]) as (string | null)[]
   if (!props.toIsoFormat) {
-    preparedValue = preparedValue.map((pv) => dayjs(pv as string, dateFormat.output).format(dateFormat.dayjs))
+    preparedValue = preparedValue.map((pv) => {
+      const parsed = dayjs(pv as string, dateFormat.value.output)
+      return parsed.isValid() ? parsed.format(dateFormat.value.dayjs) : null
+    })
   }
 
   const [start, end] = preparedValue
-  return props.range ? ([start, end].filter(Boolean) as DatePickerValue) : start
+  const startInvalid = start == null || (typeof start === 'string' && start === 'Invalid Date')
+  const endInvalid = end == null || (typeof end === 'string' && end === 'Invalid Date')
+  if (!props.range) return startInvalid ? null : start
+  if (startInvalid || endInvalid) return []
+  return ([start, end].filter(Boolean) as DatePickerValue)
 }
 
 /**
  * Prepare dates for output
  * */
 const getFormattedOutputDate = (value: DatePickerValue): DatePickerValue => {
-  if (isWeekPicker.value) return value
-  let preparedValue = props.range ? (Array.isArray(value) ? value.map((pv) => String(pv)) : []) : [String(value)]
+  if (isWeekPicker.value) {
+    if (value == null || value === '') return props.range ? [] : null
+    return value
+  }
+  let preparedValue: (string | null)[] = props.range ? (Array.isArray(value) ? value.map((pv) => String(pv)) : []) : [String(value)]
   if (!props.toIsoFormat) {
-    preparedValue = preparedValue.map((pv) => dayjs(pv, dateFormat.dayjs).format(dateFormat.output))
+    preparedValue = preparedValue.map((pv) => {
+      const parsed = dayjs(pv, dateFormat.value.dayjs)
+      return parsed.isValid() ? parsed.format(dateFormat.value.output) : null
+    })
   }
 
-  const [start, end] = preparedValue.map((pv) => (pv === 'Invalid Date' ? null : pv))
-  return props.range ? ([start, end].filter(Boolean) as DatePickerValue) : start
+  const asNull = (pv: string | null): string | null =>
+    pv === 'Invalid Date' || pv == null || pv === 'null' ? null : pv
+  const [start, end] = preparedValue.map(asNull)
+  const startInvalid = start == null || start === 'Invalid Date'
+  const endInvalid = end == null || end === 'Invalid Date'
+  if (!props.range) return startInvalid ? null : start
+  if (startInvalid || endInvalid) return []
+  return ([start, end].filter(Boolean) as DatePickerValue)
 }
 
 const setLocale = async (): Promise<void> => {

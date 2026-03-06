@@ -29,7 +29,7 @@ const closeModal = (value: IModalState) => {
 
 const handleKeyUp = (e: KeyboardEvent) => {
   const modals = props.reactiveProps?.modals
-  if(e.code === 'Escape' && modals?.length) {
+  if (e.code === 'Escape' && modals?.length) {
     const last_modal = modals[modals.length - 1]
     //@ts-ignore
     // eslint-disable-next-line no-prototype-builtins
@@ -63,16 +63,16 @@ onBeforeUnmount(() => {
 <template>
   <div class="mc-modal-container" :style="containerStyle">
     <div v-for="modal in props.reactiveProps.modals" :key="modal.id" @close="() => closeModal(modal)">
-      <mc-drawer-safe-component @error-captured="() => closeModal(modal)">
-        <Suspense>
+      <Suspense>
+        <mc-drawer-safe-component @error-captured="() => closeModal(modal)">
           <component
             v-model="modal.modelValue"
             :is="modal.component"
             v-bind="modal.componentProps"
             @closed="() => closeModal(modal)"
           />
-        </Suspense>
-      </mc-drawer-safe-component>
+        </mc-drawer-safe-component>
+      </Suspense>
     </div>
   </div>
 </template>

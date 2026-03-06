@@ -2,14 +2,9 @@
 import { onErrorCaptured } from 'vue'
 const emit = defineEmits(['error-captured'])
 
-onErrorCaptured(() => {
+onErrorCaptured((e) => {
+  console.error(e)
   emit('error-captured')
-
-  setTimeout(() => {
-    emit('error-captured')
-  })
-
-  return false
 })
 </script>
 

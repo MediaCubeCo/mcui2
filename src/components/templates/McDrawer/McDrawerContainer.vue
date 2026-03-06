@@ -94,11 +94,11 @@ onBeforeUnmount(() => {
       :class="{ 'mc-drawer-container__item--multiple': computedDrawers.length - 1 !== i }"
       :style="drawer.indent ? { transform: `translateX(-${drawer.indent}px)` } : {}"
     >
-      <mc-drawer-safe-component @error-captured="() => closeDrawer(drawer)">
-        <Suspense>
+      <Suspense>
+        <mc-drawer-safe-component @error-captured="() => closeDrawer(drawer)">
           <component :is="drawer.component" v-bind="drawer.componentProps" @close-drawer="() => closeDrawer(drawer)" />
-        </Suspense>
-      </mc-drawer-safe-component>
+        </mc-drawer-safe-component>
+      </Suspense>
     </mc-drawer>
   </div>
 </template>
