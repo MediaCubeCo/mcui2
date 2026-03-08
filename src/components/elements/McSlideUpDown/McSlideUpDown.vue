@@ -155,18 +155,4 @@ watch(
   </component>
 </template>
 
-<style lang="scss">
-@use '../../../assets/tokens/font-families' as *;
-.mc-slide-up-down {
-  overflow: hidden;
-  font-family: $font-family-main;
-  &--server {
-    &-open {
-      height: 100% !important;
-    }
-    &-close {
-      height: 0 !important;
-    }
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

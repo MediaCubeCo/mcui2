@@ -1,0 +1,69 @@
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/box-shadows' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/font-families' as *;
+.mc-range-slider {
+  $block-name: &;
+  font-family: $font-family-main;
+  &__header {
+    @include reset-text-indents();
+    display: block;
+    margin-bottom: $space-100;
+
+    &:empty {
+      display: none;
+    }
+  }
+  &__footer {
+    margin-top: $space-50;
+    line-height: $line-height-150;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .vue-slider-dot-tooltip-inner {
+    line-height: $line-height-200;
+    font-size: $font-size-200;
+    padding: $space-100 $space-150;
+    background-color: $color-black;
+    border-color: $color-black;
+  }
+  .vue-slider-process {
+    background-color: var(--mc-range-slider-color);
+  }
+
+  .vue-slider-dot-handle-focus {
+    box-shadow: $shadow-s;
+  }
+  .vue-slider-dot-handle {
+    box-shadow: $shadow-s;
+    &:hover {
+      border: 2px solid var(--mc-range-slider-color);
+    }
+    &:active {
+      border: 2px solid var(--mc-range-slider-color);
+    }
+  }
+  &--colored-tooltip {
+    .vue-slider-dot-tooltip-inner {
+      background-color: var(--mc-range-slider-color);
+      border-color: var(--mc-range-slider-color);
+      padding: $space-100 $space-150;
+    }
+  }
+  &.vue-slider {
+    .vue-slider-rail {
+      cursor: pointer;
+    }
+    &-disabled {
+      .vue-slider-rail {
+        cursor: auto;
+      }
+    }
+  }
+}

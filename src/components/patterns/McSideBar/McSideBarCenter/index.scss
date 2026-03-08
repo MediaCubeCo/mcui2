@@ -1,0 +1,110 @@
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/colors' as *;
+.mc-side-bar-center {
+  $block-name: &;
+  margin-bottom: $space-150;
+  &__title {
+    margin: $space-100;
+  }
+
+  &__content {
+    @include child-indent-bottom($space-50);
+    .item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      @include child-indent-bottom($space-50);
+      &-active {
+        .item__head.active:not(.with-submenu),
+        .nuxt-link-exact-active {
+          pointer-events: none;
+        }
+      }
+      .with-submenu {
+        pointer-events: all !important;
+        .item__head {
+          &-button--no-hover {
+            .mc-button {
+              background: none;
+            }
+          }
+        }
+        .mc-side-bar-button {
+          &__tooltip {
+            width: calc(100% - #{$space-250});
+            .mc-button {
+              &__text {
+                margin-inline-end: $space-zero;
+              }
+            }
+          }
+        }
+      }
+      &__head {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        border-radius: 4px;
+
+        .mc-button {
+          &__background {
+            display: none;
+          }
+        }
+        &:hover {
+          background-color: rgba($color-gray, 0.1);
+        }
+        &-arrow {
+          &.rotate {
+            .mc-svg-icon {
+              transform: rotate(90deg);
+            }
+          }
+          .mc-svg-icon {
+            transition: all 0.3s ease;
+          }
+        }
+        &-button {
+          &--no-hover {
+            .mc-button {
+              &:hover {
+                background-color: unset;
+              }
+            }
+            .mc-side-bar-button__with-submenu {
+              background-color: unset;
+            }
+            &:hover {
+              background-color: unset;
+            }
+          }
+        }
+        &.active {
+          padding: 0;
+          border-radius: 4px;
+          border: none;
+          &.open {
+            background-color: unset;
+          }
+        }
+      }
+      &__submenu {
+        overflow: hidden;
+        transition: all 0.3s ease;
+        @include child-indent-bottom($space-50);
+        .mc-side-bar-button {
+          padding-inline-start: $space-500;
+          height: 42px;
+        }
+        &.open {
+          max-height: 230px;
+        }
+      }
+    }
+    &-append {
+      @include child-indent-bottom($space-50);
+    }
+  }
+}

@@ -1,0 +1,29 @@
+@use '../../../assets/styles/mixins' as *;
+.mc-content-fixed {
+  $block-name: &;
+  @include position(absolute, 0);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+  @include custom-scroll();
+  &__top,
+  &__mid {
+    &:empty {
+      display: none;
+    }
+  }
+  &__top {
+    flex-shrink: 0;
+  }
+  &__mid {
+    position: relative;
+    flex-grow: 1;
+    &-inner {
+      display: inline-flex;
+      @include position(absolute, 0);
+    }
+  }
+}

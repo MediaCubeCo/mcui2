@@ -127,21 +127,4 @@ const styles = computed((): { [key: string]: string | number } => {
   </div>
 </template>
 
-<style lang="scss">
-.mc-grid-row {
-  $block-name: &;
-
-  --mc-grid-row-justify: initial;
-  --mc-grid-row-align: initial;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: var(--mc-grid-row-justify);
-  align-items: var(--mc-grid-row-align);
-  &--stretch {
-    > .mc-grid-col {
-      flex: 1;
-    }
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

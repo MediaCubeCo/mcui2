@@ -1,0 +1,186 @@
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/z-indexes' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/spacings' as *;
+.mc-tabs {
+  $block-name: &;
+  @mixin border() {
+    &::before {
+      @include pseudo();
+      @include position(absolute, auto 0 0 0);
+      height: 1px;
+      background-color: $color-hover-gray;
+    }
+  }
+
+  &--tab-variation {
+    &-body {
+      .tabs-component-tab-a {
+        font-size: $font-size-300;
+        line-height: $line-height-250;
+      }
+    }
+    &-caption {
+      .tabs-component-tab-a {
+        font-size: $font-size-200;
+        line-height: $line-height-200;
+      }
+    }
+    &-overline {
+      .tabs-component-tab-a {
+        font-size: $font-size-100;
+        line-height: $line-height-150;
+        font-weight: $font-weight-medium;
+      }
+    }
+  }
+  .tabs-component-tab-a {
+    color: var(--mc-tabs-color);
+  }
+
+  .tabs-component-tab-a {
+    &::after {
+      background-color: var(--mc-tabs-accent-color);
+    }
+    &:hover {
+      color: var(--mc-tabs-accent-color);
+    }
+  }
+  .tabs-component-tab.is-active {
+    .tabs-component-tab-a {
+      color: var(--mc-tabs-accent-color);
+      font-weight: $font-weight-semi-bold;
+    }
+  }
+
+  &--uppercase {
+    .tabs-component-tabs {
+      text-transform: uppercase;
+    }
+  }
+
+  &--sticky {
+    overflow: scroll;
+
+    .tabs-component-tabs {
+      position: sticky !important;
+      top: 0;
+      z-index: $z-index-sticky;
+      background-color: $color-white;
+    }
+  }
+
+  .tabs-component-tabs {
+    @include reset-text-indents();
+    position: relative;
+    padding-left: 0;
+    margin-top: 0;
+    list-style-type: none;
+    height: $space-350;
+    @include border();
+  }
+
+  .tabs-component-tab {
+    position: relative;
+    flex: 0 0 auto;
+    &:first-child {
+      .tabs-component-tab-a {
+        margin-left: 0;
+      }
+    }
+    &:last-child {
+      .tabs-component-tab-a {
+        margin-right: 0;
+      }
+    }
+
+    &.is-active {
+      .tabs-component-tab-a {
+        &::after {
+          left: 0;
+          right: 0;
+          opacity: 1;
+        }
+      }
+    }
+    &.is-disabled {
+      .tabs-component-tab-a {
+        cursor: not-allowed;
+        color: $color-outline-gray;
+      }
+    }
+    &.is-hidden {
+      .tabs-component-tab-a {
+        display: none;
+        visibility: hidden;
+        z-index: -1;
+        pointer-events: none;
+        user-select: none;
+      }
+    }
+
+    &__tab-name {
+      display: flex;
+      align-items: center;
+      @include child-indent-right($space-50);
+      &::after {
+        display: block;
+        content: attr(data-name);
+        font-weight: $font-weight-semi-bold;
+        height: 0;
+        overflow: hidden;
+        visibility: hidden;
+      }
+      &_append-count {
+        padding: 0;
+        height: auto;
+        &::before {
+          display: none;
+        }
+      }
+    }
+    &__icon {
+      &-prepend {
+        //color: var(--mc-tab-icon-prepend-color);
+      }
+      &-append {
+        //color: var(--mc-tab-icon-append-color);
+      }
+    }
+  }
+
+  .tabs-component-tab-a {
+    position: relative;
+    display: inline-flex;
+    font-family: $font-family-main;
+    text-decoration: none;
+    padding-bottom: $space-150;
+    margin: 0 $space-150;
+    cursor: pointer;
+
+    @include child-indent-right($space-50);
+    @include border();
+    .las,
+    .la {
+      display: flex;
+      align-items: center;
+    }
+
+    &::after {
+      @include pseudo();
+      @include position(null, null 50% 0 50%);
+      opacity: 0;
+      height: 2px;
+      z-index: 1;
+      transition:
+        left 0.2s ease,
+        right 0.2s ease,
+        opacity 0.2s ease,
+        color 0.2s ease;
+    }
+  }
+}

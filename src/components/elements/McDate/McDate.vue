@@ -76,20 +76,4 @@ const dayjsDate = computed((): string => {
   </section>
 </template>
 
-<style lang="scss">
-@use '../../../assets/styles/mixins' as *;
-@use '../../../assets/tokens/font-families' as *;
-@use '../../../assets/tokens/spacings' as *;
-.mc-date {
-  $block-name: &;
-
-  display: inline-flex;
-  align-items: center;
-  @include reset-text-indents();
-  @include child-indent-right($space-50);
-
-  &__time {
-    font-family: $font-family-main;
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

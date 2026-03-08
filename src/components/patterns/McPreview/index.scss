@@ -1,0 +1,62 @@
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/spacings' as *;
+.mc-preview {
+  $block-name: &;
+  display: flex;
+  flex-wrap: nowrap;
+  max-width: 100%;
+  &__left {
+    flex: 0 0 auto;
+    &:empty {
+      display: none;
+    }
+  }
+  &__center {
+    @include layout-flex-fix();
+    flex: 1 1 auto;
+    align-self: center;
+  }
+  &__top {
+    &:empty {
+      display: none;
+    }
+  }
+  &__bottom {
+    &:empty {
+      display: none;
+    }
+  }
+  &__right {
+    flex: 0 0 auto;
+    &:empty {
+      display: none;
+    }
+  }
+  @mixin previewIndents($indent, $bottom: unset) {
+    #{$block-name}__left {
+      margin-inline-end: $indent;
+    }
+    #{$block-name}__right {
+      margin-inline-start: $indent;
+    }
+    @if $bottom {
+      #{$block-name}__bottom {
+        margin-top: $bottom;
+      }
+    }
+  }
+  &--size {
+    &-s {
+      @include previewIndents($space-50);
+    }
+    &-m {
+      @include previewIndents($space-100);
+    }
+    &-l {
+      @include previewIndents($space-150, $space-50);
+    }
+    &-xl {
+      @include previewIndents($space-200, $space-50);
+    }
+  }
+}

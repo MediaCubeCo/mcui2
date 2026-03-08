@@ -22,44 +22,4 @@ const panelStyles = computed((): { [key: string]: string } => {
   </section>
 </template>
 
-<style lang="scss">
-@use '../../../assets/styles/mixins' as *;
-@use '../../../assets/tokens/box-shadows' as *;
-@use '../../../assets/tokens/colors' as *;
-@use '../../../assets/tokens/spacings' as *;
-@use '../../../assets/tokens/font-families' as *;
-@use '../../../assets/tokens/font-weights' as *;
-@use '../../../assets/tokens/sizes' as *;
-@use '../../../assets/tokens/border-radius' as *;
-.mc-dropdown-panel {
-  $block-name: &;
-  --panel-max-height: 300px;
-
-  font-family: $font-family-main;
-  box-shadow: $shadow-s;
-  border-radius: $radius-150;
-  background-color: $color-white;
-  padding: $space-100;
-  max-width: 320px;
-  max-height: var(--panel-max-height);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  overflow-y: auto;
-  @include hide-scrollbar();
-
-  &:empty {
-    display: none;
-  }
-
-  .mc-button {
-    &--size-m {
-      font-weight: $font-weight-medium;
-      padding: $space-100;
-      .mc-svg-icon {
-        @include size($size-300);
-      }
-    }
-  }
-}
-</style>
+<style lang="scss" src="./McDropdownPanel.scss"></style>

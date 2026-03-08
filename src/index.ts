@@ -1,11 +1,10 @@
 import { App, shallowReactive } from 'vue'
 import { setStoredAppContext } from './storedAppContext'
 import { IDSOptions } from './types/IDSOptions'
-import { useHelper } from '@/composables/useHelper'
 import { Themes } from '@/enums/Themes'
 import { ThemesColors, UiThemes } from '@/types/styles/ColorTheme'
 import defaultAvatar from './assets/img/no_user.png'
-const helpers = useHelper()
+import { createProxy } from '@/utils/proxy'
 
 export * from './types'
 export * from './enums'
@@ -33,9 +32,9 @@ export default {
     const dsOptions = shallowReactive({
       ...defaultOptions,
       ...options,
-      colors: options.colors ? helpers.mergeReactiveDefaults(defaultOptions.colors!, options.colors) : defaultOptions.colors,
-      themes: options.themes ? helpers.mergeReactiveDefaults(defaultOptions.themes!, options.themes) : defaultOptions.themes,
-      meta: options.meta ? helpers.mergeReactiveDefaults(defaultOptions.meta!, options.meta) : defaultOptions.meta,
+      colors: options.colors ? createProxy(defaultOptions.colors!, options.colors) : defaultOptions.colors,
+      themes: options.themes ? createProxy(defaultOptions.themes!, options.themes) : defaultOptions.themes,
+      meta: options.meta ? createProxy(defaultOptions.meta!, options.meta) : defaultOptions.meta,
     })
 
     app.config.globalProperties.$dsOptions = dsOptions

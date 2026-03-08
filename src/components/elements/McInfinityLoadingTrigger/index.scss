@@ -1,0 +1,12 @@
+.el-infinity-loading {
+  $block-name: &;
+  height: 1px;
+  width: 100%;
+  z-index: 999999;
+  user-select: none;
+  pointer-events: none;
+  background-color: transparent;
+  &__wrapper {
+    position: relative;
+  }
+}

@@ -69,7 +69,7 @@ export default defineConfig({
       // Название файлов скриптов
       fileName: 'mediacube-ui-v2',
       // Форматы скриптов es - ECMAScript Modules, umd - Universal Module Definition
-      formats: ['es', 'umd']
+      formats: ['es'] // , 'umd'
     },
     /**
      * Управление зависимостями
@@ -77,11 +77,10 @@ export default defineConfig({
     rollupOptions: {
       external: ['vue', 'src/mocks'],
       output: {
-        exports: 'named',
-        globals: {
-          vue: 'Vue'
-        }
-      }
+        preserveModules: true,
+        preserveModulesRoot: 'src',
+        entryFileNames: '[name].js'
+      },
     }
   },
   resolve: {

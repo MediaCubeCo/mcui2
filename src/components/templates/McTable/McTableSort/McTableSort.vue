@@ -59,8 +59,4 @@ const handleSortChange = () => {
   </div>
 </template>
 
-<style lang="scss">
-.mc-table-sort {
-  cursor: pointer;
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

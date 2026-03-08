@@ -1,0 +1,38 @@
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/line-heights' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/border-radius' as *;
+@use '../../../../assets/tokens/sizes' as *;
+.mc-chat-form {
+  $block-name: &;
+  line-height: $line-height-200;
+
+  &__inner {
+    @include custom-scroll($space-250);
+  }
+
+  .mc-field-text {
+    &__input {
+      border-radius: $radius-200;
+      padding-bottom: $space-150;
+    }
+    &__append {
+      right: $space-50;
+      padding: $space-50 0 $space-50 $space-50;
+    }
+  }
+
+  &__avatar {
+    margin-top: $space-50;
+  }
+
+  &__btn {
+    align-self: flex-end;
+    .mc-svg-icon {
+      @include size($size-400);
+    }
+  }
+  textarea {
+    resize: none !important;
+  }
+}

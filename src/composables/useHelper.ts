@@ -1,4 +1,5 @@
 import { reactive } from 'vue'
+import { createProxy } from '@/utils/proxy'
 
 function isEmpty(value: any): boolean {
   if (value == null) return true
@@ -108,47 +109,8 @@ function upperFirst(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-/**
- *  Для создания корректного реактивного результата, overrides - должен быть реактивным
- *  На выходе получается реактивный обьект, который при обращении к свойствам, достает значения из overrides или из дефолтных значений
- * */
+
 function mergeReactiveDefaults<T>(defaults: T, overrides: Partial<T>) {
-  function isObject(val: any): val is Record<string, any> {
-    return val && val.constructor === Object
-  }
-
-  function createProxy(defaults: any, overrides: any): any {
-    return new Proxy(
-      {},
-      {
-        get(target, key: string) {
-          const default_value = defaults?.[key]
-          const override_value = overrides?.[key]
-
-          if (isObject(default_value) || isObject(override_value)) {
-            return createProxy(default_value || {}, override_value || {})
-          }
-
-          return override_value !== undefined ? override_value : default_value
-        },
-        set(target, key: string, value) {
-          if (!isObject(overrides)) return false
-          overrides[key] = value
-          return true
-        },
-        ownKeys() {
-          return Array.from(new Set([...Object.keys(defaults), ...Object.keys(overrides)]))
-        },
-        getOwnPropertyDescriptor() {
-          return {
-            enumerable: true,
-            configurable: true
-          }
-        }
-      }
-    )
-  }
-
   return reactive(createProxy(defaults, overrides)) as T
 }
 

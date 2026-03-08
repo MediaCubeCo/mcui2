@@ -1,0 +1,22 @@
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/sizes' as *;
+.mc-filter-type-relation {
+  $block-name: &;
+  width: 300px;
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: -$space-50;
+    margin-top: -$space-50;
+  }
+  &__buttons {
+    display: flex;
+    @include child-indent-right($space-50);
+    .mc-button {
+      height: $size-300;
+      padding: $space-50 $space-150;
+    }
+  }
+}

@@ -103,18 +103,4 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style lang="scss">
-.mc-drawer-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  pointer-events: none;
-  &__item {
-    transition: transform 0.25s ease-in-out;
-    &--multiple {
-    }
-  }
-}
-</style>
+<style lang="scss" src="./McDrawerContainer.scss"></style>

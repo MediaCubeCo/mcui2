@@ -90,18 +90,4 @@ const actualizeNumbers = (): void => {
   </div>
 </template>
 
-<style lang="scss">
-@use '../../../assets/tokens/font-families' as *;
-@use '../../../assets/tokens/font-sizes' as *;
-@use '../../../assets/tokens/colors' as *;
-.mc-spin-number {
-  &-container {
-    display: flex;
-  }
-  &__non-digit {
-    font-size: var(--mc-spin-number-font-size);
-    color: var(--mc-spin-number-font-color);
-    line-height: 1;
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

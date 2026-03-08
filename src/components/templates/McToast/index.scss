@@ -1,0 +1,39 @@
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/border-radius' as *;
+@use '../../../assets/tokens/box-shadows' as *;
+.mc-toast {
+  --mc-toast-background-color: #{$color-white};
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  min-width: 250px;
+  max-width: 400px;
+  min-height: $space-600;
+  border-radius: $radius-100;
+  padding: $space-150 $space-200;
+  box-shadow: $shadow-s;
+  background-color: var(--mc-toast-background-color);
+  * {
+    color: $color-white;
+  }
+  &--variation-white {
+    * {
+      color: $color-black;
+    }
+  }
+  .mc-preview {
+    width: 100%;
+    align-items: center;
+    &__left,
+    &__right {
+      display: flex;
+      align-items: center;
+    }
+    &__center {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+}

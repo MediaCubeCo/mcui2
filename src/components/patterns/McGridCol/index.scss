@@ -1,0 +1,58 @@
+@use '@/assets/styles/mixins' as *;
+@use '@/assets/tokens/media-queries' as *;
+.mc-grid-col {
+  $block-name: &;
+  box-sizing: border-box;
+  $cols: 12;
+
+  display: block;
+  position: relative;
+  max-width: 100%;
+
+  @mixin generate-col($viewport: '') {
+    @for $i from 1 through $cols {
+      &--span#{$viewport}-#{$i} {
+        flex: 0 0 calc((#{$i} / #{$cols}) * 100%);
+        max-width: calc((#{$i} / #{$cols}) * 100%);
+      }
+
+      &--push#{$viewport}-#{$i} {
+        inset-inline-start: calc((#{$i} / #{$cols}) * 100%);
+      }
+
+      &--pull#{$viewport}-#{$i} {
+        inset-inline-end: calc((#{$i} / #{$cols}) * 100%);
+      }
+
+      &--offset#{$viewport}-#{$i} {
+        margin-inline-start: calc((#{$i} / #{$cols}) * 100%);
+      }
+
+      &--order#{$viewport}-#{$i} {
+        order: #{$i};
+      }
+    }
+  }
+
+  @include generate-col('');
+
+  @media #{$media-query-xs} {
+    @include generate-col('-xs');
+  }
+
+  @media #{$media-query-s} {
+    @include generate-col('-s');
+  }
+
+  @media #{$media-query-m} {
+    @include generate-col('-m');
+  }
+
+  @media #{$media-query-l} {
+    @include generate-col('-l');
+  }
+
+  @media #{$media-query-xl} {
+    @include generate-col('-xl');
+  }
+}

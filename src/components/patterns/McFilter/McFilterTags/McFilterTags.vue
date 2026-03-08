@@ -352,37 +352,4 @@ watch(
   </div>
 </template>
 
-<style lang="scss">
-@use '../../../../assets/styles/mixins' as *;
-@use '../../../../assets/tokens/spacings' as *;
-@use '../../../../assets/tokens/colors' as *;
-@use '../../../../assets/tokens/border-radius' as *;
-.mc-filter-tags {
-  $block-name: &;
-  @include child-indent-bottom($space-100);
-  &__body {
-    display: flex;
-    justify-content: space-between;
-    padding: $space-100;
-    border: 1px solid $color-outline-gray;
-    border-radius: $radius-100;
-    background-color: $color-white;
-    min-height: $space-500;
-    &-left {
-      flex-grow: 1;
-    }
-    &-right {
-      margin-inline-start: $space-100;
-      .mc-button {
-        padding: $space-50 $space-150;
-        height: $space-300;
-      }
-    }
-    .mc-grid-row {
-      &:not(:last-child) {
-        margin-bottom: $space-50 !important;
-      }
-    }
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

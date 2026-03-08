@@ -1,0 +1,40 @@
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/line-heights' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/styles/mixins' as *;
+.mc-stack {
+  $block-name: &;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  &__content {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    @include child-indent-right($space-150);
+  }
+  &--collapsed {
+    #{$block-name}__content {
+      @include child-indent-right(-#{$space-200});
+      & > *:not(#{$block-name}__more-label) {
+        border: 2px solid $color-white;
+      }
+    }
+    #{$block-name}__more-label {
+      margin-inline-start: $space-250;
+    }
+  }
+  &__more-label {
+    margin-inline-start: $space-50;
+    white-space: nowrap;
+    font-size: $font-size-200;
+    line-height: $line-height-200;
+    color: $color-gray;
+    font-weight: $font-weight-semi-bold;
+    font-family: $font-family-main;
+    width: $space-300;
+  }
+}

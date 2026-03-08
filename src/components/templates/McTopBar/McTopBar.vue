@@ -110,44 +110,4 @@ const userDropdownOpen = ref(false)
   </div>
 </template>
 
-<style lang="scss">
-@use '../../../assets/styles/mixins' as *;
-@use '../../../assets/tokens/spacings' as *;
-@use '../../../assets/tokens/colors' as *;
-.mc-top-bar {
-  $block-name: &;
-
-  width: 100%;
-
-  &__inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: $space-100 $space-150 0 $space-150;
-    @include child-indent-right($space-100);
-  }
-
-  &__left,
-  &__right {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    @include child-indent-right($space-100);
-  }
-
-  &__right {
-    min-width: 0;
-    flex: 1 1 auto;
-    justify-content: flex-end;
-  }
-  &__menu-langs {
-    .mc-svg-icon {
-      svg {
-        rect {
-          stroke: $color-hover-gray;
-        }
-      }
-    }
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

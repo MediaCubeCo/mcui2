@@ -111,13 +111,4 @@ watch(
   </div>
 </template>
 
-<style lang="scss">
-.mc-virtual-scroll {
-  position: relative;
-  overflow-y: auto;
-  &__item {
-    position: absolute;
-    width: 100%;
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

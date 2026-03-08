@@ -1,0 +1,120 @@
+@use '../../../assets/styles/mixins' as *;
+@use '../../../assets/tokens/durations' as *;
+@use '../../../assets/tokens/colors' as *;
+@use '../../../assets/tokens/spacings' as *;
+@use '../../../assets/tokens/border-radius' as *;
+.mc-collapse {
+  $block-name: &;
+
+  &--border {
+    border-radius: $radius-100;
+    border: 1px solid $color-outline-gray;
+
+    #{$block-name} {
+      &__header {
+        display: flex;
+        padding: $space-100 $space-200;
+      }
+    }
+  }
+
+  &__link {
+    display: block;
+    @include position(absolute, 0);
+    z-index: 1;
+  }
+
+  &__header {
+    display: inline-flex;
+    align-items: center;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+  }
+
+  &__icon {
+    transition: all $duration-s;
+    margin-inline: $space-50 $space-50;
+  }
+
+  &__body {
+    #{$block-name} {
+      border: none;
+      border-radius: 0;
+      border-bottom: 1px solid $color-outline-gray;
+
+      &__header {
+        padding-inline: $space-400 $space-200;
+      }
+
+      &__body {
+        #{$block-name} {
+          &__header {
+            padding-inline-start: $space-800;
+          }
+        }
+      }
+
+      &:first-child {
+        border-top: 1px solid $color-outline-gray;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  &__bottom {
+    position: relative;
+  }
+
+  &--is-open {
+    > #{$block-name} {
+      &__header {
+        #{$block-name} {
+          &__icon {
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+  }
+
+  &--is-empty {
+    #{$block-name} {
+      &__header {
+        cursor: default;
+        &:hover {
+          color: inherit;
+        }
+      }
+      &__link {
+        cursor: default;
+      }
+    }
+  }
+
+  &--is-disabled {
+    #{$block-name} {
+      &__header {
+        cursor: not-allowed;
+        color: $color-outline-gray;
+        &:hover {
+          color: $color-outline-gray;
+        }
+      }
+      &__link {
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  &--has-icon {
+    &#{$block-name}--is-empty {
+      #{$block-name}__header {
+        padding-inline-start: $space-400;
+      }
+    }
+  }
+}

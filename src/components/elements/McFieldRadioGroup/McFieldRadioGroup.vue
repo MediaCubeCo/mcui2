@@ -178,44 +178,4 @@ watch(() => props.errors, (value: string[]): void => {
   </div>
 </template>
 
-<style lang="scss">
-@use '../../../assets/styles/mixins' as *;
-@use '../../../assets/tokens/spacings' as *;
-@use '../../../assets/tokens/line-heights' as *;
-.mc-field-radio-group {
-  $block-name: &;
-
-  &__header {
-    @include reset-text-indents();
-    display: block;
-    margin-bottom: $space-100;
-
-    &:empty {
-      display: none;
-    }
-  }
-
-  &__footer {
-    line-height: $line-height-150;
-
-    &:empty {
-      display: none;
-    }
-  }
-
-  &--direction {
-    &-column {
-      #{$block-name}__buttons {
-        display: flex;
-        flex-direction: column;
-        @include child-indent-bottom($space-100);
-      }
-    }
-    &-row {
-      #{$block-name}__buttons {
-        @include child-indent-right($space-100);
-      }
-    }
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

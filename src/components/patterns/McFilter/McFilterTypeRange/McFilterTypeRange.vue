@@ -125,15 +125,4 @@ const emitValue = () => {
   </div>
 </template>
 
-<style lang="scss">
-@use '../../../../assets/styles/mixins' as *;
-@use '../../../../assets/tokens/spacings' as *;
-.mc-filter-type-range {
-  $block-name: &;
-  display: flex;
-  @include child-indent-right($space-100);
-  .mc-field-text {
-    width: 146px;
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

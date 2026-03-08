@@ -61,9 +61,4 @@ const period = computed({
   />
 </template>
 
-<style lang="scss">
-.mc-filter-type-date {
-  $block-name: &;
-  width: 300px;
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

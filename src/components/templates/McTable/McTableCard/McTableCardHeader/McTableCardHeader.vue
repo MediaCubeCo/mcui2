@@ -45,41 +45,4 @@ const theme = useTheme('tableCard')
   </section>
 </template>
 
-<style lang="scss">
-@use '../../../../../assets/styles/mixins' as *;
-@use '../../../../../assets/tokens/colors' as *;
-@use '../../../../../assets/tokens/spacings' as *;
-.mc-table-card-header {
-  $block-name: &;
-
-  display: flex;
-  flex-wrap: nowrap;
-  background-color: $color-white;
-  padding: 0;
-  padding-inline: $space-150 $space-200;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-
-  &__left,
-  &__right {
-    @include layout-flex-fix();
-    display: flex;
-    flex-wrap: nowrap;
-    @include child-indent-right($space-200);
-
-    &:empty {
-      display: none;
-    }
-  }
-
-  &__left {
-    min-width: max-content;
-    margin-inline-end: $space-150;
-  }
-
-  &__right {
-    margin-inline-start: auto;
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

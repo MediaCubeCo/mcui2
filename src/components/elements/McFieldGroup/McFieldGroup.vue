@@ -101,10 +101,4 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style lang="scss">
-@use '../../../assets/tokens/font-families' as *;
-.mc-field-group {
-  $block-name: &;
-  font-family: $font-family-main;
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

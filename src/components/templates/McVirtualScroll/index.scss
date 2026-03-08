@@ -1,0 +1,8 @@
+.mc-virtual-scroll {
+  position: relative;
+  overflow-y: auto;
+  &__item {
+    position: absolute;
+    width: 100%;
+  }
+}

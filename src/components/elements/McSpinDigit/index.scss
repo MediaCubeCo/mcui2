@@ -1,0 +1,40 @@
+@use '../../../assets/tokens/font-families' as *;
+@use '../../../assets/tokens/font-weights' as *;
+@use '../../../assets/tokens/font-sizes' as *;
+@use '../../../assets/tokens/colors' as *;
+
+.mc-spin-digit-container {
+  $block-name: &;
+  font-family: $font-family-main;
+  overflow: hidden;
+  height: var(--mc-spin-digit-font-size);
+  position: relative;
+
+  &__target {
+    font-size: var(--mc-spin-digit-font-size);
+    visibility: hidden;
+  }
+
+  .mc-spin-digit {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: var(--mc-spin-digit-font-color);
+    transition: transform var(--mc-spin-duration) cubic-bezier(0.4, 0, 0.2, 1);
+    &--off {
+      transition: none;
+    }
+    &__digit {
+      height: var(--mc-spin-digit-font-size);
+      line-height: var(--mc-spin-digit-font-size);
+      font-size: var(--mc-spin-digit-font-size);
+      font-weight: var(--mc-spin-digit-font-weight);
+      color: var(--mc-spin-digit-font-color);
+      text-align: center;
+      flex-shrink: 0;
+    }
+  }
+}

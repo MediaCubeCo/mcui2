@@ -80,14 +80,4 @@ const tooltipProps = computed<ITooltip>((): ITooltip => {
   </div>
 </template>
 
-<style lang="scss">
-@use '../../../assets/styles/tooltip' as *;
-@use '../../../assets/tokens/font-families' as *;
-
-.mc-tooltip-target {
-  $block-name: &;
-  max-width: 100%;
-  width: max-content;
-  font-family: $font-family-main;
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

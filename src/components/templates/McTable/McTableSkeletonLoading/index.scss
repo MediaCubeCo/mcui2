@@ -1,0 +1,108 @@
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/z-indexes' as *;
+@use '../../../../assets/tokens/colors' as *;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/sizes' as *;
+@mixin gradient() {
+  background: $color-hover-gray;
+  background-image: -webkit-gradient(
+    linear,
+    left center,
+    right center,
+    from($color-hover-gray),
+    color-stop(0.2, rgba($color-white, 0.5)),
+    color-stop(0.4, $color-hover-gray),
+    to($color-hover-gray)
+  );
+  background-image: -webkit-linear-gradient(
+    left,
+    $color-hover-gray 0%,
+    rgba($color-white, 0.5) 20%,
+    $color-hover-gray 40%,
+    $color-hover-gray 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 800px 100%;
+  animation: placeHolderShimmer 1s linear infinite forwards;
+  border-radius: 10px;
+  > * {
+    background: transparent;
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+    overflow: hidden;
+    &:after {
+      content: '';
+      position: absolute;
+      border: 500px solid $color-white;
+      width: 100%;
+    }
+  }
+}
+
+.mc-table-skeleton-loading {
+  display: flex;
+  overflow: hidden;
+  max-width: 100%;
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  z-index: $z-index-overlay;
+  background-color: $color-white;
+  user-select: none;
+  //margin-top: calc(var(--mc-table-header-row-height) * -1);
+  &__col {
+    width: var(--mc-table-cell-width);
+    max-width: var(--mc-table-cell-max-width);
+    min-width: var(--mc-table-cell-min-width);
+  }
+  &__cell {
+    height: var(--mc-table-row-height);
+  }
+  &__loader {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    height: $space-500;
+    padding: $space-100 $space-200;
+    &_avatar {
+      display: block;
+      float: left;
+      position: relative;
+      height: $size-300;
+      width: $size-300;
+      min-width: $size-300;
+      margin-inline-end: $space-50;
+      @include gradient();
+    }
+    &_preview-content {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      @include child-indent-bottom($space-50);
+    }
+    &_line {
+      display: block;
+      position: relative;
+      height: $size-100;
+      width: 100%;
+      @include gradient();
+    }
+    &--more-height {
+      .line {
+        height: $size-150;
+        width: 75%;
+        min-width: 150px;
+      }
+    }
+
+    @keyframes placeHolderShimmer {
+      0% {
+        background-position: -468px 0;
+      }
+      100% {
+        background-position: 468px 0;
+      }
+    }
+  }
+}

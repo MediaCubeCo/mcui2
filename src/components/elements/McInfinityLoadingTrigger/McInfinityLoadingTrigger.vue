@@ -79,17 +79,4 @@ watch(() => props.active, (value): void => {
   </section>
 </template>
 
-<style lang="scss">
-.el-infinity-loading {
-  $block-name: &;
-  height: 1px;
-  width: 100%;
-  z-index: 999999;
-  user-select: none;
-  pointer-events: none;
-  background-color: transparent;
-  &__wrapper {
-    position: relative;
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

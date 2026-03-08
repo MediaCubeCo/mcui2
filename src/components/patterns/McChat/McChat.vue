@@ -268,46 +268,4 @@ watch(() => props.comments, (newVal, prevVal) => {
   </div>
 </template>
 
-<style lang="scss">
-@use '../../../assets/styles/mixins' as *;
-@use '../../../assets/tokens/spacings' as *;
-.mc-chat {
-  $block-name: &;
-  height: 100%;
-
-  .mc-drawer-content-template {
-    &__body-inner {
-      display: flex;
-      flex-direction: column-reverse;
-      padding-left: $space-150;
-      padding-right: $space-150;
-    }
-  }
-  .mc-drawer {
-    &__header {
-      padding-top: calc(#{$space-150} - 1px);
-      padding-bottom: $space-150;
-      z-index: 12;
-    }
-    &__btn-close {
-      @include position(absolute, 0 0 null null);
-      z-index: 12;
-    }
-  }
-
-  &__comments {
-    > *:first-child {
-      margin-top: $space-400;
-    }
-    @include child-indent-bottom($space-100);
-  }
-
-  &__empty-notice {
-    @include align(true, true, absolute);
-    @include child-indent-bottom($space-150);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

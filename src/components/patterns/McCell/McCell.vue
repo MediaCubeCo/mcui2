@@ -59,38 +59,4 @@ const classes = computed((): { [key: string]: boolean } => {
   </section>
 </template>
 
-<style lang="scss">
-@use '../../../assets/styles/mixins' as *;
-@use '../../../assets/tokens/spacings' as *;
-@use '../../../assets/tokens/font-families' as *;
-.mc-cell {
-  $block-name: &;
-  font-family: $font-family-main;
-
-  &--size {
-    &-s {
-      #{$block-name}__content {
-        margin-top: 0;
-      }
-    }
-
-    &-m {
-      #{$block-name}__content {
-        margin-top: $space-50;
-      }
-    }
-
-    &-l {
-      #{$block-name}__content {
-        margin-top: $space-100;
-      }
-    }
-  }
-
-  &__content {
-    display: inline-flex;
-    flex-direction: column;
-    width: 100%;
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

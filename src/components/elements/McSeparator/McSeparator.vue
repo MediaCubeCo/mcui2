@@ -112,25 +112,4 @@ const styles = computed((): { [key: string]: ColorsUnion | SpacesUnion | string 
   </div>
 </template>
 
-<style lang="scss">
-@use '../../../assets/styles/mixins' as *;
-.mc-separator {
-  $block-name: &;
-  --mc-separator-color: initial;
-  --mc-separator-indent-top: initial;
-  --mc-separator-indent-bottom: initial;
-  --mc-separator-indent-left: initial;
-  --mc-separator-indent-right: initial;
-  --mc-separator-weight: initial;
-  width: 100%;
-  margin-top: var(--mc-separator-indent-top);
-  margin-bottom: var(--mc-separator-indent-bottom);
-  margin-inline-start: var(--mc-separator-indent-left);
-  margin-inline-end: var(--mc-separator-indent-right);
-  height: var(--mc-separator-weight);
-  &__wrapper {
-    @include size(100%);
-    background-color: var(--mc-separator-color);
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

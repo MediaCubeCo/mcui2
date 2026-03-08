@@ -1,0 +1,32 @@
+@use '../../../../assets/styles/mixins' as *;
+@use '../../../../assets/tokens/sizes' as *;
+@use '../../../../assets/tokens/colors' as *;
+@use '../../../../assets/tokens/spacings' as *;
+.mc-filter-presets {
+  $block-name: &;
+  position: relative;
+  flex-grow: 1;
+  min-width: 0;
+  &::after {
+    @include pseudo();
+    @include position(null, 0 0 0 null);
+    width: $size-1000;
+    background: linear-gradient(90deg, hsla(0, 0%, 100%, 0) 0, $color-white);
+    pointer-events: none;
+  }
+
+  &-inner {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    height: calc(#{$space-500} + 2px);
+    @include child-indent-right($space-100);
+    & {
+      @include hide-scrollbar();
+    }
+    &::after {
+      @include pseudo(block, static);
+      min-width: $space-300;
+    }
+  }
+}

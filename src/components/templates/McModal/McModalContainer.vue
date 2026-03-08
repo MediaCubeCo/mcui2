@@ -77,12 +77,4 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style>
-.mc-modal-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-}
-</style>
+<style lang="scss" src="./McModalContainer.scss"></style>

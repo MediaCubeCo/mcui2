@@ -1,0 +1,26 @@
+@use 'sass:color' as sasscolor;
+@use '../../../../assets/tokens/spacings' as *;
+@use '../../../../assets/tokens/colors' as *;
+@use '../../../../assets/tokens/font-weights' as *;
+.mc-filter-chip {
+  $block-name: &;
+  border-radius: $space-50;
+  white-space: nowrap;
+  word-break: normal;
+  &__category {
+    font-weight: $font-weight-semi-bold;
+  }
+  &--closable {
+    border-radius: $space-150;
+    &:hover {
+      cursor: pointer;
+      background-color: color-mix(in srgb, var(--mc-filter-chip-color), white 60%);
+    }
+  }
+  &--is-active {
+    background-color: color-mix(in srgb, var(--mc-filter-chip-color), white 60%);
+  }
+  .mc-title {
+    width: auto;
+  }
+}

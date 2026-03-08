@@ -196,22 +196,4 @@ const hideTab = () => {
   </section>
 </template>
 
-<style lang="scss">
-@use '../../../assets/tokens/colors' as *;
-
-.tabs-component-panel {
-  $block-name: &;
-}
-.tabs-component-tab {
-  --mc-tab-append-count-color: #{$color-black};
-  &__tab {
-    &-name-append-count {
-      color: var(--mc-tab-append-count-color);
-    }
-  }
-  a:empty {
-    margin: 0;
-    padding: 0;
-  }
-}
-</style>
+<style lang="scss" src="./index.scss"></style>

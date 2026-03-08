@@ -54,8 +54,4 @@ const text = computed({
   />
 </template>
 
-<style lang="scss">
-.mc-filter-type-text {
-  $block-name: &;
-}
-</style>
+<style lang="scss" src="./index.scss"></style>
