@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, type PropType, watch } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
-import { useFieldErrors } from '@/composables'
+import { useFieldErrors } from '@/composables/useFieldErrors'
 import { useTheme } from '@/composables/useTheme'
 
 const props = defineProps({

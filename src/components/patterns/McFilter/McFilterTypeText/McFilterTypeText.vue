@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { McFieldText } from '@/components'
+import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
 import { computed, type PropType } from 'vue'
-import type { FilterTextValue, IBaseFilter, IFilterCondition, IFilterPlaceholders } from '@/types'
+import type { FilterTextValue, IBaseFilter, IFilterCondition, IFilterPlaceholders } from '@/types/IFilter'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: IFilterCondition): void

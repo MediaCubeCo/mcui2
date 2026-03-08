@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { McAvatar, McPreview, McSvgIcon, McButton, McFieldText } from '@/components'
+import McAvatar from '@/components/elements/McAvatar/McAvatar.vue'
+import McPreview from '@/components/patterns/McPreview/McPreview.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import McButton from '@/components/elements/McButton/McButton.vue'
+import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
 import { PropType, ref } from 'vue'
-import { ButtonSize, ButtonType, InputTypes } from '@/enums'
+import { ButtonSize, ButtonType } from '@/enums/ui/Button'
+import { InputTypes } from '@/enums/Input'
 
 /**
  * Используется только в McChat

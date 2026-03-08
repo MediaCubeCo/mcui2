@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, type PropType, reactive, ref, useSlots, watch } from 'vue'
-import { useHelper } from '@/composables'
-import { Weights } from '@/enums'
+import { useHelper } from '@/composables/useHelper'
+import { Weights } from '@/enums/ui/Weights'
 import {
   type ITableColumn,
   type ITableColumnEnriched,
@@ -13,18 +13,17 @@ import {
   type ITableCardProps
 } from '@/types/ITable'
 import { TABLE } from '@/consts/table'
-import {
-  McInfinityLoadingTrigger,
-  McTitle,
-  McChip,
-  McTableSort,
-  McTableSkeletonLoading,
-  McNoData,
-  McBottomLoader,
-  McOverlay,
-  McFieldCheckbox
-} from '@/components'
-import { ICheckboxMainCheckbox, IconsListUnion } from '@/types'
+import McInfinityLoadingTrigger from '@/components/elements/McInfinityLoadingTrigger/McInfinityLoadingTrigger.vue'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McChip from '@/components/elements/McChip/McChip.vue'
+import McTableSort from '@/components/templates/McTable/McTableSort/McTableSort.vue'
+import McTableSkeletonLoading from '@/components/templates/McTable/McTableSkeletonLoading/McTableSkeletonLoading.vue'
+import McNoData from '@/components/elements/McNodata/McNoData.vue'
+import McBottomLoader from '@/components/elements/McBottomLoader/McBottomLoader.vue'
+import McOverlay from '@/components/patterns/McOverlay/McOverlay.vue'
+import McFieldCheckbox from '@/components/elements/McFieldCheckbox/McFieldCheckbox.vue'
+import type { ICheckboxMainCheckbox } from '@/types/ICheckbox'
+import type { IconsListUnion } from '@/types/styles/Icons'
 import { default as noTableDataImg } from '@/assets/img/no_table_data.png'
 import { useRafFn } from '@vueuse/core'
 

@@ -11,7 +11,7 @@ const VueCropper =
 
 import 'vue3-cropperjs/dist/v3cropper.css'
 import { useTheme } from '@/composables/useTheme'
-import { ColorTypes } from '@/types'
+import { ColorTypes } from '@/types/styles/Colors'
 
 const emit = defineEmits(['crop', 'ready'])
 const props = defineProps({

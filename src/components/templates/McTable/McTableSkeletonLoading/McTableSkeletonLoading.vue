@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, type PropType } from 'vue'
-import type { ITableColumnEnriched } from '@/types'
+import type { ITableColumnEnriched } from '@/types/ITable'
 
 const props = defineProps({
   columns: {

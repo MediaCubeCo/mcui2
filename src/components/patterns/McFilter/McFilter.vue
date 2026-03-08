@@ -1,23 +1,22 @@
 <script setup lang="ts">
-import {
-  McSvgIcon,
-  McButton,
-  McTitle,
-  McFieldSelect,
-  McFieldText,
-  McTooltip,
-  McFilterTags,
-  McFilterTypeRange,
-  McFilterTypeDate,
-  McFilterTypeText,
-  McFilterTypeRelation,
-  McChip, McFilterPresets
-} from '@/components'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import McButton from '@/components/elements/McButton/McButton.vue'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McFieldSelect from '@/components/elements/McFieldSelect/McFieldSelect.vue'
+import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
+import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
+import McFilterTags from '@/components/patterns/McFilter/McFilterTags/McFilterTags.vue'
+import McFilterTypeRange from '@/components/patterns/McFilter/McFilterTypeRange/McFilterTypeRange.vue'
+import McFilterTypeDate from '@/components/patterns/McFilter/McFilterTypeDate/McFilterTypeDate.vue'
+import McFilterTypeText from '@/components/patterns/McFilter/McFilterTypeText/McFilterTypeText.vue'
+import McFilterTypeRelation from '@/components/patterns/McFilter/McFilterTypeRelation/McFilterTypeRelation.vue'
+import McChip from '@/components/elements/McChip/McChip.vue'
+import McFilterPresets from '@/components/patterns/McFilter/McFilterPresets/McFilterPresets.vue'
 import { defaultPlaceholders } from '@/mocks/filterMocks'
 
 import { computed, onBeforeUnmount, onMounted, type PropType, reactive, ref, watch, nextTick } from 'vue'
+import type { ButtonVariationUnion } from '@/types/IButton'
 import type {
-  ButtonVariationUnion,
   FilterConditionName,
   FilterConditionValue,
   IFastFilter,
@@ -29,7 +28,6 @@ import type {
   IFilterPlaceholders,
   IFilterPreset,
   IFilterValue,
-  ISelectOption,
   FilterRelationValue,
   FilterRelationName,
   IFilterRelationTag,
@@ -39,11 +37,16 @@ import type {
   IFilterDateValue,
   IBaseFilter,
   FilterTextValue,
-  IRangeFilter,
-  ColorTypes
-} from '@/types'
-import { useHelper, UseEncodeDecode } from '@/composables'
-import { ButtonSize, ChipSize, FilterRelations, FilterTypes, TooltipPositions, TooltipSizes } from '@/enums'
+  IRangeFilter
+} from '@/types/IFilter'
+import type { ISelectOption } from '@/types/ISelect'
+import type { ColorTypes } from '@/types/styles/Colors'
+import { useHelper } from '@/composables/useHelper'
+import { UseEncodeDecode } from '@/composables/useEncodeDecode'
+import { ButtonSize } from '@/enums/ui/Button'
+import { ChipSize } from '@/enums/Chip'
+import { FilterRelations, FilterTypes } from '@/enums/Filter'
+import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'
 import { useLocalStorage } from '@vueuse/core'
 import { useTheme } from '@/composables/useTheme'
 

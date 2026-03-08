@@ -1,4 +1,4 @@
-import { Colors, ColorTypes } from '@/types'
+import { Colors, ColorTypes } from '@/types/styles/Colors'
 
 export interface ColorTheme {
   components: {

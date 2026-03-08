@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { McTitle } from '@/components'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
 import { computed, type PropType } from 'vue'
 import { CellSizes } from '@/enums/Cell'
 import type { CellSizesUnion } from '@/types/ICell'

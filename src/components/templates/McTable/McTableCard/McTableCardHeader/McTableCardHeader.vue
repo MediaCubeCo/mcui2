@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { McButton, McSvgIcon } from '@/components'
-import { ButtonSize } from '@/enums'
+import McButton from '@/components/elements/McButton/McButton.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import { ButtonSize } from '@/enums/ui/Button'
 import type { PropType } from 'vue'
 import { useTheme } from '@/composables/useTheme'
-import { ColorTypes } from '@/types'
+import { ColorTypes } from '@/types/styles/Colors'
 
 const props = defineProps({
   buttonBackText: {

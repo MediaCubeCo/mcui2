@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import McModal from './McModal.vue'
 import McButton from '@/components/elements/McButton/McButton.vue'
 import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import { HorizontalAlignment } from '@/enums'
+import { HorizontalAlignment } from '@/enums/ui/Alignment'
 import { ModalVariation } from '@/enums/Modal'
 
 const meta = {

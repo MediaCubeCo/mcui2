@@ -1,4 +1,4 @@
-import { HorizontalAlignment } from '@/enums'
+import { HorizontalAlignment } from '@/enums/ui/Alignment'
 import { ModalVariation } from '@/enums/Modal'
 
 export interface IModalServiceState {

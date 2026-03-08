@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import selectOptions from '@/mocks/selectOptions.json'
 import McDropdown from './McDropdown.vue'
 import McButton from '@/components/elements/McButton/McButton.vue'
-import { DropdownListPositions, DropdownPositions } from '@/enums'
+import { DropdownListPositions, DropdownPositions } from '@/enums/Dropdown'
 
 const meta = {
     title: 'McDropdown',

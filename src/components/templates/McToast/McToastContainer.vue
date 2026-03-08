@@ -2,7 +2,7 @@
 import McToast from '@/components/templates/McToast/McToast.vue'
 import { ToastPositions } from '@/enums/Toast'
 import { computed, PropType } from 'vue'
-import { IToast } from '@/types'
+import type { IToast } from '@/types/IToast'
 
 const props = defineProps({
   reactiveProps: {

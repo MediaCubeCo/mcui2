@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import McOverlay from './McOverlay.vue'
-import { Colors, Sizes } from '@/types'
+import { Colors } from '@/types/styles/Colors'
+import { Sizes } from '@/types/styles/Sizes'
 
 const meta = {
     title: 'McOverlay',

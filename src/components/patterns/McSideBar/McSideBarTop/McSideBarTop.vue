@@ -1,17 +1,22 @@
 <script setup lang="ts">
-import { McDropdown, McButton, McSvgIcon, McPreview, McTitle } from '@/components'
+import McDropdown from '@/components/patterns/McDropdown/McDropdown.vue'
+import McButton from '@/components/elements/McButton/McButton.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import McPreview from '@/components/patterns/McPreview/McPreview.vue'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
 import { computed, inject, type PropType, ref } from 'vue'
-import { useHelper } from '@/composables'
-import { ButtonSize, DropdownPositions, HorizontalAlignment, SidebarTheme, TitleVariations, Weights } from '@/enums'
-import type {
-  ButtonVariationUnion,
-  DropdownPositionsUnion,
-  IconsListUnion,
-  ISideBarApp,
-  ISidebarThemeConfig,
-  ISidebarThemeConfigProvide,
-  TitleVariationsUnion
-} from '@/types'
+import { useHelper } from '@/composables/useHelper'
+import { ButtonSize } from '@/enums/ui/Button'
+import { DropdownPositions } from '@/enums/Dropdown'
+import { HorizontalAlignment } from '@/enums/ui/Alignment'
+import { SidebarTheme } from '@/enums/Sidebar'
+import { TitleVariations } from '@/enums/Title'
+import { Weights } from '@/enums/ui/Weights'
+import type { ButtonVariationUnion } from '@/types/IButton'
+import type { DropdownPositionsUnion } from '@/types/IDropdown'
+import type { IconsListUnion } from '@/types/styles/Icons'
+import type { ISideBarApp, ISidebarThemeConfig, ISidebarThemeConfigProvide } from '@/types/ISideBar'
+import type { TitleVariationsUnion } from '@/types/ITitle'
 import { defaultThemes } from '@/mocks/sidebar'
 
 const helper = useHelper()

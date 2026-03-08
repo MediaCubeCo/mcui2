@@ -1,5 +1,5 @@
-import { FilterRelations, FilterTypes } from '@/enums'
-import type { IFilter, IFilterPlaceholders } from '@/types'
+import { FilterRelations, FilterTypes } from '@/enums/Filter'
+import type { IFilter, IFilterPlaceholders } from '@/types/IFilter'
 
 const value = {
   filter: {

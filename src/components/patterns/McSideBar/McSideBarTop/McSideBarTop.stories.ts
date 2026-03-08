@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import McSideBarTop from './McSideBarTop.vue'
 import { apps } from '@/mocks/sidebar'
-import { DropdownPositions, TitleVariations } from '@/enums'
+import { DropdownPositions } from '@/enums/Dropdown'
+import { TitleVariations } from '@/enums/Title'
 import iconsList from '@/mocks/icons.json'
 
 const meta = {

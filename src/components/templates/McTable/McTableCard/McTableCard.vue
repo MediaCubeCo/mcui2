@@ -9,7 +9,7 @@ import {
   type TableCardState
 } from '@/types/ITable'
 import { TABLE } from '@/consts/table'
-import { useHelper } from '@/composables'
+import { useHelper } from '@/composables/useHelper'
 
 const slots = useSlots()
 const emit = defineEmits<{

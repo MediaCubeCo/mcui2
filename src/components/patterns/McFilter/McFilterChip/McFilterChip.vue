@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { McChip } from '@/components'
+import McChip from '@/components/elements/McChip/McChip.vue'
 import { computed, type PropType } from 'vue'
-import type { ChipVariationUnion, ColorTypes } from '@/types'
-import { ChipSize } from '@/enums'
+import type { ChipVariationUnion } from '@/types/IChip'
+import type { ColorTypes } from '@/types/styles/Colors'
+import { ChipSize } from '@/enums/Chip'
 import { type IFilterTag } from '@/types/IFilter'
 import { useTheme } from '@/composables/useTheme'
 

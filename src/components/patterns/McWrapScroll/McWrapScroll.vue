@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { McGridRow } from '@/components'
+import McGridRow from '@/components/patterns/McGridRow/McGridRow.vue'
 import { computed, onBeforeUnmount, onMounted, type PropType, reactive, ref } from 'vue'
 import { useThrottleFn } from '@vueuse/core'
 import { Spaces, type SpaceTypes } from '@/types/styles/Spaces'

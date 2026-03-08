@@ -2,8 +2,8 @@ import { type ITooltip, type ITooltipInstance, type ITooltipStyles } from '@/typ
 import { useDebounceFn } from '@vueuse/core'
 import { useRandomNumber } from '@/composables/useRandomNumber'
 import { ref } from 'vue'
-import { TooltipPositions, TooltipSizes } from '@/enums'
-import { Colors, type ColorsUnion } from '@/types'
+import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'
+import { Colors, type ColorsUnion } from '@/types/styles/Colors'
 import { useHelper } from '@/composables/useHelper'
 
 const debounce = useDebounceFn((method) => {

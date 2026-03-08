@@ -6,7 +6,7 @@ import type { DirectionsUnion } from '@/types/IDirections'
 import { type IconsListUnion } from '@/types/styles/Icons'
 import { Directions } from '@/enums/ui/Directions'
 import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from '@/utils/mcSvgIconAdaptiveProps'
-import { useHelper } from '@/composables'
+import { useHelper } from '@/composables/useHelper'
 import { useTheme } from '@/composables/useTheme'
 
 const helper = useHelper()

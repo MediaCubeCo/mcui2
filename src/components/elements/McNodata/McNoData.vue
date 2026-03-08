@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { McTitle, McSvgIcon, McButton } from '@/components'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import McButton from '@/components/elements/McButton/McButton.vue'
 import { computed, type PropType, useSlots } from 'vue'
-import { HorizontalAlignment, TitleVariations, Weights } from '@/enums'
-import { ColorTypes, IconsListUnion } from '@/types'
+import { HorizontalAlignment } from '@/enums/ui/Alignment'
+import { TitleVariations } from '@/enums/Title'
+import { Weights } from '@/enums/ui/Weights'
+import { ColorTypes } from '@/types/styles/Colors'
+import { IconsListUnion } from '@/types/styles/Icons'
 
 import { default as noTableDataImg } from '@/assets/img/no_table_data.png'
 import { useTheme } from '@/composables/useTheme'

@@ -1,8 +1,8 @@
 import { Router } from 'vue-router'
 import { VueElement } from 'vue'
 import { IToast } from '@/types/IToast'
-import { Themes } from '@/enums'
-import { ColorThemes } from '@/types'
+import { Themes } from '@/enums/Themes'
+import { ColorThemes } from '@/types/styles/ColorTheme'
 
 export interface IDSOptions {
   drawerComponents?: Partial<VueElement>

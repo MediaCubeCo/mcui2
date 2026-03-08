@@ -1,4 +1,4 @@
-import { Weights } from '@/enums'
+import { Weights } from '@/enums/ui/Weights'
 import { ColorTypes } from '@/types/styles/Colors'
 
 export interface IComment {

@@ -1,4 +1,4 @@
-import type { ITableColumn, ITableData, ITableTotals } from '@/types'
+import type { ITableColumn, ITableData, ITableTotals } from '@/types/ITable'
 
 const tableColumns = [
   { header: 'Канал', field: 'channel', width: 248, total: 424 },

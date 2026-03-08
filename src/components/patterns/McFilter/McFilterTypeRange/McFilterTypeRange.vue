@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { McFieldText } from '@/components'
+import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
 import type { IFilterCondition, IFilterPlaceholders, IFilterRangeValue, IRangeFilter } from '@/types/IFilter.js'
 import { computed, type PropType, ref, watch } from 'vue'
-import { InputTypes } from '@/enums'
+import { InputTypes } from '@/enums/Input'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: IFilterCondition): void

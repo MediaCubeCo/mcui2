@@ -3,7 +3,7 @@ import { computed, ref, watch, onMounted } from 'vue'
 import { AvatarSizes, type AvatarSizeTypes } from '@/types/styles/AvatarSizes'
 import { type ColorTypes } from '@/types/styles/Colors'
 import { Sizes } from '@/types/styles/Sizes'
-import { Radiuses } from '@/types'
+import { Radiuses } from '@/types/styles/Radiuses'
 import { useTheme } from '@/composables/useTheme'
 
 const props = defineProps({

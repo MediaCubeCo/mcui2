@@ -2,7 +2,9 @@ import { useRandomNumber } from '@/composables/useRandomNumber'
 import { h, reactive, render, shallowRef, inject, ref } from 'vue'
 import ToastContainer from '@/components/templates/McToast/McToastContainer.vue'
 import { ToastPositions } from '@/enums/Toast'
-import { ColorTypes, IDSOptions, IToast, IToastAction } from '@/types'
+import { ColorTypes } from '@/types/styles/Colors'
+import { IDSOptions } from '@/types/IDSOptions'
+import { IToast, IToastAction } from '@/types/IToast'
 import { useTheme } from './useTheme'
 
 const toastDefaultOptions = {

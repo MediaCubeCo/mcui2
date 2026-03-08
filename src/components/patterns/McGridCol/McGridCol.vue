@@ -3,7 +3,7 @@ import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from
 import { computed, inject } from 'vue'
 import type { IGridGutters } from '@/types/IGrid'
 import type { ColumnSpanUnion } from '@/types/styles/Grid'
-import { useHelper } from '@/composables'
+import { useHelper } from '@/composables/useHelper'
 
 const helper = useHelper()
 const provideData = inject('provideData', { gutterX: 0, gutterY: 0 } as IGridGutters)

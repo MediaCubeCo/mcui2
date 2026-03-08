@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { McAvatar, McButton, McSvgIcon, McSeparator, McDropdown } from '@/components'
+import McAvatar from '@/components/elements/McAvatar/McAvatar.vue'
+import McButton from '@/components/elements/McButton/McButton.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import McSeparator from '@/components/elements/McSeparator/McSeparator.vue'
+import McDropdown from '@/components/patterns/McDropdown/McDropdown.vue'
 import { type PropType, ref, useSlots } from 'vue'
-import { ButtonSize, DropdownPositions, HorizontalAlignment } from '@/enums'
-import type { IconsListUnion } from '@/types'
+import { ButtonSize } from '@/enums/ui/Button'
+import { DropdownPositions } from '@/enums/Dropdown'
+import { HorizontalAlignment } from '@/enums/ui/Alignment'
+import type { IconsListUnion } from '@/types/styles/Icons'
 
 const slots = useSlots()
 

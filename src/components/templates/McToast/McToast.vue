@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { computed, onMounted, type PropType } from 'vue'
 import type { IconsListUnion } from '@/types/styles/Icons'
-import { ColorTypes, IToast, IToastAction, ToastPositionsUnion } from '@/types'
+import { ColorTypes } from '@/types/styles/Colors'
+import { IToast, IToastAction, ToastPositionsUnion } from '@/types/IToast'
 import { ToastPositions } from '@/enums/Toast'
-import { McPreview, McSvgIcon, McTitle, McButton } from '@/components'
+import McPreview from '@/components/patterns/McPreview/McPreview.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McButton from '@/components/elements/McButton/McButton.vue'
 import { useTimer } from '@/composables/useTimer'
-import { ButtonSize, PreviewSizes, Weights } from '@/enums'
+import { ButtonSize } from '@/enums/ui/Button'
+import { PreviewSizes } from '@/enums/Preview'
+import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
 
 const emit = defineEmits<{

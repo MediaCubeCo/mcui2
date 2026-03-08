@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { McTitle, McSvgIcon, McButton, McPreview } from '@/components'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import McButton from '@/components/elements/McButton/McButton.vue'
+import McPreview from '@/components/patterns/McPreview/McPreview.vue'
 import { computed, type PropType, useSlots } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { IconsListUnion } from '@/types/styles/Icons'

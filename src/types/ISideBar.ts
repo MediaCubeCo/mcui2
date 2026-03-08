@@ -1,6 +1,6 @@
 import type { IconsListUnion } from '@/types/styles/Icons'
 import type { ButtonVariationUnion } from '@/types/IButton'
-import { SidebarTheme } from '@/enums'
+import { SidebarTheme } from '@/enums/Sidebar'
 import type { ColorTypes } from '@/types/styles/Colors'
 import type { TitleVariationsUnion } from '@/types/ITitle'
 

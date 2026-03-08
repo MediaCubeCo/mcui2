@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { McTitle, McSvgIcon } from '@/components'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import { computed, type PropType, useSlots, watch } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { SizeTypes } from '@/types/styles/Sizes'
-import { useFieldErrors } from '@/composables'
+import { useFieldErrors } from '@/composables/useFieldErrors'
 import type { RadioVariationUnion } from '@/types/IRadio'
 import { Directions } from '@/enums/ui/Directions'
 import { type DirectionsUnion } from '@/types/IDirections'
 import type { IconsListUnion } from '@/types/styles/Icons'
-import { TitleVariations } from '@/enums'
+import { TitleVariations } from '@/enums/Title'
 import { useTheme } from '@/composables/useTheme'
 
 const slots = useSlots()

@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { McTitle, McSvgIcon } from '@/components'
-import { useFieldErrors } from '@/composables'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import { useFieldErrors } from '@/composables/useFieldErrors'
 import { computed, type PropType, useSlots, watch } from 'vue'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Directions } from '@/enums/ui/Directions'
 import type { SizesUnion } from '@/types/styles/Sizes'
-import { TitleVariations, Weights } from '@/enums'
+import { TitleVariations } from '@/enums/Title'
+import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
-import { ColorTypes } from '@/types'
+import { ColorTypes } from '@/types/styles/Colors'
 import { ICheckboxMainCheckbox } from '@/types/ICheckbox'
 
 const emit = defineEmits(['update:modelValue'])

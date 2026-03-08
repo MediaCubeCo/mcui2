@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, type PropType } from 'vue'
-import { McDrawer } from '@/components'
+import McDrawer from '@/components/templates/McDrawer/McDrawer.vue'
 import type { IDrawerServiceState, IDrawerState } from '@/types/IDrawer'
 import McDrawerSafeComponent from '@/components/templates/McDrawer/McDrawerSafeComponent.vue'
 

@@ -3,6 +3,10 @@
   "version": "0.0.223",
   "license": "MIT",
   "description": "Design system for Mediacube services",
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
   "keywords": [
     "vue3",
     "nuxt3",

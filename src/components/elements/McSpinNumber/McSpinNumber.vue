@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, PropType } from 'vue'
-import { ColorTypes, FontWeights, FontSizes } from '@/types'
+import { ColorTypes } from '@/types/styles/Colors'
+import { FontWeights } from '@/types/styles/FontWeights'
+import { FontSizes } from '@/types/styles/FontSizes'
 import McSpinDigit from '@/components/elements/McSpinDigit/McSpinDigit.vue'
 import { useTheme } from '@/composables/useTheme'
 

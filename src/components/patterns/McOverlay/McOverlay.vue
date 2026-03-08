@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { type ColorTypes, Sizes, type SizeTypes } from '@/types'
+import type { ColorTypes } from '@/types/styles/Colors'
+import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { computed } from 'vue'
 import { useTheme } from '@/composables/useTheme'
 

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, type PropType, ref, watch } from 'vue'
 import { useThrottleFn } from '@vueuse/core'
-import { McDropdownPanel } from '@/components'
+import McDropdownPanel from '@/components/patterns/McDropdown/McDropdownPanel.vue'
 import type { DropdownListPositionsUnion, DropdownPositionsUnion } from '@/types/IDropdown'
 import { DropdownListPositions, DropdownPositions } from '@/enums/Dropdown'
 import { useTheme } from '@/composables/useTheme'
-import { ColorTypes } from '@/types'
+import { ColorTypes } from '@/types/styles/Colors'
 
 const throttle = useThrottleFn((method) => {
   method()

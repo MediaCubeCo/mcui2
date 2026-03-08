@@ -1,9 +1,9 @@
 import { App, shallowReactive } from 'vue'
 import { setStoredAppContext } from './storedAppContext'
-import { IDSOptions } from './types'
-import { useHelper } from '@/composables'
-import { Themes } from '@/enums'
-import { ThemesColors, UiThemes } from '@/types'
+import { IDSOptions } from './types/IDSOptions'
+import { useHelper } from '@/composables/useHelper'
+import { Themes } from '@/enums/Themes'
+import { ThemesColors, UiThemes } from '@/types/styles/ColorTheme'
 import defaultAvatar from './assets/img/no_user.png'
 const helpers = useHelper()
 

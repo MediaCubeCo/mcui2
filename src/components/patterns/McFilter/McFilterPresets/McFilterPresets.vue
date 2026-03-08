@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { McButton } from '@/components'
+import McButton from '@/components/elements/McButton/McButton.vue'
 import { onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue'
-import type { ButtonVariationUnion, ColorTypes, IFilterPreset } from '@/types'
+import type { ButtonVariationUnion } from '@/types/IButton'
+import type { ColorTypes } from '@/types/styles/Colors'
+import type { IFilterPreset } from '@/types/IFilter'
 import { useLocalStorage, useDebounceFn } from '@vueuse/core'
-import { useTheme } from '@/composables'
+import { useTheme } from '@/composables/useTheme'
 
 const emit = defineEmits(['preset-selected'])
 const props = defineProps({

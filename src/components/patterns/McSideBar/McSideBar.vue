@@ -1,19 +1,15 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, type PropType, provide, reactive, ref, watch } from 'vue'
-import { McSideBarTop, McSideBarCenter, McSideBarBottom } from '@/components'
+import McSideBarTop from '@/components/patterns/McSideBar/McSideBarTop/McSideBarTop.vue'
+import McSideBarCenter from '@/components/patterns/McSideBar/McSideBarCenter/McSideBarCenter.vue'
+import McSideBarBottom from '@/components/patterns/McSideBar/McSideBarBottom/McSideBarBottom.vue'
 
-import {
-  IconsListUnion,
-  ISideBarApp,
-  ISideBarChatra,
-  ISideBarMenuItem,
-  ISideBarMenuItemEnrichment,
-  ISidebarThemeConfig,
-  ISidebarThemeConfigProvide,
-  TitleVariationsUnion
-} from '@/types'
+import type { IconsListUnion } from '@/types/styles/Icons'
+import type { ISideBarApp, ISideBarChatra, ISideBarMenuItem, ISideBarMenuItemEnrichment, ISidebarThemeConfig, ISidebarThemeConfigProvide } from '@/types/ISideBar'
+import type { TitleVariationsUnion } from '@/types/ITitle'
 import { defaultThemes } from '@/mocks/sidebar'
-import { SidebarTheme, TitleVariations } from '@/enums'
+import { SidebarTheme } from '@/enums/Sidebar'
+import { TitleVariations } from '@/enums/Title'
 
 const emit = defineEmits<{
   (e: 'absolute-mode', value: boolean): void

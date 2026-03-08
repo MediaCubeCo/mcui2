@@ -3,9 +3,10 @@ import { default as VueSlider } from 'vue-3-slider-component'
 import { computed, type PropType, reactive, useSlots, watch } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { TooltipPositionsUnion } from '@/types/ITooltip'
-import { McTitle } from '@/components'
-import { useFieldErrors } from '@/composables'
-import { TitleVariations, Weights } from '@/enums'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import { useFieldErrors } from '@/composables/useFieldErrors'
+import { TitleVariations } from '@/enums/Title'
+import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
 
 type RangeValue = string[] | number[] | number | string | null

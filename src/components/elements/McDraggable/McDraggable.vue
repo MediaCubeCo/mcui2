@@ -2,7 +2,7 @@
 import { useDebounceFn, useDraggable, useLocalStorage, useSessionStorage } from '@vueuse/core'
 import { computed, type PropType, ref, watch } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
-import { McPreview } from '@/components'
+import McPreview from '@/components/patterns/McPreview/McPreview.vue'
 import type { ColorsUnion } from '@/types/styles/Colors'
 import { useTheme } from '@/composables/useTheme'
 

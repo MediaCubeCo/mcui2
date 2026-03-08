@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed, PropType, nextTick } from 'vue'
-import { Colors, ColorTypes, FontWeights, FontSizes } from '@/types'
+import { Colors, ColorTypes } from '@/types/styles/Colors'
+import { FontWeights } from '@/types/styles/FontWeights'
+import { FontSizes } from '@/types/styles/FontSizes'
 
 export type FontSizesUnion = keyof typeof FontSizes
 export type FontWeightUnion = keyof typeof FontWeights

@@ -3,7 +3,7 @@ import { reactive, h, render, shallowRef, markRaw, inject, defineAsyncComponent 
 import ModalContainer from '@/components/templates/McModal/McModalContainer.vue'
 import { getStoredAppContext } from '@/storedAppContext'
 import type { IModalServiceState, IModalState } from '@/types/IModal'
-import { IDSOptions } from '@/types'
+import { IDSOptions } from '@/types/IDSOptions'
 import { useHelper } from '@/composables/useHelper'
 
 const helper = useHelper()

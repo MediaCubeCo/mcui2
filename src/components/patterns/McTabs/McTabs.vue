@@ -6,10 +6,11 @@ import McWrapScroll from '@/components/patterns/McWrapScroll/McWrapScroll.vue'
 import type { ITab } from '@/types/ITabs'
 import { type TabVariationUnion } from '@/types/ITabs'
 import { TabVariations } from '@/enums/Tab'
-import { McChip, McSvgIcon } from '@/components'
-import { IDSOptions } from '@/types'
+import McChip from '@/components/elements/McChip/McChip.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import { IDSOptions } from '@/types/IDSOptions'
 import { useTheme } from '@/composables/useTheme'
-import { ChipSize } from '@/enums'
+import { ChipSize } from '@/enums/Chip'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void

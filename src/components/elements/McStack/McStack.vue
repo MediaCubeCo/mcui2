@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, h, useSlots, createApp, type PropType, onBeforeMount } from 'vue'
-import { Spaces, SpacesUnion } from '@/types'
-import { McTooltip } from '@/components'
-import { TooltipSizes } from '@/enums'
+import { Spaces, SpacesUnion } from '@/types/styles/Spaces'
+import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
+import { TooltipSizes } from '@/enums/Tooltip'
 
 const emit = defineEmits<{
   (e: 'updated:hidden-count', value: number): any[]

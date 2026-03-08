@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TransitionPresets, useTransition } from '@vueuse/core'
 import { computed, type PropType, ref, watch } from 'vue'
-import { McSvgIcon } from '@/components'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import type { DrawerPositionsUnion } from '@/types/IDrawer'
 import { DrawerPositions } from '@/enums/Drawer'

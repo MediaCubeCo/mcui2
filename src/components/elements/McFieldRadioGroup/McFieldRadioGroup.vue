@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { McTitle, McFieldRadio } from '@/components'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McFieldRadio from '@/components/elements/McFieldRadio/McFieldRadio.vue'
 import { computed, type PropType, useSlots, watch } from 'vue'
-import { useFieldErrors } from '@/composables'
+import { useFieldErrors } from '@/composables/useFieldErrors'
 import type { IRadioGroupOptions, IRadioGroupOption } from '@/types/IRadioGroup'
 import { type DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
 import type { RadioGroupDirectionUnion } from '@/types/IRadioGroup'
 import { RadioGroupDirection } from '@/enums/RadioGroup'
 import type { RadioVariationUnion } from '@/types/IRadio'
-import { TitleVariations } from '@/enums'
+import { TitleVariations } from '@/enums/Title'
 
 const emit = defineEmits(['update:modelValue', 'change'])
 const slots = useSlots()

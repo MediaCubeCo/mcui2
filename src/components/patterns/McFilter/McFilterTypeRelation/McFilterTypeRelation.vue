@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { McButton, McTitle, McFieldSelect, McFieldText } from '@/components'
+import McButton from '@/components/elements/McButton/McButton.vue'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McFieldSelect from '@/components/elements/McFieldSelect/McFieldSelect.vue'
+import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
 import { computed, type PropType, ref, watch, nextTick } from 'vue'
 import {
   IFilterPlaceholders,
@@ -9,10 +12,11 @@ import {
   IFilterParsedValueFilter,
   FilterConditionValue,
   FilterRelationName,
-  IFilterCondition, ColorTypes
-} from '@/types'
-import { FilterRelations } from '@/enums'
-import { useHelper } from '@/composables'
+  IFilterCondition
+} from '@/types/IFilter'
+import type { ColorTypes } from '@/types/styles/Colors'
+import { FilterRelations } from '@/enums/Filter'
+import { useHelper } from '@/composables/useHelper'
 import { useDebounceFn } from '@vueuse/core'
 import { useTheme } from '@/composables/useTheme'
 

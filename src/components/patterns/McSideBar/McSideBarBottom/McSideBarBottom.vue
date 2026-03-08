@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { McSideBarButton } from '@/components'
+import McSideBarButton from '@/components/patterns/McSideBar/McSideBarButton/McSideBarButton.vue'
 import { computed, inject, type PropType, useSlots } from 'vue'
-import type { ButtonVariationUnion, ColorTypes, ISidebarThemeConfigProvide } from '@/types'
+import type { ButtonVariationUnion } from '@/types/IButton'
+import type { ColorTypes } from '@/types/styles/Colors'
+import type { ISidebarThemeConfigProvide } from '@/types/ISideBar'
 import { defaultThemes } from '@/mocks/sidebar'
-import { SidebarTheme } from '@/enums'
+import { SidebarTheme } from '@/enums/Sidebar'
 
 const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
 const slots = useSlots()

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { McSvgIcon } from '@/components'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import { computed, type PropType } from 'vue'
 import type { ITableSort, ITableSortState } from '@/types/ITable'
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { TooltipPositionsUnion, TooltipSizesUnion } from '@/types/ITooltip'
-import { useTooltip } from '@/composables'
+import { useTooltip } from '@/composables/useTooltip'
 import { computed, type PropType } from 'vue'
 import type { ITooltip } from '@/types/ITooltip'
 import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'

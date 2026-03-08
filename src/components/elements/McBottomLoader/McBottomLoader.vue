@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useTheme } from '@/composables/useTheme'
-import { ColorTypes } from '@/types'
+import { ColorTypes } from '@/types/styles/Colors'
 
 const props = defineProps({
   center: {

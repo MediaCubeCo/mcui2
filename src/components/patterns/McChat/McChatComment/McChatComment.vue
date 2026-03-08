@@ -1,8 +1,17 @@
 <script setup lang="ts">
-import { McPreview, McTitle, McDate, McAvatar, McBadge, McSvgIcon, McButton } from '@/components'
+import McPreview from '@/components/patterns/McPreview/McPreview.vue'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McDate from '@/components/elements/McDate/McDate.vue'
+import McAvatar from '@/components/elements/McAvatar/McAvatar.vue'
+import McBadge from '@/components/elements/McBadge/McBadge.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import McButton from '@/components/elements/McButton/McButton.vue'
 import { computed, PropType, ref } from 'vue'
-import { ButtonSize, TitleVariations, Weights } from '@/enums'
-import { ColorTypes, IComment, ICommentTitle } from '@/types'
+import { ButtonSize } from '@/enums/ui/Button'
+import { TitleVariations } from '@/enums/Title'
+import { Weights } from '@/enums/ui/Weights'
+import { ColorTypes } from '@/types/styles/Colors'
+import { IComment, ICommentTitle } from '@/types/IComment'
 /**
  * Используется только в McChat
  */

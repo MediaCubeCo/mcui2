@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { McTitle, McSideBarButton, McSeparator, McButton, McSvgIcon } from '@/components'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McSideBarButton from '@/components/patterns/McSideBar/McSideBarButton/McSideBarButton.vue'
+import McSeparator from '@/components/elements/McSeparator/McSeparator.vue'
+import McButton from '@/components/elements/McButton/McButton.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import { computed, inject, type PropType, reactive, ref, useSlots, watch } from 'vue'
-import {
-  ISideBarChatra,
-  ISideBarLink,
-  ISideBarMenuItem,
-  ISideBarMenuItemEnrichment,
-  ISidebarThemeConfigProvide
-} from '@/types'
-import { ButtonSize, SidebarTheme } from '@/enums'
+import type { ISideBarChatra, ISideBarLink, ISideBarMenuItem, ISideBarMenuItemEnrichment, ISidebarThemeConfigProvide } from '@/types/ISideBar'
+import { ButtonSize } from '@/enums/ui/Button'
+import { SidebarTheme } from '@/enums/Sidebar'
 import McSlideUpDown from '@/components/elements/McSlideUpDown/McSlideUpDown.vue'
 import { defaultThemes } from '@/mocks/sidebar'
 

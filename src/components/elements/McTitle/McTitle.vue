@@ -8,8 +8,8 @@ import { computed, type PropType, useAttrs } from 'vue'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from '@/utils/mcTitleAdaptiveProps'
 import type { TitleVariationsUnion } from '@/types/ITitle'
-import { useHelper } from '@/composables'
-import { ColorTypes } from '@/types'
+import { useHelper } from '@/composables/useHelper'
+import { ColorTypes } from '@/types/styles/Colors'
 import { useTheme } from '@/composables/useTheme'
 
 const helper = useHelper()

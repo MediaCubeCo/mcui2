@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { dayjs } from '@/utils'
-import { McTitle } from '@/components'
+import { dayjs } from '@/utils/dayjs'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
 import { computed, PropType } from 'vue'
-import { ColorTypes, TitleVariationsUnion } from '@/types'
-import { TitleVariations } from '@/enums'
+import { ColorTypes } from '@/types/styles/Colors'
+import type { TitleVariationsUnion } from '@/types/ITitle'
+import { TitleVariations } from '@/enums/Title'
 
 const props = defineProps({
   /**

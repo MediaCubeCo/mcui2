@@ -2,7 +2,7 @@ import { reactive, h, render, shallowRef, markRaw, inject, defineAsyncComponent 
 import DrawerContainer from '@/components/templates/McDrawer/McDrawerContainer.vue'
 import { getStoredAppContext } from '@/storedAppContext'
 import type { IDrawerServiceState, IDrawerProps, IDrawerState } from '@/types/IDrawer'
-import { IDSOptions } from '@/types'
+import { IDSOptions } from '@/types/IDSOptions'
 import { useHelper } from '@/composables/useHelper'
 
 const helper = useHelper()

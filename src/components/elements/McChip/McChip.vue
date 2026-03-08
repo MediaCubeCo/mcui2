@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { McSvgIcon } from '@/components'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import { computed, type PropType, useSlots } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import { ChipSizeModifiersUnion, ChipVariationUnion, IChipStyleOptions } from '@/types/IChip'
 import type { ColorsUnion } from '@/types/styles/Colors'
-import { ChipModifiers } from '@/enums'
+import { ChipModifiers } from '@/enums/Chip'
 import { useTheme } from '@/composables/useTheme'
 
 const theme = useTheme('chip')

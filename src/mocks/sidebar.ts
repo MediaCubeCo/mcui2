@@ -1,5 +1,5 @@
-import { SidebarTheme } from '@/enums'
-import type { ISideBarApp, ISideBarLang, ISideBarMenuItem, ISidebarThemeConfig } from '@/types'
+import { SidebarTheme } from '@/enums/Sidebar'
+import type { ISideBarApp, ISideBarLang, ISideBarMenuItem, ISidebarThemeConfig } from '@/types/ISideBar'
 
 const apps = [
   {

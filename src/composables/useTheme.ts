@@ -1,5 +1,7 @@
 import { inject, reactive } from 'vue'
-import { Colors, IDSOptions, UiThemes } from '@/types'
+import { Colors } from '@/types/styles/Colors'
+import { IDSOptions } from '@/types/IDSOptions'
+import { UiThemes } from '@/types/styles/ColorTheme'
 
 export function useTheme(component?: string) {
   const dsOptions = inject<IDSOptions>('dsOptions', {} as IDSOptions)
