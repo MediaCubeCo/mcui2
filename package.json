@@ -1,6 +1,6 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.224",
+  "version": "0.0.225",
   "license": "MIT",
   "description": "Design system for Mediacube services",
   "sideEffects": [
@@ -14,13 +14,17 @@
     "design-system"
   ],
   "author": "dsa@mediacube.io",
-  "main": "./dist/mediacube-ui-v2.umd.cjs",
-  "module": "./dist/mediacube-ui-v2.js",
-  "types": "./dist/types/index.d.ts",
   "files": [
     "dist",
     "!dist/assets/icons"
   ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./components/*": "./dist/components/*/index.js",
+    "./composables/*": "./dist/composables/*/index.js",
+    "./tokens": "./dist/assets/tokens/json/index.js",
+    "./assets": "./dist/assets/index.js"
+  },
   "private": false,
   "type": "module",
   "engines": {
