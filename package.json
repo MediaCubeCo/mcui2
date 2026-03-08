@@ -18,12 +18,18 @@
     "dist",
     "!dist/assets/icons"
   ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
     "./components/*": "./dist/components/*/index.js",
     "./composables/*": "./dist/composables/*/index.js",
     "./tokens": "./dist/assets/tokens/json/index.js",
-    "./assets": "./dist/assets/index.js"
+    "./assets": "./dist/assets/index.js",
+    "./style.css": "./dist/style.css",
+    "./dist/styles/*": "./dist/styles/*",
+    "./dist/tokens/*": "./dist/tokens/*"
   },
   "private": false,
   "type": "module",
