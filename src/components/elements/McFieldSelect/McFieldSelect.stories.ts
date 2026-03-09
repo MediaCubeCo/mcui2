@@ -6,7 +6,6 @@ import iconsList from '@/mocks/icons.json'
 import { Colors } from '@/types/styles/Colors'
 import { SelectListDirections } from '@/enums/Select'
 const iconsArrayList = Object.keys(iconsList)
-import sprite from '../../../assets/iconsSprite.svg?raw'
 
 const meta = {
     title: 'McFieldSelect',
@@ -150,11 +149,6 @@ export const SingleWithPreview: Story = {
           }
         },
         components: { McFieldSelect },
-        computed: {
-          sprite() {
-            return sprite
-          },
-        },
         template: `
           <mc-field-select 
             v-model="v"
@@ -165,7 +159,6 @@ export const SingleWithPreview: Story = {
             option-with-preview
             :options="options"
           />
-          <span v-html="sprite" style="display: none" />
           <br />
           Output: {{ v }}
         `
@@ -184,13 +177,7 @@ export const Multiple: Story = {
           }
         },
         components: { McFieldSelect },
-        computed: {
-          sprite() {
-            return sprite
-          }
-        },
         template: `
-          <div v-html="sprite"></div>
           <mc-field-select 
             v-model="v"
             placeholder="Select McPay benefits"
@@ -284,11 +271,6 @@ export const GroupedWithOptions: Story = {
             ]
           }
         },
-        computed: {
-          sprite() {
-            return sprite
-          }
-        },
         components: { McFieldSelect },
         template: `
           <mc-field-select 
@@ -301,7 +283,6 @@ export const GroupedWithOptions: Story = {
             :value-field="valueField"
             :options="options"
           />
-          <span v-html="sprite" style="display: none" />
           <br />
           Output: {{ v }}
         `

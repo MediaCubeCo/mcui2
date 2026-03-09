@@ -1,0 +1,12 @@
+<script setup lang="ts">
+import McIconShell from '../elements/McIconShell/McIconShell.vue'
+import { mcSvgIconStandaloneProps } from '@/composables/useMcSvgIconProps'
+
+const viewBox = '0 0 24 24'
+const props = defineProps({ ...mcSvgIconStandaloneProps })
+</script>
+<template>
+  <McIconShell :view-box="viewBox" v-bind="props">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 22C6.47667 22 2 17.5233 2 12C2 6.47667 6.47667 2 12 2C17.5233 2 22 6.47667 22 12C22 17.5233 17.5233 22 12 22ZM8.53033 7.46967C8.23744 7.17678 7.76256 7.17678 7.46967 7.46967C7.17678 7.76256 7.17678 8.23744 7.46967 8.53033L10.9393 12L7.46967 15.4697C7.17678 15.7626 7.17678 16.2374 7.46967 16.5303C7.76256 16.8232 8.23744 16.8232 8.53033 16.5303L12 13.0607L15.4697 16.5303C15.7626 16.8232 16.2374 16.8232 16.5303 16.5303C16.8232 16.2374 16.8232 15.7626 16.5303 15.4697L13.0607 12L16.5303 8.53033C16.8232 8.23744 16.8232 7.76256 16.5303 7.46967C16.2374 7.17678 15.7626 7.17678 15.4697 7.46967L12 10.9393L8.53033 7.46967Z" fill="currentColor"/>
+  </McIconShell>
+</template>

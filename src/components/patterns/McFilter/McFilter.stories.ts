@@ -3,7 +3,6 @@ import McFilter from './McFilter.vue'
 import McButton from '../../elements/McButton/McButton.vue'
 import McFilterPresets from './McFilterPresets/McFilterPresets.vue'
 import { filters } from '@/mocks/filterMocks'
-import sprite from '../../../assets/iconsSprite.svg?raw'
 
 const meta = {
   title: 'McFilter',
@@ -70,13 +69,9 @@ export const Default: Story = {
         filters() {
           return filters
         },
-        sprite() {
-          return sprite
-        },
       },
       template: `
         <div>
-          <span v-html="sprite" />
           <mc-filter :filters="filters" with-presets with-activator v-model="v" name="mc-filter"></mc-filter>
         </div>
             `

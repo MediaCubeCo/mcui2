@@ -1,0 +1,12 @@
+<script setup lang="ts">
+import McIconShell from '../elements/McIconShell/McIconShell.vue'
+import { mcSvgIconStandaloneProps } from '@/composables/useMcSvgIconProps'
+
+const viewBox = '0 0 24 24'
+const props = defineProps({ ...mcSvgIconStandaloneProps })
+</script>
+<template>
+  <McIconShell :view-box="viewBox" v-bind="props">
+    <path d="M13.0001 20C12.9921 18.896 13.888 18 14.992 18C16.104 18 17 18.896 17 20M13.0001 20C13.0001 21.104 13.896 22 15 22C16.104 22 17 21.104 17 20M13.0001 20H3M17 20H21M19 15H5C3.895 15 3 14.105 3 13V5C3 3.895 3.895 3 5 3H19C20.105 3 21 3.895 21 5V13C21 14.105 20.105 15 19 15Z" stroke="currentColor" fill="none"  stroke-linecap="round" stroke-linejoin="round"/>
+  </McIconShell>
+</template>

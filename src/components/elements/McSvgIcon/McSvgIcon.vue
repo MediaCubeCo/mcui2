@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { type ColorTypes } from '@/types/styles/Colors'
-import { computed, type PropType } from 'vue'
+import { computed, type PropType, useId, provide } from 'vue'
 import type { DirectionsUnion } from '@/types/IDirections'
 import { type IconsListUnion } from '@/types/styles/Icons'
 import { Directions } from '@/enums/ui/Directions'
 import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from '@/utils/mcSvgIconAdaptiveProps'
 import { useHelper } from '@/composables/useHelper'
 import { useTheme } from '@/composables/useTheme'
+import { iconRegistry } from '@/components/icons/registry'
 
+const DEFAULT_SPRITE_ID = 'mcSvgIconSprite'
+/** Ключ provide/inject для id символа при использовании иконки внутри McSvgIcon */
 const helper = useHelper()
 const props = defineProps({
   ...adaptiveAdditionalProps,
@@ -81,7 +84,7 @@ const responsivePropsClasses = computed((): { [key: string]: boolean } => {
 const classes = computed((): { [key: string]: boolean } => ({
   'mc-svg-icon': true,
   [`mc-svg-icon--dir-${props.dir}`]: !!props.dir,
-  ...responsivePropsClasses.value,
+  ...responsivePropsClasses.value
 }))
 
 const styles = computed((): { [key: string]: string } => ({
@@ -89,11 +92,28 @@ const styles = computed((): { [key: string]: string } => ({
   ['--mc-svg-icon-weight']: String(props.weight)?.replace('.', '')?.split('')?.join('.'),
   ['--mc-svg-icon-color']: props.color && theme.colors[props.color]
 }))
+
+const useIconRegistry = computed(() => props.spriteId === DEFAULT_SPRITE_ID)
+
+const iconComponent = computed(() => {
+  if (!useIconRegistry.value) return null
+  return (
+    iconRegistry[props.name as IconsListUnion] ??
+    (props.defaultName ? iconRegistry[props.defaultName as IconsListUnion] : null)
+  )
+})
+
+const symbolId = useId()
+provide('mcSvgIconSymbolId', symbolId)
 </script>
 
 <template>
   <svg :class="classes" :style="styles">
-    <use :xlink:href="`#${props.spriteId}-${props.name}`"></use>
+    <template v-if="iconComponent">
+      <component :is="iconComponent" />
+      <use :href="`#${symbolId}`" />
+    </template>
+    <use v-else :xlink:href="`#${props.spriteId}-${props.name}`" />
   </svg>
 </template>
 

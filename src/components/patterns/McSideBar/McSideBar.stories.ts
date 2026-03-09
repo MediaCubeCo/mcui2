@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import McSideBar from './McSideBar.vue'
 import McTitle from '@/components/elements/McTitle/McTitle.vue'
 import { menu, apps } from '@/mocks/sidebar'
-import sprite from '../../../assets/iconsSprite.svg?raw'
 
 const meta = {
   title: 'McSideBar',
@@ -37,9 +36,6 @@ export const Default: Story = {
         apps() {
           return apps
         },
-        sprite() {
-          return sprite
-        },
       },
       methods: {
         handleCompact() {
@@ -53,7 +49,6 @@ export const Default: Story = {
               <mc-title color="white">bottom-message slot</mc-title>
             </template>
           </mc-side-bar>
-          <span v-html="sprite" />
         </div>
             `
     }

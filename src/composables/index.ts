@@ -1,4 +1,9 @@
 export { useDrawer } from './useDrawer'
+export {
+  useMcSvgIconProps,
+  mcSvgIconStandaloneProps,
+  type McSvgIconStandaloneProps
+} from './useMcSvgIconProps'
 export { UseEncodeDecode } from './useEncodeDecode'
 export { useFieldErrors } from './useFieldErrors'
 export { UseFile } from './useFile'

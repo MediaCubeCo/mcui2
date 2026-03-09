@@ -1,6 +1,7 @@
 export * from './dayjs'
 export * from './sanitize'
 export * from './proxy'
+export * from './iconNameToComponentName'
 export * as mcGridColAdaptiveProps from './mcGridColAdaptiveProps'
 export * as mcSvgIconAdaptiveProps from './mcSvgIconAdaptiveProps'
 export * as mcTitleAdaptiveProps from './mcTitleAdaptiveProps'

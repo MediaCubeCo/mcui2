@@ -31,8 +31,8 @@
     "./dist/fonts/*": "./dist/fonts/*",
     "./dist/fonts/*/*": "./dist/fonts/*/*",
     "./fonts/*/*": "./dist/fonts/*/*",
-    "./dist/iconsSprite.svg": "./dist/iconsSprite.svg",
     "./components/*": "./dist/components/*/index.js",
+    "./icons": "./dist/components/icons/index.js",
     "./composables/*": "./dist/composables/*/index.js",
     "./tokens": "./dist/assets/tokens/json/index.js",
     "./assets": "./dist/assets/index.js",
@@ -55,9 +55,9 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "build:scss-to-json": "node scss-to-json.js",
-    "build:svg-sprite": "node create-svg-sprite.js",
+    "build:icons": "node build-icons.js",
     "build:readme": "node update-readme.js",
-    "prerelease": "yarn build:svg-sprite && yarn build:scss-to-json && yarn build:readme && yarn build-storybook && yarn build",
+    "prerelease": "yarn build:icons && yarn build:scss-to-json && yarn build:readme && yarn build-storybook && yarn build",
     "release": "standard-version"
   },
   "dependencies": {

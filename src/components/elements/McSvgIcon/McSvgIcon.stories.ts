@@ -7,7 +7,6 @@ import { Colors } from '@/types/styles/Colors'
 import { Sizes } from '@/types/styles/Sizes'
 import { Directions } from '@/enums/ui/Directions'
 import iconsList from '@/mocks/icons.json'
-import sprite from '../../../assets/iconsSprite.svg?raw'
 
 const iconsArrayList = Object.keys(iconsList)
 
@@ -102,13 +101,9 @@ export const FullList: Story = {
               ]
             : defaultSections
         },
-        sprite() {
-          return sprite
-        },
       },
       template: `
                 <section>
-                    <span v-html="sprite" />
                     <mc-field-text v-model="search" name="search" title="Search" placeholder="Start typing to search..." />
                     <div v-for="section in iconsSections" :key="section.id" :id="section.id">
                         <mc-separator indent-bottom="400" indent-top="400" />
