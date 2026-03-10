@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import McTitle from '@/components/elements/McTitle/McTitle.vue'
 import McFieldRadio from '@/components/elements/McFieldRadio/McFieldRadio.vue'
-import { computed, type PropType, useSlots, watch } from 'vue'
+import { computed, type PropType, useId, useSlots, watch } from 'vue'
 import { useFieldErrors } from '@/composables/useFieldErrors'
 import type { IRadioGroupOptions, IRadioGroupOption } from '@/types/IRadioGroup'
 import { type DirectionsUnion } from '@/types/IDirections'
@@ -99,9 +99,9 @@ const computedOptions = computed((): object => {
   if (!props.options.length) return []
   return props.options.map((o: IRadioGroupOption, i: number) => {
     const optionData = typeof o === 'object' ? o : ({ label: o, value: o } as IRadioGroupOption)
-    const dateNow = Date.now()
+    const dateNow = useId()
     return {
-      id: dateNow + i,
+      id: dateNow + '|' + i,
       ...optionData,
       disabled: props.disabled || optionData.disabled,
       value: optionData.value,

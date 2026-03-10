@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, PropType, nextTick } from 'vue'
+import { ref, onMounted, watch, computed, PropType, nextTick, useId } from 'vue'
 import { Colors, ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { FontSizes } from '@/types/styles/FontSizes'
@@ -44,7 +44,7 @@ const props = defineProps({
     default: 'normal'
   }
 })
-const id = ref<number>(Date.now())
+const id = useId()
 const spin_active = ref<boolean>(false)
 const offset = ref<number>(0)
 
@@ -108,7 +108,7 @@ watch(() => props.end, (newVal, oldVal) => {
 </script>
 
 <template>
-  <div :id="String(id)" class="mc-spin-digit-container" :style="containerStyles">
+  <div :id="id" class="mc-spin-digit-container" :style="containerStyles">
     <!-- фэйк цифра, нужно что бы устанавливать нужную ширину контейнера -->
     <span class="mc-spin-digit-container__target">{{ end }}</span>
     <div :class="computedSpinClasses" :style="digitStyles">

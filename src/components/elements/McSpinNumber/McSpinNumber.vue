@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, PropType } from 'vue'
+import { ref, computed, PropType, useId } from 'vue'
 import { ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { FontSizes } from '@/types/styles/FontSizes'
@@ -9,7 +9,7 @@ import { useTheme } from '@/composables/useTheme'
 export type FontSizesUnion = keyof typeof FontSizes
 export type FontWeightUnion = keyof typeof FontWeights
 
-const dateNow = Date.now()
+const dateNow = useId()
 const id = ref(String(dateNow))
 
 const props = defineProps({

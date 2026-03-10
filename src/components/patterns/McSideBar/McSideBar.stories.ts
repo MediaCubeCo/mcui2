@@ -25,7 +25,7 @@ export const Default: Story = {
     return {
       data() {
         return {
-          compact: false
+          compact: false,
         }
       },
       components: { McSideBar, McTitle },

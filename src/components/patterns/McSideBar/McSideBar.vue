@@ -16,8 +16,8 @@ const emit = defineEmits<{
   (e: 'hidden-mode', value: boolean): void
   (e: 'compact', value: boolean): void
   (e: 'chatraClick'): void
-  (e: 'item-selected', value: ISideBarMenuItemEnrichment): void
 }>()
+
 const props = defineProps({
   /**
    *  Название сервиса
@@ -300,7 +300,6 @@ provide('provideData', reactive<ISidebarThemeConfigProvide>({ currentThemeConfig
             :compact="pretty_compact"
             @handlerChatraClick="emit('chatraClick')"
             @open-side-bar="openSideBar"
-            @item-selected="($event) => emit('item-selected', $event)"
           >
             <template #content-append>
               <slot name="content-append" v-bind="{ compact: pretty_compact }" />

@@ -103,7 +103,7 @@ const iconComponent = computed(() => {
   )
 })
 
-const symbolId = useId()
+const symbolId = useId() + props.name
 provide('mcSvgIconSymbolId', symbolId)
 </script>
 

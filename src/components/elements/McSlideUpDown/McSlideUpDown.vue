@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, type PropType, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, type PropType, ref, useId, watch } from 'vue'
 
 interface animationPayload {
   contentHeight: string | number
@@ -48,7 +48,7 @@ const props = defineProps({
   }
 })
 
-const key = ref(Date.now())
+const key = useId()
 const open = ref<boolean>(props.active)
 const is_hydrated = ref(false)
 const animation_in_progress = ref<boolean>(false)
@@ -129,7 +129,6 @@ const handleOpen = ({ contentHeight }: animationPayload) => {
 }
 
 onMounted(() => {
-  key.value = Date.now()
   nextTick(() => {
     is_hydrated.value = true
   })
