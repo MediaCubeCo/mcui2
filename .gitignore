@@ -16,7 +16,8 @@ dist-ssr
 coverage
 *.local
 /src/index.js
-/src/components/index.js
+/src/components/**/index.js
+/src/components/icons/**/*.vue.js
 /src/assets/tokens/json/index.js
 /src/main.js
 /src/**/*.vue.js
