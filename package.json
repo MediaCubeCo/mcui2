@@ -1,6 +1,6 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.232",
+  "version": "0.0.233",
   "license": "MIT",
   "description": "Design system for Mediacube services",
   "sideEffects": [
@@ -34,6 +34,7 @@
     "./components/*": "./dist/components/*/index.js",
     "./components": "./dist/components/index.js",
     "./icons": "./dist/components/icons/index.js",
+    "./icons/*": "./dist/components/icons/*.js",
     "./composables/*": "./dist/composables/*/index.js",
     "./tokens": "./dist/assets/tokens/json/index.js",
     "./assets": "./dist/assets/index.js",
