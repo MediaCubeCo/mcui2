@@ -1,6 +1,6 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.235",
+  "version": "0.0.236",
   "license": "MIT",
   "description": "Design system for Mediacube services",
   "sideEffects": [
@@ -57,7 +57,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "build:scss-to-json": "node scss-to-json.js",
-    "build:icons": "node build-icons.js",
+    "build:icons": "node create-svg-sprite.js",
     "build:readme": "node update-readme.js",
     "prerelease": "yarn build:icons && yarn build:scss-to-json && yarn build:readme && yarn build-storybook && yarn build",
     "release": "standard-version"
