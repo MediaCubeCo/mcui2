@@ -1,5 +1,7 @@
-import McDropdown from './McDropdown.vue'
+import { defineAsyncComponent } from 'vue'
+
+const McDropdown = defineAsyncComponent(() => import('./McDropdown.vue'))
 export { McDropdown }
-import McDropdownPanel from './McDropdownPanel.vue'
+const McDropdownPanel = defineAsyncComponent(() => import('./McDropdownPanel.vue'))
 export { McDropdownPanel }
 export default McDropdown

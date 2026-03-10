@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useId, inject } from 'vue'
+import { useId, inject, onMounted } from 'vue'
 import { useMcSvgIconProps, mcSvgIconStandaloneProps } from '@/composables/useMcSvgIconProps'
 
 const props = defineProps({
@@ -11,8 +11,13 @@ const props = defineProps({
 })
 
 const symbolId = inject<string | null>('mcSvgIconSymbolId', null)
+const onIconReady = inject<(() => void) | null>('mcSvgIconOnReady', null)
 const localId = useId()
 const { classes, styles } = useMcSvgIconProps(props)
+
+onMounted(() => {
+  if (symbolId && onIconReady) onIconReady()
+})
 </script>
 
 <template>

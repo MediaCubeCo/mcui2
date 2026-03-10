@@ -1,3 +1,5 @@
-import McTableCard from './McTableCard.vue'
+import { defineAsyncComponent } from 'vue'
+
+const McTableCard = defineAsyncComponent(() => import('./McTableCard.vue'))
 export { McTableCard }
 export default McTableCard

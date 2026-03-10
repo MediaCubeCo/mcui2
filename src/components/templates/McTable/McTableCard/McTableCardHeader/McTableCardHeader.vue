@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import McButton from '@/components/elements/McButton/McButton.vue'
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
 import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import { ButtonSize } from '@/enums/ui/Button'
-import type { PropType } from 'vue'
+import { defineAsyncComponent, PropType } from 'vue'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types/styles/Colors'
 

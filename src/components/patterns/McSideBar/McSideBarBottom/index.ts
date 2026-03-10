@@ -1,3 +1,5 @@
-import McSideBarBottom from './McSideBarBottom.vue'
+import { defineAsyncComponent } from 'vue'
+
+const McSideBarBottom = defineAsyncComponent(() => import('./McSideBarBottom.vue'))
 export { McSideBarBottom }
 export default McSideBarBottom

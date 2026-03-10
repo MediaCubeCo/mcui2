@@ -5,6 +5,13 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 import path from 'path'
 
 export default defineConfig({
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler',
+      },
+    },
+  },
   plugins: [
     vue(),
     /**
@@ -22,6 +29,10 @@ export default defineConfig({
      * */
     viteStaticCopy({
       targets: [
+        {
+          src: 'src/assets/iconsSprite.svg',
+          dest: ''
+        },
         {
           src: 'src/assets/img',
           dest: ''

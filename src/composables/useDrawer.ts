@@ -1,5 +1,4 @@
-import { reactive, h, render, shallowRef, markRaw, inject, defineAsyncComponent } from 'vue'
-import DrawerContainer from '@/components/templates/McDrawer/McDrawerContainer.vue'
+import { reactive, h, render, shallowRef, markRaw, inject, defineAsyncComponent, type Component } from 'vue'
 import { getStoredAppContext } from '@/storedAppContext'
 import type { IDrawerServiceState, IDrawerProps, IDrawerState } from '@/types/IDrawer'
 import { IDSOptions } from '@/types/IDSOptions'
@@ -8,6 +7,9 @@ import { useHelper } from '@/composables/useHelper'
 const helper = useHelper()
 const componentCache = <Record<string, any>>{}
 const drawerInstanceCache = <Record<string, any>>{}
+
+let DrawerContainerComponent: Component | null = null
+let drawerContainerReady: Promise<void> | null = null
 
 const drawerServiceState = reactive<IDrawerServiceState>({
   isOpen: false,
@@ -31,16 +33,21 @@ const normalizeComponent = (comp: any) => {
   return comp
 }
 
-const createDrawerContainer = () => {
+const createDrawerContainer = async (): Promise<void> => {
   if (typeof window === 'undefined') return
 
   if (document.getElementById('drawer-container')) return
+
+  if (!DrawerContainerComponent) {
+    const mod = await import('@/components/templates/McDrawer/McDrawerContainer.vue')
+    DrawerContainerComponent = mod.default
+  }
 
   const el = document.createElement('div')
   el.id = 'drawer-container'
   document.body.appendChild(el)
 
-  const vnode = h(DrawerContainer, {
+  const vnode = h(DrawerContainerComponent!, {
     drawerServiceState,
     reactiveProps
   })
@@ -49,20 +56,22 @@ const createDrawerContainer = () => {
   render(vnode, el)
 }
 
-const ensureDrawerContainerExists = () => {
-  if (getStoredAppContext()) {
-    createDrawerContainer()
+const ensureDrawerContainerExists = (): Promise<void> => {
+  if (!getStoredAppContext()) return Promise.resolve()
+  if (!drawerContainerReady) {
+    drawerContainerReady = createDrawerContainer()
   }
+  return drawerContainerReady
 }
 
-const showDrawer = (componentName: string, drawerProps: Partial<IDrawerProps> = {}, componentProps = {}) => {
+const showDrawer = async (componentName: string, drawerProps: Partial<IDrawerProps> = {}, componentProps = {}) => {
   const compLoader = drawerComponents.value[componentName]
 
   if (!compLoader) {
     return console.warn(`Drawer component ${componentName} not registered`)
   }
 
-  ensureDrawerContainerExists()
+  await ensureDrawerContainerExists()
 
   const existing = helper.findLastSafe(reactiveProps.drawers, (d) => d.componentName === componentName)
 

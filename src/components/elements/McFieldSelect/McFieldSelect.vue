@@ -277,7 +277,7 @@ const closest_scroll_element = ref<HTMLElement>(document?.documentElement)
 const scroll_resize_observer = ref<ResizeObserver>()
 const field_key = ref(`field-${props.name}`)
 const list_teleported_to_body = ref(false)
-const list_original_parent = ref<Element | null>(null)
+const list_original_parent = ref<HTMLElement | null>(null)
 const list_original_next_sibling = ref<ChildNode | null>(null)
 const list_portal_wrapper = ref<HTMLElement | null>(null)
 
@@ -498,9 +498,8 @@ const repositionDropDown = () => {
   const actualBottom = bottom - scrollElementRect.bottom
   // if field hides under scrolled element borders -> blur select to prevent overlap
   if (actualTop >= -height && actualBottom < height) {
-    //@ts-ignore
-    const { list } = ref.$refs
-    const cbRect = getFixedContainingBlock(list as HTMLElement)
+    const list = ref.$refs.list as HTMLElement
+    const cbRect = getFixedContainingBlock(list)
     const offsetX = cbRect ? cbRect.left : 0
     const offsetY = cbRect ? cbRect.top : 0
 

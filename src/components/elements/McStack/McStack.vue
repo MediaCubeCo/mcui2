@@ -1,5 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, h, useSlots, createApp, type PropType, onBeforeMount } from 'vue'
+import {
+  ref,
+  onMounted,
+  onUnmounted,
+  computed,
+  h,
+  useSlots,
+  createApp,
+  type PropType,
+  onBeforeMount,
+  type Slots
+} from 'vue'
 import { Spaces, SpacesUnion } from '@/types/styles/Spaces'
 import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
 import { TooltipSizes } from '@/enums/Tooltip'
@@ -18,17 +29,15 @@ const props = defineProps({
   },
   overflowTooltip: {
     type: String as PropType<string>,
-    default: null,
-  },
+    default: null
+  }
 })
 
-const slots = useSlots()
+const slots = useSlots() as Slots
 const container = ref<HTMLElement | null>(null)
+const defaultSlot = slots['default']
 const children =
-  (slots.default && slots.default()[0].children?.length
-    ? slots.default()[0].children
-    : //@ts-ignore
-      slots.default()) || []
+  (defaultSlot && defaultSlot()[0].children?.length ? defaultSlot()[0].children : (defaultSlot?.() ?? [])) || []
 
 //@ts-ignore
 const visibleChildren = ref<any[]>([])
@@ -86,13 +95,15 @@ const updateChildrenVisible = (): void => {
       : itemNode.getBoundingClientRect().width + 4
     app.unmount()
     itemNode.remove()
-    const getSize = (size: SpacesUnion): number => parseFloat(size) * parseInt(getComputedStyle(document.documentElement).fontSize)
+    const getSize = (size: SpacesUnion): number =>
+      parseFloat(size) * parseInt(getComputedStyle(document.documentElement).fontSize)
     const moreContentWidth = getSize(Spaces['300'])
     const itemIndent = props.collapsed ? -getSize(Spaces['200']) : getSize(Spaces['150'])
 
     if (
       (totalWidth + (itemWidth + itemIndent) <= container.value.clientWidth - moreContentWidth &&
-      itemCount < props.visibleCount) || itemCount === 0
+        itemCount < props.visibleCount) ||
+      itemCount === 0
     ) {
       totalWidth += itemWidth + itemIndent
       visibleChildren.value.push(item)

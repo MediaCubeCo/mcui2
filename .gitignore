@@ -17,6 +17,7 @@ coverage
 *.local
 /src/index.js
 /src/components/**/index.js
+/src/components/**/registry.js
 /src/components/icons/**/*.vue.js
 /src/assets/tokens/json/index.js
 /src/main.js

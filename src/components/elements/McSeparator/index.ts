@@ -1,3 +1,5 @@
-import McSeparator from './McSeparator.vue'
+import { defineAsyncComponent } from 'vue'
+
+const McSeparator = defineAsyncComponent(() => import('./McSeparator.vue'))
 export { McSeparator }
 export default McSeparator

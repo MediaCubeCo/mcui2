@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import McDropdown from '@/components/patterns/McDropdown/McDropdown.vue'
+import { defineAsyncComponent } from 'vue'
 import McButton from '@/components/elements/McButton/McButton.vue'
 import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import McPreview from '@/components/patterns/McPreview/McPreview.vue'
@@ -19,6 +19,7 @@ import type { ISideBarApp, ISidebarThemeConfig, ISidebarThemeConfigProvide } fro
 import type { TitleVariationsUnion } from '@/types/ITitle'
 import { defaultThemes } from '@/mocks/sidebar'
 
+const McDropdown = defineAsyncComponent(() => import('@/components/patterns/McDropdown/McDropdown.vue'))
 const helper = useHelper()
 const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
 const props = defineProps({

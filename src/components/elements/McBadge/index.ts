@@ -1,3 +1,5 @@
-import McBadge from './McBadge.vue'
+import { defineAsyncComponent } from 'vue'
+
+const McBadge = defineAsyncComponent(() => import('./McBadge.vue'))
 export { McBadge }
 export default McBadge

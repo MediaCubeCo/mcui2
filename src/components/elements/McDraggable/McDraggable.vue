@@ -6,7 +6,7 @@ import McPreview from '@/components/patterns/McPreview/McPreview.vue'
 import type { ColorsUnion } from '@/types/styles/Colors'
 import { useTheme } from '@/composables/useTheme'
 
-interface DraggableInitPayload {
+export interface DraggableInitPayload {
   x: number
   y: number
 }

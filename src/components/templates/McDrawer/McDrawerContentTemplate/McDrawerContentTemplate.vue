@@ -1,11 +1,8 @@
 <script setup lang="ts">
+import { defineAsyncComponent, PropType } from 'vue'
 import { TitleVariations } from '@/enums/Title'
 import { Weights } from '@/enums/ui/Weights'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import type { PropType } from 'vue'
-import { useSlots } from 'vue'
-
-const slots = useSlots()
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
 
 const props = defineProps({
   /**

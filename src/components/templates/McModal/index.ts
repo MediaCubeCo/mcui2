@@ -1,5 +1,6 @@
-import McModalContainer from './McModalContainer.vue'
+import { defineAsyncComponent } from 'vue'
+const McModalContainer = defineAsyncComponent(() => import('./McModalContainer.vue'))
 export { McModalContainer }
-import McModal from './McModal.vue'
+const McModal = defineAsyncComponent(() => import('./McModal.vue'))
 export { McModal }
 export default McModalContainer

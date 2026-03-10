@@ -1,5 +1,7 @@
-import McDrawer from './McDrawer.vue'
+import { defineAsyncComponent } from 'vue'
+
+const McDrawer = defineAsyncComponent(() => import('./McDrawer.vue'))
 export { McDrawer }
-import McDrawerContainer from './McDrawerContainer.vue'
+const McDrawerContainer = defineAsyncComponent(() => import('./McDrawerContainer.vue'))
 export { McDrawerContainer }
 export default McDrawer
