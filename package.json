@@ -1,6 +1,6 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.230",
+  "version": "0.0.231",
   "license": "MIT",
   "description": "Design system for Mediacube services",
   "sideEffects": [
@@ -74,7 +74,10 @@
     "xss": "^1.0.15"
   },
   "peerDependencies": {
-    "vue": "^3.4.29"
+    "vue": "^3.5.30"
+  },
+  "overrides": {
+    "vue": "3.5.30"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
@@ -109,7 +112,7 @@
     "typescript": "~5.4.0",
     "vite": "^5.4.11",
     "vite-plugin-dts": "^4.3.0",
-    "vue": "^3.4.29",
+    "vue": "3.5.30",
     "vue-tsc": "^2.0.21"
   },
   "volta": {
