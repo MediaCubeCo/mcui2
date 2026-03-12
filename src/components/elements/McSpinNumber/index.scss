@@ -4,10 +4,20 @@
 .mc-spin-number {
   &-container {
     display: flex;
+    align-items: center;
+    font-size: var(--mc-spin-number-container-font-size);
+    line-height: 1;
+    min-height: var(--mc-spin-number-font-size);
+    height: var(--mc-spin-number-font-size);
   }
   &__non-digit {
-    font-size: var(--mc-spin-number-font-size);
-    color: var(--mc-spin-number-font-color);
+    display: inline-flex;
     line-height: 1;
+    font-size: var(--mc-spin-number-font-size);
+    font-weight: var(--mc-spin-number-font-weight);
+    color: var(--mc-spin-number-font-color);
+    text-align: center;
+    flex-shrink: 0;
+    min-width: .3em;
   }
 }

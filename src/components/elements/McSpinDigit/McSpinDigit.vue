@@ -42,17 +42,25 @@ const props = defineProps({
   weight: {
     type: String as () => FontWeightUnion,
     default: 'normal'
+  },
+  parentId: {
+    type: String,
+    default: null
   }
 })
-const id = useId()
 const spin_active = ref<boolean>(false)
 const offset = ref<number>(0)
+const fallback_id = useId()
 
 const computedSpinClasses = computed(() => {
   return {
     'mc-spin-digit': true,
     'mc-spin-digit--off': !spin_active.value
   }
+})
+
+const id = computed(() => {
+  return props.parentId ?? fallback_id
 })
 
 const digitStyles = computed(() => {
@@ -70,36 +78,49 @@ const containerStyles = computed(() => {
   }
 })
 
+const preparedEnd = computed(() => {
+  return getSimpleNumValue(props.end)
+})
+const preparedStart = computed(() => {
+  return getSimpleNumValue(props.start)
+})
+
 const triggerSpin = () => {
   emit('spin-start', props.start)
-
   // делаем проверку, если duration = 0 то скипаем анимацию
   if (!props.duration) {
-    offset.value = props.end
-    emit('spin-end', props.end)
+    offset.value = preparedEnd.value
+    emit('spin-end', preparedEnd.value)
     return
   }
 
   spin_active.value = true
   nextTick(() => {
-    offset.value = props.end
+    offset.value = preparedEnd.value
 
     setTimeout(() => {
       spin_active.value = false
-      emit('spin-end', props.end)
+      emit('spin-end', preparedEnd.value)
     }, props.duration)
   })
 }
 
-const init = () => {
-  spin_active.value = false
-  offset.value = props.start
-  requestAnimationFrame(triggerSpin)
+const getSimpleNumValue = (number: number) => {
+  let prepared_end = number ?? 0
+  prepared_end = Math.max(prepared_end, 0)
+  prepared_end = Math.min(prepared_end, 9)
+  return prepared_end
 }
 
-onMounted(() => {
-  init()
-})
+const init = () => {
+  spin_active.value = false
+  offset.value = preparedStart.value
+  if (typeof requestAnimationFrame !== 'undefined') {
+    requestAnimationFrame(triggerSpin)
+  }
+}
+
+init()
 
 watch(() => props.end, (newVal, oldVal) => {
   newVal !== oldVal && triggerSpin()
@@ -108,12 +129,12 @@ watch(() => props.end, (newVal, oldVal) => {
 </script>
 
 <template>
-  <div :id="id" class="mc-spin-digit-container" :style="containerStyles">
+  <div class="mc-spin-digit-container" :style="containerStyles">
     <!-- фэйк цифра, нужно что бы устанавливать нужную ширину контейнера -->
     <span class="mc-spin-digit-container__target">{{ end }}</span>
     <div :class="computedSpinClasses" :style="digitStyles">
-      <span v-for="n in 10" :key="`${id}-${start}-${end}-${n}`" class="mc-spin-digit__digit">
-        {{ (n - 1 + 10) % 10 }}
+      <span v-for="(_, i) in 10" :key="`mc-spin-digit-${id}-${i}`" class="mc-spin-digit__digit">
+        {{ i }}
       </span>
     </div>
   </div>

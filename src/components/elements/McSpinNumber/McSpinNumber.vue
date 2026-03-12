@@ -9,8 +9,7 @@ import { useTheme } from '@/composables/useTheme'
 export type FontSizesUnion = keyof typeof FontSizes
 export type FontWeightUnion = keyof typeof FontWeights
 
-const dateNow = useId()
-const id = ref(String(dateNow))
+const id = useId()
 
 const props = defineProps({
   start: {
@@ -30,7 +29,7 @@ const props = defineProps({
     default: '300'
   },
   color: {
-    type: String as () => ColorTypes,
+    type: String as () => ColorTypes
   },
   weight: {
     type: String as () => FontWeightUnion,
@@ -40,40 +39,59 @@ const props = defineProps({
 
 const theme = useTheme('spinNumber')
 
-const current_from = ref<number | null>(null)
+const current_from = ref<string | null>(null)
 
 const computedColor = computed((): ColorTypes => {
-  return props.color || theme.component.color as ColorTypes
+  return props.color || (theme.component.color as ColorTypes)
 })
 const currentTo = computed((): (string | number)[] => {
   // @ts-ignore
-  return String(props.end).split('').map(v => isNaN(v) ? v : +v)
+  return String(props.end ?? 0).split('').map((v) => (/^\s$/.test(v) ? v : isNaN(v) ? v : +v))
 })
 const currentFrom = computed((): (string | number)[] => {
-  const from = `000000000${String((current_from.value ?? props.start) || 0)}`.substr(-currentTo.value.length)
+  const from = `000000000${String((current_from.value ?? props.start) || 0)}`.slice(-currentTo.value.length)
   // @ts-ignore
-  return from.split('').map(v => isNaN(v) ? v : +v)
+  return formatNumber(from)
 })
 
+const containerStyle = computed((): { [key: string]: string } => {
+  return {
+    '--mc-spin-number-container-font-size': FontSizes[props.fontSize],
+  }
+})
 const nonDigitStyles = computed((): { [key: string]: string } => {
   return {
     '--mc-spin-number-font-size': FontSizes[props.fontSize],
-    '--mc-spin-number-font-color': theme.colors[computedColor.value]
+    '--mc-spin-number-font-color': theme.colors[computedColor.value],
+    '--mc-spin-number-font-weight': FontWeights[props.weight]
   }
 })
 
+const formatNumber = (num: number) => {
+  return String(num)
+    .split('')
+    .map((n) => (/^\s$/.test(n) ? n : /\d/.test(n) ? +n : n))
+}
+
 const actualizeNumbers = (): void => {
-  current_from.value = props.end as number
+  current_from.value = String(props.end ?? 0)
+}
+
+const handleCopy = (e: ClipboardEvent) => {
+  if (e.clipboardData) {
+    e.preventDefault()
+    e.clipboardData.setData('text/plain', String(props.end))
+  }
 }
 </script>
 
 <template>
-  <div class="mc-spin-number-container" :id="id">
-    <div v-for="(digit, i) in currentTo" :key="`mc-spin-number-${id}-${i}-${props.end}`" class="mc-spin-number">
-      <template v-if="isNaN(digit as number)">
+  <div class="mc-spin-number-container" :id="id" :style="containerStyle" @copy="handleCopy">
+    <div v-for="(digit, i) in currentTo" :key="`mc-spin-number-${id}-${i}`" class="mc-spin-number">
+      <template v-if="!Number.isFinite(digit)">
         <span :style="nonDigitStyles" class="mc-spin-number__non-digit">
-        {{ currentTo[i] }}
-      </span>
+          {{ currentTo[i] }}
+        </span>
       </template>
       <mc-spin-digit
         v-else
@@ -83,6 +101,7 @@ const actualizeNumbers = (): void => {
         :font-size="props.fontSize"
         :weight="props.weight"
         :color="computedColor"
+        :parent-id="id"
         class="mc-spin-number__digit"
         @spin-end="actualizeNumbers"
       />

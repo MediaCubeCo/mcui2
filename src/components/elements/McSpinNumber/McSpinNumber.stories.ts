@@ -56,14 +56,33 @@ export const Random: Story = {
                 setRandomFloatEnd() {
                     this.end = ((Math.random() * 10000) + 1).toFixed(2)
                 },
+                setFormattedEnd() {
+                    if (this.end === '44 935.47 $') {
+                        this.end = '- 27 282.92€'
+                    } else if (this.end === '- 27 282.92€') {
+                        this.end = '$77,901.21'
+                    }else if (this.end === '$77,901.21') {
+                        this.end = '-$7 001.99'
+                    } else if (this.end === '-$7 001.99') {
+                        this.end = -2000
+                    } else if (this.end === -2000) {
+                        this.end = -0.000000023
+                    } else if (this.end === -0.000000023) {
+                        this.end = '00000000012.5'
+                    } else if (this.end === '00000000012.5') {
+                        this.end = '44 935.47 $'
+                    } else this.end = '44 935.47 $'
+                },
             },
             template: `
                 <mc-spin-number font-size="700" color="red" :end="end" :start="0" :duration="500" />
+                <mc-spin-number font-size="400" color="red" :end="end" :start="0" :duration="500" />
                 <br />
                 End v - {{ end }}
                 <br />
                 <br />
                 <mc-button @click="() => setRandomEnd()">Random Int</mc-button>&nbsp;
+                <mc-button @click="() => setFormattedEnd()">Formatted end</mc-button>&nbsp;
                 <mc-button @click="() => setRandomFloatEnd()">Random Float</mc-button>
             `
         }
