@@ -109,7 +109,7 @@ onMounted(() => {
   window.addEventListener('mousemove', onMouseMove)
   window.addEventListener('mouseup', onMouseUp)
   init()
-  setTimeout(() => handlerScroll(), 10)
+  setTimeout(handlerScroll, 10)
 })
 
 onBeforeUnmount(() => {

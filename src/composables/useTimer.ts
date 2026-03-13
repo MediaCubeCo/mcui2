@@ -1,6 +1,6 @@
 import { ref, onBeforeUnmount } from 'vue'
 
-export function useTimer(callback: Function, duration: number) {
+export function useTimer(callback: () => void, duration: number) {
   const timeToEnd = ref<number>(duration)
   const timerStart = ref<number>(Date.now())
   const timeout = ref<ReturnType<typeof setTimeout> | null>(null)
@@ -8,7 +8,7 @@ export function useTimer(callback: Function, duration: number) {
   function start() {
     timerStart.value = Date.now()
     timeout.value && clearTimeout(timeout.value) // ✅ Очищаем предыдущий таймер
-    timeout.value = setTimeout(() => callback(), timeToEnd.value)
+    timeout.value = setTimeout(callback, timeToEnd.value)
   }
   
   function pause() {
@@ -23,10 +23,7 @@ export function useTimer(callback: Function, duration: number) {
     }
   }
 
-  // ✅ Очистка при размонтировании компонента
-  onBeforeUnmount(() => {
-    stop()
-  })
+  onBeforeUnmount(stop)
 
   return {
     start,

@@ -192,10 +192,12 @@
         background-color: $color-white;
         .mc-svg-icon {
           color: var(--mc-field-select-color);
+          fill: var(--mc-field-select-color);
         }
         &:hover {
           .mc-svg-icon {
             color: $color-red;
+            fill: $color-red;
           }
         }
       }

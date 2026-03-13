@@ -21,6 +21,7 @@ import { TooltipPositions } from '@/enums/Tooltip'
 import { Weights } from '@/enums/ui/Weights'
 import { ChipSize } from '@/enums/Chip'
 import { useTheme } from '@/composables/useTheme'
+import { useThrottleFn } from '@vueuse/core'
 
 const emit = defineEmits<{
   (e: 'original-input', value: ISelectOptions[]): void
@@ -273,9 +274,8 @@ const searchValue = ref<string | null>(null)
 const field_select_ref = ref<InstanceType<typeof MultiSelect> | null>(null)
 const field_select_wrapper_ref = ref<InstanceType<typeof HTMLDivElement> | null>(null)
 const local_options = ref<ISelectOptions>([])
-const closest_scroll_element = ref<HTMLElement>(document?.documentElement)
+const closest_scroll_element = ref<HTMLElement | null>(null)
 const scroll_resize_observer = ref<ResizeObserver>()
-const field_key = ref(`field-${props.name}`)
 const list_teleported_to_body = ref(false)
 const list_original_parent = ref<HTMLElement | null>(null)
 const list_original_next_sibling = ref<ChildNode | null>(null)
@@ -331,17 +331,32 @@ const tagBind = computed(() => {
 })
 
 const computedOptions = computed((): ISelectOptions => {
-  //@ts-ignore
-  return !isGroupedOptions.value
-    ? ([...props.options, ...local_options.value].filter(
-        //@ts-ignore
-        (v, i, a) => a.findIndex((afi: ISelectOption) => afi[props.valueField] === v[props.valueField]) === i
-      ) as ISelectOptions)
-    : props.options
+  if (isGroupedOptions.value) return props.options as ISelectOptions
+
+  const unique = new Set()
+  const combined = [...props.options, ...local_options.value] as ISelectOptions
+  return combined.filter((option) => {
+    const key = option[props.valueField]
+    if (unique.has(String(key))) return false
+    unique.add(String(key))
+    return true
+  }) as ISelectOptions
 })
+
+const flatOptions = computed(() => {
+  return isGroupedOptions.value
+    ? computedOptions.value.map((co) => co[SelectGroupKeys.Values]).flat()
+    : computedOptions.value
+})
+
+const flatOptionsMap = computed(() => {
+  return new Map(flatOptions.value.map((fo) => [String(fo[props.valueField]), fo]))
+})
+
 const rtl = computed((): boolean => {
   return props.dir === Directions.Rtl
 })
+
 const classes = computed((): { [key: string]: boolean } => {
   return {
     'mc-field-select': true,
@@ -403,18 +418,14 @@ const computedModelValue = computed({
   get() {
     let preparedValue: any = isValueMustBeArray.value ? props.modelValue || [] : [props.modelValue].filter(Boolean)
     preparedValue = preparedValue.map((pv: string): ISelectOption => {
-      //@ts-ignore
-      const options = isGroupedOptions.value
-        ? computedOptions.value.map((co) => co[SelectGroupKeys.Values]).flat()
-        : computedOptions.value
-      const item = options.find((co) => String(co[props.valueField]) === String(pv))
+      const item = flatOptionsMap.value.get(String(pv))
 
       return {
-        [props.titleField]: item?.[props.titleField],
-        [props.valueField]: item?.[props.valueField],
+        [props.titleField]: item?.[props.titleField] || pv,
+        [props.valueField]: item?.[props.valueField] || pv,
         text: item?.text,
         icon: item?.icon,
-        is_closable: item && (!Object.prototype.hasOwnProperty.call(item, 'is_closable') || item.is_closable)
+        is_closable: item && (!Object.prototype.hasOwnProperty.call(item, 'is_closable') || item.is_closable) || !item
       }
     })
 
@@ -431,28 +442,47 @@ const computedModelValue = computed({
   }
 })
 
-const actualizeSavedOptions = (): void => {
+const actualizeSavedOptions = (payload: ISelectOption[] = []): void => {
   //Фильтруем локальные опции и оставляем только те, значения которых выбраны в селекте
-  local_options.value = local_options.value.filter((lo: ISelectOption) =>
-    props.modelValue?.constructor === Array
-      ? props.modelValue.map((v) => String(v)).includes(String(lo[props.valueField]))
-      : String(lo[props.valueField]) === String(props.modelValue)
-  )
+  const unique = new Set()
 
-  //Делаем Юник, что бы опции не повторялись
-  local_options.value = local_options.value.filter(
-    (v, i, a) => a.findIndex((afi) => String(afi[props.valueField]) === String(v[props.valueField])) === i
-  )
+  const new_options = isGroupedOptions.value
+    ? (payload as ISelectGroupOptions).flatMap((g) => g[SelectGroupKeys.Values] ?? [])
+    : (payload as ISelectOption[])
+
+  const combined = [...local_options.value, ...new_options]
+
+  local_options.value = combined.filter((option: ISelectOption) => {
+    const key = option[props.valueField]
+    if (unique.has(String(key))) return false
+
+    const has_selected =
+      props.modelValue?.constructor === Array
+        ? props.modelValue.map((v) => String(v)).includes(String(option[props.valueField]))
+        : String(option[props.valueField]) === String(props.modelValue)
+
+    if (has_selected) unique.add(String(key))
+    return has_selected
+  })
 }
 
 const findClosestScrollElement = (element: HTMLElement): HTMLElement => {
-  if (!element) return document?.documentElement
-  //@ts-ignore
-  const { overflow, overflowY } = getComputedStyle(element as HTMLElement)
+  if (!element || element.nodeType !== Node.ELEMENT_NODE) {
+    return document.documentElement
+  }
+  if (element === document.documentElement) {
+    return document.documentElement
+  }
+  const { overflow, overflowY } = getComputedStyle(element)
   const scrollableVariants = ['auto', 'scroll']
-  return scrollableVariants.some((v) => [overflow, overflowY].includes(v))
-    ? element
-    : findClosestScrollElement(element.parentNode as HTMLElement)
+  if (scrollableVariants.some((v) => [overflow, overflowY].includes(v))) {
+    return element
+  }
+  const parent = element.parentNode
+  if (!parent || parent.nodeType !== Node.ELEMENT_NODE) {
+    return document.documentElement
+  }
+  return findClosestScrollElement(parent as HTMLElement)
 }
 
 /**
@@ -461,6 +491,7 @@ const findClosestScrollElement = (element: HTMLElement): HTMLElement => {
  * Нужно для корректного позиционирования списка в модалках с contain: layout paint.
  */
 const getFixedContainingBlock = (element: HTMLElement): DOMRect | null => {
+  if (!element) return null
   let el: HTMLElement | null = element.parentElement
   while (el && el !== document.body) {
     const style = getComputedStyle(el)
@@ -477,7 +508,16 @@ const getFixedContainingBlock = (element: HTMLElement): DOMRect | null => {
   return null
 }
 
-const repositionDropDown = () => {
+// Добавляем к позиции отступ visualViewport?.offsetTop, который добавляет iOs при открытии вирутальной клавиатуры
+const iosViewportIndent = computed(() => {
+  return ['iPhone', 'iPad'].some((device) => navigator?.platform?.includes(device))
+    ? window.visualViewport?.offsetTop || 0
+    : 0
+})
+
+const repositionDropDown = useThrottleFn(() => {
+  if (!closest_scroll_element.value || !field_select_ref.value) return
+
   const {
     top = 0,
     bottom = 0,
@@ -488,11 +528,7 @@ const repositionDropDown = () => {
   const scrollElementRect = closest_scroll_element.value.getBoundingClientRect()
   const ref = field_select_ref.value
   if (!ref) return
-  const ios_devices = ['iPhone', 'iPad']
-  // Добавляем к позиции отступ visualViewport?.offsetTop, который добавляет iOs при открытии вирутальной клавиатуры
-  const iosViewportIndent = ios_devices?.some((device) => navigator?.platform?.includes(device))
-    ? window.visualViewport?.offsetTop || 0
-    : 0
+
   // Высчитываем реальную позицию селекта относительно первого скроллящегося родителя
   const actualTop = top - scrollElementRect.top
   const actualBottom = bottom - scrollElementRect.bottom
@@ -507,7 +543,7 @@ const repositionDropDown = () => {
     list.style.position = 'fixed'
     list.style.left = `${left - offsetX}px`
     //@ts-ignore
-    const title_height = document.querySelector('.mc-field-select__header')?.offsetHeight
+    const title_height = field_select_wrapper_ref.value?.querySelector('.mc-field-select__header')?.offsetHeight
     const title_margin = 8
     let openDir = props.openDirection
     //@ts-ignore
@@ -518,7 +554,7 @@ const repositionDropDown = () => {
         const viewportTop =
           top +
           (hasTitle.value ? title_height + title_margin : 0) +
-          iosViewportIndent -
+          iosViewportIndent.value -
           list.getBoundingClientRect().height -
           8
         list.style.top = `${viewportTop - offsetY}px`
@@ -528,7 +564,7 @@ const repositionDropDown = () => {
       //@ts-ignore
       case 'bottom':
         list.style.bottom = 'auto'
-        list.style.top = `${top + iosViewportIndent + height - offsetY}px`
+        list.style.top = `${top + iosViewportIndent.value + height - offsetY}px`
         break
     }
     // Для андроидов не прячем селект при оверлапе, так как там работает все криво
@@ -537,13 +573,15 @@ const repositionDropDown = () => {
     // прячем селект, если его не видно юзеру
     return ref.deactivate()
   }
-}
+}, 16)
 
 const initScroll = () => {
   // looking for closest scroll elemen to track select list position dynamically
+  removeScrollListener()
   //@ts-ignore
-  closest_scroll_element.value = findClosestScrollElement(field_select_ref.value.$el)
+  closest_scroll_element.value = findClosestScrollElement(field_select_ref.value.$el) || document.documentElement
   closest_scroll_element.value.addEventListener('scroll', repositionDropDown)
+  scroll_resize_observer.value?.disconnect()
   scroll_resize_observer.value = new ResizeObserver(repositionDropDown)
   scroll_resize_observer.value.observe(closest_scroll_element.value)
 }
@@ -628,21 +666,30 @@ const handleOpen = (): void => {
     nextTick(moveListToBody)
   }
 }
+
+const removeScrollListener = () => {
+  scroll_resize_observer.value?.disconnect()
+
+  if (!closest_scroll_element.value) return
+  closest_scroll_element.value.removeEventListener('scroll', repositionDropDown)
+  closest_scroll_element.value = null
+}
+
 const handleClose = (): void => {
   if (list_teleported_to_body.value) moveListBack()
+  removeScrollListener()
   emit('handle-close')
 }
 
 onBeforeUnmount(() => {
   if (list_teleported_to_body.value) moveListBack()
+  removeScrollListener()
 })
 
 watch(
   () => props.options,
-  (val) => {
-    //Пушим все входящие опции в локальные опции
-    local_options.value.push(...val)
-    actualizeSavedOptions()
+  (val: ISelectOption[]) => {
+    actualizeSavedOptions(val)
   },
   { immediate: true }
 )
@@ -750,6 +797,7 @@ watch(
             :size="ChipSize.Xs"
             class="multiselect__tag"
             variation="main-invert"
+            text-color="black"
             :closable="!multiselectTag?.option?.hasOwnProperty('is_closable') || multiselectTag?.option?.is_closable"
             @close="multiselectTag.remove(multiselectTag.option)"
           >

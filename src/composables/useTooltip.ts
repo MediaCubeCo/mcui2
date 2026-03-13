@@ -228,8 +228,8 @@ const ensureTooltipContainerExists = () => {
 }
 
 let activeTooltipCount = 0
-const handleScroll = () => updateAllTooltips()
-const handleResize = () => updateAllTooltips()
+const handleScroll = updateAllTooltips
+const handleResize = updateAllTooltips
 
 export function useTooltip() {
   const tooltip = ref<ITooltipInstance | null>(null)

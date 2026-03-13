@@ -130,11 +130,11 @@ const modalTransition = useTransition(modalTransitionState, {
 
 const mcModalBody = ref<HTMLElement | null>(null)
 const modalInner = ref<HTMLElement | null>(null)
+const resize_observer = ref<ResizeObserver | null>(null)
 
 const data = reactive({
   scrolled_top: false,
   scrolled_bottom: false,
-  resize_observer: {} as ResizeObserver,
   small_indents: false,
   can_shorten_modal: false,
   modal_params: {} as { [key: string]: string | number },
@@ -211,6 +211,8 @@ const calculateSeparators = (scrolled: boolean = true): void => {
   )
 }
 
+const scrollHandler = () => calculateSeparators()
+
 const handleBeforeClose = (): void => {
   /**
    * Событие перед закрытием
@@ -218,8 +220,8 @@ const handleBeforeClose = (): void => {
    */
   emit('before-close')
   if (mcModalBody.value) {
-    data.resize_observer && data.resize_observer.unobserve(mcModalBody.value)
-    mcModalBody.value.removeEventListener('scroll', () => calculateSeparators())
+    resize_observer.value && resize_observer.value.disconnect()
+    mcModalBody.value.removeEventListener('scroll', scrollHandler)
   }
 }
 
@@ -227,11 +229,11 @@ const handleOpened = (): void => {
   if (props.separators) {
     getParams()
     if (mcModalBody.value) {
-      mcModalBody.value.addEventListener('scroll', () => calculateSeparators(), {
+      mcModalBody.value.addEventListener('scroll', scrollHandler, {
         passive: true
       })
-      data.resize_observer = new ResizeObserver(() => resizeHandler())
-      data.resize_observer.observe(mcModalBody.value)
+      resize_observer.value = new ResizeObserver(resizeHandler)
+      resize_observer.value.observe(mcModalBody.value)
     }
     calculateSeparators()
   }
@@ -287,7 +289,7 @@ const openModal = (): void => {
   modalTransitionState.value = 1
   emit('before-open')
   emit('update:modelValue', true)
-  nextTick(() => handleOpened())
+  nextTick(handleOpened)
 }
 const closeModal = (): void => {
   modalTransitionState.value = 0

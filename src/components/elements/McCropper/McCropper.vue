@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, ref, watch } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
 
 const VueCropper =
   typeof window !== 'undefined'
@@ -45,11 +46,6 @@ const setImage = (value: string): void => {
   cropper.value.replace(props.imgSrc || value)
 }
 
-const debounce = (method: TimerHandler): void => {
-  clearDebounce()
-  timeout.value = setTimeout(method, 200)
-}
-
 const cropImage = (e: any): void => {
   e.target?.cropper
     ?.getCroppedCanvas({
@@ -63,12 +59,9 @@ const cropImage = (e: any): void => {
        */
       emit('crop', blob)
     })
-  clearDebounce()
 }
 
-const clearDebounce = (): void => {
-  timeout.value && clearTimeout(timeout.value)
-}
+const debouncedCropImage = useDebounceFn((e: any) => cropImage(e), 200)
 
 watch(
   () => props.imgSrc,
@@ -93,7 +86,7 @@ watch(
       :view-mode="2"
       :src="imgSrc"
       @ready="emit('ready', $event)"
-      @crop="(e: any) => debounce(() => cropImage(e))"
+      @crop="debouncedCropImage"
     />
   </section>
 </template>

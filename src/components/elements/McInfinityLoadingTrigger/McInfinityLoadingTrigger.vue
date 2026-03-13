@@ -30,13 +30,6 @@ const observer =  ref<IntersectionObserver | null>()
 const el =  ref<HTMLElement | null>()
 const infinity_loading_ref = ref<HTMLElement | null>()
 
-onMounted(() => {
-  setObserver()
-})
-
-onBeforeUnmount(() => {
-  clearAllListeners()
-})
 
 const setObserver = (): void => {
   el.value = infinity_loading_ref.value
@@ -65,10 +58,13 @@ const clearAllListeners = (): void => {
   observer.value = null
 }
 
+onMounted(setObserver)
+onBeforeUnmount(clearAllListeners)
+
 watch(() => props.active, (value): void => {
   clearAllListeners()
   if (value) {
-    nextTick(() => setObserver())
+    nextTick(setObserver)
   }
 })
 </script>

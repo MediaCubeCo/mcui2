@@ -124,7 +124,7 @@ export const UiThemes: ColorThemes = {
       },
       chip: {
         variation: 'transparent',
-        textColor: 'black'
+        textColor: 'white'
       },
       cropper: {
         color: 'main'

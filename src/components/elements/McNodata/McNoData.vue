@@ -74,7 +74,7 @@ const btnAttrs = computed((): { [key: string]: boolean | string } => {
 const btnListeners = computed((): { [key: string]: Function } => {
   return !props.href
     ? {
-        click: () => handleClick()
+        click: handleClick
       }
     : {}
 })

@@ -11,10 +11,11 @@ import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import { IDSOptions } from '@/types/IDSOptions'
 import { useTheme } from '@/composables/useTheme'
 import { ChipSize } from '@/enums/Chip'
+import { useDebounceFn } from '@vueuse/core'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
-  (e: 'tab-changed', value: { tab: ITab, event?: Event }): void
+  (e: 'tab-changed', value: { tab: ITab; event?: Event }): void
   (e: 'clicked', value: { tab: ITab }): void
 }>()
 
@@ -37,13 +38,13 @@ const props = defineProps({
    *  Цвет текста табов
    */
   color: {
-    type: String as () => ColorTypes,
+    type: String as () => ColorTypes
   },
   /**
    *  Цвет линии активного таба
    */
   accentColor: {
-    type: String as () => ColorTypes,
+    type: String as () => ColorTypes
   },
   /**
    *  Заглавные буквы
@@ -80,10 +81,10 @@ const theme = useTheme('tabs')
 const tabs = ref<ITab[]>([])
 
 const computedColor = computed((): ColorsUnion => {
-  return props.color || theme.component.color as ColorTypes
+  return props.color || (theme.component.color as ColorTypes)
 })
 const computedAccentColor = computed((): ColorsUnion => {
-  return props.accentColor || theme.component.accentColor as ColorTypes
+  return props.accentColor || (theme.component.accentColor as ColorTypes)
 })
 
 const classes = computed((): { [key: string]: boolean } => {
@@ -115,15 +116,6 @@ const activeVisibleTabs = computed((): ITab[] => {
   return tabs.value.filter((tab) => tab.visible && !tab.isDisabled)
 })
 
-onMounted(() => {
-  handleCheckInitTab()
-})
-onUpdated(() => {
-  setTimeout(() => {
-    watchDisableTab()
-  }, 10)
-})
-
 const updateTabsState = (payload: string): void => {
   tabs.value.forEach((tab: ITab) => {
     tab.isActive = tab.computedId === payload
@@ -147,16 +139,16 @@ const handleCheckInitTab = (): void => {
 }
 
 const handleEmitChange = (tab: ITab, event?: Event): void => {
-  emit('tab-changed', { tab, event } as { tab: ITab, event?: Event })
+  emit('tab-changed', { tab, event } as { tab: ITab; event?: Event })
 }
 
-const watchDisableTab = (): void => {
+const watchDisableTab = useDebounceFn((): void => {
   if (props.loading) return
   const activeTab: ITab | undefined = tabs.value?.find((tab) => tab.isActive)
   if (!activeTab?.isDisabled) return
   const [tab]: ITab[] = activeVisibleTabs.value
   handleSelectTab(tab)
-}
+}, 100)
 
 const handleSelectTab = (tab: ITab, event?: Event): void | undefined => {
   //@ts-ignore
@@ -178,6 +170,9 @@ const handleSelectTab = (tab: ITab, event?: Event): void | undefined => {
   //@ts-ignore
   computedValue.value = tab.computedId
 }
+
+onMounted(handleCheckInitTab)
+onUpdated(watchDisableTab)
 
 watch(
   () => props.loading,

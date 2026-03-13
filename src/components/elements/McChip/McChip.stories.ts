@@ -12,6 +12,7 @@ const meta = {
     tags: ['autodocs'],
     argTypes: {
         variation: { control: 'select', options: Object.keys(Colors) },
+        textColor: { control: 'select', options: Object.keys(Colors) },
         title: { control: 'text' },
         closable: { control: 'boolean' },
         counter: { control: 'number' },
@@ -19,6 +20,7 @@ const meta = {
     },
     args: {
         variation: 'purple',
+        textColor: 'white',
         title: 'McChip',
         closable: false,
         onClose: fn(() => { alert('close click') }),

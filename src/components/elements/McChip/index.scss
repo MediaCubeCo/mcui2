@@ -11,7 +11,7 @@
 
 .mc-chip {
   $block-name: &;
-  --mc-chip-text-color: #{$color-black};
+  --mc-chip-text-color: #{$color-white};
   --mc-chip-color: #{$color-white};
   display: inline-flex;
   position: relative;

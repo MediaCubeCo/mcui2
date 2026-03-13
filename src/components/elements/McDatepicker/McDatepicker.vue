@@ -344,10 +344,6 @@ const isPeriodsVisible = computed((): boolean => {
   )
 })
 
-onMounted(() => {
-  init()
-})
-
 const localValue = computed({
   get() {
     return getFormattedPickerDate(props.modelValue)
@@ -480,6 +476,8 @@ const handleSubmit = () => {
   input.value.selectDate()
   input.value.closeMenu()
 }
+
+onMounted(init)
 
 watch(
   () => props.lang,

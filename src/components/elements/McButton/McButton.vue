@@ -401,9 +401,7 @@ const checkHasClickListener = (): void => {
   has_click.value = !!parentVNode?.props?.onClick
 }
 
-onMounted(() => {
-  checkHasClickListener()
-})
+onMounted(checkHasClickListener)
 </script>
 
 <template>

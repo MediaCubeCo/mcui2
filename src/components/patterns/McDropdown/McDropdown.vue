@@ -141,7 +141,7 @@ const calculateDropdownPosition = (): void => {
   local_position.value = props.position === DropdownPositions.Auto ? auto_position : props.position
 }
 
-const throttledCalculateDropdownPosition = () => throttle(() => calculateDropdownPosition())
+const throttledCalculateDropdownPosition = () => throttle(calculateDropdownPosition)
 
 watch(
   () => props.modelValue,

@@ -170,7 +170,7 @@ export const Multiple: Story = {
       return {
         data() {
           return {
-            v: [],
+            v: [2, 3, 4, 99],
             titleField: 'title',
             valueField: 'id',
             options: selectOptions
@@ -198,7 +198,7 @@ export const Taggable: Story = {
       return {
         data() {
           return {
-            v: [],
+            v: [2, 99],
             titleField: 'title',
             valueField: 'id',
             options: selectOptions
@@ -227,7 +227,7 @@ export const Grouped: Story = {
       return {
         data() {
           return {
-            v: null,
+            v: [2, 99],
             titleField: 'title',
             valueField: 'id',
             options: [
@@ -260,7 +260,7 @@ export const GroupedWithOptions: Story = {
       return {
         data() {
           return {
-            v: null,
+            v: [2, 99],
             titleField: 'title',
             valueField: 'id',
             options: [
