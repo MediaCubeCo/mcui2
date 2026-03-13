@@ -6,16 +6,21 @@ import McSeparator from '@/components/elements/McSeparator/McSeparator.vue'
 import { Colors } from '@/types/styles/Colors'
 import { Sizes } from '@/types/styles/Sizes'
 import { Directions } from '@/enums/ui/Directions'
-import iconsList from '@/mocks/icons.json'
+import { SPRITE_IDS } from '@/consts/iconsSpriteIds.js'
+import allIconsList from '@/mocks/icons.json'
+import flagsIconsList from '@/mocks/icons_flags.json'
+import gradIconsList from '@/mocks/icons_grad.json'
 
-const iconsArrayList = Object.keys(iconsList)
+const allIconsArrayList = Object.keys(allIconsList)
+const flagsIconsArrayList = Object.keys(flagsIconsList)
+const gradsIconsArrayList = Object.keys(gradIconsList)
 
 const meta = {
   title: 'McSvgIcon',
   component: McSvgIcon,
   tags: ['autodocs'],
   argTypes: {
-    name: { control: 'select', options: iconsArrayList },
+    name: { control: 'select', options: allIconsArrayList },
     color: { control: 'select', options: Object.keys(Colors) },
     size: { control: 'select', options: Object.keys(Sizes) },
     weight: { control: 'number' },
@@ -51,7 +56,7 @@ export const FullList: Story = {
         McSvgIcon,
         McTitle,
         McFieldText,
-          McSeparator,
+        McSeparator
       },
       data: () => ({
         search: null
@@ -59,48 +64,80 @@ export const FullList: Story = {
       computed: {
         iconsSections() {
           const iconsObject = {
-            colored: [],
-            blue: [],
-            arrows: [],
-            flags: [],
-            checks: [],
-            mediacube: [],
-            other: []
+            gradiented: {
+              sprite_id: SPRITE_IDS.GRADS,
+              icons: gradsIconsArrayList
+            },
+            flags: {
+              sprite_id: SPRITE_IDS.FLAGS,
+              icons: flagsIconsArrayList
+            },
+            colored: {
+              sprite_id: SPRITE_IDS.MAIN,
+              icons: []
+            },
+            blue: {
+              sprite_id: SPRITE_IDS.MAIN,
+              icons: []
+            },
+            arrows: {
+              sprite_id: SPRITE_IDS.MAIN,
+              icons: []
+            },
+            checks: {
+              sprite_id: SPRITE_IDS.MAIN,
+              icons: []
+            },
+            mediacube: {
+              sprite_id: SPRITE_IDS.MAIN,
+              icons: []
+            },
+            other: {
+              sprite_id: SPRITE_IDS.MAIN,
+              icons: []
+            }
           }
-          iconsArrayList.forEach((icon) => {
+          const other_icons = allIconsArrayList.filter(
+            (icon) => !flagsIconsArrayList.includes(icon) && !gradsIconsArrayList.includes(icon)
+          )
+          for (const icon of other_icons) {
             switch (true) {
               case icon.includes('_colored'):
-                return iconsObject.colored.push(icon)
+                iconsObject.colored.icons.push(icon)
+                break
               case icon.includes('_blue'):
-                return iconsObject.blue.push(icon)
+                iconsObject.blue.icons.push(icon)
+                break
               case icon.includes('arrow'):
-                return iconsObject.arrows.push(icon)
-              case icon.includes('flag'):
-                return iconsObject.flags.push(icon)
+                iconsObject.arrows.icons.push(icon)
+                break
               case icon.includes('check'):
-                return iconsObject.checks.push(icon)
+                iconsObject.checks.icons.push(icon)
+                break
               case icon.includes('mc'):
               case icon.includes('mediacube'):
-                return iconsObject.mediacube.push(icon)
+                iconsObject.mediacube.icons.push(icon)
+                break
               default:
-                return iconsObject.other.push(icon)
+                iconsObject.other.icons.push(icon)
+                break
             }
-          })
-          const defaultSections = Object.keys(iconsObject).map((key) => ({
+          }
+          const defaultSections = Object.entries(iconsObject).map(([key, value]) => ({
             title: key.replace(/^./, key[0].toUpperCase()),
-            icons: iconsObject[key],
+            icons: value.icons,
+            sprite_id: value.sprite_id,
             id: key
           }))
-
           return this.search
             ? [
                 {
                   title: 'Search results',
-                  icons: iconsArrayList.filter((icon) => icon.includes(this.search))
+                  icons: allIconsArrayList.filter((icon) => icon.includes(this.search))
                 }
               ]
             : defaultSections
-        },
+        }
       },
       template: `
                 <section>
@@ -110,6 +147,8 @@ export const FullList: Story = {
                         <mc-title variation="h3">
                             {{ section.title }}
                         </mc-title>
+                      <br />
+                      <small>sprite id: {{ section.sprite_id }}</small>
                         <mc-separator indent-bottom="400" indent-top="400" />
                         <template v-if="section.icons.length">
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, 160px); gap: 16px">
@@ -118,7 +157,7 @@ export const FullList: Story = {
                                     :key="icon"
                                     style="display: flex; flex-direction: column; align-items: center; justify-content: center"
                                 >
-                                    <mc-svg-icon :name="icon" size="400" />
+                                    <mc-svg-icon :name="icon" :sprite-id="section.sprite_id" size="400" />
                                     <mc-title text-align="center" class="mt-150">{{ icon }}</mc-title>
                                 </div>
                             </div>

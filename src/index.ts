@@ -5,7 +5,8 @@ import { Themes } from '@/enums/Themes'
 import { ThemesColors, UiThemes } from '@/types/styles/ColorTheme'
 import defaultAvatar from './assets/img/no_user.png'
 import { createProxy } from '@/utils/proxy'
-
+import { SPRITE_IDS, SPRITE_FILES } from '@/consts/'
+export { SPRITE_IDS, SPRITE_FILES }
 export {
   ThemesColors,
   UiThemes,
@@ -232,7 +233,27 @@ export {
   mcTitleAdaptiveProps,
   mcSvgIconAdaptiveProps
 } from '@/utils'
-export * from './assets/tokens/json'
+
+export {
+  colors,
+  durations,
+  easings,
+  fontFamilies,
+  fontSizes,
+  fontWeights,
+  gradients,
+  letterSpacings,
+  lineHeights,
+  mediaQueries,
+  opacities,
+  sizes,
+  spacings,
+  zIndexes,
+  borderRadius,
+  boxShadows,
+  animations
+} from './assets/tokens/json'
+
 export {
   useModal,
   useHelper,

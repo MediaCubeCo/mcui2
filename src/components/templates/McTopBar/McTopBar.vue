@@ -86,7 +86,10 @@ const userDropdownOpen = ref(false)
               full-width
             >
               <template #icon-prepend>
-                <mc-svg-icon :name="`flag_${item.name.toLowerCase()}` as IconsListUnion" />
+                <mc-svg-icon
+                  sprite-id="m_s_i_s_flags"
+                  :name="`flag_${item.name.toLowerCase()}` as IconsListUnion"
+                />
               </template>
               {{ item.name }}
             </mc-button>

@@ -8,6 +8,7 @@ import { Directions } from '@/enums/ui/Directions'
 import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from '@/utils/mcSvgIconAdaptiveProps'
 import { useHelper } from '@/composables/useHelper'
 import { useTheme } from '@/composables/useTheme'
+import { SPRITE_IDS } from '@/consts/iconsSpriteIds'
 
 const helper = useHelper()
 const props = defineProps({
@@ -23,8 +24,8 @@ const props = defineProps({
    * ID-префикс в названиях иконок, для использлования иконок из стороннего спрайта
    */
   spriteId: {
-    type: String as PropType<string>,
-    default: 'mcSvgIconSprite'
+    type: String as PropType<string | (typeof SPRITE_IDS)[keyof typeof SPRITE_IDS]>,
+    default: () => SPRITE_IDS.MAIN
   },
   /**
    * Цвет иконки
@@ -81,7 +82,7 @@ const responsivePropsClasses = computed((): { [key: string]: boolean } => {
 const classes = computed((): { [key: string]: boolean } => ({
   'mc-svg-icon': true,
   [`mc-svg-icon--dir-${props.dir}`]: !!props.dir,
-  ...responsivePropsClasses.value,
+  ...responsivePropsClasses.value
 }))
 
 const styles = computed((): { [key: string]: string } => ({

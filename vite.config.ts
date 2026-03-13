@@ -2,15 +2,16 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
+import { SPRITE_FILES } from './src/consts/iconsSpriteIds.js'
 import path from 'path'
 
 export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        api: 'modern-compiler',
-      },
-    },
+        api: 'modern-compiler'
+      }
+    }
   },
   plugins: [
     vue(),
@@ -29,14 +30,13 @@ export default defineConfig({
      * */
     viteStaticCopy({
       targets: [
-        {
-          src: 'src/assets/iconsSprite.svg',
-          dest: ''
-        },
-        {
-          src: 'src/assets/img',
-          dest: ''
-        },
+        ...[
+          ...Object.values(SPRITE_FILES).map(sf => `src/assets/${sf}`),
+          'src/assets/img',
+          'src/assets/fonts',
+          'src/assets/variables.scss',
+          'src/assets/base.scss'
+        ].map((src) => ({ src, dest: '' })),
         {
           src: 'src/assets/styles/*.scss',
           dest: 'styles'
@@ -44,18 +44,6 @@ export default defineConfig({
         {
           src: 'src/assets/tokens/*.scss',
           dest: 'tokens'
-        },
-        {
-          src: 'src/assets/fonts',
-          dest: ''
-        },
-        {
-          src: 'src/assets/variables.scss',
-          dest: ''
-        },
-        {
-          src: 'src/assets/base.scss',
-          dest: ''
         }
       ]
     })
@@ -87,13 +75,13 @@ export default defineConfig({
         preserveModules: true,
         preserveModulesRoot: 'src',
         entryFileNames: '[name].js'
-      },
+      }
     }
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src')
     },
-    dedupe: ['vue'],
+    dedupe: ['vue']
   }
 })

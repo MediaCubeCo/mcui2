@@ -24,6 +24,7 @@ coverage
 /src/**/*.vue.js
 /src/composables/**/*.js
 /src/consts/**/*.js
+!/src/consts/iconsSpriteIds.js
 /src/enums/**/*.js
 /src/mocks/**/*.js
 /src/types/**/*.js

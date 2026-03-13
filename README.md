@@ -84,6 +84,19 @@ import mediacubeUiIconsSprite from 'mediacube-ui-v2/sprite?raw'
 
 ```
 
+If you use **McTopBar** (language dropdown with flags), also embed the flags sprite:
+
+```vue
+import mediacubeUiIconsSprite from 'mediacube-ui-v2/sprite?raw'
+import mediacubeUiIconsSpriteFlags from 'mediacube-ui-v2/iconsSpriteFlags.svg?raw'
+
+...
+<span v-html="mediacubeUiIconsSprite" id="ui-svg-sprite" />
+<span v-html="mediacubeUiIconsSpriteFlags" id="ui-svg-sprite-flags" />
+
+...
+```
+
 ## Type Support for `.vue` Imports in TS
 
 TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking.
