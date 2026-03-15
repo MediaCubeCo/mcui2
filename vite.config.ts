@@ -75,7 +75,6 @@ export default defineConfig({
         'vue3-cropperjs',
         'vue-3-slider-component',
         'vue-imask',
-        'xss',
         'src/mocks'
       ],
       output: {

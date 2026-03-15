@@ -4,14 +4,14 @@ import McAvatar from '@/components/elements/McAvatar/McAvatar.vue'
 import McButton from '@/components/elements/McButton/McButton.vue'
 import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import McSeparator from '@/components/elements/McSeparator/McSeparator.vue'
-import { type PropType, ref, useSlots } from 'vue'
+import { type PropType, ref } from 'vue'
 import { ButtonSize } from '@/enums/ui/Button'
 import { DropdownPositions } from '@/enums/Dropdown'
 import { HorizontalAlignment } from '@/enums/ui/Alignment'
 import type { IconsListUnion } from '@/types/styles/Icons'
+import { SPRITE_IDS } from '@/consts'
 
 const McDropdown = defineAsyncComponent(() => import('@/components/patterns/McDropdown/McDropdown.vue'))
-const slots = useSlots()
 
 const props = defineProps({
   /**
@@ -87,7 +87,7 @@ const userDropdownOpen = ref(false)
             >
               <template #icon-prepend>
                 <mc-svg-icon
-                  sprite-id="m_s_i_s_flags"
+                  :sprite-id="SPRITE_IDS.FLAGS"
                   :name="`flag_${item.name.toLowerCase()}` as IconsListUnion"
                 />
               </template>
