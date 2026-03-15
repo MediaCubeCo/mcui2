@@ -6,8 +6,26 @@ function isObject(val: any): val is Record<string, any> {
   return val && val.constructor === Object
 }
 
+/** Кэш прокси по паре (defaults, overrides) для стабильных объектных ссылок */
+const proxyCache = new WeakMap<object, WeakMap<object, any>>()
+
+function canCacheProxy(defaults: unknown, overrides: unknown): defaults is object {
+  return (
+    defaults !== null &&
+    typeof defaults === 'object' &&
+    overrides !== null &&
+    typeof overrides === 'object'
+  )
+}
+
 export function createProxy(defaults: any, overrides: any): any {
-  return new Proxy(
+  if (canCacheProxy(defaults, overrides)) {
+    const byOverrides = proxyCache.get(defaults)
+    const cached = byOverrides?.get(overrides)
+    if (cached) return cached
+  }
+
+  const proxy = new Proxy(
     {},
     {
       get(target, key: string) {
@@ -36,4 +54,15 @@ export function createProxy(defaults: any, overrides: any): any {
       }
     }
   )
+
+  if (canCacheProxy(defaults, overrides)) {
+    let byOverrides = proxyCache.get(defaults)
+    if (!byOverrides) {
+      byOverrides = new WeakMap()
+      proxyCache.set(defaults, byOverrides)
+    }
+    byOverrides.set(overrides, proxy)
+  }
+
+  return proxy
 }
