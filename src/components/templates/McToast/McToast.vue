@@ -85,7 +85,7 @@ const computedVariation = computed((): ColorTypes => {
   return props.variation || theme.component.variation as ColorTypes
 })
 
-const timer = useTimer(props.toast.timeEnd || (() => {}), props.duration)
+const timer = useTimer(props.toast.timeEnd, props.duration)
 
 const toastClasses = computed((): { [key: string]: boolean } => {
   return {

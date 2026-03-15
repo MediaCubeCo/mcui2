@@ -25,10 +25,8 @@ function createThemeReactive(componentName: string, dsOptions: IDSOptions): Them
       const comps = dsOptions.theme
         ? dsOptions.themes?.[dsOptions.theme]?.components ?? UiThemes.light.components
         : UiThemes.light.components
-      return (componentName && comps?.[componentName] ? comps[componentName] : {}) as Record<
-        string,
-        unknown
-      >
+      //@ts-ignore
+      return (componentName && comps?.[componentName] ? comps[componentName] : {}) as Record<string, unknown>
     }
   }) as ThemeReactive
 }

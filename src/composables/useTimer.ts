@@ -1,9 +1,9 @@
 import { ref, onBeforeUnmount } from 'vue'
 
-export function useTimer(callback: () => void, duration: number) {
+export function useTimer(callback: Function, duration: number) {
   const timeToEnd = ref<number>(duration)
   const timerStart = ref<number>(Date.now())
-  const timeout = ref<ReturnType<typeof setTimeout> | null>(null)
+  const timeout = ref<number | null>(null)
 
   function start() {
     timerStart.value = Date.now()

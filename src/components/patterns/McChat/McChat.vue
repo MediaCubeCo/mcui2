@@ -5,7 +5,7 @@ import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import McTitle from '@/components/elements/McTitle/McTitle.vue'
 import McInfinityLoadingTrigger from '@/components/elements/McInfinityLoadingTrigger/McInfinityLoadingTrigger.vue'
 import { computed, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue'
-import { McDrawerContentTemplate } from '@/components/index.js'
+import { McDrawerContentTemplate } from '@/components/templates/McDrawer/McDrawerContentTemplate'
 import { IComment } from '@/types/IComment'
 import { HorizontalAlignment } from '@/enums/ui/Alignment'
 import { Weights } from '@/enums/ui/Weights'
@@ -39,7 +39,7 @@ const props = defineProps({
    */
   modelValue: {
     type: String as PropType<string | null>,
-    default: null,
+    default: null
   },
   /**
    * Можно ли производить
@@ -117,7 +117,6 @@ const formElement = ref(null)
 const formElementOldHeight = ref(null)
 const indicator = ref(null)
 const chat_form = ref<HTMLElement | null>(null)
-
 
 const sortedComments = computed((): IComment[] => {
   const comments = [...props.comments]
@@ -217,11 +216,14 @@ onBeforeUnmount(() => {
   setPosition('mc-drawer')
 })
 
-
-watch(() => props.comments, (newVal, prevVal) => {
-  scrollContent(prevVal.length < newVal.length ? +indicatorPosition.value : 0)
-  loading.value = false
-}, { deep: true })
+watch(
+  () => props.comments,
+  (newVal, prevVal) => {
+    scrollContent(prevVal.length < newVal.length ? +indicatorPosition.value : 0)
+    loading.value = false
+  },
+  { deep: true }
+)
 </script>
 
 <template>
@@ -250,7 +252,9 @@ watch(() => props.comments, (newVal, prevVal) => {
       </div>
       <div v-else class="mc-chat__empty-notice">
         <mc-svg-icon name="chat_forum" color="outline-gray" size="1000" :weight="1" />
-        <mc-title v-if="emptyMessage" color="outline-gray" :text-align="HorizontalAlignment.Center">{{ emptyMessage }}</mc-title>
+        <mc-title v-if="emptyMessage" color="outline-gray" :text-align="HorizontalAlignment.Center">{{
+          emptyMessage
+        }}</mc-title>
       </div>
       <template #footer>
         <mc-chat-form

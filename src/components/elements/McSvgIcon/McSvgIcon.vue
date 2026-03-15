@@ -8,7 +8,8 @@ import { Directions } from '@/enums/ui/Directions'
 import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from '@/utils/mcSvgIconAdaptiveProps'
 import { useHelper } from '@/composables/useHelper'
 import { useTheme } from '@/composables/useTheme'
-import { SPRITE_IDS } from '@/consts/iconsSpriteIds'
+//@ts-ignore
+import { SPRITE_IDS } from '@/consts/iconsSpriteIds.js'
 
 const helper = useHelper()
 const props = defineProps({

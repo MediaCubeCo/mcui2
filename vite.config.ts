@@ -49,28 +49,35 @@ export default defineConfig({
     })
   ],
   build: {
-    /**
-     * Папка куда будет билдиться
-     * */
     outDir: 'dist',
-    /**
-     * Блок указывающий что билд будет как библиотека
-     * */
+    target: 'esnext',
+    minify: 'esbuild',
     lib: {
-      // Точка входа
       entry: './src/index.ts',
-      // Название
       name: 'mediacube-ui-v2',
-      // Название файлов скриптов
       fileName: 'mediacube-ui-v2',
       // Форматы скриптов es - ECMAScript Modules, umd - Universal Module Definition
       formats: ['es'] // , 'umd'
     },
     /**
-     * Управление зависимостями
-     * */
+     * external — не включать в бандл; приложение подтянет из своих зависимостей (меньше дублирования и размер).
+     * preserveModules — сохраняет дерево модулей для tree-shaking: потребитель тянет только импортируемые компоненты.
+     */
     rollupOptions: {
-      external: ['vue', 'src/mocks'],
+      external: [
+        'vue',
+        'vue-router',
+        '@vueuse/core',
+        '@vueuse/shared',
+        'dayjs',
+        'vue-multiselect',
+        '@vuepic/vue-datepicker',
+        'vue3-cropperjs',
+        'vue-3-slider-component',
+        'vue-imask',
+        'xss',
+        'src/mocks'
+      ],
       output: {
         preserveModules: true,
         preserveModulesRoot: 'src',

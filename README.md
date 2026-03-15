@@ -93,7 +93,6 @@ import mediacubeUiIconsSpriteFlags from 'mediacube-ui-v2/iconsSpriteFlags.svg?ra
 ...
 <span v-html="mediacubeUiIconsSprite" id="ui-svg-sprite" />
 <span v-html="mediacubeUiIconsSpriteFlags" id="ui-svg-sprite-flags" />
-
 ...
 ```
 
