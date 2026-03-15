@@ -52,8 +52,8 @@ const computedDrawers = computed((): IEnrichedDrawerState[] => {
 })
 
 const containerStyle = computed((): { [key: string]: string | number } => ({
-  zIndex: computedDrawers.value.length ? 10004 : -1,
-  visibility: computedDrawers.value.length ? 'visible' : 'hidden'
+  zIndex: props.reactiveProps.drawers.length ? 10004 : -1,
+  visibility: props.reactiveProps.drawers.length ? 'visible' : 'hidden'
 }))
 
 const closeDrawer = (value: IDrawerState) => {

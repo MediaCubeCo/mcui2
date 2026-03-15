@@ -23,14 +23,30 @@ const drawerServiceState = reactive<IDrawerServiceState>({
 const drawerComponents = shallowRef<Record<string, any>>({})
 const reactiveProps = reactive<{ drawers: IDrawerState[] }>({ drawers: [] })
 
+const ASYNC_LOAD_ERROR_COMPONENT = { name: 'McDrawerAsyncError', render: () => null }
+
+/**
+ * Resolves component from any supported form:
+ * - () => import('...') → Promise
+ * - () => defineAsyncComponent(() => import('...')) → Component
+ * - direct component object → use as-is
+ */
 const normalizeComponent = (comp: any) => {
-  if (typeof comp === 'function') {
-    if (!componentCache[comp.toString()]) {
-      componentCache[comp.toString()] = defineAsyncComponent(comp)
+  if (typeof comp !== 'function') return comp
+  const cacheKey = comp.toString()
+  if (componentCache[cacheKey]) return componentCache[cacheKey]
+  componentCache[cacheKey] = defineAsyncComponent({
+    loader: () => {
+      const result = comp()
+      if (result != null && typeof (result as Promise<unknown>).then === 'function') return result as Promise<Component>
+      return Promise.resolve(result as Component)
+    },
+    errorComponent: ASYNC_LOAD_ERROR_COMPONENT,
+    onError: (error: Error) => {
+      console.error('[useDrawer] Failed to load drawer component', error)
     }
-    return componentCache[comp.toString()]
-  }
-  return comp
+  })
+  return componentCache[cacheKey]
 }
 
 const createDrawerContainer = async (): Promise<void> => {
@@ -59,7 +75,10 @@ const createDrawerContainer = async (): Promise<void> => {
 const ensureDrawerContainerExists = (): Promise<void> => {
   if (!getStoredAppContext()) return Promise.resolve()
   if (!drawerContainerReady) {
-    drawerContainerReady = createDrawerContainer()
+    drawerContainerReady = createDrawerContainer().catch((err) => {
+      drawerContainerReady = null
+      throw err
+    })
   }
   return drawerContainerReady
 }
@@ -71,7 +90,12 @@ const showDrawer = async (componentName: string, drawerProps: Partial<IDrawerPro
     return console.warn(`Drawer component ${componentName} not registered`)
   }
 
-  await ensureDrawerContainerExists()
+  try {
+    await ensureDrawerContainerExists()
+  } catch (err) {
+    console.error('[useDrawer] Failed to init drawer container', err)
+    return
+  }
 
   const existing = helper.findLastSafe(reactiveProps.drawers, (d) => d.componentName === componentName)
 

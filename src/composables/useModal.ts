@@ -23,30 +23,40 @@ const modalServiceState = reactive<IModalServiceState>({
 const modalComponents = shallowRef<Record<string, any>>({})
 const reactiveProps = reactive<{ modals: IModalState[] }>({ modals: [] })
 
+const ASYNC_LOAD_ERROR_COMPONENT = { name: 'McModalAsyncError', render: () => null }
+
 /**
- * Normalize ANY import style into Vue component
+ * Resolves component from any supported form:
+ * - () => import('...') → Promise
+ * - () => defineAsyncComponent(() => import('...')) → Component
+ * - direct component object → use as-is
  */
 const normalizeComponent = (comp: any) => {
   if (!comp) return comp
 
   const compKey = comp.toString()
 
-  if (componentCache[compKey]) {
-    return componentCache[compKey]
-  }
+  if (componentCache[compKey]) return componentCache[compKey]
 
   let resolved = comp
 
   if (typeof comp === 'function') {
     resolved = defineAsyncComponent({
-      loader: comp,
+      loader: () => {
+        const result = comp()
+        if (result != null && typeof (result as Promise<unknown>).then === 'function') return result as Promise<any>
+        return Promise.resolve(result)
+      },
       timeout: 10000,
-      suspensible: false
+      suspensible: false,
+      errorComponent: ASYNC_LOAD_ERROR_COMPONENT,
+      onError: (error: Error) => {
+        console.error('[useModal] Failed to load modal component', error)
+      }
     })
   }
 
   componentCache[compKey] = resolved
-
   return resolved
 }
 
