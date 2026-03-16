@@ -28,13 +28,13 @@ const sortState = computed((): ITableSortState => {
       return {
         direction: 'asc',
         next_direction: 'desc',
-        icon: 'arrow_downward'
+        icon: 'arrow_upward'
       }
     case props.sort.sort_direction === 'desc' && isActive.value:
       return {
         direction: 'desc',
         next_direction: 'asc',
-        icon: 'arrow_upward'
+        icon: 'arrow_downward'
       }
     default:
       return {

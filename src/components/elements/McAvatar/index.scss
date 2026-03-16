@@ -22,6 +22,7 @@ $dot-colors: $token-colors;
   overflow: hidden;
   background-color: $color-hover-gray;
   transition: box-shadow $duration-s;
+  vertical-align: middle;
   &--bordered {
     border: 2px solid var(--mc-avatar-border-color);
   }

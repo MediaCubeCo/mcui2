@@ -16,7 +16,6 @@ const emit = defineEmits<{
   (e: 'back', value: Event): void
   (e: 'update:modelValue', value: boolean): void
 }>()
-const slots = useSlots()
 
 const props = defineProps({
   modelValue: {
@@ -293,11 +292,8 @@ const openModal = (): void => {
 }
 const closeModal = (): void => {
   modalTransitionState.value = 0
-  setTimeout(() => {
-    handleBeforeClose()
-    emit('update:modelValue', false)
-    emit('closed')
-  }, props.duration || 300)
+  handleBeforeClose()
+  emit('closed')
 }
 
 const handleOverlayClick = (): void => {
@@ -307,7 +303,8 @@ const handleOverlayClick = (): void => {
 
 watch(
   () => props.modelValue,
-  (value): void => {
+  (value, oldValue): void => {
+    if (value === oldValue) return
     value ? openModal() : closeModal()
   },
   { immediate: true }

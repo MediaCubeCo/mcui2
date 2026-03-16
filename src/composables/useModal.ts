@@ -117,7 +117,7 @@ const showModal = (componentName: string, componentProps: any = {}) => {
 
       if (!modalToClose) return
 
-      modalToClose.modelValue = false
+      modalToClose.modelValue && (modalToClose.modelValue = false)
 
       setTimeout(() => {
         reactiveProps.modals = reactiveProps.modals.filter((m) => m.id !== modalToClose.id)

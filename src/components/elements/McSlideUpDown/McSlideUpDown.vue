@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, type PropType, ref, useId, watch } from 'vue'
 
-interface animationPayload {
-  contentHeight: string | number
-}
-
 const emit = defineEmits<{
   (e: 'slide-open-start', value: boolean): void
   (e: 'slide-close-start', value: boolean): void
@@ -63,67 +59,67 @@ const classes = computed(() => {
   }
 })
 
+const parseHeightPx = (el: HTMLElement): number => {
+  const h = getComputedStyle(el).height
+  if (h === 'auto' || h === '') return el.offsetHeight
+  return parseFloat(h) || 0
+}
+
 const init = (): void => {
-  if (container.value && !open.value) {
-    container.value.style.height = '0'
+  if (!container.value) return
+  const el = container.value as HTMLElement
+  if (open.value) {
+    el.style.height = 'auto'
+  } else {
+    el.style.height = '0'
   }
 }
 
-const animate = (): void => {
-  if (!container.value || animation_in_progress.value) return
-  animation_in_progress.value = true
-  // Получаем фактическую высоту содержимого
-  const contentHeight = container.value.scrollHeight
+const runAnimationTo = (targetOpen: boolean): void => {
+  const el = container.value as HTMLElement | null
+  if (!el) {
+    open.value = targetOpen
+    return
+  }
 
-  const payload = {
-    contentHeight
-  } as animationPayload
-
-  // Отменяем предыдущую анимацию, если она была
   if (animation.value) {
     animation.value.cancel()
+    animation.value = null
   }
-  open.value ? handleClose(payload) : handleOpen(payload)
-}
 
-const toggleOpenValue = (): void => {
-  open.value = !open.value
-}
+  const targetHeight = targetOpen ? el.scrollHeight : 0
+  const currentHeight = parseHeightPx(el)
 
-const handleClose = ({ contentHeight }: animationPayload) => {
-  emit('slide-close-start', open.value)
+  if (Math.abs(currentHeight - targetHeight) < 2) {
+    open.value = targetOpen
+    animation_in_progress.value = false
+    el.style.height = targetOpen ? 'auto' : '0'
+    return
+  }
 
-  if (container.value) {
-    animation.value = container.value.animate([{ height: `${contentHeight}px` }, { height: '0' }], {
-      duration: props.duration,
-      easing: props.type,
-      fill: 'forwards'
-    })
-    animation.value.onfinish = () => {
-      emit('slide-close-end', open.value)
-      animation_in_progress.value = false
-      toggleOpenValue()
+  animation_in_progress.value = true
+  if (targetOpen) {
+    emit('slide-open-start', open.value)
+  } else {
+    emit('slide-close-start', open.value)
+  }
+
+  animation.value = el.animate(
+    [{ height: `${currentHeight}px` }, { height: `${targetHeight}px` }],
+    { duration: props.duration, easing: props.type, fill: 'forwards' }
+  )
+
+  animation.value.onfinish = () => {
+    open.value = props.active
+    animation_in_progress.value = false
+    if (container.value) {
+      const containerEl = container.value as HTMLElement
+      containerEl.style.height = open.value ? 'auto' : '0'
     }
-  }
-}
-
-const handleOpen = ({ contentHeight }: animationPayload) => {
-  emit('slide-open-start', open.value)
-
-  if (container.value) {
-    animation.value = container.value.animate([{ height: '0' }, { height: `${contentHeight}px` }], {
-      duration: props.duration,
-      easing: props.type,
-      // fill: 'forwards'
-    })
-
-    animation.value.onfinish = () => {
+    if (targetOpen) {
       emit('slide-open-end', open.value)
-      animation_in_progress.value = false
-      if (container.value) {
-        container.value.style.height = 'auto'
-      }
-      toggleOpenValue()
+    } else {
+      emit('slide-close-end', open.value)
     }
   }
 }
@@ -137,7 +133,7 @@ onMounted(() => {
 watch(
   () => props.active,
   (): void => {
-    animate()
+    runAnimationTo(props.active)
   }
 )
 watch(

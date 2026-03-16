@@ -38,7 +38,7 @@ const props = defineProps({
    * Значение инпута
    */
   modelValue: {
-    type: String as PropType<string | null>,
+    type: [String, null] as PropType<string | null>,
     default: null
   },
   /**
