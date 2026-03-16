@@ -9,7 +9,8 @@ import { ButtonSize } from '@/enums/ui/Button'
 import { DropdownPositions } from '@/enums/Dropdown'
 import { HorizontalAlignment } from '@/enums/ui/Alignment'
 import type { IconsListUnion } from '@/types/styles/Icons'
-import { SPRITE_IDS } from '@/consts'
+//@ts-ignore
+import { SPRITE_IDS } from '@/consts/iconsSpriteIds.js'
 
 const McDropdown = defineAsyncComponent(() => import('@/components/patterns/McDropdown/McDropdown.vue'))
 

@@ -193,9 +193,20 @@ export const MonthPicker: Story = {
             data: () => ({
                 v: null,
             }),
+            methods: {
+                disabledDates(date) {
+                    const d = new Date(date)
+                    const now = new Date()
+                    const year = d.getFullYear()
+                    const month = d.getMonth()
+                    const currentYear = now.getFullYear()
+                    const currentMonth = now.getMonth()
+                    return year < currentYear || (year === currentYear && month < currentMonth)
+                }
+            },
             template: `
                 <div> 
-                    <mc-datepicker v-model="v" type="month-picker" name="MonthPicker"></mc-datepicker>
+                    <mc-datepicker v-model="v" type="month-picker" :disabled-dates="disabledDates" name="MonthPicker"></mc-datepicker>
                     <p>Output: {{ v }}</p>
                 </div>
             `

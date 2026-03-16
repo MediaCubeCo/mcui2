@@ -43,7 +43,7 @@ const lockBodyScroll = (val: boolean) => {
   if (typeof window === 'undefined') return
 
   document.body.style.overflow = val ? 'hidden' : ''
-  document.body.style.paddingRight = val ? '15px' : ''
+  // document.body.style.paddingRight = val ? '15px' : ''
 }
 
 onMounted(() => {

@@ -235,6 +235,8 @@ const theme = useTheme('datepicker')
 const fieldErrors = useFieldErrors(props.errors)
 const pickDate = ref<DatePickerValue>(null)
 const input = ref<InstanceType<typeof DatePicker> | null | any>(null)
+// ref для года, который сейчас показан в month-picker
+const month_picker_view_year = ref(new Date().getFullYear())
 
 const classes = computed((): { [key: string]: boolean } => {
   return {
@@ -477,6 +479,23 @@ const handleSubmit = () => {
   input.value.closeMenu()
 }
 
+const disabledMonthsFilter = computed(() => {
+  if (props.type !== DatepickerTypes.MonthPicker || typeof props.disabledDates !== 'function')
+    return undefined
+  const year = month_picker_view_year.value
+  const disabled: number[] = []
+  for (let month = 0; month < 12; month++) {
+    const date = new Date(year, month, 1)
+    if (props.disabledDates(date)) disabled.push(month)
+  }
+  return { months: disabled }
+})
+
+const onUpdateMonthYear = (e: any) => {
+  const { year } = e
+  month_picker_view_year.value = year
+}
+
 onMounted(init)
 
 watch(
@@ -537,6 +556,7 @@ watch(
           :editable="editable"
           :disabled="disabled"
           :disabled-dates="disabledDates"
+          :filters="disabledMonthsFilter"
           :allowed-dates="allowedDates"
           :min-date="minDate"
           :max-date="maxDate"
@@ -544,6 +564,7 @@ watch(
           :teleport="props.teleport"
           :teleport-to="props.teleportTo"
           @range-start="handlePickDate"
+          @update-month-year="onUpdateMonthYear"
         >
           <!-- @slot Слот для вставки в футер попапа календаря -->
           <template #action-row>
