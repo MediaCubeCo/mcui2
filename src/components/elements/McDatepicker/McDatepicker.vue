@@ -10,7 +10,7 @@ import {
 import type { DatepickerFormatsObjectFormat, IDatepickerPlaceholders, IDatepickerPreset } from '@/types/IDatepicker'
 import { type DatePickerValue, type DatepickerTypesUnion, type DatepickerFormatsObject } from '@/types/IDatepicker'
 //@ts-ignore
-import { dayjs, dayjsLocales } from '@/utils/dayjs'
+import { dayjs } from '@/utils/dayjs'
 import { default as DatePicker, type DatePickerMarker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import McTitle from '@/components/elements/McTitle/McTitle.vue'
@@ -251,11 +251,10 @@ const styles = computed((): { [key: string]: string } => {
   }
   return {
     '--mc-date-picker-color': theme.colors[theme.component.color as ColorTypes]
-    // '--dp-primary-color': theme.colors[theme.component.color as ColorTypes],
   }
 })
 
-const formats = reactive<DatepickerFormatsObject>({
+const formats:DatepickerFormatsObject = {
   [DatepickerTypes.TimePicker]: {
     [DatepickerFormatsVariations.Picker]: DatepickerFormat.TimePicker,
     [DatepickerFormatsVariations.Dayjs]: DayjsFormat.TimePicker,
@@ -286,7 +285,8 @@ const formats = reactive<DatepickerFormatsObject>({
     [DatepickerFormatsVariations.Dayjs]: DayjsFormat.YearPicker,
     [DatepickerFormatsVariations.Output]: DatepickerOutputFormat.YearPicker
   }
-})
+}
+
 const computedType = computed((): DatepickerTypes => {
   return (props.type as DatepickerTypes) || DatepickerTypes.DatePicker
 })
@@ -445,11 +445,6 @@ const getFormattedOutputDate = (value: DatePickerValue): DatePickerValue => {
   return ([start, end].filter(Boolean) as DatePickerValue)
 }
 
-const setLocale = async (): Promise<void> => {
-  const locale = props.lang !== 'ar' && Object.keys(dayjsLocales).includes(props.lang) ? props.lang : 'en'
-  dayjs.locale(locale)
-}
-
 const selectPeriod = (key: string) => {
   let start = dayjs()
   //@ts-ignore
@@ -497,14 +492,6 @@ const onUpdateMonthYear = (e: any) => {
 }
 
 onMounted(init)
-
-watch(
-  () => props.lang,
-  () => {
-    setLocale()
-  },
-  { immediate: true }
-)
 
 watch(
   () => props.errors,

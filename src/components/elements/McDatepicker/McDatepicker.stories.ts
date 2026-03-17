@@ -206,7 +206,7 @@ export const MonthPicker: Story = {
             },
             template: `
                 <div> 
-                    <mc-datepicker v-model="v" type="month-picker" :disabled-dates="disabledDates" name="MonthPicker"></mc-datepicker>
+                    <mc-datepicker v-model="v" lang="ru" type="month-picker" :disabled-dates="disabledDates" name="MonthPicker"></mc-datepicker>
                     <p>Output: {{ v }}</p>
                 </div>
             `
