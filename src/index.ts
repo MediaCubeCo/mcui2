@@ -228,6 +228,7 @@ export {
   createProxy,
   dayjs,
   dayjsLocales,
+  setDayjsLocale,
   iconNameToComponentName,
   mcGridColAdaptiveProps,
   mcTitleAdaptiveProps,
