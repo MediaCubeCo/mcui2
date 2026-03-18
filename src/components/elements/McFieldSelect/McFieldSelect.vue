@@ -101,7 +101,7 @@ const props = defineProps({
    */
   allowEmpty: {
     type: Boolean as PropType<boolean>,
-    default: true
+    default: false
   },
   /**
    *  Отключенное состояние

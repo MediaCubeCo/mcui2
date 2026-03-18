@@ -7,6 +7,7 @@ import { useHelper } from '@/composables/useHelper'
 const helper = useHelper()
 const componentCache = <Record<string, any>>{}
 const drawerInstanceCache = <Record<string, any>>{}
+let drawerInstanceSeq = 0
 
 let DrawerContainerComponent: Component | null = null
 let drawerContainerReady: Promise<void> | null = null
@@ -97,17 +98,9 @@ const showDrawer = async (componentName: string, drawerProps: Partial<IDrawerPro
     return
   }
 
-  const existing = helper.findLastSafe(reactiveProps.drawers, (d) => d.componentName === componentName)
-
-  if (existing) {
-    existing.modelValue = true
-    drawerServiceState.activeDrawer = existing
-    return
-  }
-
   const component = markRaw(normalizeComponent(compLoader))
 
-  const id = componentName
+  const id = `${componentName}__${String(drawerInstanceSeq)}`
 
   const newDrawer: IDrawerState = {
     component,
@@ -138,6 +131,7 @@ const showDrawer = async (componentName: string, drawerProps: Partial<IDrawerPro
 
   drawerServiceState.isOpen = true
   drawerServiceState.activeDrawer = newDrawer
+  drawerInstanceSeq++
 }
 
 const closeDrawer = (componentName: string) => {
