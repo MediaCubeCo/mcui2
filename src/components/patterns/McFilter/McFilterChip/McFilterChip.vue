@@ -75,6 +75,7 @@ const handleChipClick = (e: Event): void => {
     :class="classes"
     :style="styles"
     :size="ChipSize.S"
+    text-color="black"
     @close="handleChipClick"
   >
     <span v-if="tag.categoryName" class="mc-filter-chip__category">{{ computedCategory }}</span

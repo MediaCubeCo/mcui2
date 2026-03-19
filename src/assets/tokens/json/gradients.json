@@ -1,13 +1,15 @@
 {
   "$gradient-pink": "linear-gradient(180deg, #F5576C 0%, #F093FB 100%)",
-  "$gradient-violet": "linear-gradient(180deg, #E41AFE 0%, #8035F8 100%)",
+  "$gradient-violet": "linear-gradient(180deg, #E41AFE 0%, var(--color-main-dark) 100%)",
   "$gradient-blue": "linear-gradient(180deg, #1ADBFE 0%, #3580F8 100%)",
   "$gradient-yellow": "linear-gradient(180deg, #FEE41A 0%, #F89B35 100%)",
   "$gradient-green": "linear-gradient(180deg, #C9DD4C 0%, #63BE7E 100%)",
   "$gradient-red": "linear-gradient(180deg, #F26567 0%, #F79440 100%)",
-  "$gradient-purple": "linear-gradient(270deg, #9a47ed 0%, #8446ff 100%)",
-  "$gradient-purple-pink": "linear-gradient(90deg, #722eff 2%, #fe6ffc 100%)",
-  "$gradient-blue-purple": "linear-gradient(90deg, #18bfe3 20%, #8756ff 70%)",
-  "$gradient-dark-blue": "linear-gradient(90deg, #5550EF 0%, #7F4EFF 100%)",
-  "$gradient-primary-radial": "radial-gradient(rgb(179, 211, 255), rgb(62, 132, 244))"
+  "$gradient-primary-radial": "radial-gradient(rgb(179, 211, 255), rgb(62, 132, 244))",
+  "$gradient-purple-blue": "linear-gradient(270deg, #18bfe3 17%, var(--color-main) 70%)",
+  "$gradient-light-blue": "linear-gradient(280deg, #d6e8ff 5%, #efe9ff 95%)",
+  "$gradient-purple": "linear-gradient(90deg, var(--color-main-dark) 0%, var(--color-main) 100%)",
+  "$gradient-purple-pink": "linear-gradient(90deg, var(--color-main-dark) 2%, #E986FF 100%)",
+  "$gradient-dark-blue": "linear-gradient(90deg, #B265FF 0%, var(--color-main-dark) 100%)",
+  "$gradient-blue-purple": "linear-gradient(90deg, #C55FE8 0%, #3C88FA 100%)"
 }

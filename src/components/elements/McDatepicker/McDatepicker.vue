@@ -189,7 +189,7 @@ const props = defineProps({
   },
   timezone: {
     type: String as PropType<string>,
-    default: dayjs.tz.guess()
+    default: () => dayjs.tz?.guess?.() ?? 'UTC',
   },
   useTimezone: {
     type: Boolean as PropType<boolean>,

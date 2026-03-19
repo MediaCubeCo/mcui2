@@ -26,8 +26,8 @@ async function setDayjsLocale (locale: any) {
   dayjs.locale(locale)
 }
 
-dayjs.extend(timezone)
 dayjs.extend(utc)
+dayjs.extend(timezone)
 dayjs.extend(customParseFormat)
 
 export { dayjs, dayjsLocales, setDayjsLocale }
