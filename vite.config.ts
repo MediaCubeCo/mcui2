@@ -52,6 +52,7 @@ export default defineConfig({
     outDir: 'dist',
     target: 'esnext',
     minify: 'esbuild',
+    cssCodeSplit: true,
     lib: {
       entry: './src/index.ts',
       name: 'mediacube-ui-v2',
