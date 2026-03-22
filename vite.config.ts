@@ -23,7 +23,7 @@ export default defineConfig({
       outDir: 'dist/types',
       insertTypesEntry: true,
       include: ['src'],
-      exclude: ['src/mocks']
+      exclude: ["node_modules", "src/**/*.stories.ts", "src/**/*.stories.js", "src/**/*.stories.vue", "dist", "src/mocks", "src/App.vue", "src/main.*"]
     }),
     /**
      * Перенос файлов которые не задеваются сборкой
@@ -52,7 +52,9 @@ export default defineConfig({
     outDir: 'dist',
     target: 'esnext',
     minify: 'esbuild',
-    cssCodeSplit: true,
+    sourcemap: false,
+    reportCompressedSize: false,
+    cssMinify: true,
     lib: {
       entry: './src/index.ts',
       name: 'mediacube-ui-v2',

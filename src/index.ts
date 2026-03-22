@@ -5,7 +5,7 @@ import { Themes } from '@/enums/Themes'
 import { ThemesColors, UiThemes } from '@/types/styles/ColorTheme'
 import defaultAvatar from './assets/img/no_user.png'
 import { createProxy } from '@/utils/proxy'
-import { SPRITE_IDS, SPRITE_FILES } from '@/consts/'
+import { SPRITE_IDS, SPRITE_FILES } from '@/consts'
 export { SPRITE_IDS, SPRITE_FILES }
 export {
   ThemesColors,
@@ -226,34 +226,34 @@ export {
 export {
   sanitize,
   createProxy,
-  dayjs,
-  dayjsLocales,
-  setDayjsLocale,
-  iconNameToComponentName,
-  mcGridColAdaptiveProps,
-  mcTitleAdaptiveProps,
-  mcSvgIconAdaptiveProps
+  // dayjs,
+  // dayjsLocales,
+  // setDayjsLocale,
+  // iconNameToComponentName,
+  // mcGridColAdaptiveProps,
+  // mcTitleAdaptiveProps,
+  // mcSvgIconAdaptiveProps
 } from '@/utils'
 
-export {
-  colors,
-  durations,
-  easings,
-  fontFamilies,
-  fontSizes,
-  fontWeights,
-  gradients,
-  letterSpacings,
-  lineHeights,
-  mediaQueries,
-  opacities,
-  sizes,
-  spacings,
-  zIndexes,
-  borderRadius,
-  boxShadows,
-  animations
-} from './assets/tokens/json'
+// export {
+//   colors,
+//   durations,
+//   easings,
+//   fontFamilies,
+//   fontSizes,
+//   fontWeights,
+//   gradients,
+//   letterSpacings,
+//   lineHeights,
+//   mediaQueries,
+//   opacities,
+//   sizes,
+//   spacings,
+//   zIndexes,
+//   borderRadius,
+//   boxShadows,
+//   animations
+// } from './assets/tokens/json'
 
 export {
   useModal,
