@@ -1,6 +1,6 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.262",
+  "version": "0.0.263",
   "license": "MIT",
   "description": "Design system for Mediacube services",
   "sideEffects": [
@@ -31,18 +31,62 @@
     "./base.scss": "./dist/base.scss",
     "./variables.scss": "./dist/variables.scss",
     "./fonts/*": "./dist/fonts/*",
-    "./components/elements/*": "./dist/components/elements/*/index.js",
-    "./components/patterns/*/*/*": "./dist/components/patterns/*/*/*/index.js",
-    "./components/patterns/*/*": "./dist/components/patterns/*/*/index.js",
-    "./components/patterns/*": "./dist/components/patterns/*/index.js",
-    "./components/templates/*/*/*": "./dist/components/templates/*/*/*/index.js",
-    "./components/templates/*/*": "./dist/components/templates/*/*/index.js",
-    "./components/templates/*": "./dist/components/templates/*/index.js",
-    "./composables/*": "./dist/composables/*.js",
-    "./enums/ui/*": "./dist/enums/ui/*.js",
-    "./enums/*": "./dist/enums/*.js",
+    "./components/elements/*": {
+      "types": "./dist/types/components/elements/*/index.d.ts",
+      "import": "./dist/components/elements/*/index.js",
+      "default": "./dist/components/elements/*/index.js"
+    },
+    "./components/patterns/*/*/*": {
+      "types": "./dist/types/components/patterns/*/*/*/index.d.ts",
+      "import": "./dist/components/patterns/*/*/*/index.js",
+      "default": "./dist/components/patterns/*/*/*/index.js"
+    },
+    "./components/patterns/*/*": {
+      "types": "./dist/types/components/patterns/*/*/index.d.ts",
+      "import": "./dist/components/patterns/*/*/index.js",
+      "default": "./dist/components/patterns/*/*/index.js"
+    },
+    "./components/patterns/*": {
+      "types": "./dist/types/components/patterns/*/index.d.ts",
+      "import": "./dist/components/patterns/*/index.js",
+      "default": "./dist/components/patterns/*/index.js"
+    },
+    "./components/templates/*/*/*": {
+      "types": "./dist/types/components/templates/*/*/*/index.d.ts",
+      "import": "./dist/components/templates/*/*/*/index.js",
+      "default": "./dist/components/templates/*/*/*/index.js"
+    },
+    "./components/templates/*/*": {
+      "types": "./dist/types/components/templates/*/*/index.d.ts",
+      "import": "./dist/components/templates/*/*/index.js",
+      "default": "./dist/components/templates/*/*/index.js"
+    },
+    "./components/templates/*": {
+      "types": "./dist/types/components/templates/*/index.d.ts",
+      "import": "./dist/components/templates/*/index.js",
+      "default": "./dist/components/templates/*/index.js"
+    },
+    "./composables/*": {
+      "types": "./dist/types/composables/*.d.ts",
+      "import": "./dist/composables/*.js",
+      "default": "./dist/composables/*.js"
+    },
+    "./enums/ui/*": {
+      "types": "./dist/types/enums/ui/*.d.ts",
+      "import": "./dist/enums/ui/*.js",
+      "default": "./dist/enums/ui/*.js"
+    },
+    "./enums/*": {
+      "types": "./dist/types/enums/*.d.ts",
+      "import": "./dist/enums/*.js",
+      "default": "./dist/enums/*.js"
+    },
     "./types/*": "./dist/types/*",
-    "./utils/*": "./dist/utils/*.js",
+    "./utils/*": {
+      "types": "./dist/types/utils/*.d.ts",
+      "import": "./dist/utils/*.js",
+      "default": "./dist/utils/*.js"
+    },
     "./iconsSprite.svg": "./dist/iconsSprite.svg",
     "./iconsSpriteFlags.svg": "./dist/iconsSpriteFlags.svg",
     "./iconsSpriteGrads.svg": "./dist/iconsSpriteGrads.svg",
