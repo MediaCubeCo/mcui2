@@ -56,7 +56,7 @@ const createDrawerContainer = async (): Promise<void> => {
   if (document.getElementById('drawer-container')) return
 
   if (!DrawerContainerComponent) {
-    const mod = await import('@/components/templates/McDrawer/McDrawerContainer.vue')
+    const mod = await import('@/components/templates/McDrawer/McDrawerContainer/McDrawerContainer.vue')
     DrawerContainerComponent = mod.default
   }
 

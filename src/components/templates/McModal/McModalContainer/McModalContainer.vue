@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, type PropType, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, type PropType, watch } from 'vue'
 import type { IModalServiceState, IModalState } from '@/types/IModal'
-const McDrawerSafeComponent = defineAsyncComponent(() => import('@/components/templates/McDrawer/McDrawerSafeComponent.vue'))
+import McModalSafeComponent from '@/components/templates/McModal/McModalSafeComponent.vue'
 
 const props = defineProps({
   modalServiceState: {
@@ -10,27 +10,31 @@ const props = defineProps({
   },
   reactiveProps: {
     type: Object as () => { modals: IModalState[] },
-    default: () => ({})
+    default: () => ({ modals: [] as IModalState[] })
   }
 })
 
+const modalsList = computed((): IModalState[] => {
+  return props.reactiveProps?.modals ?? []
+})
+
 const containerStyle = computed((): { [key: string]: string | number } => ({
-  zIndex: props.reactiveProps.modals.length ? 99999 : -1,
-  visibility: props.reactiveProps.modals.length ? 'visible' : 'hidden'
+  zIndex: modalsList.value.length ? 99999 : -1,
+  visibility: modalsList.value.length ? 'visible' : 'hidden'
 }))
+
 const closeModal = (value: IModalState) => {
   value.close()
   setTimeout(() => {
-    if (props.reactiveProps.modals.every((d) => !d.modelValue)) {
+    if (modalsList.value.every((d) => !d.modelValue)) {
       props.modalServiceState.closeServiceState()
     }
   }, 300)
 }
 
 const handleKeyUp = (e: KeyboardEvent) => {
-  const modals = props.reactiveProps?.modals
-  if (e.code === 'Escape' && modals?.length) {
-    const last_modal = modals[modals.length - 1]
+  if (e.code === 'Escape' && modalsList.value.length) {
+    const last_modal = modalsList.value[modalsList.value.length - 1]
     //@ts-ignore
     // eslint-disable-next-line no-prototype-builtins
     const clickBackdropToClose = !last_modal?.componentProps?.hasOwnProperty('clickBackdropToClose') || last_modal?.componentProps?.clickBackdropToClose
@@ -50,7 +54,7 @@ onMounted(() => {
   document.addEventListener('keyup', handleKeyUp)
 
   watch(
-    () => props.reactiveProps.modals.length,
+    () => modalsList.value.length,
     (val) => lockBodyScroll(!!val),
     { immediate: true }
   )
@@ -62,19 +66,19 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="mc-modal-container" :style="containerStyle">
-    <div v-for="modal in props.reactiveProps.modals" :key="modal.id" @close="() => closeModal(modal)">
+    <div v-for="modal in modalsList" :key="modal.id" @close="() => closeModal(modal)">
       <Suspense>
-        <mc-drawer-safe-component @error-captured="() => closeModal(modal)">
+        <mc-modal-safe-component @error-captured="() => closeModal(modal)">
           <component
             v-model="modal.modelValue"
             :is="modal.component"
             v-bind="modal.componentProps"
             @closed="() => closeModal(modal)"
           />
-        </mc-drawer-safe-component>
+        </mc-modal-safe-component>
       </Suspense>
     </div>
   </div>
 </template>
 
-<style lang="scss" src="./McModalContainer.scss"></style>
+<style lang="scss" src="./index.scss"></style>

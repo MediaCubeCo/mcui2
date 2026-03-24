@@ -342,4 +342,4 @@ watch(
   </div>
 </template>
 
-<style lang="scss" src="./McModal.scss"></style>
+<style lang="scss" src="./index.scss"></style>

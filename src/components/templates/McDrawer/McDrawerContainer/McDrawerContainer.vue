@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, type PropType } from 'vue'
 import type { IDrawerServiceState, IDrawerState } from '@/types/IDrawer'
-const McDrawerSafeComponent = defineAsyncComponent(() => import('@/components/templates/McDrawer/McDrawerSafeComponent.vue'))
+import McDrawerSafeComponent from '@/components/templates/McDrawer/McDrawerSafeComponent.vue'
 const McDrawer = defineAsyncComponent(() => import('@/components/templates/McDrawer/McDrawer.vue'))
 
 interface IEnrichedDrawerState extends IDrawerState {
@@ -30,12 +30,16 @@ const props = defineProps({
   }
 })
 
+const drawersList = computed((): IDrawerState[] => {
+  return props.reactiveProps.drawers ?? []
+})
+
 const computedDrawers = computed((): IEnrichedDrawerState[] => {
-  return props.reactiveProps.drawers.map((cDrawer, i) => {
-    const indent_coefficient = props.reactiveProps.drawers.length - 1 - i
+  return drawersList.value.map((cDrawer, i) => {
+    const indent_coefficient = drawersList.value.length - 1 - i
     const real_coefficient = Math.min(indent_coefficient, props.drawersMaxInCascade - 1)
 
-    const last_drawer_has_overlay = props.reactiveProps.drawers.findLastIndex(
+    const last_drawer_has_overlay = drawersList.value.findLastIndex(
       // @ts-ignore
       // eslint-disable-next-line no-prototype-builtins
       (drawer) => !drawer?.drawerProps.hasOwnProperty('showOverlay') || drawer.drawerProps?.showOverlay
@@ -52,8 +56,8 @@ const computedDrawers = computed((): IEnrichedDrawerState[] => {
 })
 
 const containerStyle = computed((): { [key: string]: string | number } => ({
-  zIndex: props.reactiveProps.drawers.length ? 10004 : -1,
-  visibility: props.reactiveProps.drawers.length ? 'visible' : 'hidden'
+  zIndex: drawersList.value.length ? 10004 : -1,
+  visibility: drawersList.value.length ? 'visible' : 'hidden'
 }))
 
 const closeDrawer = (value: IDrawerState) => {
@@ -103,4 +107,4 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style lang="scss" src="./McDrawerContainer.scss"></style>
+<style lang="scss" src="./index.scss"></style>

@@ -159,4 +159,4 @@ watch(
   </div>
 </template>
 
-<style lang="scss" scoped src="./McDrawer.scss"></style>
+<style lang="scss" scoped src="./index.scss"></style>
