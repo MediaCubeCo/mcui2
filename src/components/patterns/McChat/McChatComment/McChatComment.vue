@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import McPreview from '@/components/patterns/McPreview/McPreview.vue'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McDate from '@/components/elements/McDate/McDate.vue'
-import McAvatar from '@/components/elements/McAvatar/McAvatar.vue'
-import McBadge from '@/components/elements/McBadge/McBadge.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
-import { computed, PropType, ref } from 'vue'
+import { computed, defineAsyncComponent, PropType, ref } from 'vue'
 import { ButtonSize } from '@/enums/ui/Button'
 import { TitleVariations } from '@/enums/Title'
 import { Weights } from '@/enums/ui/Weights'
 import { ColorTypes } from '@/types/styles/Colors'
 import { IComment, ICommentTitle } from '@/types/IComment'
+const McPreview = defineAsyncComponent(() => import('@/components/patterns/McPreview/McPreview.vue'))
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+const McDate = defineAsyncComponent(() => import('@/components/elements/McDate/McDate.vue'))
+const McAvatar = defineAsyncComponent(() => import('@/components/elements/McAvatar/McAvatar.vue'))
+const McBadge = defineAsyncComponent(() => import('@/components/elements/McBadge/McBadge.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
 /**
  * Используется только в McChat
  */

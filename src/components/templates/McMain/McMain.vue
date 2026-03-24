@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, useSlots } from 'vue'
+import { onBeforeUnmount, onMounted } from 'vue'
 /**
  * Используется для вёрстки основных страниц
  * на проектах
  */
 
-const slots = useSlots()
 
 const vhFix = () => {
   const vh = window.innerHeight * 0.01

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import { computed, nextTick, type PropType, reactive, ref, useSlots, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, type PropType, reactive, ref, watch } from 'vue'
 import { LineHeights, type LineHeightTypes } from '@/types/styles/LineHeights'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Spaces, type SpaceTypes } from '@/types/styles/Spaces'
 import { HorizontalAlignment } from '@/enums/ui/Alignment'
 import { TransitionPresets, useTransition } from '@vueuse/core'
 import { ModalVariation } from '@/enums/Modal'
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
 
 const emit = defineEmits<{
   (e: 'before-open'): void

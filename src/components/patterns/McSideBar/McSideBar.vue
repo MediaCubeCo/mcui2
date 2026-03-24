@@ -1,15 +1,25 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, type PropType, provide, reactive, ref, watch } from 'vue'
-import McSideBarTop from '@/components/patterns/McSideBar/McSideBarTop/McSideBarTop.vue'
-import McSideBarCenter from '@/components/patterns/McSideBar/McSideBarCenter/McSideBarCenter.vue'
-import McSideBarBottom from '@/components/patterns/McSideBar/McSideBarBottom/McSideBarBottom.vue'
+import {
+  computed,
+  defineAsyncComponent,
+  onBeforeUnmount,
+  onMounted,
+  type PropType,
+  provide,
+  reactive,
+  ref,
+  watch
+} from 'vue'
 
 import type { IconsListUnion } from '@/types/styles/Icons'
-import type { ISideBarApp, ISideBarChatra, ISideBarMenuItem, ISideBarMenuItemEnrichment, ISidebarThemeConfig, ISidebarThemeConfigProvide } from '@/types/ISideBar'
+import type { ISideBarApp, ISideBarChatra, ISideBarMenuItem, ISidebarThemeConfig, ISidebarThemeConfigProvide } from '@/types/ISideBar'
 import type { TitleVariationsUnion } from '@/types/ITitle'
 import { defaultThemes } from '@/mocks/sidebar'
 import { SidebarTheme } from '@/enums/Sidebar'
 import { TitleVariations } from '@/enums/Title'
+const McSideBarTop = defineAsyncComponent(() => import('@/components/patterns/McSideBar/McSideBarTop/McSideBarTop.vue'))
+const McSideBarCenter = defineAsyncComponent(() => import('@/components/patterns/McSideBar/McSideBarCenter/McSideBarCenter.vue'))
+const McSideBarBottom = defineAsyncComponent(() => import('@/components/patterns/McSideBar/McSideBarBottom/McSideBarBottom.vue'))
 
 const emit = defineEmits<{
   (e: 'absolute-mode', value: boolean): void

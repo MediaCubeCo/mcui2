@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import { computed, type PropType } from 'vue'
+import { computed, defineAsyncComponent, type PropType } from 'vue'
 import type { ITableSort, ITableSortState } from '@/types/ITable'
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
 
 const emit = defineEmits<{
   (e: 'change', value: ITableSort): void

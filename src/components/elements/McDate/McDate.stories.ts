@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import McDate from './McDate.vue'
-import { Colors } from '../../../types'
-import { TitleVariations } from '../../../enums'
+import { Colors } from '../../../types/styles/Colors'
+import { TitleVariations } from '../../../enums/Title'
 
 const meta = {
     title: 'McDate',

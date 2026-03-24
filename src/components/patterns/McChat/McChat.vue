@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import McChatForm from '@/components/patterns/McChat/McChatForm/McChatForm.vue'
-import McChatComment from '@/components/patterns/McChat/McChatComment/McChatComment.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McInfinityLoadingTrigger from '@/components/elements/McInfinityLoadingTrigger/McInfinityLoadingTrigger.vue'
-import { computed, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue'
 import { McDrawerContentTemplate } from '@/components/templates/McDrawer/McDrawerContentTemplate'
 import { IComment } from '@/types/IComment'
 import { HorizontalAlignment } from '@/enums/ui/Alignment'
 import { Weights } from '@/enums/ui/Weights'
+const McChatForm = defineAsyncComponent(() => import('@/components/patterns/McChat/McChatForm/McChatForm.vue'))
+const McChatComment = defineAsyncComponent(() => import('@/components/patterns/McChat/McChatComment/McChatComment.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+const McInfinityLoadingTrigger = defineAsyncComponent(() => import('@/components/elements/McInfinityLoadingTrigger/McInfinityLoadingTrigger.vue'))
 
 const emit = defineEmits<{
   (e: 'loading'): void

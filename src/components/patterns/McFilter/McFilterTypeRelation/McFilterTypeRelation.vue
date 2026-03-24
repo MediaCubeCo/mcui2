@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McFieldSelect from '@/components/elements/McFieldSelect/McFieldSelect.vue'
-import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
-import { computed, type PropType, ref, watch, nextTick } from 'vue'
+import { computed, type PropType, ref, watch, nextTick, defineAsyncComponent } from 'vue'
 import {
   IFilterPlaceholders,
   FilterRelationValue,
@@ -19,6 +15,10 @@ import { FilterRelations } from '@/enums/Filter'
 import { useHelper } from '@/composables/useHelper'
 import { useDebounceFn } from '@vueuse/core'
 import { useTheme } from '@/composables/useTheme'
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+const McFieldSelect = defineAsyncComponent(() => import('@/components/elements/McFieldSelect/McFieldSelect.vue'))
+const McFieldText = defineAsyncComponent(() => import('@/components/elements/McFieldText/McFieldText.vue'))
 
 const helper = useHelper()
 const emit = defineEmits<{

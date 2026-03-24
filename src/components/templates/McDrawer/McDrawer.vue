@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { TransitionPresets, useTransition } from '@vueuse/core'
-import { computed, type PropType, ref, watch } from 'vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import { computed, defineAsyncComponent, type PropType, ref, watch } from 'vue'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import type { DrawerPositionsUnion } from '@/types/IDrawer'
 import { DrawerPositions } from '@/enums/Drawer'
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
 
 const emit = defineEmits<{
   (e: 'toggle', value: boolean): void

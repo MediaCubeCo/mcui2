@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import McGridRow from '@/components/patterns/McGridRow/McGridRow.vue'
-import { computed, onBeforeUnmount, onMounted, type PropType, reactive, ref } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, type PropType, reactive, ref } from 'vue'
 import { useThrottleFn } from '@vueuse/core'
 import { Spaces, type SpaceTypes } from '@/types/styles/Spaces'
 import type { SpacesUnion } from '@/types/styles/Spaces'
 import type { ColumnJustifyAlignmentUnion } from '@/types/styles/Grid'
 import { ColumnAlignment, ColumnJustifyAlignment } from '@/enums/Grid'
+const McGridRow = defineAsyncComponent(() => import('@/components/patterns/McGridRow/McGridRow.vue'))
 
 const emit = defineEmits(['content-scrolled'])
 const props = defineProps({

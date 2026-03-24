@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import McToast from '@/components/templates/McToast/McToast.vue'
 import { ToastPositions } from '@/enums/Toast'
-import { computed, PropType } from 'vue'
+import { computed, defineAsyncComponent, PropType } from 'vue'
 import type { IToast } from '@/types/IToast'
+const McToast = defineAsyncComponent(() => import('@/components/templates/McToast/McToast.vue'))
 
 const props = defineProps({
   reactiveProps: {

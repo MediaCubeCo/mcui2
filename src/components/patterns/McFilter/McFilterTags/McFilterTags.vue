@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { dayjs } from '@/utils/dayjs'
 
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McGridRow from '@/components/patterns/McGridRow/McGridRow.vue'
-import McGridCol from '@/components/patterns/McGridCol/McGridCol.vue'
-import McFilterChip from '@/components/patterns/McFilter/McFilterChip/McFilterChip.vue'
-import { computed, type PropType, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, type PropType, ref, watch } from 'vue'
 import { useRandomNumber } from '@/composables/useRandomNumber'
 import { useHelper } from '@/composables/useHelper'
 import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'
 import { FilterRelations, FilterTypes } from '@/enums/Filter'
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
+const McTooltip = defineAsyncComponent(() => import('@/components/elements/McTooltip/McTooltip.vue'))
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+const McGridRow = defineAsyncComponent(() => import('@/components/patterns/McGridRow/McGridRow.vue'))
+const McGridCol = defineAsyncComponent(() => import('@/components/patterns/McGridCol/McGridCol.vue'))
+const McFilterChip = defineAsyncComponent(() => import('@/components/patterns/McFilter/McFilterChip/McFilterChip.vue'))
+
 import type {
   FilterConditionName,
   IFilter,

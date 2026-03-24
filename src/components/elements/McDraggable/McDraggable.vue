@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useDebounceFn, useDraggable, useLocalStorage, useSessionStorage } from '@vueuse/core'
-import { computed, type PropType, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, type PropType, ref, watch } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
-import McPreview from '@/components/patterns/McPreview/McPreview.vue'
 import type { ColorsUnion } from '@/types/styles/Colors'
 import { useTheme } from '@/composables/useTheme'
+const McPreview = defineAsyncComponent(() => import('@/components/patterns/McPreview/McPreview.vue'))
 
 export interface DraggableInitPayload {
   x: number

@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import { computed, type PropType, useSlots } from 'vue'
+import { computed, defineAsyncComponent, type PropType } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import { ChipSizeModifiersUnion, ChipVariationUnion, IChipStyleOptions } from '@/types/IChip'
 import type { ColorsUnion } from '@/types/styles/Colors'
 import { ChipModifiers } from '@/enums/Chip'
 import { useTheme } from '@/composables/useTheme'
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
 
 const theme = useTheme('chip')
-const slots = useSlots()
 const emit = defineEmits(['close', 'click'])
 const props = defineProps({
   /**

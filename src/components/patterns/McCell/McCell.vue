@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import { computed, type PropType } from 'vue'
+import { computed, defineAsyncComponent, type PropType } from 'vue'
 import { CellSizes } from '@/enums/Cell'
 import type { CellSizesUnion } from '@/types/ICell'
 import { TitleVariations } from '@/enums/Title'
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+
 const props = defineProps({
   /**
    * Заголовок

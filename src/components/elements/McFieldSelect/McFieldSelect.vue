@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import { computed, type PropType, ref, useSlots, watch, nextTick, onBeforeUnmount } from 'vue'
+import { computed, type PropType, ref, useSlots, watch, nextTick, onBeforeUnmount, defineAsyncComponent } from 'vue'
 import { default as MultiSelect } from 'vue-multiselect'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McAvatar from '@/components/elements/McAvatar/McAvatar.vue'
-import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
-import McPreview from '@/components/patterns/McPreview/McPreview.vue'
-import McChip from '@/components/elements/McChip/McChip.vue'
 import type { ISelectGroupOptions, ISelectOption, ISelectOptions } from '@/types/ISelect'
 import { type DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
@@ -22,6 +16,12 @@ import { Weights } from '@/enums/ui/Weights'
 import { ChipSize } from '@/enums/Chip'
 import { useTheme } from '@/composables/useTheme'
 import { useThrottleFn } from '@vueuse/core'
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McAvatar = defineAsyncComponent(() => import('@/components/elements/McAvatar/McAvatar.vue'))
+const McTooltip = defineAsyncComponent(() => import('@/components/elements/McTooltip/McTooltip.vue'))
+const McPreview = defineAsyncComponent(() => import('@/components/patterns/McPreview/McPreview.vue'))
+const McChip = defineAsyncComponent(() => import('@/components/elements/McChip/McChip.vue'))
 
 const emit = defineEmits<{
   (e: 'original-input', value: ISelectOptions[]): void

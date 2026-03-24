@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, type PropType, reactive, ref, useAttrs, useSlots, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, type PropType, ref, useAttrs, watch } from 'vue'
 import {
   DatepickerFormat,
   DatepickerTypes,
@@ -13,15 +13,15 @@ import { type DatePickerValue, type DatepickerTypesUnion, type DatepickerFormats
 import { dayjs } from '@/utils/dayjs'
 import { default as DatePicker, type DatePickerMarker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
 import { useFieldErrors } from '@/composables/useFieldErrors'
 import { ButtonSize } from '@/enums/ui/Button'
 import { TitleVariations } from '@/enums/Title'
 import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types/styles/Colors'
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
 
 const default_placeholders: IDatepickerPlaceholders = {
   week: 'Week',
@@ -32,7 +32,6 @@ const default_placeholders: IDatepickerPlaceholders = {
 }
 
 const attrs = useAttrs()
-const slots = useSlots()
 const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps({

@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import { useFieldErrors } from '@/composables/useFieldErrors'
-import { computed, type PropType, useSlots, watch } from 'vue'
+import { computed, defineAsyncComponent, type PropType, useSlots, watch } from 'vue'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Directions } from '@/enums/ui/Directions'
 import type { SizesUnion } from '@/types/styles/Sizes'
@@ -11,6 +9,8 @@ import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types/styles/Colors'
 import { ICheckboxMainCheckbox } from '@/types/ICheckbox'
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
 
 const emit = defineEmits(['update:modelValue'])
 const slots = useSlots()

@@ -3,7 +3,7 @@ import McToast from './McToast.vue'
 import McButton from '../../elements/McButton/McButton.vue'
 import { ToastPositions } from '../../../enums/Toast'
 import { useToast } from '../../../composables/useToast'
-import { Colors } from '../../../types'
+import { Colors } from '../../../types/styles/Colors'
 import iconsList from '@/mocks/icons.json'
 
 const meta = {

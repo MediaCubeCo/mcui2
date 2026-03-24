@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import McSpinNumber from './McSpinNumber.vue'
 import McButton from '../McButton/McButton.vue'
-import { Colors, type ColorTypes, FontSizes, FontWeights } from '../../../types'
+import { Colors, type ColorTypes } from '../../../types/styles/Colors'
+import { FontSizes } from '../../../types/styles/FontSizes'
+import { FontWeights } from '../../../types/styles/FontWeights'
 
 const meta = {
     title: 'McSpinNumber',

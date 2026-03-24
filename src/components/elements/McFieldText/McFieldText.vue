@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { IMaskComponent, IMask } from 'vue-imask'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
 import { Spaces } from '@/types/styles/Spaces'
-import { computed, type PropType, reactive, ref, useAttrs, useSlots, watch } from 'vue'
+import { computed, defineAsyncComponent, type PropType, reactive, ref, useAttrs, watch } from 'vue'
 import type { DirectionsUnion } from '@/types/IDirections'
 import { Directions } from '@/enums/ui/Directions'
 import type { InputTypesUnion, InputValue } from '@/types/IInput'
@@ -19,6 +15,10 @@ import { HorizontalAlignment } from '@/enums/ui/Alignment'
 import { TitleVariations } from '@/enums/Title'
 import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McTooltip = defineAsyncComponent(() => import('@/components/elements/McTooltip/McTooltip.vue'))
 
 const { textarea } = useTextareaAutosize()
 const emit = defineEmits<{
@@ -27,7 +27,6 @@ const emit = defineEmits<{
   (e: 'copy', value: string): void
 }>()
 const attrs = useAttrs()
-const slots = useSlots()
 const props = defineProps({
   /**
    *  Значение

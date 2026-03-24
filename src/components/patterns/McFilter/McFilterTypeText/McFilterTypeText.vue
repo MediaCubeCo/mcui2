@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
-import { computed, type PropType } from 'vue'
+import { computed, defineAsyncComponent, type PropType } from 'vue'
 import type { FilterTextValue, IBaseFilter, IFilterCondition, IFilterPlaceholders } from '@/types/IFilter'
+const McFieldText = defineAsyncComponent(() => import('@/components/elements/McFieldText/McFieldText.vue'))
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: IFilterCondition): void

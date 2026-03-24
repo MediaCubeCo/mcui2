@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import McDatepicker from '@/components/elements/McDatepicker/McDatepicker.vue'
-import { computed, type PropType } from 'vue'
+import { computed, defineAsyncComponent, type PropType } from 'vue'
 import type { IBaseFilter, IFilterCondition, IFilterDateValue } from '@/types/IFilter'
+const McDatepicker = defineAsyncComponent(() => import('@/components/elements/McDatepicker/McDatepicker.vue'))
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: IFilterCondition): void

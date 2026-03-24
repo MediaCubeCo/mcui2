@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McSideBarButton from '@/components/patterns/McSideBar/McSideBarButton/McSideBarButton.vue'
-import McSeparator from '@/components/elements/McSeparator/McSeparator.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import { computed, inject, type PropType, ref, useSlots, watch } from 'vue'
+import { computed, defineAsyncComponent, inject, type PropType, ref, useSlots, watch } from 'vue'
 import type {
   ISideBarChatra,
   ISideBarLink,
@@ -14,8 +9,13 @@ import type {
 } from '@/types/ISideBar'
 import { ButtonSize } from '@/enums/ui/Button'
 import { SidebarTheme } from '@/enums/Sidebar'
-import McSlideUpDown from '@/components/elements/McSlideUpDown/McSlideUpDown.vue'
 import { defaultThemes } from '@/mocks/sidebar'
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+const McSideBarButton = defineAsyncComponent(() => import('@/components/patterns/McSideBar/McSideBarButton/McSideBarButton.vue'))
+const McSeparator = defineAsyncComponent(() => import('@/components/elements/McSeparator/McSeparator.vue'))
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McSlideUpDown = defineAsyncComponent(() => import('@/components/elements/McSlideUpDown/McSlideUpDown.vue'))
 
 const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
 const slots = useSlots()

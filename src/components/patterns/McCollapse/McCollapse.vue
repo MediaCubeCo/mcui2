@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McSlideUpDown from '@/components/elements/McSlideUpDown/McSlideUpDown.vue'
-import { computed, type PropType, ref, useSlots, watch, inject, onMounted } from 'vue'
+import { computed, type PropType, ref, useSlots, watch, inject, onMounted, defineAsyncComponent } from 'vue'
 import type { ICollapse, ICollapseEmitPayload } from '@/types/ICollapse'
 import { useRandomNumber } from '@/composables/useRandomNumber'
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McSlideUpDown = defineAsyncComponent(() => import('@/components/elements/McSlideUpDown/McSlideUpDown.vue'))
 
 const randomNumber = useRandomNumber()
 const selfRegisterCollapseMethod: Function = inject('selfRegisterCollapseMethod', () => {})

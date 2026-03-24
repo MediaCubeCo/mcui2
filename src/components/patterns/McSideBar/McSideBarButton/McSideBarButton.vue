@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McChip from '@/components/elements/McChip/McChip.vue'
 import type { ButtonVariationUnion } from '@/types/IButton'
 import type { ColorTypes } from '@/types/styles/Colors'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import type { ISidebarThemeConfigProvide } from '@/types/ISideBar'
-import { computed, inject, type PropType, useAttrs } from 'vue'
+import { computed, defineAsyncComponent, inject, type PropType, useAttrs } from 'vue'
 import { ButtonSize } from '@/enums/ui/Button'
 import { HorizontalAlignment } from '@/enums/ui/Alignment'
 import { SidebarTheme } from '@/enums/Sidebar'
 import { TooltipPositions } from '@/enums/Tooltip'
 import { defaultThemes } from '@/mocks/sidebar'
 import { useTheme } from '@/composables/useTheme'
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McChip = defineAsyncComponent(() => import('@/components/elements/McChip/McChip.vue'))
 
 const attrs = useAttrs()
 const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)

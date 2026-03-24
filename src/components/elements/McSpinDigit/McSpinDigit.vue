@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, PropType, nextTick, useId } from 'vue'
+import { ref, watch, computed, PropType, nextTick, useId } from 'vue'
 import { Colors, ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { FontSizes } from '@/types/styles/FontSizes'

@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, onMounted, type PropType, ref, useSlots } from 'vue'
+import {
+  computed,
+  defineAsyncComponent,
+  getCurrentInstance,
+  inject,
+  onMounted,
+  type PropType,
+  ref,
+  useSlots
+} from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { useTooltip } from '@/composables/useTooltip'
 import type { ITooltip, TooltipPositionsUnion } from '@/types/ITooltip'
 import type { ButtonVariationUnion, IButtonStyleOptions } from '@/types/IButton'
 import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
 import type { ButtonSizeUnion, ButtonTypeUnion } from '@/types/IButton'
 import type { HorizontalAlignmentUnion } from '@/types/styles/Alignment'
 import type { WeightsUnion } from '@/types/styles/Weights'
@@ -333,7 +342,7 @@ const styles = computed((): { [key: string]: ColorsUnion | FontWeightsUnion | st
   return {
     '--mc-button-secondary-color': props.secondaryColor && theme.colors[props.secondaryColor],
     '--mc-button-background-color': computedVariation.value && theme.colors[buttonVariation.value.color as ColorTypes],
-    '--mc-button-active-text-color': textActiveColor as string && theme.colors[textActiveColor as ColorTypes],
+    '--mc-button-active-text-color': (textActiveColor as string) && theme.colors[textActiveColor as ColorTypes],
     '--mc-button-font-weight': props.weight && FontWeights[props.weight],
     '--mc-button-hover-brightness': hoverBrightness,
     '--mc-button-text-color': textColor && theme.colors[textColor]

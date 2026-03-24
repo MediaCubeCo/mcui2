@@ -1,10 +1,10 @@
 <script setup lang="ts">
-const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import { ButtonSize } from '@/enums/ui/Button'
 import { defineAsyncComponent, PropType } from 'vue'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types/styles/Colors'
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
 
 const props = defineProps({
   buttonBackText: {

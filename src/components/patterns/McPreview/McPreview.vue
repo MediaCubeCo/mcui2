@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { computed, useSlots } from 'vue'
+import { computed } from 'vue'
 import type { PreviewSizesUnion } from '@/types/IPreview'
 
-const slots = useSlots()
 
 const props = defineProps({
   /**

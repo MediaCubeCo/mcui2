@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from 'vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McPreview from '@/components/patterns/McPreview/McPreview.vue'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
 import { computed, inject, type PropType, ref } from 'vue'
 import { useHelper } from '@/composables/useHelper'
 import { ButtonSize } from '@/enums/ui/Button'
@@ -18,6 +14,10 @@ import type { IconsListUnion } from '@/types/styles/Icons'
 import type { ISideBarApp, ISidebarThemeConfig, ISidebarThemeConfigProvide } from '@/types/ISideBar'
 import type { TitleVariationsUnion } from '@/types/ITitle'
 import { defaultThemes } from '@/mocks/sidebar'
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McPreview = defineAsyncComponent(() => import('@/components/patterns/McPreview/McPreview.vue'))
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
 
 const McDropdown = defineAsyncComponent(() => import('@/components/patterns/McDropdown/McDropdown.vue'))
 const helper = useHelper()

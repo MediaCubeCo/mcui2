@@ -1,17 +1,28 @@
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, type PropType, ref, watch, provide, nextTick, inject } from 'vue'
+import {
+  computed,
+  onMounted,
+  onUpdated,
+  type PropType,
+  ref,
+  watch,
+  provide,
+  nextTick,
+  inject,
+  defineAsyncComponent
+} from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { ColorsUnion } from '@/types/styles/Colors'
-import McWrapScroll from '@/components/patterns/McWrapScroll/McWrapScroll.vue'
 import type { ITab } from '@/types/ITabs'
 import { type TabVariationUnion } from '@/types/ITabs'
 import { TabVariations } from '@/enums/Tab'
-import McChip from '@/components/elements/McChip/McChip.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import { IDSOptions } from '@/types/IDSOptions'
 import { useTheme } from '@/composables/useTheme'
 import { ChipSize } from '@/enums/Chip'
 import { useDebounceFn } from '@vueuse/core'
+const McChip = defineAsyncComponent(() => import('@/components/elements/McChip/McChip.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McWrapScroll = defineAsyncComponent(() => import('@/components/patterns/McWrapScroll/McWrapScroll.vue'))
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void

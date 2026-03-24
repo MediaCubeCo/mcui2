@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, type PropType } from 'vue'
-import McDrawer from '@/components/templates/McDrawer/McDrawer.vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, type PropType } from 'vue'
 import type { IDrawerServiceState, IDrawerState } from '@/types/IDrawer'
-import McDrawerSafeComponent from '@/components/templates/McDrawer/McDrawerSafeComponent.vue'
+const McDrawerSafeComponent = defineAsyncComponent(() => import('@/components/templates/McDrawer/McDrawerSafeComponent.vue'))
+const McDrawer = defineAsyncComponent(() => import('@/components/templates/McDrawer/McDrawer.vue'))
 
 interface IEnrichedDrawerState extends IDrawerState {
   indent_coefficient: number

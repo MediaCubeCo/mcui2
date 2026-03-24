@@ -2,7 +2,6 @@
 import { computed, type PropType, ref, inject, onMounted, useAttrs } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { ITab } from '@/types/ITabs'
-import type { IRoute } from '@/types/IRoute'
 import { type IconsListUnion } from '@/types/styles/Icons'
 import { useTheme } from '@/composables/useTheme'
 

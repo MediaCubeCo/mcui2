@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import McSideBarButton from '@/components/patterns/McSideBar/McSideBarButton/McSideBarButton.vue'
-import { computed, inject, type PropType, useSlots } from 'vue'
+import { computed, defineAsyncComponent, inject, type PropType } from 'vue'
 import type { ButtonVariationUnion } from '@/types/IButton'
 import type { ColorTypes } from '@/types/styles/Colors'
 import type { ISidebarThemeConfigProvide } from '@/types/ISideBar'
 import { defaultThemes } from '@/mocks/sidebar'
 import { SidebarTheme } from '@/enums/Sidebar'
+const McSideBarButton = defineAsyncComponent(() => import('@/components/patterns/McSideBar/McSideBarButton/McSideBarButton.vue'))
 
 const provideData = inject<ISidebarThemeConfigProvide>('provideData', {} as ISidebarThemeConfigProvide)
-const slots = useSlots()
 const emit = defineEmits<{
   (e: 'toggle-size', value: boolean): void
 }>()

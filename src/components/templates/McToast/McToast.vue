@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { computed, onMounted, type PropType } from 'vue'
+import { computed, defineAsyncComponent, onMounted, type PropType } from 'vue'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { ColorTypes } from '@/types/styles/Colors'
 import { IToast, IToastAction, ToastPositionsUnion } from '@/types/IToast'
 import { ToastPositions } from '@/enums/Toast'
-import McPreview from '@/components/patterns/McPreview/McPreview.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
 import { useTimer } from '@/composables/useTimer'
 import { ButtonSize } from '@/enums/ui/Button'
 import { PreviewSizes } from '@/enums/Preview'
 import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
+const McPreview = defineAsyncComponent(() => import('@/components/patterns/McPreview/McPreview.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
 
 const emit = defineEmits<{
   (e: 'closed', value: IToast): void

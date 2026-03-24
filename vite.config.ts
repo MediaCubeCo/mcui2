@@ -1,9 +1,12 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { libInjectCss } from 'vite-plugin-lib-inject-css'
 import dts from 'vite-plugin-dts'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
+// @ts-ignore
 import { SPRITE_FILES } from './src/consts/iconsSpriteIds.js'
 import path from 'path'
+import { resolveLibEntries } from './scripts/resolveLibEntries'
 
 export default defineConfig({
   css: {
@@ -15,6 +18,8 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    /** ESM `import './…css'` в чанки компонентов (library + preserveModules), без style-inject в DOM */
+    libInjectCss(),
     /**
      * Генерация деклараций для всей папки src.
      * Что бы подсказки работали в IDE, обязательно указание в package.json ("types": "./dist/types/index.d.ts",)
@@ -55,12 +60,12 @@ export default defineConfig({
     sourcemap: false,
     reportCompressedSize: false,
     cssMinify: true,
+    cssCodeSplit: true,
     lib: {
-      entry: './src/index.ts',
+      entry: resolveLibEntries(),
       name: 'mediacube-ui-v2',
-      fileName: 'mediacube-ui-v2',
-      // Форматы скриптов es - ECMAScript Modules, umd - Universal Module Definition
-      formats: ['es'] // , 'umd'
+      fileName: (format, entryName) => `${entryName}.js`,
+      formats: ['es'],
     },
     /**
      * external — не включать в бандл; приложение подтянет из своих зависимостей (меньше дублирования и размер).
@@ -82,9 +87,11 @@ export default defineConfig({
       ],
       output: {
         preserveModules: true,
-        preserveModulesRoot: 'src',
-        entryFileNames: '[name].js'
-      }
+        preserveModulesRoot: path.resolve(__dirname, 'src'),
+        entryFileNames: '[name].js',
+        chunkFileNames: 'chunks/[name]-[hash].js',
+        assetFileNames: 'assets/[name][extname]',
+      },
     }
   },
   resolve: {

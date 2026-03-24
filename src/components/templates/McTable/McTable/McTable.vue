@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, type PropType, reactive, ref, useSlots, watch } from 'vue'
+import {
+  computed,
+  defineAsyncComponent,
+  onBeforeUnmount,
+  onMounted,
+  type PropType,
+  reactive,
+  ref,
+  watch
+} from 'vue'
 import { useHelper } from '@/composables/useHelper'
 import { Weights } from '@/enums/ui/Weights'
 import {
@@ -13,19 +22,19 @@ import {
   type ITableCardProps
 } from '@/types/ITable'
 import { TABLE } from '@/consts/table'
-import McInfinityLoadingTrigger from '@/components/elements/McInfinityLoadingTrigger/McInfinityLoadingTrigger.vue'
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McChip from '@/components/elements/McChip/McChip.vue'
-import McTableSort from '@/components/templates/McTable/McTableSort/McTableSort.vue'
-import McTableSkeletonLoading from '@/components/templates/McTable/McTableSkeletonLoading/McTableSkeletonLoading.vue'
-import McNoData from '@/components/elements/McNodata/McNoData.vue'
-import McBottomLoader from '@/components/elements/McBottomLoader/McBottomLoader.vue'
-import McOverlay from '@/components/patterns/McOverlay/McOverlay.vue'
-import McFieldCheckbox from '@/components/elements/McFieldCheckbox/McFieldCheckbox.vue'
 import type { ICheckboxMainCheckbox } from '@/types/ICheckbox'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { default as noTableDataImg } from '@/assets/img/no_table_data.png'
 import { useRafFn } from '@vueuse/core'
+const McInfinityLoadingTrigger = defineAsyncComponent(() => import('@/components/elements/McInfinityLoadingTrigger/McInfinityLoadingTrigger.vue'))
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+const McChip = defineAsyncComponent(() => import('@/components/elements/McChip/McChip.vue'))
+const McTableSort = defineAsyncComponent(() => import('@/components/templates/McTable/McTableSort/McTableSort.vue'))
+const McTableSkeletonLoading = defineAsyncComponent(() => import('@/components/templates/McTable/McTableSkeletonLoading/McTableSkeletonLoading.vue'))
+const McNoData = defineAsyncComponent(() => import('@/components/elements/McNodata/McNoData.vue'))
+const McBottomLoader = defineAsyncComponent(() => import('@/components/elements/McBottomLoader/McBottomLoader.vue'))
+const McOverlay = defineAsyncComponent(() => import('@/components/patterns/McOverlay/McOverlay.vue'))
+const McFieldCheckbox = defineAsyncComponent(() => import('@/components/elements/McFieldCheckbox/McFieldCheckbox.vue'))
 
 const defaultPlaceholders = {
   no_data: 'No data',
@@ -54,7 +63,6 @@ const emit = defineEmits<{
  * */
 
 const helper = useHelper()
-const slots = useSlots()
 const props = defineProps({
   columns: {
     type: Array as PropType<ITableColumn[]>,

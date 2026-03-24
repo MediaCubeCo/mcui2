@@ -9,11 +9,12 @@ import {
   createApp,
   type PropType,
   onBeforeMount,
-  type Slots
+  type Slots,
+  defineAsyncComponent
 } from 'vue'
 import { Spaces, SpacesUnion } from '@/types/styles/Spaces'
-import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
 import { TooltipSizes } from '@/enums/Tooltip'
+const McTooltip = defineAsyncComponent(() => import('@/components/elements/McTooltip/McTooltip.vue'))
 
 const emit = defineEmits<{
   (e: 'updated:hidden-count', value: number): any[]

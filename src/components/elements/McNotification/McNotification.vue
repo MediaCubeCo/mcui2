@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import McTitle from '@/components/elements/McTitle/McTitle.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McPreview from '@/components/patterns/McPreview/McPreview.vue'
-import { computed, type PropType, useSlots } from 'vue'
+import { computed, defineAsyncComponent, type PropType } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
-
+const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
+const McPreview = defineAsyncComponent(() => import('@/components/patterns/McPreview/McPreview.vue'))
 
 const emit = defineEmits(['click'])
-const slots = useSlots()
 const props = defineProps({
   /**
    * Дизайн:

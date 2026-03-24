@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import McChip from '@/components/elements/McChip/McChip.vue'
-import { computed, type PropType } from 'vue'
+import { computed, defineAsyncComponent, type PropType } from 'vue'
 import type { ChipVariationUnion } from '@/types/IChip'
 import type { ColorTypes } from '@/types/styles/Colors'
 import { ChipSize } from '@/enums/Chip'
 import { type IFilterTag } from '@/types/IFilter'
 import { useTheme } from '@/composables/useTheme'
+const McChip = defineAsyncComponent(() => import('@/components/elements/McChip/McChip.vue'))
 
 const emit = defineEmits<{
   (e: 'close'): void

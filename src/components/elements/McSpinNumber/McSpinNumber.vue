@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, PropType, useId } from 'vue'
+import { ref, computed, PropType, useId, defineAsyncComponent } from 'vue'
 import { ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { FontSizes } from '@/types/styles/FontSizes'
-import McSpinDigit from '@/components/elements/McSpinDigit/McSpinDigit.vue'
 import { useTheme } from '@/composables/useTheme'
+const McSpinDigit = defineAsyncComponent(() => import('@/components/elements/McSpinDigit/McSpinDigit.vue'))
 
 export type FontSizesUnion = keyof typeof FontSizes
 export type FontWeightUnion = keyof typeof FontWeights

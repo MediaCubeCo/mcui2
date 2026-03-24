@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, type PropType, watch } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, type PropType, watch } from 'vue'
 import type { IModalServiceState, IModalState } from '@/types/IModal'
-import McDrawerSafeComponent from '@/components/templates/McDrawer/McDrawerSafeComponent.vue'
+const McDrawerSafeComponent = defineAsyncComponent(() => import('@/components/templates/McDrawer/McDrawerSafeComponent.vue'))
 
 const props = defineProps({
   modalServiceState: {

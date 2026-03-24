@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import McAvatar from '@/components/elements/McAvatar/McAvatar.vue'
-import McPreview from '@/components/patterns/McPreview/McPreview.vue'
-import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
-import McButton from '@/components/elements/McButton/McButton.vue'
-import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
-import { PropType, ref } from 'vue'
+import { defineAsyncComponent, PropType, ref } from 'vue'
 import { ButtonSize, ButtonType } from '@/enums/ui/Button'
 import { InputTypes } from '@/enums/Input'
+
+const McAvatar = defineAsyncComponent(() => import('@/components/elements/McAvatar/McAvatar.vue'))
+const McPreview = defineAsyncComponent(() => import('@/components/patterns/McPreview/McPreview.vue'))
+const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
+const McFieldText = defineAsyncComponent(() => import('@/components/elements/McFieldText/McFieldText.vue'))
 
 /**
  * Используется только в McChat
