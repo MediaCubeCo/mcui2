@@ -67,6 +67,31 @@ const props = defineProps({
 })
 const theme = useTheme()
 
+const iconsSpriteGradsNames = [
+  'card_mir_colored',
+  'clickup',
+  'instagram_colored',
+  'mc_pay_mobile_app',
+  'mc_vidwide',
+  'messenger_colored',
+  'payoneer_colored',
+  'personal_email_colored',
+  'steam_colored',
+  'telegram_colored',
+]
+const GRADS = new Set(iconsSpriteGradsNames)
+
+const iconsSpriteFlagsNames = [
+  'flag_ar',
+  'flag_en',
+  'flag_es',
+  'flag_pt',
+  'flag_ru',
+  'flag_th',
+  'flag_vi',
+]
+const FLAGS = new Set(iconsSpriteFlagsNames)
+
 const responsivePropsClasses = computed((): { [key: string]: boolean } => {
   const result: { [key: string]: any } = {}
   adaptivePropsParams.forEach((value) => {
@@ -91,11 +116,18 @@ const styles = computed((): { [key: string]: string } => ({
   ['--mc-svg-icon-weight']: String(props.weight)?.replace('.', '')?.split('')?.join('.'),
   ['--mc-svg-icon-color']: props.color && theme.colors[props.color]
 }))
+
+const computedSpriteId = computed(() => {
+  if (GRADS.has(props.name)) return SPRITE_IDS.GRADS
+  if (FLAGS.has(props.name)) return SPRITE_IDS.FLAGS
+  return props.spriteId
+})
+
 </script>
 
 <template>
   <svg :class="classes" :style="styles">
-    <use :xlink:href="`#${props.spriteId}-${props.name}`"></use>
+    <use :xlink:href="`#${computedSpriteId}-${props.name}`"></use>
   </svg>
 </template>
 
