@@ -1,6 +1,6 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.263",
+  "version": "0.0.264",
   "license": "MIT",
   "description": "Design system for Mediacube services",
   "sideEffects": [
@@ -87,6 +87,7 @@
       "import": "./dist/utils/*.js",
       "default": "./dist/utils/*.js"
     },
+    "./consts/*": "./dist/consts/*.js",
     "./iconsSprite.svg": "./dist/iconsSprite.svg",
     "./iconsSpriteFlags.svg": "./dist/iconsSpriteFlags.svg",
     "./iconsSpriteGrads.svg": "./dist/iconsSpriteGrads.svg",
