@@ -10,7 +10,8 @@
     min-height: var(--mc-spin-number-font-size);
     height: var(--mc-spin-number-font-size);
   }
-  &__non-digit {
+  &__non-digit,
+  &__static-digit {
     display: inline-flex;
     line-height: 1;
     font-size: var(--mc-spin-number-font-size);

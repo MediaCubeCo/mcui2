@@ -26,7 +26,8 @@ const meta = {
         weight: 'normal',
     },
     parameters: {
-        componentSubtitle: 'Status: Ready',
+        componentSubtitle:
+            'Status: Ready. До монтирования рендерится статический end (SSR/гидрация); после mount — анимация McSpinDigit.',
         design: {
             type: 'figma',
             url: 'https://www.figma.com/file/LXNkU1vlAYmydEiC0l0gDa/MC-Design-System?node-id=81%3A788',

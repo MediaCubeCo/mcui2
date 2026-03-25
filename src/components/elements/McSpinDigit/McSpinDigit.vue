@@ -117,6 +117,9 @@ const init = () => {
   offset.value = preparedStart.value
   if (typeof requestAnimationFrame !== 'undefined') {
     requestAnimationFrame(triggerSpin)
+  } else {
+    offset.value = preparedEnd.value
+    emit('spin-end', preparedEnd.value)
   }
 }
 

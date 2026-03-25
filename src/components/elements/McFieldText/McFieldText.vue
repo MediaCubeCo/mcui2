@@ -353,7 +353,7 @@ const isPasswordType = computed((): boolean => {
   return prettyType.value === InputTypes.Password
 })
 const passwordIcon = computed((): IconsListUnion => {
-  return isPasswordType.value ? 'visibility' : 'visibility_off'
+  return isPasswordType.value ? 'visibility_off' : 'visibility'
 })
 const charCounter = computed((): string | number => {
   return props.modelValue ? String(props.modelValue).length : 0
@@ -478,7 +478,7 @@ const getPreparedInputValue = (e: Event): InputValue => {
 
   const target = e.target as HTMLInputElement
   let value: InputValue = isDate.value && target && target.value ? target.value?.substring(0, 10) : target.value
-  let cursor_position: number = getCaretPos(target)?.start
+  const { start: cursor_position } = getCaretPos(target)
   let prepared_value = formattedToNumber(value)
 
   switch (props.type) {
@@ -514,25 +514,34 @@ const getPreparedInputValue = (e: Event): InputValue => {
       const formatted_value = getAmountFormat(prepared_value)
       target.value = isRtl.value ? formatted_value.replace(/ /gm, '') : formatted_value
       const space_length = target.value?.slice(0, cursor_position).replace(/[^ ]/gm, '')?.length || 0
-      setCaretPos(target, cursor_position + space_length, cursor_position + space_length)
+      const caret_after_format = cursor_position + space_length
+      if (Number.isFinite(cursor_position) && Number.isFinite(caret_after_format)) {
+        scheduleCaretPos(target, caret_after_format, caret_after_format)
+      }
       break
     }
     case InputTypes.Uppercase: {
       value = value?.toUpperCase()
       target.value = value
-      setCaretPos(target, cursor_position, cursor_position)
+      if (Number.isFinite(cursor_position)) {
+        scheduleCaretPos(target, cursor_position, cursor_position)
+      }
       break
     }
     case InputTypes.Lowercase: {
       value = value?.toLowerCase()
       target.value = value
-      setCaretPos(target, cursor_position, cursor_position)
+      if (Number.isFinite(cursor_position)) {
+        scheduleCaretPos(target, cursor_position, cursor_position)
+      }
       break
     }
     case InputTypes.Password:
       value = value?.replace(/ /gm, '')
       target.value = value
-      setCaretPos(target, cursor_position, cursor_position)
+      if (Number.isFinite(cursor_position)) {
+        scheduleCaretPos(target, cursor_position, cursor_position)
+      }
       break
     case InputTypes.PhoneNumber:
       if (value.length === 0) value = '+'
@@ -584,18 +593,42 @@ const formattedToNumber = (value: string): string => {
 }
 
 const setCaretPos = (ctrl: HTMLInputElement, start: number, end: number): void => {
-  if (ctrl.setSelectionRange) {
-    ctrl.focus()
-    ctrl.setSelectionRange(start, end)
+  if (!ctrl.setSelectionRange) return
+
+  let s = Number(start)
+  let e = Number(end)
+  if (!Number.isFinite(s) || !Number.isFinite(e)) return
+
+  const len = ctrl.value.length
+  s = Math.max(0, Math.min(s, len))
+  e = Math.max(0, Math.min(e, len))
+
+  if (ctrl.selectionStart === s && ctrl.selectionEnd === e) return
+
+  try {
+    if (typeof document !== 'undefined' && document.activeElement !== ctrl) {
+      ctrl.focus()
+    }
+    ctrl.setSelectionRange(s, e)
+  } catch {
+    /* InvalidStateError (readonly / type mismatch) */
+  }
+}
+
+const scheduleCaretPos = (ctrl: HTMLInputElement, start: number, end: number): void => {
+  const run = () => setCaretPos(ctrl, start, end)
+  if (typeof requestAnimationFrame === 'function') {
+    requestAnimationFrame(run)
+  } else {
+    run()
   }
 }
 
 const getCaretPos = (ctrl: HTMLInputElement) => {
-  if (ctrl.selectionStart || ctrl.selectionStart === 0) {
+  if (typeof ctrl.selectionStart === 'number' && typeof ctrl.selectionEnd === 'number') {
     return { start: ctrl.selectionStart, end: ctrl.selectionEnd }
-  } else {
-    return { start: 0, end: 0 }
   }
+  return { start: 0, end: 0 }
 }
 
 const getAmountFormat = (value: string): string => {
@@ -724,7 +757,7 @@ const handleFocus = (e: MouseEvent): void => {
         >
           <!-- @slot Слот в конце инпута -->
           <slot name="append" />
-          <mc-button v-if="copy" variation="black-link" :size="ButtonSize.MCompact" @click.prevent="handlerCopy">
+          <mc-button v-if="copy" variation="black-link" :size="ButtonSize.MCompact" @click.stop.prevent="handlerCopy">
             <template #icon-append>
               <mc-svg-icon :name="copyIcon.name" :color="copyIcon.color" />
             </template>
@@ -738,7 +771,7 @@ const handleFocus = (e: MouseEvent): void => {
               :size="ButtonSize.MCompact"
               tabindex="-1"
               :type="ButtonType.Button"
-              @click.prevent="togglePasswordVisibility"
+              @click.stop.prevent="togglePasswordVisibility"
             >
               <template #icon-append>
                 <mc-svg-icon :name="passwordIcon" />

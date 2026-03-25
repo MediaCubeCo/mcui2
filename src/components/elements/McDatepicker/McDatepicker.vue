@@ -20,6 +20,50 @@ import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types/styles/Colors'
 const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+
+/** ISO date или начало ISO datetime; остальные строки не гадаем (нет MM/DD vs DD/MM). */
+const ISO_DATE_OR_DATETIME_PREFIX_RE = /^\d{4}-\d{2}-\d{2}(?:[T ].*)?$/
+
+/**
+ * Разбор сегмента даты для date-picker / date-time-picker: сначала тот же шаг, что был в McDatepicker
+ * до правок; fallback только при invalid. Month/year/time намеренно не используют (другие маски).
+ */
+function formatSegmentForPicker(
+  pv: unknown,
+  df: DatepickerFormatsObjectFormat,
+  direction: 'inbound' | 'outbound'
+): string | null {
+  if (pv == null || pv === '') return null
+
+  if (pv instanceof Date) {
+    const d = dayjs(pv)
+    if (!d.isValid()) return null
+    return direction === 'inbound' ? d.format(df.dayjs) : d.format(df.output)
+  }
+
+  const str = String(pv)
+  const primaryMask = direction === 'inbound' ? df.output : df.dayjs
+  const fallbackMask = direction === 'inbound' ? df.dayjs : df.output
+
+  let parsed = dayjs(str, primaryMask)
+  if (parsed.isValid()) {
+    return direction === 'inbound' ? parsed.format(df.dayjs) : parsed.format(df.output)
+  }
+
+  parsed = dayjs(str, fallbackMask)
+  if (parsed.isValid()) {
+    return direction === 'inbound' ? parsed.format(df.dayjs) : parsed.format(df.output)
+  }
+
+  if (ISO_DATE_OR_DATETIME_PREFIX_RE.test(str.trim())) {
+    parsed = dayjs(str)
+    if (parsed.isValid()) {
+      return direction === 'inbound' ? parsed.format(df.dayjs) : parsed.format(df.output)
+    }
+  }
+
+  return null
+}
 const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
 const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
 
@@ -404,7 +448,12 @@ const getFormattedPickerDate = (value: DatePickerValue): DatePickerValue => {
 
   let preparedValue = (props.range ? (Array.isArray(value) ? value : []) : [value]) as (string | null)[]
   if (!props.toIsoFormat) {
+    const useSafeCalendarParse =
+      computedType.value === DatepickerTypes.DatePicker || computedType.value === DatepickerTypes.DateTimePicker
     preparedValue = preparedValue.map((pv) => {
+      if (useSafeCalendarParse) {
+        return formatSegmentForPicker(pv, dateFormat.value, 'inbound')
+      }
       const parsed = dayjs(pv as string, dateFormat.value.output)
       return parsed.isValid() ? parsed.format(dateFormat.value.dayjs) : null
     })
@@ -426,12 +475,25 @@ const getFormattedOutputDate = (value: DatePickerValue): DatePickerValue => {
     if (value == null || value === '') return props.range ? [] : null
     return value
   }
-  let preparedValue: (string | null)[] = props.range ? (Array.isArray(value) ? value.map((pv) => String(pv)) : []) : [String(value)]
-  if (!props.toIsoFormat) {
-    preparedValue = preparedValue.map((pv) => {
-      const parsed = dayjs(pv, dateFormat.value.dayjs)
-      return parsed.isValid() ? parsed.format(dateFormat.value.output) : null
-    })
+  const useSafeCalendarParse =
+    !props.toIsoFormat &&
+    (computedType.value === DatepickerTypes.DatePicker || computedType.value === DatepickerTypes.DateTimePicker)
+
+  let preparedValue: (string | null)[]
+  if (useSafeCalendarParse) {
+    preparedValue = props.range
+      ? Array.isArray(value)
+        ? value.map((pv) => formatSegmentForPicker(pv, dateFormat.value, 'outbound'))
+        : []
+      : [formatSegmentForPicker(value, dateFormat.value, 'outbound')]
+  } else {
+    preparedValue = props.range ? (Array.isArray(value) ? value.map((pv) => String(pv)) : []) : [String(value)]
+    if (!props.toIsoFormat) {
+      preparedValue = preparedValue.map((pv) => {
+        const parsed = dayjs(pv, dateFormat.value.dayjs)
+        return parsed.isValid() ? parsed.format(dateFormat.value.output) : null
+      })
+    }
   }
 
   const asNull = (pv: string | null): string | null =>

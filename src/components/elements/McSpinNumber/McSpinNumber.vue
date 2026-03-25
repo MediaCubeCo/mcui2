@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, PropType, useId, defineAsyncComponent } from 'vue'
+import { ref, computed, PropType, useId, onMounted } from 'vue'
 import { ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { FontSizes } from '@/types/styles/FontSizes'
 import { useTheme } from '@/composables/useTheme'
-const McSpinDigit = defineAsyncComponent(() => import('@/components/elements/McSpinDigit/McSpinDigit.vue'))
+import McSpinDigit from '@/components/elements/McSpinDigit/McSpinDigit.vue'
 
 export type FontSizesUnion = keyof typeof FontSizes
 export type FontWeightUnion = keyof typeof FontWeights
@@ -38,6 +38,8 @@ const props = defineProps({
 })
 
 const theme = useTheme('spinNumber')
+
+const is_animation_ready = ref(false)
 
 const current_from = ref<string | null>(null)
 
@@ -83,29 +85,45 @@ const handleCopy = (e: ClipboardEvent) => {
     e.clipboardData.setData('text/plain', String(props.end))
   }
 }
+
+onMounted(() => {
+  is_animation_ready.value = true
+})
 </script>
 
 <template>
   <div class="mc-spin-number-container" :id="id" :style="containerStyle" @copy="handleCopy">
-    <div v-for="(digit, i) in currentTo" :key="`mc-spin-number-${id}-${i}`" class="mc-spin-number">
-      <template v-if="!Number.isFinite(digit)">
-        <span :style="nonDigitStyles" class="mc-spin-number__non-digit">
-          {{ currentTo[i] }}
+    <template v-if="!is_animation_ready">
+      <div v-for="(digit, i) in currentTo" :key="`mc-spin-number-static-${id}-${i}`" class="mc-spin-number">
+        <span
+          :style="nonDigitStyles"
+          :class="Number.isFinite(digit) ? 'mc-spin-number__static-digit' : 'mc-spin-number__non-digit'"
+        >
+          {{ Number.isFinite(digit) ? digit : currentTo[i] }}
         </span>
-      </template>
-      <mc-spin-digit
-        v-else
-        :end="+currentTo[i]"
-        :start="+currentFrom[i]"
-        :duration="props.duration"
-        :font-size="props.fontSize"
-        :weight="props.weight"
-        :color="computedColor"
-        :parent-id="id"
-        class="mc-spin-number__digit"
-        @spin-end="actualizeNumbers"
-      />
-    </div>
+      </div>
+    </template>
+    <template v-else>
+      <div v-for="(digit, i) in currentTo" :key="`mc-spin-number-${id}-${i}`" class="mc-spin-number">
+        <template v-if="!Number.isFinite(digit)">
+          <span :style="nonDigitStyles" class="mc-spin-number__non-digit">
+            {{ currentTo[i] }}
+          </span>
+        </template>
+        <mc-spin-digit
+          v-else
+          :end="+currentTo[i]"
+          :start="+currentFrom[i]"
+          :duration="props.duration"
+          :font-size="props.fontSize"
+          :weight="props.weight"
+          :color="computedColor"
+          :parent-id="id"
+          class="mc-spin-number__digit"
+          @spin-end="actualizeNumbers"
+        />
+      </div>
+    </template>
   </div>
 </template>
 
