@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted, type PropType, ref, useAttrs, watch } from 'vue'
+import { computed, onMounted, type PropType, ref, useAttrs, watch } from 'vue'
 import {
   DatepickerFormat,
   DatepickerTypes,
@@ -19,7 +19,9 @@ import { TitleVariations } from '@/enums/Title'
 import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types/styles/Colors'
-const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McButton from '@/components/elements/McButton/McButton.vue'
 
 /** ISO date или начало ISO datetime; остальные строки не гадаем (нет MM/DD vs DD/MM). */
 const ISO_DATE_OR_DATETIME_PREFIX_RE = /^\d{4}-\d{2}-\d{2}(?:[T ].*)?$/
@@ -64,8 +66,6 @@ function formatSegmentForPicker(
 
   return null
 }
-const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
-const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
 
 const default_placeholders: IDatepickerPlaceholders = {
   week: 'Week',
@@ -288,14 +288,24 @@ const classes = computed((): { [key: string]: boolean } => {
     'mc-date-picker--without-icon': props.hideCalendarIcon
   }
 })
-const styles = computed((): { [key: string]: string } => {
-  if (document) {
-    document.documentElement.style.setProperty('--mc-date-picker-color', theme.colors[theme.component.color as ColorTypes])
-  }
+/** Локально для .mc-date-picker и потомков; без побочных эффектов (SSR-safe). */
+const pickerInlineStyles = computed((): { [key: string]: string } => {
   return {
     '--mc-date-picker-color': theme.colors[theme.component.color as ColorTypes]
   }
 })
+
+/**
+ * Телепорт календаря в body: .dp читает var с :root. Только на клиенте (SSR: document нет).
+ */
+watch(
+  () => theme.colors[theme.component.color as ColorTypes],
+  color => {
+    if (typeof document === 'undefined') return
+    document.documentElement.style.setProperty('--mc-date-picker-color', color)
+  },
+  { immediate: true }
+)
 
 const formats:DatepickerFormatsObject = {
   [DatepickerTypes.TimePicker]: {
@@ -563,7 +573,7 @@ watch(
 </script>
 
 <template>
-  <div ref="field" class="mc-date-picker" :class="classes" :style="styles">
+  <div ref="field" class="mc-date-picker" :class="classes" :style="pickerInlineStyles">
     <label v-if="$slots.title || !!props.title" :for="name" class="mc-date-picker__header">
       <!-- @slot Слот для заголовка над инпутом -->
       <slot name="title">
