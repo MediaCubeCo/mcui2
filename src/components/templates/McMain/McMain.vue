@@ -1,23 +1,39 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 /**
  * Используется для вёрстки основных страниц
  * на проектах
  */
 
+const vhResizeRaf = ref<number | null>(null)
 
 const vhFix = () => {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return
   const vh = window.innerHeight * 0.01
   document.documentElement.style.setProperty('--vh', `${vh}px`)
 }
 
+const vhFixOnResize = () => {
+  if (typeof window === 'undefined') return
+  if (vhResizeRaf.value != null) cancelAnimationFrame(vhResizeRaf.value)
+  vhResizeRaf.value = requestAnimationFrame(() => {
+    vhResizeRaf.value = null
+    vhFix()
+  })
+}
+
 onMounted(() => {
   vhFix()
-  window.addEventListener('resize', vhFix)
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', vhFixOnResize)
+  }
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', vhFix)
+  if (vhResizeRaf.value != null) cancelAnimationFrame(vhResizeRaf.value)
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', vhFixOnResize)
+  }
 })
 </script>
 

@@ -46,12 +46,12 @@ import { FilterRelations, FilterTypes } from '@/enums/Filter'
 import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'
 import { useLocalStorage } from '@vueuse/core'
 import { useTheme } from '@/composables/useTheme'
-const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
-const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
-const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import McButton from '@/components/elements/McButton/McButton.vue'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
+import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
 const McFieldSelect = defineAsyncComponent(() => import('@/components/elements/McFieldSelect/McFieldSelect.vue'))
-const McFieldText = defineAsyncComponent(() => import('@/components/elements/McFieldText/McFieldText.vue'))
-const McTooltip = defineAsyncComponent(() => import('@/components/elements/McTooltip/McTooltip.vue'))
 const McFilterTags = defineAsyncComponent(() => import('@/components/patterns/McFilter/McFilterTags/McFilterTags.vue'))
 const McFilterTypeRange = defineAsyncComponent(() => import('@/components/patterns/McFilter/McFilterTypeRange/McFilterTypeRange.vue'))
 const McFilterTypeDate = defineAsyncComponent(() => import('@/components/patterns/McFilter/McFilterTypeDate/McFilterTypeDate.vue'))

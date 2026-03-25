@@ -9,12 +9,11 @@ import {
   createApp,
   type PropType,
   onBeforeMount,
-  type Slots,
-  defineAsyncComponent
+  type Slots
 } from 'vue'
 import { Spaces, SpacesUnion } from '@/types/styles/Spaces'
 import { TooltipSizes } from '@/enums/Tooltip'
-const McTooltip = defineAsyncComponent(() => import('@/components/elements/McTooltip/McTooltip.vue'))
+import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
 
 const emit = defineEmits<{
   (e: 'updated:hidden-count', value: number): any[]
@@ -44,28 +43,14 @@ const children =
 const visibleChildren = ref<any[]>([])
 const hiddenCount = ref<number>(0)
 const prevHiddenCount = ref<number>(-1)
-let resizeObserver: any = null
+let resizeObserver: ResizeObserver | null = null
+let resizeRafId: number | null = null
 
 const classes = computed((): { [key: string]: boolean } => {
   return {
     'mc-stack': true,
     'mc-stack--collapsed': props.collapsed
   }
-})
-
-onBeforeMount(() => {
-  updateChildrenVisible()
-})
-
-onMounted(() => {
-  resizeObserver = new ResizeObserver(updateChildrenVisible)
-  if (container.value) resizeObserver.observe(container.value)
-
-  updateChildrenVisible()
-})
-
-onUnmounted(() => {
-  resizeObserver && resizeObserver.disconnect()
 })
 
 const updateChildrenVisible = (): void => {
@@ -75,6 +60,11 @@ const updateChildrenVisible = (): void => {
   visibleChildren.value = []
   let itemCount = 0
   hiddenCount.value = 0
+
+  const rootFontPx = parseInt(getComputedStyle(document.documentElement).fontSize, 10) || 16
+  const getSize = (size: SpacesUnion): number => parseFloat(size) * rootFontPx
+  const moreContentWidth = getSize(Spaces['300'])
+  const itemIndent = props.collapsed ? -getSize(Spaces['200']) : getSize(Spaces['150'])
 
   const tempContainer = document.createElement('div')
   tempContainer.style.position = 'absolute'
@@ -96,10 +86,6 @@ const updateChildrenVisible = (): void => {
       : itemNode.getBoundingClientRect().width + 4
     app.unmount()
     itemNode.remove()
-    const getSize = (size: SpacesUnion): number =>
-      parseFloat(size) * parseInt(getComputedStyle(document.documentElement).fontSize)
-    const moreContentWidth = getSize(Spaces['300'])
-    const itemIndent = props.collapsed ? -getSize(Spaces['200']) : getSize(Spaces['150'])
 
     if (
       (totalWidth + (itemWidth + itemIndent) <= container.value.clientWidth - moreContentWidth &&
@@ -121,6 +107,37 @@ const updateChildrenVisible = (): void => {
     emit('updated:hidden-count', hiddenCount.value)
   }
 }
+
+const scheduleUpdateChildrenVisible = (): void => {
+  if (typeof requestAnimationFrame === 'undefined') {
+    updateChildrenVisible()
+    return
+  }
+  if (resizeRafId != null) cancelAnimationFrame(resizeRafId)
+  resizeRafId = requestAnimationFrame(() => {
+    resizeRafId = null
+    updateChildrenVisible()
+  })
+}
+
+onBeforeMount(() => {
+  updateChildrenVisible()
+})
+
+onMounted(() => {
+  resizeObserver = new ResizeObserver(scheduleUpdateChildrenVisible)
+  if (container.value) resizeObserver.observe(container.value)
+
+  updateChildrenVisible()
+})
+
+onUnmounted(() => {
+  if (resizeRafId != null) {
+    cancelAnimationFrame(resizeRafId)
+    resizeRafId = null
+  }
+  resizeObserver?.disconnect()
+})
 </script>
 
 <template>

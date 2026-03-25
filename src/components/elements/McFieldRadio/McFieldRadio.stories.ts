@@ -63,7 +63,7 @@ export const Group: Story = {
             template: `
                 <mc-field-radio v-model="v" name="radio" :errors="['Error text']" value="1">McFieldRadio</mc-field-radio>
                 <br />
-                <mc-field-radio v-model="v" name="radio" value="2">McFieldRadio 2</mc-field-radio>
+                <mc-field-radio v-model="v" name="radio" value="2" label="McFieldRadio 2" />
                 <br />
                 Output: {{ v }}
             `
@@ -82,7 +82,7 @@ export const CheckMark: Story = {
             template: `
                 <mc-field-radio v-model="v" name="radio2" variation="checkmark" value="value1">McFieldRadio</mc-field-radio>
                 <br />
-                <McFieldRadio v-model="v" name="radio2" variation="checkmark" value="value2">McFieldRadio 2</McFieldRadio>
+                <McFieldRadio v-model="v" name="radio2" variation="checkmark" value="value2" label="McFieldRadio 2" />
                 <br />
                 Output: {{ v }}
             `

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { default as VueSlider } from 'vue-3-slider-component'
-import { computed, defineAsyncComponent, type PropType, reactive, watch } from 'vue'
+import { computed, type PropType, reactive, watch } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { TooltipPositionsUnion } from '@/types/ITooltip'
 import { useFieldErrors } from '@/composables/useFieldErrors'
 import { TitleVariations } from '@/enums/Title'
 import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
-const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
 
 type RangeValue = string[] | number[] | number | string | null
 

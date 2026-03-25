@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import {
-  computed,
-  defineAsyncComponent,
-  onBeforeUnmount,
-  onMounted,
-  type PropType,
-  reactive,
-  ref,
-  watch
-} from 'vue'
+import { computed, onBeforeUnmount, onMounted, type PropType, reactive, ref, watch } from 'vue'
 import { useHelper } from '@/composables/useHelper'
 import { Weights } from '@/enums/ui/Weights'
 import {
@@ -26,15 +17,15 @@ import type { ICheckboxMainCheckbox } from '@/types/ICheckbox'
 import type { IconsListUnion } from '@/types/styles/Icons'
 import { default as noTableDataImg } from '@/assets/img/no_table_data.png'
 import { useRafFn } from '@vueuse/core'
-const McInfinityLoadingTrigger = defineAsyncComponent(() => import('@/components/elements/McInfinityLoadingTrigger/McInfinityLoadingTrigger.vue'))
-const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
-const McChip = defineAsyncComponent(() => import('@/components/elements/McChip/McChip.vue'))
-const McTableSort = defineAsyncComponent(() => import('@/components/templates/McTable/McTableSort/McTableSort.vue'))
-const McTableSkeletonLoading = defineAsyncComponent(() => import('@/components/templates/McTable/McTableSkeletonLoading/McTableSkeletonLoading.vue'))
-const McNoData = defineAsyncComponent(() => import('@/components/elements/McNodata/McNoData.vue'))
-const McBottomLoader = defineAsyncComponent(() => import('@/components/elements/McBottomLoader/McBottomLoader.vue'))
-const McOverlay = defineAsyncComponent(() => import('@/components/patterns/McOverlay/McOverlay.vue'))
-const McFieldCheckbox = defineAsyncComponent(() => import('@/components/elements/McFieldCheckbox/McFieldCheckbox.vue'))
+import McInfinityLoadingTrigger from '@/components/elements/McInfinityLoadingTrigger/McInfinityLoadingTrigger.vue'
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McChip from '@/components/elements/McChip/McChip.vue'
+import McTableSort from '@/components/templates/McTable/McTableSort/McTableSort.vue'
+import McTableSkeletonLoading from '@/components/templates/McTable/McTableSkeletonLoading/McTableSkeletonLoading.vue'
+import McNoData from '@/components/elements/McNodata/McNoData.vue'
+import McBottomLoader from '@/components/elements/McBottomLoader/McBottomLoader.vue'
+import McOverlay from '@/components/patterns/McOverlay/McOverlay.vue'
+import McFieldCheckbox from '@/components/elements/McFieldCheckbox/McFieldCheckbox.vue'
 
 const defaultPlaceholders = {
   no_data: 'No data',
@@ -278,50 +269,65 @@ const tableFirstColWidth = computed((): number => {
   return first?.width ? first.width : TABLE.defaultTableFirstColWidth
 })
 
-const computedHeaderColumns = computed((): ITableColumnEnriched[] => {
-  return computedColumns.value.map((column) => ({
-    ...column,
-    class: {
-      'mc-table__table_header-cell': true,
-      'mc-table__table_header-cell--fixed-first': column.fixedFirst,
-      'mc-table__table_header-cell--fixed-last': column.fixedLast,
-      'mc-table__table_header-cell--shadow-first': column.fixedFirst && shadows.firstColHasShadow,
-      'mc-table__table_header-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow,
-      [`mc-table__table_header-cell--align-${column.align}`]: !!column.align,
-      ...(column.class ? { [String(column.class)]: true } : {})
-    }
-  }))
+const tableColumnLayers = computed((): {
+  header: ITableColumnEnriched[]
+  body: ITableColumnEnriched[]
+  footer: ITableColumnEnriched[]
+} => {
+  const cols = computedColumns.value
+  const header: ITableColumnEnriched[] = []
+  const body: ITableColumnEnriched[] = []
+  const footer: ITableColumnEnriched[] = []
+  const shadowFirst = shadows.firstColHasShadow
+  const shadowLast = shadows.lastColHasShadow
+  for (let i = 0; i < cols.length; i++) {
+    const column = cols[i]
+    const extraClass = column.class ? { [String(column.class)]: true } : {}
+    header.push({
+      ...column,
+      class: {
+        'mc-table__table_header-cell': true,
+        'mc-table__table_header-cell--fixed-first': column.fixedFirst,
+        'mc-table__table_header-cell--fixed-last': column.fixedLast,
+        'mc-table__table_header-cell--shadow-first': column.fixedFirst && shadowFirst,
+        'mc-table__table_header-cell--shadow-last': column.fixedLast && shadowLast,
+        [`mc-table__table_header-cell--align-${column.align}`]: !!column.align,
+        ...extraClass
+      }
+    })
+    body.push({
+      ...column,
+      class: {
+        'mc-table__table_body-cell': true,
+        'mc-table__table_body-cell--fixed-first': column.fixedFirst,
+        'mc-table__table_body-cell--fixed-last': column.fixedLast,
+        'mc-table__table_body-cell--shadow-first': column.fixedFirst && shadowFirst,
+        'mc-table__table_body-cell--shadow-last': column.fixedLast && shadowLast,
+        [`mc-table__table_body-cell--align-${column.align}`]: !!column.align,
+        ...extraClass
+      }
+    })
+    footer.push({
+      ...column,
+      class: {
+        'mc-table__table_footer-cell': true,
+        'mc-table__table_footer-cell--fixed-first': column.fixedFirst,
+        'mc-table__table_footer-cell--fixed-last': column.fixedLast,
+        'mc-table__table_footer-cell--shadow-first': column.fixedFirst && shadowFirst,
+        'mc-table__table_footer-cell--shadow-last': column.fixedLast && shadowLast,
+        [`mc-table__table_footer-cell--align-${column.align}`]: !!column.align,
+        ...extraClass
+      }
+    })
+  }
+  return { header, body, footer }
 })
 
-const computedBodyColumns = computed((): ITableColumnEnriched[] => {
-  return computedColumns.value.map((column) => ({
-    ...column,
-    class: {
-      'mc-table__table_body-cell': true,
-      'mc-table__table_body-cell--fixed-first': column.fixedFirst,
-      'mc-table__table_body-cell--fixed-last': column.fixedLast,
-      'mc-table__table_body-cell--shadow-first': column.fixedFirst && shadows.firstColHasShadow,
-      'mc-table__table_body-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow,
-      [`mc-table__table_body-cell--align-${column.align}`]: !!column.align,
-      ...(column.class ? { [String(column.class)]: true } : {})
-    }
-  }))
-})
+const computedHeaderColumns = computed((): ITableColumnEnriched[] => tableColumnLayers.value.header)
 
-const computedFooterColumns = computed((): ITableColumnEnriched[] => {
-  return computedColumns.value.map((column) => ({
-    ...column,
-    class: {
-      'mc-table__table_footer-cell': true,
-      'mc-table__table_footer-cell--fixed-first': column.fixedFirst,
-      'mc-table__table_footer-cell--fixed-last': column.fixedLast,
-      'mc-table__table_footer-cell--shadow-first': column.fixedFirst && shadows.firstColHasShadow,
-      'mc-table__table_footer-cell--shadow-last': column.fixedLast && shadows.lastColHasShadow,
-      [`mc-table__table_footer-cell--align-${column.align}`]: !!column.align,
-      ...(column.class ? { [String(column.class)]: true } : {})
-    }
-  }))
-})
+const computedBodyColumns = computed((): ITableColumnEnriched[] => tableColumnLayers.value.body)
+
+const computedFooterColumns = computed((): ITableColumnEnriched[] => tableColumnLayers.value.footer)
 
 const containerStyle = computed((): { [key: string]: string } => {
   return {

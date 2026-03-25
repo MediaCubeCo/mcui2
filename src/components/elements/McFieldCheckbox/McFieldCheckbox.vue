@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useFieldErrors } from '@/composables/useFieldErrors'
-import { computed, defineAsyncComponent, type PropType, useSlots, watch } from 'vue'
+import { computed, type PropType, useSlots, watch } from 'vue'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Directions } from '@/enums/ui/Directions'
 import type { SizesUnion } from '@/types/styles/Sizes'
@@ -9,8 +9,8 @@ import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types/styles/Colors'
 import { ICheckboxMainCheckbox } from '@/types/ICheckbox'
-const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
-const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 
 const emit = defineEmits(['update:modelValue'])
 const slots = useSlots()
@@ -167,6 +167,7 @@ const checkboxColor = computed((): string => {
     const color: ColorTypes = theme.component.color as ColorTypes
     return isAllCheckboxesSelected.value ? color : props.mainCheckbox.selected?.length > 0 ? color : 'gray'
   }
+  console.log(theme.component.color)
   return isChecked.value ? (theme.component.color as ColorTypes) : 'gray'
 })
 

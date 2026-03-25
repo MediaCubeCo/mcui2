@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useFieldErrors } from '@/composables/useFieldErrors'
 import { type ColorTypes } from '@/types/styles/Colors'
-import { computed, defineAsyncComponent, type PropType, watch } from 'vue'
+import { computed, type PropType, watch } from 'vue'
 import type { HorizontalAlignmentUnion } from '@/types/styles/Alignment'
 import type { HorizontalAlignment } from '@/enums/ui/Alignment'
 import { TitleVariations } from '@/enums/Title'
 import { useTheme } from '@/composables/useTheme'
-const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
 
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps({

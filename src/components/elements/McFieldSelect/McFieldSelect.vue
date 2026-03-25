@@ -16,8 +16,8 @@ import { Weights } from '@/enums/ui/Weights'
 import { ChipSize } from '@/enums/Chip'
 import { useTheme } from '@/composables/useTheme'
 import { useThrottleFn } from '@vueuse/core'
-const McTitle = defineAsyncComponent(() => import('@/components/elements/McTitle/McTitle.vue'))
-const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+import McTitle from '@/components/elements/McTitle/McTitle.vue'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 const McAvatar = defineAsyncComponent(() => import('@/components/elements/McAvatar/McAvatar.vue'))
 const McTooltip = defineAsyncComponent(() => import('@/components/elements/McTooltip/McTooltip.vue'))
 const McPreview = defineAsyncComponent(() => import('@/components/patterns/McPreview/McPreview.vue'))

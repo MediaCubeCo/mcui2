@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, type PropType, reactive, ref } from 'vue'
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  type ComponentPublicInstance,
+  type PropType,
+  reactive,
+  ref
+} from 'vue'
 import { useThrottleFn } from '@vueuse/core'
 import { Spaces, type SpaceTypes } from '@/types/styles/Spaces'
 import type { SpacesUnion } from '@/types/styles/Spaces'
 import type { ColumnJustifyAlignmentUnion } from '@/types/styles/Grid'
 import { ColumnAlignment, ColumnJustifyAlignment } from '@/enums/Grid'
-const McGridRow = defineAsyncComponent(() => import('@/components/patterns/McGridRow/McGridRow.vue'))
+import McGridRow from '@/components/patterns/McGridRow/McGridRow.vue'
 
 const emit = defineEmits(['content-scrolled'])
 const props = defineProps({
@@ -70,7 +79,10 @@ const drag_options = reactive({
 const show_left_blur = ref<boolean>(false)
 const show_right_blur = ref<boolean>(false)
 const observer = ref<MutationObserver | null>(null)
+const rowResizeObserver = ref<ResizeObserver | null>(null)
 const scrollContainer = ref<HTMLElement | null>(null)
+const gridRowRef = ref<ComponentPublicInstance | null>(null)
+let blurRafId: number | null = null
 
 const containerProps = computed((): { [key: string]: string | number | boolean } => {
   return {
@@ -105,26 +117,6 @@ const wrapperClasses = computed(() => {
   }
 })
 
-onMounted(() => {
-  window.addEventListener('mousemove', onMouseMove)
-  window.addEventListener('mouseup', onMouseUp)
-  init()
-  setTimeout(handlerScroll, 10)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('mousemove', onMouseMove)
-  window.removeEventListener('mouseup', onMouseUp)
-  scrollContainer.value && scrollContainer.value.removeEventListener('scroll', handlerScroll)
-  observer.value && observer.value.disconnect()
-})
-
-const init = () => {
-  if (scrollContainer.value) {
-    scrollContainer.value.addEventListener('scroll', handlerScroll)
-    if (props.withBlur) createMutationObserver()
-  }
-}
 const handlerScroll = useThrottleFn(() => {
   emit('content-scrolled')
   if (!props.withBlur) return
@@ -148,22 +140,69 @@ const handlerScroll = useThrottleFn(() => {
   }
 }, 16) // ~60fps
 
-const createMutationObserver = () => {
-  if (scrollContainer.value) {
-    try {
-      observer.value = new MutationObserver(handlerScroll)
-
-      const config = {
-        attributes: true,
-        childList: true,
-        subtree: true
-      }
-      observer.value.observe(scrollContainer.value, config)
-    } catch (e) {
-      console.error('Error when try to create observer in McWrapScroll')
-    }
-  } else console.error('Error when try to create observer in McWrapScroll')
+const scheduleBlurRecalc = (): void => {
+  if (typeof requestAnimationFrame === 'undefined') {
+    handlerScroll()
+    return
+  }
+  if (blurRafId != null) return
+  blurRafId = requestAnimationFrame(() => {
+    blurRafId = null
+    handlerScroll()
+  })
 }
+
+const setupBlurObservers = () => {
+  const rowEl = gridRowRef.value?.$el
+  if (!rowEl || !(rowEl instanceof Element)) return
+  try {
+    rowResizeObserver.value?.disconnect()
+    rowResizeObserver.value = new ResizeObserver(scheduleBlurRecalc)
+    rowResizeObserver.value.observe(rowEl)
+
+    observer.value?.disconnect()
+    observer.value = new MutationObserver(scheduleBlurRecalc)
+    observer.value.observe(rowEl, {
+      childList: true,
+      subtree: true
+    })
+  } catch (e) {
+    console.error('Error when try to create observer in McWrapScroll')
+  }
+}
+
+const createBlurObserversWhenReady = () => {
+  if (!props.withBlur) return
+  nextTick(() => {
+    setupBlurObservers()
+  })
+}
+
+const init = () => {
+  if (scrollContainer.value) {
+    scrollContainer.value.addEventListener('scroll', handlerScroll)
+    if (props.withBlur) createBlurObserversWhenReady()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('mousemove', onMouseMove)
+  window.addEventListener('mouseup', onMouseUp)
+  init()
+  setTimeout(handlerScroll, 10)
+})
+
+onBeforeUnmount(() => {
+  if (blurRafId != null) {
+    cancelAnimationFrame(blurRafId)
+    blurRafId = null
+  }
+  window.removeEventListener('mousemove', onMouseMove)
+  window.removeEventListener('mouseup', onMouseUp)
+  scrollContainer.value && scrollContainer.value.removeEventListener('scroll', handlerScroll)
+  observer.value?.disconnect()
+  rowResizeObserver.value?.disconnect()
+})
 
 const onMouseDown = (e: MouseEvent) => {
   if (scrollContainer.value) {
@@ -206,6 +245,7 @@ const onMouseUp = () => {
   <component :is="props.tagName" :class="wrapperClasses" class="mc-wrap-scroll__wrapper">
     <div ref="scrollContainer" :class="containerClasses" :style="containerStyles" @mousedown="onMouseDown">
       <mc-grid-row
+        ref="gridRowRef"
         v-bind="containerProps"
         :style="{ 'pointer-events': drag_options.is_drag ? 'none' : 'auto' }"
         class="mc-wrap-scroll__row"
