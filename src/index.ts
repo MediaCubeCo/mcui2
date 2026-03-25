@@ -1,10 +1,11 @@
-import { App, shallowReactive } from 'vue'
+import { App, computed } from 'vue'
 import { setStoredAppContext } from './storedAppContext'
 import type { IDSOptions } from '@/types/IDSOptions'
 import { Themes } from '@/enums/Themes'
 import { ThemesColors, UiThemes } from '@/types/styles/ColorTheme'
 import defaultAvatar from './assets/img/no_user.png'
-import { createProxy } from '@/utils/proxy'
+import { useHelper } from '@/composables/useHelper'
+const helper = useHelper()
 
 export default {
   install(app: App, options: IDSOptions = {}) {
@@ -21,13 +22,14 @@ export default {
       }
     }
 
-    const dsOptions = shallowReactive({
+    const mergedThemes = helper.deepMerge(defaultOptions.themes, options.themes)
+    const dsOptions = {
       ...defaultOptions,
       ...options,
-      colors: options.colors ? createProxy(defaultOptions.colors!, options.colors) : defaultOptions.colors,
-      themes: options.themes ? createProxy(defaultOptions.themes!, options.themes) : defaultOptions.themes,
-      meta: options.meta ? createProxy(defaultOptions.meta!, options.meta) : defaultOptions.meta
-    })
+      colors: computed(() => (options.colors ? { ...defaultOptions.colors, ...(options.colors || {}) } : defaultOptions.colors)),
+      themes: computed(() => mergedThemes),
+      meta: computed(() => (options.meta ? { ...defaultOptions.meta, ...options.meta } : defaultOptions.meta))
+    }
 
     app.config.globalProperties.$dsOptions = dsOptions
     app.provide('dsOptions', dsOptions)
