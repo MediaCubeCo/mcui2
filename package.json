@@ -1,6 +1,6 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.272",
+  "version": "0.0.273",
   "license": "MIT",
   "description": "Design system for Mediacube services",
   "sideEffects": [
@@ -131,9 +131,6 @@
   },
   "peerDependencies": {
     "vue": "^3.5.30"
-  },
-  "overrides": {
-    "vue": "3.5.30"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
