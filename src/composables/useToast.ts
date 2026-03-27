@@ -1,11 +1,11 @@
 import { useRandomNumber } from '@/composables/useRandomNumber'
-import { h, reactive, render, shallowRef, inject, ref } from 'vue'
+import { h, reactive, render, shallowRef, inject, ref, defineAsyncComponent } from 'vue'
 import { ToastPositions } from '@/enums/Toast'
 import { ColorTypes } from '@/types/styles/Colors'
 import { IDSOptions } from '@/types/IDSOptions'
 import { IToast, IToastAction } from '@/types/IToast'
 import { useTheme } from './useTheme'
-import ToastContainer from '@/components/templates/McToast/McToastContainer.vue'
+const ToastContainer = defineAsyncComponent(() => import('@/components/templates/McToast/McToastContainer.vue'))
 
 const toastDefaultOptions = {
   position: ToastPositions.BottomCenter,
