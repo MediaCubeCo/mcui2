@@ -1,4 +1,3 @@
-import { Router } from 'vue-router'
 import { VueElement } from 'vue'
 import { IToast } from '@/types/IToast'
 import { Themes } from '@/enums/Themes'
@@ -13,6 +12,6 @@ export interface IDSOptions {
   themes?: ColorThemes,
   theme?: Themes,
   meta?: {
-    router?: null | Router,
+    router_push?: null | Function,
   }
 }

@@ -167,7 +167,6 @@ const checkboxColor = computed((): string => {
     const color: ColorTypes = theme.component.color as ColorTypes
     return isAllCheckboxesSelected.value ? color : props.mainCheckbox.selected?.length > 0 ? color : 'gray'
   }
-  console.log(theme.component.color)
   return isChecked.value ? (theme.component.color as ColorTypes) : 'gray'
 })
 

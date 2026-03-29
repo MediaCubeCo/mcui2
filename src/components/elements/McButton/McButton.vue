@@ -398,8 +398,8 @@ const handleClick = (e: Event): void => {
   if (has_click.value) return emit('click', e, props)
 
   if (props.to) {
-    if (dsOptions?.meta?.router) {
-      dsOptions.meta.router.push(props.to)
+    if (dsOptions?.meta?.router_push) {
+      dsOptions.meta.router_push(props.to)
     }
   } else window.open(props.href, props.target)
 }

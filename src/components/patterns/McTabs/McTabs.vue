@@ -172,8 +172,8 @@ const handleSelectTab = (tab: ITab, event?: Event): void | undefined => {
     window.open(tab.href, '_blank')
     return
   }
-  if (tab.to && dsOptions?.meta?.router) {
-    dsOptions.meta.router.push(tab.to)
+  if (tab.to && dsOptions?.meta?.router_push) {
+    dsOptions.meta.router_push(tab.to)
     return
   }
   handleEmitChange(tab, event)

@@ -5,6 +5,7 @@ import { Themes } from '@/enums/Themes'
 import { ThemesColors, UiThemes } from '@/types/styles/ColorTheme'
 import defaultAvatar from './assets/img/no_user.png'
 import { useHelper } from '@/composables/useHelper'
+import { createProxy } from '@/utils/proxy'
 const helper = useHelper()
 
 export default {
@@ -18,7 +19,7 @@ export default {
       themes: UiThemes,
       theme: Themes.Light,
       meta: {
-        router: null
+        router_push: null
       }
     }
 
@@ -28,7 +29,7 @@ export default {
       ...options,
       colors: computed(() => (options.colors ? { ...defaultOptions.colors, ...(options.colors || {}) } : defaultOptions.colors)),
       themes: computed(() => mergedThemes),
-      meta: computed(() => (options.meta ? { ...defaultOptions.meta, ...options.meta } : defaultOptions.meta))
+      meta: options.meta ? createProxy(defaultOptions.meta!, options.meta) : defaultOptions.meta
     }
 
     app.config.globalProperties.$dsOptions = dsOptions
