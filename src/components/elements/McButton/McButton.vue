@@ -64,14 +64,6 @@ const props = defineProps({
   href: {
     type: String as PropType<string>
   },
-  /**
-   *  По умолчанию ожидается использование в `Nuxt`
-   *
-   */
-  nuxt: {
-    type: Boolean as PropType<boolean>,
-    default: true
-  },
   target: {
     type: String as PropType<'_self' | '_blank'>,
     default: '_self'

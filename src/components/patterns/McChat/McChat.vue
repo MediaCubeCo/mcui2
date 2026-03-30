@@ -95,7 +95,7 @@ const props = defineProps({
     default: 'System comment'
   },
   /**
-   * Формат даты (dayjs)
+   * Формат даты
    */
   dateFormat: {
     type: String,

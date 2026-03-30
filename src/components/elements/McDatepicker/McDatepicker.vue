@@ -1,16 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, type PropType, ref, useAttrs, watch } from 'vue'
-import {
-  DatepickerFormat,
-  DatepickerTypes,
-  DayjsFormat,
-  DatepickerOutputFormat,
-  DatepickerFormatsVariations
-} from '@/enums/Datepicker'
-import type { DatepickerFormatsObjectFormat, IDatepickerPlaceholders, IDatepickerPreset } from '@/types/IDatepicker'
-import { type DatePickerValue, type DatepickerTypesUnion, type DatepickerFormatsObject } from '@/types/IDatepicker'
-//@ts-ignore
-import { dayjs } from '@/utils/dayjs'
+import { DatepickerFormat, DatepickerTypes, DatepickerOutputFormat } from '@/enums/Datepicker'
+import type { IDatepickerPlaceholders, IDatepickerPreset } from '@/types/IDatepicker'
+import { type DatePickerValue, type DatepickerTypesUnion } from '@/types/IDatepicker'
 import { default as DatePicker, type DatePickerMarker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { useFieldErrors } from '@/composables/useFieldErrors'
@@ -22,50 +14,21 @@ import { ColorTypes } from '@/types/styles/Colors'
 import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import McTitle from '@/components/elements/McTitle/McTitle.vue'
 import McButton from '@/components/elements/McButton/McButton.vue'
-
-/** ISO date или начало ISO datetime; остальные строки не гадаем (нет MM/DD vs DD/MM). */
-const ISO_DATE_OR_DATETIME_PREFIX_RE = /^\d{4}-\d{2}-\d{2}(?:[T ].*)?$/
-
-/**
- * Разбор сегмента даты для date-picker / date-time-picker: сначала тот же шаг, что был в McDatepicker
- * до правок; fallback только при invalid. Month/year/time намеренно не используют (другие маски).
- */
-function formatSegmentForPicker(
-  pv: unknown,
-  df: DatepickerFormatsObjectFormat,
-  direction: 'inbound' | 'outbound'
-): string | null {
-  if (pv == null || pv === '') return null
-
-  if (pv instanceof Date) {
-    const d = dayjs(pv)
-    if (!d.isValid()) return null
-    return direction === 'inbound' ? d.format(df.dayjs) : d.format(df.output)
-  }
-
-  const str = String(pv)
-  const primaryMask = direction === 'inbound' ? df.output : df.dayjs
-  const fallbackMask = direction === 'inbound' ? df.dayjs : df.output
-
-  let parsed = dayjs(str, primaryMask)
-  if (parsed.isValid()) {
-    return direction === 'inbound' ? parsed.format(df.dayjs) : parsed.format(df.output)
-  }
-
-  parsed = dayjs(str, fallbackMask)
-  if (parsed.isValid()) {
-    return direction === 'inbound' ? parsed.format(df.dayjs) : parsed.format(df.output)
-  }
-
-  if (ISO_DATE_OR_DATETIME_PREFIX_RE.test(str.trim())) {
-    parsed = dayjs(str)
-    if (parsed.isValid()) {
-      return direction === 'inbound' ? parsed.format(df.dayjs) : parsed.format(df.output)
-    }
-  }
-
-  return null
-}
+import {
+  addCalendarDays,
+  addCalendarMonths,
+  addCalendarYears,
+  coercePickDateToDate,
+  formatNowAsOutput,
+  formatSegmentMc,
+  getDefaultTimeZone,
+  isValidDateish,
+  langToDateFnsLocale,
+  outputToPicker,
+  parsePresetYmdToDate,
+  pickerToOutput,
+  type McFormatPair
+} from './McDatepicker.calendar'
 
 const default_placeholders: IDatepickerPlaceholders = {
   week: 'Week',
@@ -216,7 +179,7 @@ const props = defineProps({
   },
   minWidth: {
     type: String as PropType<string>,
-    default: '240px'
+    default: '140px'
   },
   hours: {
     type: Array as PropType<string[]>,
@@ -232,7 +195,7 @@ const props = defineProps({
   },
   timezone: {
     type: String as PropType<string>,
-    default: () => dayjs.tz?.guess?.() ?? 'UTC',
+    default: () => getDefaultTimeZone()
   },
   useTimezone: {
     type: Boolean as PropType<boolean>,
@@ -276,7 +239,7 @@ const props = defineProps({
 })
 const theme = useTheme('datepicker')
 const fieldErrors = useFieldErrors(props.errors)
-const pickDate = ref<DatePickerValue>(null)
+const pickDate = ref<DatePickerValue | Date | null>(null)
 const input = ref<InstanceType<typeof DatePicker> | null | any>(null)
 // ref для года, который сейчас показан в month-picker
 const month_picker_view_year = ref(new Date().getFullYear())
@@ -307,43 +270,47 @@ watch(
   { immediate: true }
 )
 
-const formats:DatepickerFormatsObject = {
+const formats: Record<DatepickerTypes, McFormatPair> = {
   [DatepickerTypes.TimePicker]: {
-    [DatepickerFormatsVariations.Picker]: DatepickerFormat.TimePicker,
-    [DatepickerFormatsVariations.Dayjs]: DayjsFormat.TimePicker,
-    [DatepickerFormatsVariations.Output]: DatepickerOutputFormat.TimePicker
+    picker: DatepickerFormat.TimePicker,
+    output: DatepickerOutputFormat.TimePicker
   },
   [DatepickerTypes.DatePicker]: {
-    [DatepickerFormatsVariations.Picker]: DatepickerFormat.DatePicker,
-    [DatepickerFormatsVariations.Dayjs]: DayjsFormat.DatePicker,
-    [DatepickerFormatsVariations.Output]: DatepickerOutputFormat.DatePicker
+    picker: DatepickerFormat.DatePicker,
+    output: DatepickerOutputFormat.DatePicker
   },
   [DatepickerTypes.DateTimePicker]: {
-    [DatepickerFormatsVariations.Picker]: DatepickerFormat.DateTimePicker,
-    [DatepickerFormatsVariations.Dayjs]: DayjsFormat.DateTimePicker,
-    [DatepickerFormatsVariations.Output]: DatepickerOutputFormat.DateTimePicker
+    picker: DatepickerFormat.DateTimePicker,
+    output: DatepickerOutputFormat.DateTimePicker
   },
   [DatepickerTypes.WeekPicker]: {
-    [DatepickerFormatsVariations.Picker]: DatepickerFormat.WeekPicker,
-    [DatepickerFormatsVariations.Dayjs]: DayjsFormat.WeekPicker,
-    [DatepickerFormatsVariations.Output]: DatepickerOutputFormat.WeekPicker
+    picker: DatepickerFormat.WeekPicker,
+    output: DatepickerOutputFormat.WeekPicker
   },
   [DatepickerTypes.MonthPicker]: {
-    [DatepickerFormatsVariations.Picker]: DatepickerFormat.MonthPicker,
-    [DatepickerFormatsVariations.Dayjs]: DayjsFormat.MonthPicker,
-    [DatepickerFormatsVariations.Output]: DatepickerOutputFormat.MonthPicker
+    picker: DatepickerFormat.MonthPicker,
+    output: DatepickerOutputFormat.MonthPicker
   },
   [DatepickerTypes.YearPicker]: {
-    [DatepickerFormatsVariations.Picker]: DatepickerFormat.YearPicker,
-    [DatepickerFormatsVariations.Dayjs]: DayjsFormat.YearPicker,
-    [DatepickerFormatsVariations.Output]: DatepickerOutputFormat.YearPicker
+    picker: DatepickerFormat.YearPicker,
+    output: DatepickerOutputFormat.YearPicker
   }
 }
 
 const computedType = computed((): DatepickerTypes => {
   return (props.type as DatepickerTypes) || DatepickerTypes.DatePicker
 })
-const dateFormat = computed((): DatepickerFormatsObjectFormat => formats[computedType.value])
+const dateFormat = computed((): McFormatPair => formats[computedType.value])
+const calendarContext = computed(() => ({
+  locale: props.lang,
+  timeZone: props.timezone,
+  useTimezone: props.useTimezone
+}))
+const dateFnsFormatLocale = computed(() => langToDateFnsLocale(props.lang))
+
+function formatSegmentForPicker(pv: unknown, direction: 'inbound' | 'outbound'): string | null {
+  return formatSegmentMc(pv, computedType.value, direction, calendarContext.value)
+}
 
 const isTimePicker = computed((): boolean => {
   return computedType.value === DatepickerTypes.TimePicker
@@ -422,8 +389,10 @@ const init = () => {
 
 const handlerPreselectRange = (period: string[]): void => {
   const [start, end] = period
-  // input.value.currentValue = dayjs ? [dayjs(start).toDate(), dayjs(end).toDate()] : period
-  input.value.updateInternalModelValue(dayjs ? [dayjs(start).toDate(), dayjs(end).toDate()] : period)
+  const ctx = calendarContext.value
+  const d0 = parsePresetYmdToDate(start, ctx)
+  const d1 = parsePresetYmdToDate(end, ctx)
+  if (d0 && d1) input.value.updateInternalModelValue([d0, d1])
 }
 
 /**
@@ -433,14 +402,14 @@ const handlePreselectToday = (): void => {
   if (isWeekPicker.value) return
 
   const hasValue = props.range
-    ? localValue.value?.length && Array.isArray(localValue.value) && localValue.value.every((v) => dayjs(v).isValid())
-    : //@ts-ignore
-      dayjs(localValue.value).isValid()
+    ? !!(localValue.value?.length && Array.isArray(localValue.value) && localValue.value.every((v) => isValidDateish(v)))
+    : isValidDateish(localValue.value)
 
   if (!hasValue) {
-    let today = props.toIsoFormat
-      ? dayjs().toISOString()
-      : dayjs().format(dateFormat.value[DatepickerFormatsVariations.Output])
+    let today: string | null = props.toIsoFormat
+      ? new Date().toISOString()
+      : formatNowAsOutput(computedType.value, calendarContext.value)
+    if (!today) today = new Date().toISOString()
     localValue.value = props.range ? getFormattedPickerDate([today, today]) : getFormattedPickerDate(today)
   }
 }
@@ -462,10 +431,9 @@ const getFormattedPickerDate = (value: DatePickerValue): DatePickerValue => {
       computedType.value === DatepickerTypes.DatePicker || computedType.value === DatepickerTypes.DateTimePicker
     preparedValue = preparedValue.map((pv) => {
       if (useSafeCalendarParse) {
-        return formatSegmentForPicker(pv, dateFormat.value, 'inbound')
+        return formatSegmentForPicker(pv, 'inbound')
       }
-      const parsed = dayjs(pv as string, dateFormat.value.output)
-      return parsed.isValid() ? parsed.format(dateFormat.value.dayjs) : null
+      return outputToPicker(String(pv).trim(), computedType.value, calendarContext.value)
     })
   }
 
@@ -480,10 +448,10 @@ const getFormattedPickerDate = (value: DatePickerValue): DatePickerValue => {
 /**
  * Prepare dates for output
  * */
-const getFormattedOutputDate = (value: DatePickerValue): DatePickerValue => {
+const getFormattedOutputDate = (value: unknown): DatePickerValue => {
   if (isWeekPicker.value) {
     if (value == null || value === '') return props.range ? [] : null
-    return value
+    return value as DatePickerValue
   }
   const useSafeCalendarParse =
     !props.toIsoFormat &&
@@ -493,16 +461,15 @@ const getFormattedOutputDate = (value: DatePickerValue): DatePickerValue => {
   if (useSafeCalendarParse) {
     preparedValue = props.range
       ? Array.isArray(value)
-        ? value.map((pv) => formatSegmentForPicker(pv, dateFormat.value, 'outbound'))
+        ? value.map((pv) => formatSegmentForPicker(pv, 'outbound'))
         : []
-      : [formatSegmentForPicker(value, dateFormat.value, 'outbound')]
+      : [formatSegmentForPicker(value, 'outbound')]
   } else {
     preparedValue = props.range ? (Array.isArray(value) ? value.map((pv) => String(pv)) : []) : [String(value)]
     if (!props.toIsoFormat) {
-      preparedValue = preparedValue.map((pv) => {
-        const parsed = dayjs(pv, dateFormat.value.dayjs)
-        return parsed.isValid() ? parsed.format(dateFormat.value.output) : null
-      })
+      preparedValue = preparedValue.map((pv) =>
+        pickerToOutput(pv == null ? '' : String(pv), computedType.value, calendarContext.value)
+      )
     }
   }
 
@@ -517,27 +484,26 @@ const getFormattedOutputDate = (value: DatePickerValue): DatePickerValue => {
 }
 
 const selectPeriod = (key: string) => {
-  let start = dayjs()
-  //@ts-ignore
-  const end = pickDate.value ? dayjs(pickDate.value) : dayjs()
+  const end = coercePickDateToDate(pickDate.value)
+  let start = new Date(end.getTime())
   switch (key) {
     case 'week':
-      start = dayjs(end).subtract(7, 'days')
+      start = addCalendarDays(end, -7)
       break
     case 'month':
-      start = dayjs(end).subtract(1, 'months')
+      start = addCalendarMonths(end, -1)
       break
     case 'quarter':
-      start = dayjs(end).subtract(3, 'months')
+      start = addCalendarMonths(end, -3)
       break
     case 'year':
-      start = dayjs(end).subtract(1, 'years')
+      start = addCalendarYears(end, -1)
       break
   }
-  input.value.updateInternalModelValue([start.toDate(), end.toDate()])
+  input.value.updateInternalModelValue([start, end])
 }
-const handlePickDate = (date: DatePickerValue) => {
-  pickDate.value = date
+const handlePickDate = (date: DatePickerValue | Date) => {
+  pickDate.value = date as DatePickerValue
 }
 
 const handleSubmit = () => {
@@ -606,6 +572,7 @@ watch(
           :clearable="clearable"
           :inline="inline"
           :locale="lang"
+          :format-locale="dateFnsFormatLocale"
           :markers="markers"
           :action-row="{}"
           :loading="loading"
