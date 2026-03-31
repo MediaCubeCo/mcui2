@@ -52,7 +52,6 @@ const menu = [
     menu: [
       {
         name: 'Сеть',
-        icon: 'public',
         to: `payment-accounts-partners-network-index`,
       },
       {

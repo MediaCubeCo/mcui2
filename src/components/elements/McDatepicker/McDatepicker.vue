@@ -161,7 +161,7 @@ const props = defineProps({
    * Массив дат запрещенных к выбору / Метод которые проверяет каждую дату
    **/
   disabledDates: {
-    type: [Array as PropType<Date[] | string[]>, Function]
+    type: Function as PropType<(date: Date) => boolean>
   },
   /**
    * Массив дат разрешенных к выбору / Метод которые проверяет каждую дату
@@ -366,6 +366,10 @@ const isPeriodsVisible = computed((): boolean => {
   )
 })
 
+const hasDisableDatesProp = computed((): boolean => {
+  return typeof props.disabledDates === 'function'
+})
+
 const localValue = computed({
   get() {
     return getFormattedPickerDate(props.modelValue)
@@ -483,7 +487,7 @@ const getFormattedOutputDate = (value: unknown): DatePickerValue => {
   return ([start, end].filter(Boolean) as DatePickerValue)
 }
 
-const selectPeriod = (key: string) => {
+const selectPeriod = (key: string, isReturn = false ) => {
   const end = coercePickDateToDate(pickDate.value)
   let start = new Date(end.getTime())
   switch (key) {
@@ -500,6 +504,7 @@ const selectPeriod = (key: string) => {
       start = addCalendarYears(end, -1)
       break
   }
+  if (isReturn) return [start, end]
   input.value.updateInternalModelValue([start, end])
 }
 const handlePickDate = (date: DatePickerValue | Date) => {
@@ -606,7 +611,7 @@ watch(
                     {{ preset.title }}
                   </mc-button>
                 </template>
-                <template v-else>
+                <template v-else-if="!hasDisableDatesProp">
                   <mc-button
                     v-if="placeholders.week"
                     variation="black-link"

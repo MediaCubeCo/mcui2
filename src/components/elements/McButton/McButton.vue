@@ -248,7 +248,6 @@ const props = defineProps({
 })
 
 const theme = useTheme('button')
-const slots = useSlots()
 const mcButton = ref(null)
 const has_click = ref(false)
 const emit = defineEmits(['blur', 'click'])
@@ -258,20 +257,20 @@ const classes = computed((): { [key: string]: boolean } => {
     [`mc-button--variation-${props.variation}`]: !!props.variation,
     [`mc-button--size-${props.size}`]: !!props.size,
     [`mc-button--text-align-${props.textAlign}`]: !!props.textAlign,
-    'mc-button--loading': !!props.loading,
-    'mc-button--icon-loading': !!props.iconLoading,
-    'mc-button--is-active': !!props.isActive,
-    'mc-button--disabled': !!props.disabled,
+    'mc-button--loading': props.loading,
+    'mc-button--icon-loading': props.iconLoading,
+    'mc-button--is-active': props.isActive,
+    'mc-button--disabled': props.disabled,
     'mc-button--rounded': props.rounded && /-compact$/.test(props.size),
-    'mc-button--semi-rounded': !!props.semiRounded,
-    'mc-button--full-width': !!props.fullWidth,
-    'mc-button--uppercase': !!props.uppercase,
-    'mc-button--shadow': !!props.shadow,
+    'mc-button--semi-rounded': props.semiRounded,
+    'mc-button--full-width': props.fullWidth,
+    'mc-button--uppercase': props.uppercase,
+    'mc-button--shadow': props.shadow,
     'mc-button--secondary-color': !!props.secondaryColor,
-    'mc-button--underline-link': !!props.underlineLink,
-    'mc-button--bg-flat': !!props.bgFlat,
+    'mc-button--underline-link': props.underlineLink,
+    'mc-button--bg-flat': props.bgFlat,
     [`mc-button--type-${buttonVariation.value.type}`]: !!buttonVariation.value.type,
-    'mc-button--inactive': !!props.inactive
+    'mc-button--inactive': props.inactive
   }
 })
 

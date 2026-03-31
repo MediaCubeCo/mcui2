@@ -10,7 +10,7 @@ import { SidebarTheme } from '@/enums/Sidebar'
 import { TooltipPositions } from '@/enums/Tooltip'
 import { defaultThemes } from '@/mocks/sidebar'
 import { useTheme } from '@/composables/useTheme'
-const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
+import McButton from '@/components/elements/McButton/McButton.vue'
 const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
 const McChip = defineAsyncComponent(() => import('@/components/elements/McChip/McChip.vue'))
 
@@ -153,9 +153,9 @@ const styles = computed((): { [key: string]: string } => {
 
 <template>
   <mc-button v-bind="btnAttrs" :target="props.href ? '_blank' : '_self'" :class="classes" :style="styles">
-    <template #icon-prepend>
-      <mc-svg-icon v-if="icon" :fill="iconColor" class="mc-side-bar-button__icon" :name="icon" />
-      <span v-if="icon && compact && (info || withIndicator)" class="mc-side-bar-button__dot" />
+    <template v-if="icon" #icon-prepend>
+      <mc-svg-icon :fill="iconColor" class="mc-side-bar-button__icon" :name="icon" />
+      <span v-if="compact && (info || withIndicator)" class="mc-side-bar-button__dot" />
     </template>
     <template v-if="!compact">{{ title }}</template>
     <template #icon-append>
