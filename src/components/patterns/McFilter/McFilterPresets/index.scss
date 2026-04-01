@@ -20,7 +20,6 @@
     flex-wrap: nowrap;
     overflow-x: auto;
     height: calc(#{$space-500} + 2px);
-    @include child-indent-right($space-100);
     & {
       @include hide-scrollbar();
     }

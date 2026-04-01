@@ -6,7 +6,9 @@ const meta = {
     title: 'McCropper',
     component: McCropper,
     tags: ['autodocs'],
-    argTypes: {},
+    argTypes: {
+        cropBoxResizable: { control: 'boolean' },
+    },
     args: {
         imgSrc: 'https://avatars.githubusercontent.com/u/63395408?s=400&u=5f3ae555700cfcacf278425bf37c1433c3ed43c1&v=4',
         onReady: fn((e) => {
@@ -14,7 +16,8 @@ const meta = {
         }),
         onCrop: fn((e) => {
             console.log(e)
-        })
+        }),
+        cropBoxResizable: true
     },
     parameters: {
         componentSubtitle: 'Status: Ready',

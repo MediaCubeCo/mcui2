@@ -5,6 +5,8 @@ import type { ColorTypes } from '@/types/styles/Colors'
 import type { IFilterPreset } from '@/types/IFilter'
 import { useLocalStorage, useDebounceFn } from '@vueuse/core'
 import { useTheme } from '@/composables/useTheme'
+import McWrapScroll from '@/components/patterns/McWrapScroll/McWrapScroll.vue'
+import McGridCol from '@/components/patterns/McGridCol/McGridCol.vue'
 const McButton = defineAsyncComponent(() => import('@/components/elements/McButton/McButton.vue'))
 
 const emit = defineEmits(['preset-selected'])
@@ -48,7 +50,7 @@ const getPresetButtonVariation = (preset: IFilterPreset): ButtonVariationUnion =
     : 'gray-outline'
 }
 
-const handleStorageChange = (e:StorageEvent) => {
+const handleStorageChange = (e: StorageEvent) => {
   if (e?.key === storage_name) {
     debounce(() => {
       updatePresets()
@@ -75,15 +77,17 @@ watch(
 <template>
   <div class="mc-filter-presets">
     <div class="mc-filter-presets-inner">
-      <mc-button
-        v-for="preset in presets"
-        :key="preset.name"
-        :variation="getPresetButtonVariation(preset)"
-        :secondary-color="theme.component.button as ColorTypes"
-        @mouseup="() => handlePresetMouseUp(preset)"
-      >
-        {{ preset.name }}
-      </mc-button>
+      <mc-wrap-scroll :scroll-speed="2" :gutter-x="8">
+        <mc-grid-col v-for="preset in presets" :key="preset.name">
+          <mc-button
+            :variation="getPresetButtonVariation(preset)"
+            :secondary-color="theme.component.button as ColorTypes"
+            @mouseup="() => handlePresetMouseUp(preset)"
+          >
+            {{ preset.name }}
+          </mc-button>
+        </mc-grid-col>
+      </mc-wrap-scroll>
     </div>
   </div>
 </template>
