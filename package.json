@@ -1,6 +1,6 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.284",
+  "version": "0.0.285",
   "license": "MIT",
   "description": "Design system for Mediacube services",
   "sideEffects": [
