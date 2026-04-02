@@ -157,9 +157,8 @@ watch(() => props.errors, (value: string[]): void => {
         color="red"
         :variation="TitleVariations.Overline"
         max-width="100%"
-      >
-        {{ fieldErrors.errorText.value }}
-      </mc-title>
+        :html-data="fieldErrors.errorText.value"
+      />
       <br v-if="fieldErrors.errorText.value" />
       <!-- @slot Слот доп. текста под инпутом -->
       <slot name="footer">

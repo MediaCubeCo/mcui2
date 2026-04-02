@@ -125,9 +125,7 @@ watch(() => props.errors, (value: string[]): void => {
     <div class="mc-progress__wrapper-line">
       <div :class="lineClasses" :style="lineStyles"></div>
     </div>
-    <div v-if="fieldErrors.errorText.value" class="mc-progress__errors-container">
-      {{ fieldErrors.errorText.value }}
-    </div>
+    <div v-if="fieldErrors.errorText.value" v-html="fieldErrors.errorText.value" class="mc-progress__errors-container" />
   </div>
 </template>
 

@@ -160,9 +160,8 @@ watch(() => props.errors, (value: string[]): void => {
       color="red"
       :variation="TitleVariations.Overline"
       max-width="100%"
-    >
-      {{ fieldErrors.errorText.value }}
-    </mc-title>
+      :html-data="fieldErrors.errorText.value"
+    />
   </div>
 </template>
 

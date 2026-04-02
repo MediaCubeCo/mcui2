@@ -19,6 +19,9 @@
   //TODO refactor structure to normal
   // стили вынесены в рут, для кейса когда клендарь телепортируется в бади
   @at-root {
+    :root {
+      --dp-font-family: #{$font-family-main};
+    }
     .dp {
       padding: $space-200;
       font-size: $font-size-200;
@@ -241,6 +244,7 @@
         --dp-button-icon-height: 16px;
         --dp-common-padding: 12px;
         --dp-time-inc-dec-button-size: 16px;
+        --dp-font-family: #{$font-family-main};
 
         //--dp-menu-padding: 50px;
         //--dp-button-height: 50px;

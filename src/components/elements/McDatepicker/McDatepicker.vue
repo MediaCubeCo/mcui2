@@ -235,7 +235,7 @@ const props = defineProps({
   teleportTo: {
     type: String as PropType<string>,
     default: 'body'
-  },
+  }
 })
 const theme = useTheme('datepicker')
 const fieldErrors = useFieldErrors(props.errors)
@@ -263,7 +263,7 @@ const pickerInlineStyles = computed((): { [key: string]: string } => {
  */
 watch(
   () => theme.colors[theme.component.color as ColorTypes],
-  color => {
+  (color) => {
     if (typeof document === 'undefined') return
     document.documentElement.style.setProperty('--mc-date-picker-color', color)
   },
@@ -406,7 +406,11 @@ const handlePreselectToday = (): void => {
   if (isWeekPicker.value) return
 
   const hasValue = props.range
-    ? !!(localValue.value?.length && Array.isArray(localValue.value) && localValue.value.every((v) => isValidDateish(v)))
+    ? !!(
+        localValue.value?.length &&
+        Array.isArray(localValue.value) &&
+        localValue.value.every((v) => isValidDateish(v))
+      )
     : isValidDateish(localValue.value)
 
   if (!hasValue) {
@@ -446,7 +450,7 @@ const getFormattedPickerDate = (value: DatePickerValue): DatePickerValue => {
   const endInvalid = end == null || (typeof end === 'string' && end === 'Invalid Date')
   if (!props.range) return startInvalid ? null : start
   if (startInvalid || endInvalid) return []
-  return ([start, end].filter(Boolean) as DatePickerValue)
+  return [start, end].filter(Boolean) as DatePickerValue
 }
 
 /**
@@ -484,10 +488,10 @@ const getFormattedOutputDate = (value: unknown): DatePickerValue => {
   const endInvalid = end == null || end === 'Invalid Date'
   if (!props.range) return startInvalid ? null : start
   if (startInvalid || endInvalid) return []
-  return ([start, end].filter(Boolean) as DatePickerValue)
+  return [start, end].filter(Boolean) as DatePickerValue
 }
 
-const selectPeriod = (key: string, isReturn = false ) => {
+const selectPeriod = (key: string, isReturn = false) => {
   const end = coercePickDateToDate(pickDate.value)
   let start = new Date(end.getTime())
   switch (key) {
@@ -517,8 +521,7 @@ const handleSubmit = () => {
 }
 
 const disabledMonthsFilter = computed(() => {
-  if (props.type !== DatepickerTypes.MonthPicker || typeof props.disabledDates !== 'function')
-    return undefined
+  if (props.type !== DatepickerTypes.MonthPicker || typeof props.disabledDates !== 'function') return undefined
   const year = month_picker_view_year.value
   const disabled: number[] = []
   for (let month = 0; month < 12; month++) {
@@ -693,9 +696,13 @@ watch(
       </div>
     </div>
     <div v-if="!!fieldErrors.errorText.value || !!props.helpText || !!$slots.bottom" class="mc-date-picker__footer">
-      <mc-title v-if="!!fieldErrors.errorText.value" tag-name="div" color="red" :variation="TitleVariations.Overline">
-        {{ fieldErrors.errorText.value }}
-      </mc-title>
+      <mc-title
+        v-if="!!fieldErrors.errorText.value"
+        tag-name="div"
+        color="red"
+        :variation="TitleVariations.Overline"
+        :html-data="fieldErrors.errorText.value"
+      />
       <br v-if="!!fieldErrors.errorText.value && (!!props.helpText || !!$slots.bottom)" />
       <!-- @slot Слот для доп. текста под инпутом -->
       <slot name="bottom">

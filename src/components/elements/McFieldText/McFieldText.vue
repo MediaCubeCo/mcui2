@@ -484,18 +484,19 @@ const getPreparedInputValue = (e: Event): InputValue => {
   switch (props.type) {
     case InputTypes.Num: {
       //eslint-disable-next-line
-      let [num] = /-?\d*[\.]?\d*/.exec(String(value)) || []
+      const prep_val = value?.replace(/,/g, '.')?.replace(/ /g, '')
+      let [num] = /-?\d*[\.]?\d*/.exec(String(prep_val)) || []
       num = setDecimalsLimit(num as string)
       num = handleRemoveLeadingZero(num)
-      value = num ? +num : num
-      target.value = num
+      value = String(num)
+      target.value = String(num)
       break
     }
     case InputTypes.Int: {
       let [int] = /-?\d*/.exec(String(target.value)) || []
       int = handleRemoveLeadingZero(int as string)
-      value = int ? +int : int
-      target.value = int
+      value = String(int)
+      target.value = String(int)
       break
     }
     case InputTypes.AmountFormat: {
