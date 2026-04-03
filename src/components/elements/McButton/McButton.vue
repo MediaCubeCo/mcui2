@@ -356,19 +356,14 @@ const isVariationLink = computed((): boolean => {
 
 const tagBind = computed((): ElButtonTagBind => {
   let result: ElButtonTagBind = {
-    to: props.to,
-    href: props.href,
+    href: props.href || props.to,
     disabled: false,
-    rel: '',
+    rel: 'noopener noreferrer',
     type: props.type,
     tabindex: props.tabindex
   }
 
-  if (props.to) {
-    delete result.href
-  } else if (props.href) {
-    delete result.to
-  } else if (props.disabled || props.loading) {
+  if (props.disabled || props.loading) {
     result.disabled = true
   }
 

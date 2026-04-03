@@ -38,7 +38,7 @@ export default {
     const dsOptions = {
       ...defaultOptions,
       ...options,
-      colors: computed(() => mergeDefined(defaultOptions.colors!, options.colors)),
+      colors: options.colors ? createProxy(defaultOptions.colors!, options.colors) : defaultOptions.colors,
       themes: computed(() => mergedThemes),
       meta: options.meta ? createProxy(defaultOptions.meta!, options.meta) : defaultOptions.meta
     }

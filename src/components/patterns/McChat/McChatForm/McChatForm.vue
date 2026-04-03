@@ -13,7 +13,7 @@ const McFieldText = defineAsyncComponent(() => import('@/components/elements/McF
  * Используется только в McChat
  */
 
-const emit  = defineEmits<{
+const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
   (e: 'submit'): void
 }>()
@@ -24,7 +24,7 @@ const props = defineProps({
    */
   modelValue: {
     type: [String, null] as PropType<string | null>,
-    required: true,
+    required: true
   },
   /**
    * Состояние загрузки/отправки
@@ -32,22 +32,22 @@ const props = defineProps({
    */
   loading: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * Аватар пользователя
    */
   avatar: {
     type: String as PropType<string>,
-    default: null,
+    default: null
   },
   /**
    * Плейсхолдер инпута
    */
   placeholder: {
     type: String as PropType<string>,
-    default: '',
-  },
+    default: ''
+  }
 })
 
 const prettyValue = ref(props.modelValue)
@@ -77,7 +77,12 @@ const toNewRow = (): void => {
 
 <template>
   <div class="mc-chat-form">
-    <form @submit.prevent="handleSubmit">
+    <form
+      @submit.prevent="handleSubmit"
+      @keydown.enter.native.prevent.exact="handleSubmit"
+      @keydown.ctrl.enter.native="toNewRow"
+      @keydown.shift.enter.native="toNewRow"
+    >
       <mc-preview class="mc-chat-form__inner">
         <template #left>
           <mc-avatar class="mc-chat-form__avatar" size="400" rounded :src="avatar" />
@@ -92,8 +97,6 @@ const toNewRow = (): void => {
             :model-value="prettyValue"
             :placeholder="placeholder"
             @update:modelValue="handleInput"
-            @keydown.enter.native.prevent.exact="handleSubmit"
-            @keydown.ctrl.enter.native="toNewRow"
           >
             <template #append>
               <mc-button
