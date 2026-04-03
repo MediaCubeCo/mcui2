@@ -76,7 +76,7 @@ const computedPlaceholder = computed(() => {
 })
 
 const isAjax = computed((): boolean => {
-  return props.filter.getAjaxOptions?.constructor === Function
+  return typeof props.filter.getAjaxOptions === 'function'
 })
 
 const computedOptions = computed(() => {

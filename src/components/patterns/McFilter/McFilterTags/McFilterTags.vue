@@ -207,7 +207,6 @@ const splitTags = (value: FilterConditionName) => {
 
 const addInitTags = (parentVal: FilterConditionName, parentKey?: string) => {
   const relationKeys = [FilterRelations.Is, FilterRelations.IsNot, FilterRelations.Exists]
-
   for (let [key, val] of Object.entries(parentVal)) {
     if (relationKeys.includes(key as FilterRelations)) {
       relationValues.value[key] = {
@@ -216,7 +215,7 @@ const addInitTags = (parentVal: FilterConditionName, parentKey?: string) => {
       } as FilterConditionName
       continue
     }
-    if (val.constructor !== Object && parentKey) {
+    if (val?.constructor !== Object && parentKey) {
       simpleValues.value[parentKey] = parentVal
       continue
     }

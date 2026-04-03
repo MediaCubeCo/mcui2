@@ -19,7 +19,7 @@ const props = defineProps({
 })
 
 const isActive = computed((): boolean => {
-  return props.column === props.sort.sort_column
+  return props.column === props.sort.sort_column && props.sort.sort_direction !== null
 })
 
 const sortState = computed((): ITableSortState => {
@@ -33,7 +33,7 @@ const sortState = computed((): ITableSortState => {
     case props.sort.sort_direction === 'desc' && isActive.value:
       return {
         direction: 'desc',
-        next_direction: 'asc',
+        next_direction: null,
         icon: 'arrow_downward'
       }
     default:
@@ -46,10 +46,16 @@ const sortState = computed((): ITableSortState => {
 })
 
 const handleSortChange = () => {
-  emit('change', {
-    sort_column: props.column,
-    sort_direction: sortState.value.next_direction
-  })
+  const payload = sortState.value.next_direction
+    ? {
+        sort_column: props.column,
+        sort_direction: sortState.value.next_direction
+      }
+    : {
+        sort_column: null,
+        sort_direction: null
+      }
+  emit('change', payload)
 }
 </script>
 

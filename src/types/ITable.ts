@@ -37,7 +37,7 @@ export type ITableTotals<T extends ITableColumnBase> = {
 export type ITableData = any[]
 
 export interface ITableSort {
-  sort_column: string
+  sort_column: string | null
   sort_direction: SortDirection
 }
 export interface ITableSortState {

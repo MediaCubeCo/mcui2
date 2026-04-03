@@ -220,7 +220,7 @@
   }
 }
 
-@mixin default-link($main-color: $color-black, $second-color: $color-purple, $is-important: false) {
+@mixin default-link($main-color, $second-color, $is-important: false) {
   & {
     @if $is-important {
       color: $main-color !important;
@@ -228,19 +228,37 @@
       color: $main-color;
     }
   }
-  &:hover,
-  &:focus {
-    @if $is-important {
-      color: $second-color !important;
-    } @else {
-      color: $second-color;
+  @if($second-color) {
+    &:hover,
+    &:focus {
+      @if $is-important {
+        color: $second-color !important;
+      } @else {
+        color: $second-color;
+      }
     }
-  }
-  &:active {
-    @if $is-important {
-      color: sasscolor.adjust($second-color, $lightness: 8%) !important;
-    } @else {
-      color: sasscolor.adjust($second-color, $lightness: 8%);
+    &:active {
+      @if $is-important {
+        color: $second-color !important;
+      } @else {
+        color: $second-color !important;
+      }
+    }
+  } @else {
+    &:hover,
+    &:focus {
+      @if $is-important {
+        color: color-mix(in srgb, #{$main-color} 75%, black) !important;
+      } @else {
+        color: color-mix(in srgb, #{$main-color} 75%, black);
+      }
+    }
+    &:active {
+      @if $is-important {
+        color: color-mix(in srgb, #{$main-color} 75%, black) !important;
+      } @else {
+        color: color-mix(in srgb, #{$main-color} 75%, black) !important;
+      }
     }
   }
 }
@@ -249,7 +267,7 @@
   @include default-link($color-black, $color-red);
 }
 @mixin text-link($is-important: false) {
-  @include default-link($color-purple, $color-hover-purple, $is-important);
+  @include default-link(var(--color-main), var(--color-main-dark), $is-important);
 }
 @mixin close-link() {
   @include default-link($color-gray, $color-black);

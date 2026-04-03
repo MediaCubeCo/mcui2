@@ -239,16 +239,19 @@ pre {
 }
 
 :root {
+  // Default main project colors
+  --color-main: #{$color-purple};
+  --color-main-dark: #{$color-hover-purple};
+  --color-main-light: #{$color-light-purple};
+
   @each $name, $radius in $token-radius {
     #{'--radius-'}#{$name}: #{$radius};
   }
   @each $name, $color in $token-colors {
     #{'--color-'}#{$name}: #{$color};
+    #{'--color-'}#{$name}#{'-light'}: color-mix(in srgb, #{$color} 75%, white);
+    #{'--color-'}#{$name}#{'-dark'}: color-mix(in srgb, #{$color} 75%, black);
   }
-  // Default main project colors
-  --color-main: #{$color-purple};
-  --color-main-dark: #{$color-hover-purple};
-  --color-main-light: #{$color-light-purple};
 
   @for $i from 1 through 10 {
     #{'--color-main-alpha-'}#{$i * 10}: #{rgba($color-purple, math.div($i, 10))};
