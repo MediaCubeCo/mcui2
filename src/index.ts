@@ -1,23 +1,10 @@
-import { App, computed } from 'vue'
+import { App } from 'vue'
 import { setStoredAppContext } from './storedAppContext'
 import type { IDSOptions } from '@/types/IDSOptions'
 import { Themes } from '@/enums/Themes'
 import { ThemesColors, UiThemes } from '@/types/styles/ColorTheme'
 import defaultAvatar from './assets/img/no_user.png'
-import { useHelper } from '@/composables/useHelper'
 import { createProxy } from '@/utils/proxy'
-const helper = useHelper()
-
-function mergeDefined<T extends Record<string, unknown>>(defaults: T, overrides?: Partial<T>): T {
-  if (!overrides) return defaults
-
-  const definedEntries = Object.entries(overrides).filter(([, value]) => value !== undefined)
-
-  return {
-    ...defaults,
-    ...Object.fromEntries(definedEntries)
-  } as T
-}
 
 export default {
   install(app: App, options: IDSOptions = {}) {
@@ -34,12 +21,11 @@ export default {
       }
     }
 
-    const mergedThemes = helper.deepMerge(defaultOptions.themes, options.themes)
     const dsOptions = {
       ...defaultOptions,
       ...options,
       colors: options.colors ? createProxy(defaultOptions.colors!, options.colors) : defaultOptions.colors,
-      themes: computed(() => mergedThemes),
+      themes: options.themes ? createProxy(defaultOptions.themes!, options.themes) : defaultOptions.themes,
       meta: options.meta ? createProxy(defaultOptions.meta!, options.meta) : defaultOptions.meta
     }
 
