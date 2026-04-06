@@ -3,20 +3,23 @@
 * @presenter Spacing
 */
 
-$size-50: 0.25rem;  // 4px
-$size-100: 0.5rem;  // 8px
+$size-50: 0.25rem; // 4px
+$size-100: 0.5rem; // 8px
 $size-150: 0.75rem; // 12px
-$size-200: 1rem;    // 16px
+$size-200: 1rem; // 16px
 $size-250: 1.25rem; // 20px
-$size-300: 1.5rem;  // 24px
-$size-400: 2rem;    // 32px
-$size-500: 2.5rem;  // 40px
+$size-300: 1.5rem; // 24px
+$size-400: 2rem; // 32px
+$size-500: 2.5rem; // 40px
 $size-550: 2.75rem; // 44px
-$size-600: 3rem;     // 48px
-$size-700: 3.5rem;  // 56px
-$size-800: 4rem;    // 64px
-$size-900: 4.5rem;  // 72px
-$size-1000: 5rem;   // 80px
+$size-600: 3rem; // 48px
+$size-700: 3.5rem; // 56px
+$size-800: 4rem; // 64px
+$size-900: 4.5rem; // 72px
+$size-1000: 5rem; // 80px
+$size-1200: 6rem;
+$size-1400: 7rem;
+$size-1500: 7.5rem;
 
 $token-avatar-sizes: (
   300: $size-300,
@@ -27,6 +30,9 @@ $token-avatar-sizes: (
   800: $size-800,
   900: $size-900,
   1000: $size-1000,
+  1200: $size-1200,
+  1400: $size-1400,
+  1500: $size-1500
 );
 
 $token-icon-sizes: (
@@ -44,4 +50,7 @@ $token-icon-sizes: (
   800: $size-800,
   900: $size-900,
   1000: $size-1000,
+  1200: $size-1200,
+  1400: $size-1400,
+  1500: $size-1500
 );
