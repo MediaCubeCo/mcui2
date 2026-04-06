@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { AvatarSizes, type AvatarSizeTypes } from '@/types/styles/AvatarSizes'
 import { type ColorTypes } from '@/types/styles/Colors'
 import { Sizes } from '@/types/styles/Sizes'
 import { Radiuses } from '@/types/styles/Radiuses'
 import { useTheme } from '@/composables/useTheme'
+import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 
 const props = defineProps({
   /**
@@ -13,7 +14,7 @@ const props = defineProps({
    */
   src: {
     type: String,
-    default: '',
+    default: ''
   },
   /**
    *  Отложенная подгрузка
@@ -21,7 +22,7 @@ const props = defineProps({
    */
   lazy: {
     type: Boolean,
-    default: false
+    default: true
   },
   /**
    *  Атрибут alt
@@ -80,9 +81,9 @@ const props = defineProps({
 })
 
 const theme = useTheme('avatar')
-const style = ref<{ [key: string]: string }>({})
 const hasError = ref<boolean>(false)
-const wrapperStyle = ref<{ [key: string]: string }>({})
+const imageSrc = ref<string | null>(props.src)
+
 const hasStatus = computed((): boolean => !!props.borderColor || !!props.dotColor)
 
 const classes = computed((): { [key: string]: boolean } => ({
@@ -96,71 +97,58 @@ const classes = computed((): { [key: string]: boolean } => ({
 const wrapperClasses = computed((): { [key: string]: boolean } => {
   return {
     'mc-avatar__wrapper': true,
-    'mc-avatar__wrapper-status--shadow': !!props.shadow,
+    'mc-avatar__wrapper-status--shadow': props.shadow,
     [`mc-avatar__wrapper-status--size-${props.size}`]: !!props.size,
     'mc-avatar__wrapper--has-dot': !!props.dotColor
   }
 })
 
-watch(
-  () => props.dotColor,
-  () => {
-    if (hasStatus.value) {
-      if (props.dotColor) wrapperStyle.value['--mc-avatar-dot-color'] = theme.colors[props.dotColor]
-    }
-  },
-  { immediate: true }
-)
+const style = computed((): { [key: string]: string } => {
+  let result = {
+    '--mc-avatar-avatar-size': AvatarSizes[props.size]
+  }
 
-watch(
-  () => props.borderColor,
-  () => {
-    if (hasStatus.value) {
-      if (props.borderColor) style.value['--mc-avatar-border-color'] = theme.colors[props.borderColor]
-    }
-  },
-  { immediate: true }
-)
+  if (hasStatus.value) {
+    // @ts-ignore
+    result['--mc-avatar-border-color'] = theme.colors[props.borderColor]
+  }
 
-watch(
-  () => props.size,
-  () => {
-    if (props.size) {
-      style.value['--mc-avatar-avatar-size'] = AvatarSizes[props.size]
-      if (+props.size < 500) {
-        wrapperStyle.value['--mc-avatar-dot-size'] = Sizes['100']
-        style.value['--mc-avatar-avatar-radius'] = Radiuses['50']
-      }
-      switch (+props.size) {
-        case 500:
-        case 600: {
-          wrapperStyle.value['--mc-avatar-dot-size'] = Sizes['150']
-          break
-        }
-        case 700:
-        case 800:
-        case 900:
-        case 1000: {
-          wrapperStyle.value['--mc-avatar-dot-size'] = Sizes['200']
-          wrapperStyle.value['--mc-avatar-dot-border-width'] = '2px'
-          break
-        }
-      }
-    }
-  },
-  { immediate: true }
-)
-
-const imageSrc = ref<string | null>(null)
-
-watch(() => props.src, () => {
-  hasError.value = false
-  imageSrc.value = props.src
+  return result
 })
 
-onMounted(() => {
-  imageSrc.value = props.src
+const wrapperStyle = computed((): { [key: string]: string } => {
+  if (!hasStatus.value) return {}
+
+  let dot_size = Sizes['150']
+  let border_width = '1px'
+  let av_radius = '0'
+
+  if (+props.size < 500) {
+    dot_size = Sizes['100']
+    av_radius = Radiuses['50']
+  }
+  if (+props.size >= 700) {
+    dot_size = Sizes['200']
+    border_width = '2px'
+  }
+
+  return {
+    '--mc-avatar-dot-color': theme.colors[props.dotColor],
+    '--mc-avatar-dot-size': dot_size,
+    '--mc-avatar-dot-border-width': border_width,
+    '--mc-avatar-avatar-radius': av_radius
+  }
 })
+
+watch(
+  () => props.src,
+  () => {
+    if (imageSrc.value === props.src) return
+    hasError.value = false
+    imageSrc.value = props.src
+  },
+  { immediate: true }
+)
 const handleOnError = (): void => {
   hasError.value = true
 }
@@ -178,11 +166,13 @@ const handleOnError = (): void => {
         class="mc-avatar__img"
         @error="handleOnError"
       />
-      <svg v-show="!imageSrc || hasError" width="104" height="104" viewBox="0 0 104 104" fill="none" class="mc-avatar__img" xmlns="http://www.w3.org/2000/svg">
-        <rect width="104" height="104" rx="8" :fill="theme.colors[theme.component.defaultIcon as ColorTypes]" />
-        <path d="M33.3078 40.2381C33.3078 29.9814 41.6764 21.6667 51.9997 21.6667C62.3229 21.6667 70.6916 29.9814 70.6916 40.2381V42.7143C70.6916 52.971 62.3229 61.2857 51.9997 61.2857C41.6764 61.2857 33.3078 52.971 33.3078 42.7143V40.2381Z" fill="white" />
-        <path d="M86.6663 84.6684C78.021 93.8955 65.6887 99.6667 51.9997 99.6667C38.3107 99.6667 25.9783 93.8955 17.333 84.6684C24.1962 75.69 37.15 69.9524 51.9997 69.9524C66.8493 69.9524 79.8032 75.69 86.6663 84.6684Z" fill="white" />
-      </svg>
+      <mc-svg-icon
+        v-show="!imageSrc || hasError"
+        name="no_user"
+        :size="props.size"
+        :color="theme.component.defaultIcon"
+        style="margin-left: -1px"
+      />
     </div>
   </div>
 </template>
