@@ -146,7 +146,7 @@ export const UiThemes: ColorThemes = {
       },
       select: {
         color: 'main',
-        selected: 'main-lighter'
+        selected: 'main'
       },
       fieldText: {
         color: 'main'
@@ -251,7 +251,7 @@ export const UiThemes: ColorThemes = {
       },
       select: {
         color: 'main',
-        selected: 'main-lighter'
+        selected: 'main'
       },
       fieldText: {
         color: 'main'

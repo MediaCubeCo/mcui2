@@ -18,6 +18,7 @@ import { useTheme } from '@/composables/useTheme'
 import { useThrottleFn } from '@vueuse/core'
 import McTitle from '@/components/elements/McTitle/McTitle.vue'
 import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
+import { ChipVariationUnion } from '@/types/IChip'
 const McAvatar = defineAsyncComponent(() => import('@/components/elements/McAvatar/McAvatar.vue'))
 const McTooltip = defineAsyncComponent(() => import('@/components/elements/McTooltip/McTooltip.vue'))
 const McPreview = defineAsyncComponent(() => import('@/components/patterns/McPreview/McPreview.vue'))
@@ -796,7 +797,7 @@ watch(
           <mc-chip
             :size="ChipSize.Xs"
             class="multiselect__tag"
-            variation="main-invert"
+            :variation="`${theme.component.selected}-invert` as ChipVariationUnion"
             text-color="black"
             :closable="!multiselectTag?.option?.hasOwnProperty('is_closable') || multiselectTag?.option?.is_closable"
             @close="multiselectTag.remove(multiselectTag.option)"

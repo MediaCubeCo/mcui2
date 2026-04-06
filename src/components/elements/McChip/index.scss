@@ -170,8 +170,7 @@
     &-invert {
       color: $color-black;
       &:before {
-        background-color: var(--mc-chip-color);
-        opacity: 0.1;
+        background-color: color-mix(in srgb, var(--mc-chip-color) 10%, white);
       }
     }
   }
