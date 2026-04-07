@@ -294,6 +294,7 @@ const closeModal = (): void => {
   modalTransitionState.value = 0
   handleBeforeClose()
   emit('closed')
+  // emit('update:modelValue', false)
 }
 
 const handleOverlayClick = (): void => {

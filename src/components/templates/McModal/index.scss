@@ -79,12 +79,14 @@
     @include position(absolute, var(--mc-modal-padding) $space-200 null null);
     @media #{$media-query-s} {
       @include position(absolute, var(--mc-modal-padding) $space-600 null null);
+      transform: translateY(50%);
     }
   }
   &__btn-back {
     @include position(absolute, var(--mc-modal-padding) null null $space-200);
     @media #{$media-query-s} {
       @include position(absolute, var(--mc-modal-padding) null null $space-600);
+      transform: translateY(50%);
     }
   }
   &__icon-close {

@@ -745,7 +745,7 @@ watch(
               <slot name="arrow" />
             </template>
             <template v-if="!!option.text" #bottom>
-              <mc-title color="gray">{{ option.text }}</mc-title>
+              <mc-title color="gray" ellipsis>{{ option.text }}</mc-title>
             </template>
           </mc-preview>
           <div v-else class="mc-field-select__single-label">

@@ -266,9 +266,14 @@
             height: var(--mc-table-row-height);
             min-height: var(--mc-table-row-height);
             align-items: center;
-            background: linear-gradient(90deg, rgba($color-hover-gray, 0.2) 0%, $color-hover-gray 60%);
             z-index: var(--mc-table-z-index-cell-right-slot);
             @include child-indent-right($space-50);
+            @media #{$media-desktop} {
+              background: linear-gradient(90deg, rgba($color-hover-gray, 0.2) 0%, $color-hover-gray 60%);
+            }
+            @media #{$media-mobile} {
+              background: linear-gradient(90deg, rgba($color-white, 0.2) 0%, $color-white 60%);
+            }
           }
           &-left {
             display: flex;

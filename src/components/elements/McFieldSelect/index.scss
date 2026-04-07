@@ -247,14 +247,14 @@
       border-radius: $radius-100;
       padding: $space-150;
       span {
-        @include ellipsis();
+        white-space: wrap;
       }
       &--highlight {
         background-color: $color-hover-gray;
         color: $color-black;
       }
       &--selected {
-        background-color: var(--mc-field-select-selected-color) !important;
+        background-color: color-mix(in srgb, var(--mc-field-select-selected-color) 10%, white) !important;
         color: $color-black !important;
         font-weight: $font-weight-medium;
       }
