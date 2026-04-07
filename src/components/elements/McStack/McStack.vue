@@ -4,12 +4,14 @@ import {
   onMounted,
   onUnmounted,
   computed,
-  h,
   useSlots,
-  createApp,
+  render as vueRender,
+  cloneVNode,
+  getCurrentInstance,
+  watch,
   type PropType,
-  onBeforeMount,
-  type Slots
+  type Slots,
+  type VNode
 } from 'vue'
 import { Spaces, SpacesUnion } from '@/types/styles/Spaces'
 import { TooltipSizes } from '@/enums/Tooltip'
@@ -18,6 +20,7 @@ import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
 const emit = defineEmits<{
   (e: 'updated:hidden-count', value: number): any[]
 }>()
+
 const props = defineProps({
   visibleCount: {
     type: Number as PropType<number>,
@@ -35,77 +38,118 @@ const props = defineProps({
 
 const slots = useSlots() as Slots
 const container = ref<HTMLElement | null>(null)
-const defaultSlot = slots['default']
-const children =
-  (defaultSlot && defaultSlot()[0].children?.length ? defaultSlot()[0].children : (defaultSlot?.() ?? [])) || []
 
-//@ts-ignore
-const visibleChildren = ref<any[]>([])
-const hiddenCount = ref<number>(0)
-const prevHiddenCount = ref<number>(-1)
+const instance = getCurrentInstance()
+const parentAppContext = instance?.appContext
+
+const children = computed((): VNode[] => {
+  const renderDefault = slots.default
+  if (!renderDefault) return []
+  const vnodes = renderDefault()
+  if (!vnodes?.length) return []
+  const first = vnodes[0] as VNode & { children?: VNode[] }
+  if (Array.isArray(first?.children) && first.children.length) {
+    return first.children as VNode[]
+  }
+  return vnodes as VNode[]
+})
+
+const visibleChildren = ref<VNode[]>([])
+const hiddenCount = ref(0)
+const prevHiddenCount = ref(-1)
+
 let resizeObserver: ResizeObserver | null = null
 let resizeRafId: number | null = null
 
-const classes = computed((): { [key: string]: boolean } => {
-  return {
-    'mc-stack': true,
-    'mc-stack--collapsed': props.collapsed
+let widthCache = new WeakMap<VNode, number>()
+let tempContainer: HTMLDivElement | null = null
+
+const classes = computed((): Record<string, boolean> => ({
+  'mc-stack': true,
+  'mc-stack--collapsed': props.collapsed
+}))
+
+function ensureTempContainer(): HTMLDivElement {
+  if (!tempContainer) {
+    tempContainer = document.createElement('div')
+    tempContainer.style.cssText =
+      'position:absolute;left:-99999px;top:0;visibility:hidden;white-space:nowrap;pointer-events:none'
+    document.body.appendChild(tempContainer)
   }
-})
+  return tempContainer
+}
 
-const updateChildrenVisible = (): void => {
-  if (!container.value) return
+function measureItemWidth(item: VNode, rootFontPx: number): number {
+  const getSize = (size: SpacesUnion) => parseFloat(size) * rootFontPx
 
-  let totalWidth = 0
-  visibleChildren.value = []
-  let itemCount = 0
-  hiddenCount.value = 0
+  const wrap = ensureTempContainer()
+  const itemNode = document.createElement('div')
+  wrap.appendChild(itemNode)
 
-  const rootFontPx = parseInt(getComputedStyle(document.documentElement).fontSize, 10) || 16
-  const getSize = (size: SpacesUnion): number => parseFloat(size) * rootFontPx
-  const moreContentWidth = getSize(Spaces['300'])
-  const itemIndent = props.collapsed ? -getSize(Spaces['200']) : getSize(Spaces['150'])
-
-  const tempContainer = document.createElement('div')
-  tempContainer.style.position = 'absolute'
-  tempContainer.style.visibility = 'hidden'
-  tempContainer.style.whiteSpace = 'nowrap'
-  document.body.appendChild(tempContainer)
-
-  //@ts-ignore
-  for (const item of children) {
-    const vnode = h(item)
-    const itemNode = document.createElement('div')
-    tempContainer.appendChild(itemNode)
-
-    const app = createApp({ render: () => vnode })
-    app.mount(itemNode)
-
-    const itemWidth = props.collapsed
-      ? itemNode.getBoundingClientRect().width + 6
-      : itemNode.getBoundingClientRect().width + 4
-    app.unmount()
-    itemNode.remove()
-
-    if (
-      (totalWidth + (itemWidth + itemIndent) <= container.value.clientWidth - moreContentWidth &&
-        itemCount < props.visibleCount) ||
-      itemCount === 0
-    ) {
-      totalWidth += itemWidth + itemIndent
-      visibleChildren.value.push(item)
-      itemCount++
-    } else {
-      //@ts-ignore
-      hiddenCount.value = children.length - visibleChildren.value.length
-      break
-    }
+  const vnode = cloneVNode(item)
+  if (parentAppContext) {
+    vnode.appContext = parentAppContext
   }
-  document.body.removeChild(tempContainer)
+
+  vueRender(vnode, itemNode)
+
+  const extra = props.collapsed ? 6 : 4
+  const w = itemNode.getBoundingClientRect().width + extra
+
+  vueRender(null, itemNode)
+  wrap.removeChild(itemNode)
+
+  return w
+}
+
+function emitHiddenIfChanged(): void {
   if (+prevHiddenCount.value !== +hiddenCount.value) {
     prevHiddenCount.value = hiddenCount.value
     emit('updated:hidden-count', hiddenCount.value)
   }
+}
+
+const updateChildrenVisible = (): void => {
+  if (typeof document === 'undefined') return
+  if (!container.value) return
+
+  const list = children.value
+  const rootFontPx = parseInt(getComputedStyle(document.documentElement).fontSize, 10) || 16
+  const getSize = (size: SpacesUnion) => parseFloat(size) * rootFontPx
+  const moreContentWidth = getSize(Spaces['300'])
+  const itemIndent = props.collapsed ? -getSize(Spaces['200']) : getSize(Spaces['150'])
+  const available = container.value.clientWidth - moreContentWidth
+
+  let totalWidth = 0
+  const nextVisible: VNode[] = []
+  let itemCount = 0
+
+  for (const item of list) {
+    let itemWidth = widthCache.get(item)
+    if (itemWidth == null) {
+      itemWidth = measureItemWidth(item, rootFontPx)
+      widthCache.set(item, itemWidth)
+    }
+
+    const fits =
+      (totalWidth + (itemWidth + itemIndent) <= available && itemCount < props.visibleCount) ||
+      itemCount === 0
+
+    if (fits) {
+      totalWidth += itemWidth + itemIndent
+      nextVisible.push(item)
+      itemCount++
+    } else {
+      hiddenCount.value = list.length - nextVisible.length
+      visibleChildren.value = nextVisible
+      emitHiddenIfChanged()
+      return
+    }
+  }
+
+  hiddenCount.value = 0
+  visibleChildren.value = nextVisible
+  emitHiddenIfChanged()
 }
 
 const scheduleUpdateChildrenVisible = (): void => {
@@ -120,15 +164,19 @@ const scheduleUpdateChildrenVisible = (): void => {
   })
 }
 
-onBeforeMount(() => {
-  updateChildrenVisible()
-})
+watch(
+  () => children.value,
+  () => {
+    widthCache = new WeakMap()
+    scheduleUpdateChildrenVisible()
+  },
+  { flush: 'post' }
+)
 
 onMounted(() => {
   resizeObserver = new ResizeObserver(scheduleUpdateChildrenVisible)
   if (container.value) resizeObserver.observe(container.value)
-
-  updateChildrenVisible()
+  scheduleUpdateChildrenVisible()
 })
 
 onUnmounted(() => {
@@ -137,6 +185,10 @@ onUnmounted(() => {
     resizeRafId = null
   }
   resizeObserver?.disconnect()
+  if (tempContainer?.parentNode) {
+    tempContainer.parentNode.removeChild(tempContainer)
+  }
+  tempContainer = null
 })
 </script>
 

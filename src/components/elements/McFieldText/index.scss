@@ -173,7 +173,9 @@
     #{$block-name} {
       &__input {
         height: auto;
-        resize: vertical;
+        &[name=TextareaAutosize] {
+          resize: none;
+        }
       }
     }
     &_wrapper {

@@ -207,11 +207,13 @@
             background-color: var(--table-row-hover-background-color);
           }
         }
-        &:hover {
-          #{$body}-cell {
-            background-color: var(--table-row-hover-background-color);
-            &_content-right {
-              display: flex;
+        @media #{$media-desktop} {
+          &:hover {
+            #{$body}-cell {
+              background-color: var(--table-row-hover-background-color);
+              &_content-right {
+                display: flex;
+              }
             }
           }
         }
@@ -227,11 +229,13 @@
           max-height: 100%;
           height: 100%;
           cursor: default;
-          &:hover {
-            #{$body}-cell {
-              background-color: transparent;
-              &_content-right {
-                display: none;
+          @media #{$media-desktop} {
+            &:hover {
+              #{$body}-cell {
+                background-color: transparent;
+                &_content-right {
+                  display: none;
+                }
               }
             }
           }
@@ -270,9 +274,11 @@
             @include child-indent-right($space-50);
             @media #{$media-desktop} {
               background: linear-gradient(90deg, rgba($color-hover-gray, 0.2) 0%, $color-hover-gray 60%);
+              padding-left: $space-800;
             }
             @media #{$media-mobile} {
               background: linear-gradient(90deg, rgba($color-white, 0.2) 0%, $color-white 60%);
+              padding-left: $space-400;
             }
           }
           &-left {
