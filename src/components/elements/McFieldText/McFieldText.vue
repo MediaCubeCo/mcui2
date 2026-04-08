@@ -500,6 +500,7 @@ const getPreparedInputValue = (e: Event): InputValue => {
       break
     }
     case InputTypes.AmountFormat: {
+      value = value?.replace(/,/g, '.')?.replace(/ /g, '')
       value = setDecimalsLimit(value)
       value = handleRemoveLeadingZero(value)
       prepared_value = formattedToNumber(value)

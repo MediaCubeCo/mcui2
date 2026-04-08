@@ -1,5 +1,13 @@
 <script lang="ts" setup>
-import { ref, onMounted, nextTick, watch, type PropType, computed } from 'vue'
+import {
+  ref,
+  onMounted,
+  onUnmounted,
+  nextTick,
+  watch,
+  type PropType,
+  computed
+} from 'vue'
 
 interface VisibleItem {
   key: number
@@ -9,32 +17,20 @@ interface VisibleItem {
 }
 
 const props = defineProps({
-  /**
-   * Массив данных для рендеринга
-   * */
   items: {
     type: Array as PropType<any[]>,
     default: () => [],
     required: true
   },
-  /**
-   * Высота контейнера скролла
-   * */
   containerHeight: {
     type: Number as PropType<number>,
     required: true
   },
-  /**
-   * Высота 1 элемента списка
-   * */
   itemHeight: {
     type: Number as PropType<number>,
     default: 20,
     required: true
   },
-  /**
-   * Буфер для подгрузки дополнительных элементов вне видимой области
-   * */
   buffer: {
     type: Number as PropType<number>,
     default: 1
@@ -42,72 +38,124 @@ const props = defineProps({
 })
 
 const containerRef = ref<HTMLDivElement | null>(null)
-const scrollTop = ref<number>(0)
 const visibleItems = ref<VisibleItem[]>([])
-const totalHeight = ref<number>(0)
+const totalHeight = ref(0)
 
-const styles = computed((): { [key: string]: string } => {
-  return {
-    height: `${props.containerHeight}px`,
-    overflowY: 'auto',
-    position: 'relative'
-  }
-})
+let rafId: number | null = null
+let resizeObserver: ResizeObserver | null = null
 
-onMounted((): void => {
-  calculateTotalHeight()
-  nextTick(calculateVisibleItems)
-})
+/** Высота задаётся пропом; overflow-y задан в scss у .mc-virtual-scroll */
+const styles = computed((): Record<string, string> => ({
+  height: `${props.containerHeight}px`,
+  position: 'relative'
+}))
 
 const calculateTotalHeight = (): void => {
   totalHeight.value = props.items.length * props.itemHeight
 }
 
 const calculateVisibleItems = (): void => {
-  const containerHeight = containerRef.value?.clientHeight || 0
-  const startIndex = Math.floor(scrollTop.value / props.itemHeight)
-  const endIndex = Math.min(props.items.length - 1, Math.floor((scrollTop.value + containerHeight) / props.itemHeight))
-  const buffer = props.buffer || 5
+  rafId = null
 
-  const result: VisibleItem[] = []
-  for (let i = Math.max(0, startIndex - buffer); i <= Math.min(endIndex + buffer, props.items.length - 1); i++) {
-    result.push({
+  const el = containerRef.value
+  if (!el) return
+
+  const scrollTop = el.scrollTop
+  const clientH = el.clientHeight || 0
+  const ih = props.itemHeight
+  const len = props.items.length
+
+  if (len === 0 || ih <= 0) {
+    visibleItems.value = []
+    return
+  }
+
+  const startIndex = Math.floor(scrollTop / ih)
+  const endIndex = Math.min(len - 1, Math.floor((scrollTop + clientH) / ih))
+  const buffer = Math.max(0, props.buffer)
+
+  const from = Math.max(0, startIndex - buffer)
+  const to = Math.min(endIndex + buffer, len - 1)
+
+  const next: VisibleItem[] = []
+  for (let i = from; i <= to; i++) {
+    next.push({
       key: i,
       data: props.items[i],
       index: i,
-      top: i * props.itemHeight
-    } as VisibleItem)
+      top: i * ih
+    })
   }
-  visibleItems.value = result
+  visibleItems.value = next
+}
+
+const scheduleVisibleItems = (): void => {
+  if (typeof requestAnimationFrame === 'undefined') {
+    calculateVisibleItems()
+    return
+  }
+  if (rafId != null) cancelAnimationFrame(rafId)
+  rafId = requestAnimationFrame(calculateVisibleItems)
 }
 
 const onScroll = (): void => {
-  scrollTop.value = containerRef.value?.scrollTop || 0
-  requestAnimationFrame(calculateVisibleItems)
+  scheduleVisibleItems()
 }
 
-watch(
-  () => props.items,
-  (): void => {
-    calculateTotalHeight()
-    nextTick(calculateVisibleItems)
+onMounted(() => {
+  calculateTotalHeight()
+  nextTick(() => {
+    calculateVisibleItems()
+  })
+
+  if (typeof ResizeObserver !== 'undefined' && containerRef.value) {
+    resizeObserver = new ResizeObserver(() => {
+      scheduleVisibleItems()
+    })
+    resizeObserver.observe(containerRef.value)
   }
+})
+
+onUnmounted(() => {
+  if (rafId != null) {
+    cancelAnimationFrame(rafId)
+    rafId = null
+  }
+  resizeObserver?.disconnect()
+  resizeObserver = null
+})
+
+/** Ссылка на массив + длина: push/splice/new array; без deep — дешевле */
+watch(
+  [() => props.items, () => props.items.length, () => props.itemHeight],
+  () => {
+    calculateTotalHeight()
+    nextTick(scheduleVisibleItems)
+  },
+  { flush: 'post' }
+)
+
+watch(
+  () => props.containerHeight,
+  () => {
+    nextTick(scheduleVisibleItems)
+  },
+  { flush: 'post' }
 )
 </script>
 
 <template>
-  <div class="mc-virtual-scroll" ref="containerRef" @scroll="onScroll" :style="styles">
+  <div class="mc-virtual-scroll" ref="containerRef" :style="styles" @scroll.passive="onScroll">
     <div
       v-for="item in visibleItems"
       :key="`mc-virtual-scroll__item-${item.key}`"
       class="mc-virtual-scroll__item"
       :style="{ top: `${item.top}px` }"
     >
-      <slot name="item" :item="item.data" :index="item.index"></slot>
+      <slot name="item" :item="item.data" :index="item.index" />
     </div>
 
-    <!-- Пустое пространство для скролла -->
-    <div :style="{ height: `${totalHeight}px` }"></div>
+    <div :style="{ height: `${totalHeight}px` }" />
   </div>
 </template>
 
