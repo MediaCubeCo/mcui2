@@ -9,19 +9,23 @@ import type {
 } from '@/types/IFilter'
 
 function cloneDeep<T>(value: T): T {
-  if (value === null || typeof value !== 'object') {
-    return value
-  }
-  if (Array.isArray(value)) {
-    return value.map(cloneDeep) as unknown as T
-  }
-  const clonedObj: Record<string, unknown> = {}
-  for (const key in value as object) {
-    if (Object.prototype.hasOwnProperty.call(value, key)) {
-      clonedObj[key] = cloneDeep((value as Record<string, unknown>)[key])
+  try {
+    if (value === null || typeof value !== 'object') {
+      return value
     }
+    if (Array.isArray(value)) {
+      return value.map(cloneDeep) as unknown as T
+    }
+    const clonedObj: Record<string, unknown> = {}
+    for (const key in value as object) {
+      if (Object.prototype.hasOwnProperty.call(value, key)) {
+        clonedObj[key] = cloneDeep((value as Record<string, unknown>)[key])
+      }
+    }
+    return clonedObj as T
+  } catch {
+    return (Array.isArray(value) ? [] : {}) as T
   }
-  return clonedObj as T
 }
 
 function isEmpty(value: unknown): boolean {
@@ -111,7 +115,9 @@ function backfillFilterNameForKey(
 
   switch (meta.type) {
     case FilterTypes.Text: {
-      filterName[key] = cond as FilterConditionName
+      if (typeof cond === 'string' || typeof cond === 'number') {
+        filterName[key] = cond as FilterConditionName
+      }
       break
     }
     case FilterTypes.Range:
@@ -131,7 +137,7 @@ function backfillFilterNameForKey(
     case FilterTypes.Fast: {
       if (isRelationShaped(cond)) {
         filterName[key] = buildRelationFilterName(cond, true, new Map()) as FilterConditionName
-      } else {
+      } else if (typeof cond === 'string' || typeof cond === 'number') {
         filterName[key] = cond as FilterConditionName
       }
       break
@@ -150,13 +156,15 @@ export function normalizeMcFilterModel(
   rawFilterName: IFilterParsedValueFilterName | null | undefined,
   schema: IFilter[]
 ): { filter: IFilterParsedValueFilter; filter_name: IFilterParsedValueFilterName } {
+  const list = Array.isArray(schema) ? schema : []
+
   const filter: IFilterParsedValueFilter = isPlainObject(rawFilter) ? cloneDeep(rawFilter) : {}
   const filter_name: IFilterParsedValueFilterName =
     isPlainObject(rawFilterName) && !Array.isArray(rawFilterName)
       ? cloneDeep(rawFilterName)
       : {}
 
-  const allowed = new Set(schema.map((f) => String(f.value)))
+  const allowed = new Set(list.map((f) => String(f.value)))
 
   for (const key of Object.keys(filter)) {
     if (!allowed.has(key)) {
@@ -175,7 +183,7 @@ export function normalizeMcFilterModel(
   }
 
   const schemaByKey = new Map<string, IFilter>()
-  for (const f of schema) {
+  for (const f of list) {
     schemaByKey.set(String(f.value), f)
   }
 

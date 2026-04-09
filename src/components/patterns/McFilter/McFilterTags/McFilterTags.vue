@@ -2,7 +2,6 @@
 import { dayjs } from '@/utils/dayjs'
 
 import { computed, defineAsyncComponent, type PropType, ref, watch } from 'vue'
-import { useRandomNumber } from '@/composables/useRandomNumber'
 import { useHelper } from '@/composables/useHelper'
 import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'
 import { FilterRelations, FilterTypes } from '@/enums/Filter'
@@ -25,7 +24,11 @@ import type {
 } from '@/types/IFilter'
 
 const helper = useHelper()
-const randomNumber = useRandomNumber()
+
+/** Стабильные ключи для v-for: случайные id пересоздавали DOM при любом обновлении modelValue. */
+function stableTagId(...parts: (string | number | null | undefined)[]): string {
+  return parts.filter((p) => p != null && p !== '').join('::')
+}
 
 const emit = defineEmits<{
   (e: 'tag-click', value: IFilterTag): void
@@ -100,7 +103,7 @@ const simpleTags = computed((): IFilterTag[] => {
       const filter: IFilter = map.get(_key) || ({} as IFilter)
       if (filter && filter.type === FilterTypes.Fast) {
         tags.push({
-          id: randomNumber.random(filter.type),
+          id: stableTagId('fast', _key),
           categoryName: filter?.name,
           category: _key,
           type: FilterTypes.Fast
@@ -122,7 +125,7 @@ const simpleTags = computed((): IFilterTag[] => {
         const space = from && to ? ' ' : ''
         const title = typeof value === 'object' ? `${from}${space}${to}`.toLowerCase() : value
         tags.push({
-          id: randomNumber.random(filter.type, 5),
+          id: stableTagId('simple', _key),
           categoryName: filter?.name,
           title,
           value,
@@ -147,7 +150,7 @@ const relationRows = computed((): IFilterTag[][] => {
         const empties: IFilterTag[] = Object.keys(_relationVal).map((key) => {
           const filter = map.get(key) || ({} as IFilter)
           return {
-            id: randomNumber.random(relationKey),
+            id: stableTagId(FilterRelations.Exists, key),
             categoryName: filter?.name,
             value: key,
             category: key,
@@ -156,7 +159,7 @@ const relationRows = computed((): IFilterTag[][] => {
           } as IFilterTag
         })
         const head = {
-          id: randomNumber.random(relationKey, 5),
+          id: stableTagId(FilterRelations.Exists, 'head'),
           categoryName: props.placeholders.actions.empty,
           relationKey: FilterRelations.Exists
         } as IFilterTag
@@ -171,7 +174,7 @@ const relationRows = computed((): IFilterTag[][] => {
         const filter: IFilter = map.get(_categoryKey) || ({} as IFilter)
         Object.entries(_categoryVal).forEach(([key, val]) => {
           values.push({
-            id: randomNumber.random(relationKey, 6),
+            id: stableTagId(_relationKey, _categoryKey, key),
             categoryName: filter?.name,
             title: val,
             value: key,
@@ -182,7 +185,7 @@ const relationRows = computed((): IFilterTag[][] => {
         })
       })
       const head = {
-        id: randomNumber.random(relationKey, 9),
+        id: stableTagId(_relationKey, 'head'),
         //@ts-ignore
         categoryName: props.placeholders.actions?.[_relationKey],
         relationKey
@@ -323,7 +326,7 @@ watch(
           </mc-grid-col>
         </mc-grid-row>
         <template v-if="relationRows.length">
-          <mc-grid-row v-for="(row, index) in relationRows" :key="index" :gutter-x="4" :gutter-y="8">
+          <mc-grid-row v-for="row in relationRows" :key="row[0]?.id ?? row[0]?.relationKey" :gutter-x="4" :gutter-y="8">
             <mc-grid-col v-for="tag in row" :key="tag.id">
               <mc-filter-chip
                 :tag="tag"
