@@ -46,6 +46,7 @@ import { FilterRelations, FilterTypes } from '@/enums/Filter'
 import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'
 import { useLocalStorage } from '@vueuse/core'
 import { useTheme } from '@/composables/useTheme'
+import { normalizeMcFilterModel } from '@/utils/normalizeMcFilterModel'
 import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import McButton from '@/components/elements/McButton/McButton.vue'
 import McTitle from '@/components/elements/McTitle/McTitle.vue'
@@ -277,34 +278,16 @@ onBeforeUnmount((): void => {
 })
 
 const init = () => {
-  const filter_name = computedModelValue.value.filter_name || {}
+  const { filter, filter_name } = normalizeMcFilterModel(
+    computedModelValue.value.filter,
+    computedModelValue.value.filter_name,
+    props.filters
+  )
 
-  // восполнение недостающих данных если filter_name пустой
-  for (let filter_key in props.filters) {
-    const filter = props.filters[filter_key]
-    if (filter.type === 'relation' && filter.is_text && computedModelValue.value.filter[filter.value]) {
-      const filter_value = computedModelValue.value.filter[filter.value]
-      if (!filter_value) continue
-      const [entries] = Object.entries(filter_value)
-      if (!entries) continue
-      const [relation, value] = entries || []
-      if (!relation || !value) continue
-
-      let prepared_value = {}
-      value.forEach((v) => {
-        prepared_value = {
-          ...prepared_value,
-          [v]: v
-        }
-      })
-      filter_name[filter.value] = { [relation]: prepared_value }
-    }
-  }
-
-  temporaryFilter.value = computedModelValue.value.filter
+  temporaryFilter.value = filter
   temporaryFilterName.value = filter_name
 
-  currentValues.value = computedModelValue.value.filter
+  currentValues.value = filter
   currentValuesName.value = filter_name
 }
 
@@ -590,8 +573,13 @@ const handleConfirm = (): void => {
 const handleSelectPreset = (preset: IFilterPreset) => {
   if (preset) {
     activePreset.value = preset
-    currentValues.value = helper.cloneDeep(preset.filter)
-    currentValuesName.value = helper.cloneDeep(preset.filter_name)
+    const { filter, filter_name } = normalizeMcFilterModel(
+      helper.cloneDeep(preset.filter),
+      helper.cloneDeep(preset.filter_name) as IFilterParsedValueFilterName,
+      props.filters
+    )
+    currentValues.value = filter
+    currentValuesName.value = filter_name
   } else {
     activePreset.value = null
     currentValues.value = {}
@@ -647,14 +635,20 @@ watch(
       filter: null,
       filter_name: null
     }
-    currentValues.value = { ...filter_value.filter }
+    let decodedName: IFilterParsedValueFilterName = {}
     if (filter_value.filter_name) {
       try {
-        currentValuesName.value = UseEncodeDecode.decode(filter_value.filter_name)
+        const decoded = UseEncodeDecode.decode(filter_value.filter_name)
+        if (decoded && typeof decoded === 'object' && !Array.isArray(decoded)) {
+          decodedName = decoded as IFilterParsedValueFilterName
+        }
       } catch (e) {
         console.error(`Can't parse filters`)
       }
     }
+    const { filter, filter_name } = normalizeMcFilterModel(filter_value.filter, decodedName, props.filters)
+    currentValues.value = filter
+    currentValuesName.value = filter_name
   },
   { deep: true }
 )
