@@ -5,6 +5,12 @@ export function timestamp(postfixLength: number = 0): number {
   return +(String(Date.now()) + String(Math.floor(Math.random() * (max - min + 1)) + min))
 }
 
+export function random(salt: string = '', postfixLength = 8): string {
+  const min = Math.pow(10, postfixLength - 1)
+  const max = Math.pow(10, postfixLength) - 1
+  return salt + String(Math.floor(Math.random() * (max - min + 1)) + min)
+}
+
 export function useRandomNumber() {
-  return { timestamp }
+  return { timestamp, random }
 }

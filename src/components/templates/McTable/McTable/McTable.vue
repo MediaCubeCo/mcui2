@@ -432,7 +432,7 @@ watch(
                   <mc-table-sort
                     v-if="column.sortable"
                     :column="column.field"
-                    :sort="sort"
+                    :sort="props.sort"
                     @change="(val) => emit('sort', val)"
                   />
                   <!-- slot для ячейки колонки хедера -->

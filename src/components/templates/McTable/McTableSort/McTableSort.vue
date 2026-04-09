@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, type PropType } from 'vue'
-import type { ITableSort, ITableSortState } from '@/types/ITable'
+import { computed, defineAsyncComponent, onMounted, type PropType, ref } from 'vue'
+import { ITableSort, ITableSortState, SortDirection } from '@/types/ITable'
 const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
 
 const emit = defineEmits<{
@@ -18,6 +18,8 @@ const props = defineProps({
   }
 })
 
+const initial_direction = ref<SortDirection>(null)
+
 const isActive = computed((): boolean => {
   return props.column === props.sort.sort_column && props.sort.sort_direction !== null
 })
@@ -27,19 +29,19 @@ const sortState = computed((): ITableSortState => {
     case props.sort.sort_direction === 'asc' && isActive.value:
       return {
         direction: 'asc',
-        next_direction: 'desc',
+        next_direction: initial_direction.value === 'asc' ? 'desc' : null,
         icon: 'arrow_upward'
       }
     case props.sort.sort_direction === 'desc' && isActive.value:
       return {
         direction: 'desc',
-        next_direction: null,
+        next_direction: initial_direction.value === 'asc' ? null : 'asc',
         icon: 'arrow_downward'
       }
     default:
       return {
         direction: null,
-        next_direction: 'asc',
+        next_direction: initial_direction.value === 'asc' ? 'asc' : 'desc',
         icon: 'arrow_up_down'
       }
   }
@@ -57,6 +59,10 @@ const handleSortChange = () => {
       }
   emit('change', payload)
 }
+
+onMounted(() => {
+  initial_direction.value = props.sort?.sort_direction
+})
 </script>
 
 <template>

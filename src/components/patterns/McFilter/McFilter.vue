@@ -274,11 +274,21 @@ const updatePresets = (): void => {
 const handlerSetFastFilter = (tag: IFastFilter): void => {
   const { relation, value } = tag
 
+  // clone old values
+  const prev_option_filter = selectedOptionFilter.value
+  const prev_condition_value = currentCondition.value
+
   const filterValue = relation ? { [relation]: tag.default } : tag.default
 
   selectedOptionFilter.value = value
   handleConditionChange({ value: filterValue, valueName: tag.name })
-  handleStoreTag()
+  addSimpleValue()
+
+  // restore old values
+  selectedOptionFilter.value = prev_option_filter
+  nextTick(() => {
+    currentCondition.value = prev_condition_value
+  })
 }
 
 const handleConditionChange = ({ value, valueName }: IFilterCondition): void => {
@@ -586,12 +596,6 @@ const handleCreatePreset = (): void => {
 
   newPresetName.value = ''
   activePreset.value = { ...preset }
-}
-
-const getPresetButtonVariation = (preset: IFilterPreset): ButtonVariationUnion => {
-  return activePreset.value && activePreset.value.name === preset.name
-    ? (`${theme.component.button}-invert` as ColorTypes)
-    : 'gray-outline'
 }
 
 watch(

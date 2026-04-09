@@ -100,7 +100,7 @@ const simpleTags = computed((): IFilterTag[] => {
       const filter: IFilter = map.get(_key) || ({} as IFilter)
       if (filter && filter.type === FilterTypes.Fast) {
         tags.push({
-          id: randomNumber.timestamp(5),
+          id: randomNumber.random(filter.type),
           categoryName: filter?.name,
           category: _key,
           type: FilterTypes.Fast
@@ -122,7 +122,7 @@ const simpleTags = computed((): IFilterTag[] => {
         const space = from && to ? ' ' : ''
         const title = typeof value === 'object' ? `${from}${space}${to}`.toLowerCase() : value
         tags.push({
-          id: randomNumber.timestamp(5),
+          id: randomNumber.random(filter.type, 5),
           categoryName: filter?.name,
           title,
           value,
@@ -147,7 +147,7 @@ const relationRows = computed((): IFilterTag[][] => {
         const empties: IFilterTag[] = Object.keys(_relationVal).map((key) => {
           const filter = map.get(key) || ({} as IFilter)
           return {
-            id: randomNumber.timestamp(5),
+            id: randomNumber.random(relationKey),
             categoryName: filter?.name,
             value: key,
             category: key,
@@ -156,7 +156,7 @@ const relationRows = computed((): IFilterTag[][] => {
           } as IFilterTag
         })
         const head = {
-          id: randomNumber.timestamp(5),
+          id: randomNumber.random(relationKey, 5),
           categoryName: props.placeholders.actions.empty,
           relationKey: FilterRelations.Exists
         } as IFilterTag
@@ -171,7 +171,7 @@ const relationRows = computed((): IFilterTag[][] => {
         const filter: IFilter = map.get(_categoryKey) || ({} as IFilter)
         Object.entries(_categoryVal).forEach(([key, val]) => {
           values.push({
-            id: randomNumber.timestamp(5),
+            id: randomNumber.random(relationKey, 6),
             categoryName: filter?.name,
             title: val,
             value: key,
@@ -182,7 +182,7 @@ const relationRows = computed((): IFilterTag[][] => {
         })
       })
       const head = {
-        id: randomNumber.timestamp(5),
+        id: randomNumber.random(relationKey, 9),
         //@ts-ignore
         categoryName: props.placeholders.actions?.[_relationKey],
         relationKey
