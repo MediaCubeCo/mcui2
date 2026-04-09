@@ -53,12 +53,22 @@ import McFieldText from '@/components/elements/McFieldText/McFieldText.vue'
 import McTooltip from '@/components/elements/McTooltip/McTooltip.vue'
 const McFieldSelect = defineAsyncComponent(() => import('@/components/elements/McFieldSelect/McFieldSelect.vue'))
 const McFilterTags = defineAsyncComponent(() => import('@/components/patterns/McFilter/McFilterTags/McFilterTags.vue'))
-const McFilterTypeRange = defineAsyncComponent(() => import('@/components/patterns/McFilter/McFilterTypeRange/McFilterTypeRange.vue'))
-const McFilterTypeDate = defineAsyncComponent(() => import('@/components/patterns/McFilter/McFilterTypeDate/McFilterTypeDate.vue'))
-const McFilterTypeText = defineAsyncComponent(() => import('@/components/patterns/McFilter/McFilterTypeText/McFilterTypeText.vue'))
-const McFilterTypeRelation = defineAsyncComponent(() => import('@/components/patterns/McFilter/McFilterTypeRelation/McFilterTypeRelation.vue'))
+const McFilterTypeRange = defineAsyncComponent(
+  () => import('@/components/patterns/McFilter/McFilterTypeRange/McFilterTypeRange.vue')
+)
+const McFilterTypeDate = defineAsyncComponent(
+  () => import('@/components/patterns/McFilter/McFilterTypeDate/McFilterTypeDate.vue')
+)
+const McFilterTypeText = defineAsyncComponent(
+  () => import('@/components/patterns/McFilter/McFilterTypeText/McFilterTypeText.vue')
+)
+const McFilterTypeRelation = defineAsyncComponent(
+  () => import('@/components/patterns/McFilter/McFilterTypeRelation/McFilterTypeRelation.vue')
+)
 const McChip = defineAsyncComponent(() => import('@/components/elements/McChip/McChip.vue'))
-const McFilterPresets = defineAsyncComponent(() => import('@/components/patterns/McFilter/McFilterPresets/McFilterPresets.vue'))
+const McFilterPresets = defineAsyncComponent(
+  () => import('@/components/patterns/McFilter/McFilterPresets/McFilterPresets.vue')
+)
 
 const helper = useHelper()
 const emit = defineEmits<{
@@ -72,7 +82,7 @@ const emit = defineEmits<{
 const props = defineProps({
   open: {
     type: Boolean as PropType<boolean>,
-    default: false,
+    default: false
   },
   /**
    *  Имя фильтра
@@ -128,16 +138,16 @@ const props = defineProps({
   },
   withActivator: {
     type: Boolean as PropType<boolean>,
-    default: false,
+    default: false
   },
   withPresets: {
     type: Boolean as PropType<boolean>,
-    default: false,
+    default: false
   },
   selectedPreset: {
     type: Object as PropType<IFilterPreset>,
     default: null
-  },
+  }
 })
 
 const theme = useTheme('filter')
@@ -176,7 +186,6 @@ const presets = ref<IFilterPreset[]>([])
 const computedModelValue = computed({
   get(): IFilterParsedValue {
     const { filter = null, filter_name = null } = props.modelValue || {}
-
     return {
       filter: filter,
       filter_name: UseEncodeDecode.decode(filter_name)
@@ -248,6 +257,14 @@ const buttonCreateIsDisable = computed((): boolean => {
   return !newPresetName.value.trim()
 })
 
+const filtersMap = computed(() => {
+  const result = new Map()
+  for (let filter in props.filters) {
+    result.set(props.filters[filter].value, props.filters[filter])
+  }
+  return result
+})
+
 onMounted((): void => {
   updatePresets()
   window.addEventListener('storage', updatePresets)
@@ -260,11 +277,35 @@ onBeforeUnmount((): void => {
 })
 
 const init = () => {
+  const filter_name = computedModelValue.value.filter_name || {}
+
+  // восполнение недостающих данных если filter_name пустой
+  for (let filter_key in props.filters) {
+    const filter = props.filters[filter_key]
+    if (filter.type === 'relation' && filter.is_text && computedModelValue.value.filter[filter.value]) {
+      const filter_value = computedModelValue.value.filter[filter.value]
+      if (!filter_value) continue
+      const [entries] = Object.entries(filter_value)
+      if (!entries) continue
+      const [relation, value] = entries || []
+      if (!relation || !value) continue
+
+      let prepared_value = {}
+      value.forEach((v) => {
+        prepared_value = {
+          ...prepared_value,
+          [v]: v
+        }
+      })
+      filter_name[filter.value] = { [relation]: prepared_value }
+    }
+  }
+
   temporaryFilter.value = computedModelValue.value.filter
-  temporaryFilterName.value = computedModelValue.value.filter_name
+  temporaryFilterName.value = filter_name
 
   currentValues.value = computedModelValue.value.filter
-  currentValuesName.value = computedModelValue.value.filter_name
+  currentValuesName.value = filter_name
 }
 
 const updatePresets = (): void => {
@@ -297,6 +338,7 @@ const handleConditionChange = ({ value, valueName }: IFilterCondition): void => 
 }
 
 const handleStoreTag = (): void => {
+  console.log('handleStoreTag')
   activeTag.value ? editTag() : addTag()
 }
 
@@ -646,15 +688,24 @@ watch(
   { deep: true }
 )
 
-watch(() => props.open, (val) => {
-  isOpen.value = val
-})
-watch(() => isOpen.value, (val) => {
-  emit('open', val)
-})
-watch(() => props.selectedPreset, (val: IFilterPreset) => {
-  handleSelectPreset(val)
-})
+watch(
+  () => props.open,
+  (val) => {
+    isOpen.value = val
+  }
+)
+watch(
+  () => isOpen.value,
+  (val) => {
+    emit('open', val)
+  }
+)
+watch(
+  () => props.selectedPreset,
+  (val: IFilterPreset) => {
+    handleSelectPreset(val)
+  }
+)
 </script>
 
 <template>
@@ -676,7 +727,11 @@ watch(() => props.selectedPreset, (val: IFilterPreset) => {
         </mc-tooltip>
       </slot>
       <div v-if="props.withPresets && presets" class="mc-filter__presets">
-        <mc-filter-presets :name="props.name" :selected-preset="activePreset as IFilterPreset" @preset-selected="handleSelectPreset" />
+        <mc-filter-presets
+          :name="props.name"
+          :selected-preset="activePreset as IFilterPreset"
+          @preset-selected="handleSelectPreset"
+        />
       </div>
     </div>
     <div v-if="isOpen">

@@ -43,6 +43,9 @@ export const Default: Story = {
               countries: {
                 is: ['1', '3']
               },
+              emails: {
+                is: ['support@mcpay.io', 'help@mcpay.io']
+              },
               views_count: {
                 more: 1,
                 less: 10000

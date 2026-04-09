@@ -3,7 +3,7 @@
 @use '../../../../assets/tokens/sizes' as *;
 .mc-filter-type-relation {
   $block-name: &;
-  width: 300px;
+  min-width: 300px;
   &__header {
     display: flex;
     align-items: center;

@@ -23,6 +23,12 @@ const filters: IFilter[] = [
   },
   {
     type: FilterTypes.Relation,
+    name: 'Поиск emails relation text',
+    value: 'emails',
+    is_text: true,
+  },
+  {
+    type: FilterTypes.Relation,
     is_text: false,
     name: 'Страна',
     value: 'countries',
