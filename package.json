@@ -1,6 +1,6 @@
 {
   "name": "mediacube-ui-v2",
-  "version": "0.0.303",
+  "version": "0.0.304",
   "license": "MIT",
   "description": "Design system for Mediacube services",
   "sideEffects": [
@@ -16,6 +16,11 @@
     "design-system"
   ],
   "author": "dsa@mediacube.io",
+  "aiCatalog": {
+    "index": "./dist/ai-catalog/index.json",
+    "unpkgTemplate": "https://unpkg.com/mediacube-ui-v2@${version}/dist/ai-catalog/index.json",
+    "jsdelivrTemplate": "https://cdn.jsdelivr.net/npm/mediacube-ui-v2@${version}/dist/ai-catalog/index.json"
+  },
   "files": [
     "dist",
     "!dist/assets/icons"
@@ -95,7 +100,15 @@
     "./iconsSpriteGrads.svg": "./dist/iconsSpriteGrads.svg",
     "./tokens": "./dist/assets/tokens/json/index.js",
     "./styles/*": "./dist/styles/*",
-    "./tokens/*": "./dist/tokens/*"
+    "./tokens/*": "./dist/tokens/*",
+    "./ai-catalog.json": "./dist/ai-catalog/index.json",
+    "./ai-catalog/catalog.schema.json": "./dist/ai-catalog/catalog.schema.json",
+    "./ai-catalog/for-ai.md": "./dist/ai-catalog/FOR_AI.md",
+    "./ai-catalog/recommended-entrypoints.json": "./dist/ai-catalog/recommended-entrypoints.json",
+    "./ai-catalog/types/*": "./dist/ai-catalog/types/*",
+    "./ai-catalog/types/*/*": "./dist/ai-catalog/types/*/*",
+    "./ai-catalog/enums/*": "./dist/ai-catalog/enums/*",
+    "./ai-catalog/enums/*/*": "./dist/ai-catalog/enums/*/*"
   },
   "private": false,
   "type": "module",
@@ -104,9 +117,12 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "run-p type-check \"build-only {@}\" -- && node scripts/build-ai-catalog.mjs",
     "preview": "vite preview",
     "build-only": "vite build",
+    "build:ai-catalog": "node scripts/build-ai-catalog.mjs",
+    "verify:ai-catalog": "node scripts/build-ai-catalog.mjs && node scripts/verify-ai-catalog.mjs",
+    "mcp:ui": "node scripts/mcp-ui-server.mjs",
     "type-check": "vue-tsc --build --force",
     "test:datepicker": "vitest run",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
@@ -115,9 +131,9 @@
     "build-storybook": "storybook build",
     "build:scss-to-json": "node scss-to-json.js",
     "build:icons": "node create-svg-sprite.js",
-    "build:readme": "node update-readme.js",
-    "prerelease": "yarn build:icons && yarn build:scss-to-json && yarn build:readme && yarn build-storybook && yarn build",
-    "release": "standard-version"
+    "prerelease": "yarn build:icons && yarn build:scss-to-json && yarn build-storybook && yarn build",
+    "release": "standard-version",
+    "prepublishOnly": "npm run verify:ai-catalog"
   },
   "dependencies": {
     "@vuepic/vue-datepicker": "^9.0.2",
@@ -138,6 +154,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@rushstack/eslint-patch": "^1.8.0",
     "@storybook/addon-essentials": "^8.2.9",
     "@storybook/addon-interactions": "^8.2.9",
@@ -157,6 +174,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-storybook": "^0.8.0",
     "eslint-plugin-vue": "^9.23.0",
+    "glob": "^13.0.6",
     "npm-run-all2": "^6.2.0",
     "prettier": "^3.2.5",
     "sass": "^1.81.0",
@@ -172,7 +190,9 @@
     "vite-plugin-dts": "^4.3.0",
     "vite-plugin-lib-inject-css": "^2.2.2",
     "vitest": "^2.1.9",
-    "vue-tsc": "^2.0.21"
+    "vue-docgen-api": "^4.79.2",
+    "vue-tsc": "^2.0.21",
+    "zod": "^4.3.6"
   },
   "volta": {
     "node": "20.10.0",
