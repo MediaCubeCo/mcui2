@@ -26,6 +26,8 @@ import McNoData from '@/components/elements/McNodata/McNoData.vue'
 import McBottomLoader from '@/components/elements/McBottomLoader/McBottomLoader.vue'
 import McOverlay from '@/components/patterns/McOverlay/McOverlay.vue'
 import McFieldCheckbox from '@/components/elements/McFieldCheckbox/McFieldCheckbox.vue'
+import { useTheme } from '@/composables/useTheme'
+import { ColorTypes } from '@/types/styles/Colors'
 
 const defaultPlaceholders = {
   no_data: 'No data',
@@ -53,6 +55,7 @@ const emit = defineEmits<{
  * №footer-cell - тотал колонки (строка внизу таблицы), каждая колонка
  * */
 
+const theme = useTheme('table')
 const helper = useHelper()
 const props = defineProps({
   columns: {
@@ -336,7 +339,8 @@ const containerStyle = computed((): { [key: string]: string } => {
     '--mc-table-header-row-height': helper.isNumber(props.headerRowHeight) ? `${props.headerRowHeight}px` : '40px',
     '--mc-table-row-height': helper.isNumber(props.rowHeight) ? `${props.rowHeight}px` : '40px',
     '--mc-table-footer-row-height': helper.isNumber(props.footerRowHeight) ? `${props.footerRowHeight}px` : '40px',
-    '--mc-table-first-col-width': `${tableFirstColWidth.value}px`
+    '--mc-table-first-col-width': `${tableFirstColWidth.value}px`,
+    '--mc-table-row-active-color': theme.colors[theme.component.activeRow as ColorTypes],
   }
 })
 

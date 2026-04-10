@@ -96,6 +96,9 @@ export interface ColorTheme {
     tableCard: {
       backLink: ColorTypes | string
     }
+    table: {
+      activeRow: ColorTypes | string
+    }
     toast: {
       variation: ColorTypes | string
     }
@@ -211,6 +214,9 @@ export const UiThemes: ColorThemes = {
       tableCard: {
         backLink: 'main'
       },
+      table: {
+        activeRow: 'main'
+      },
       toast: {
         variation: 'white'
       }
@@ -315,6 +321,9 @@ export const UiThemes: ColorThemes = {
       },
       tableCard: {
         backLink: 'main'
+      },
+      table: {
+        activeRow: 'main'
       },
       toast: {
         variation: 'white'

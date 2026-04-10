@@ -204,13 +204,19 @@
         cursor: pointer;
         &--active {
           #{$body}-cell {
-            background-color: var(--table-row-hover-background-color);
+            background-color: color-mix(in srgb, var(--mc-table-row-active-color) 10%, white);
+            --row-cell-color: color-mix(in srgb, var(--mc-table-row-active-color) 10%, white);
           }
         }
         @media #{$media-desktop} {
-          &:hover {
+          &:hover:not(#{$body}-row--active) {
             #{$body}-cell {
               background-color: var(--table-row-hover-background-color);
+              --row-cell-color: var(--table-row-hover-background-color);
+            }
+          }
+          &:hover {
+            #{$body}-cell {
               &_content-right {
                 display: flex;
               }
@@ -273,7 +279,11 @@
             z-index: var(--mc-table-z-index-cell-right-slot);
             @include child-indent-right($space-50);
             @media #{$media-desktop} {
-              background: linear-gradient(90deg, rgba($color-hover-gray, 0.2) 0%, $color-hover-gray 60%);
+              background: linear-gradient(
+                270deg,
+                color-mix(in srgb, var(--row-cell-color) 100%, transparent 0%) 50%,
+                color-mix(in srgb, var(--row-cell-color) 0%, transparent 100%) 100%
+              );
               padding-left: $space-800;
             }
             @media #{$media-mobile} {
