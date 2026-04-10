@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mediacube.io/schemas/mediacube-ui-ai-catalog.json",
+  "title": "mediacube-ui-v2 AI catalog",
+  "type": "object",
+  "required": [
+    "catalogSchemaVersion",
+    "libraryVersion",
+    "packageName",
+    "componentCount",
+    "typesIndex",
+    "typesFileCount",
+    "components",
+    "recommendedEntrypoints"
+  ],
+  "properties": {
+    "catalogSchemaVersion": { "type": "integer", "const": 2 },
+    "libraryVersion": { "type": "string" },
+    "packageName": { "type": "string" },
+    "pathHash": { "type": "string" },
+    "componentCount": { "type": "integer", "minimum": 0 },
+    "typesFileCount": { "type": "integer", "minimum": 0 },
+    "typesIndex": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/typeIndexEntry" }
+    },
+    "recommendedEntrypoints": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/component" }
+    }
+  },
+  "$defs": {
+    "typeIndexEntry": {
+      "type": "object",
+      "required": ["id", "file", "packageExport"],
+      "properties": {
+        "id": { "type": "string" },
+        "file": { "type": "string" },
+        "packageExport": { "type": "string" }
+      }
+    },
+    "component": {
+      "type": "object",
+      "required": ["id", "name", "filePath", "category", "importPath", "props", "emits", "slots"],
+      "properties": {
+        "id": { "type": "string", "description": "Путь от src/components без .vue, posix" },
+        "name": { "type": "string" },
+        "filePath": { "type": "string" },
+        "category": { "type": "string", "enum": ["elements", "patterns", "templates", "root"] },
+        "importPath": { "type": ["string", "null"] },
+        "props": { "type": "array" },
+        "emits": { "type": "array" },
+        "slots": { "type": "array" },
+        "storyFile": { "type": ["string", "null"] },
+        "storyExports": { "type": "array", "items": { "type": "string" } },
+        "storyHints": {
+          "type": ["object", "null"],
+          "description": "metaArgs / named story args (best-effort parse) или null"
+        },
+        "relatedTypeImports": { "type": "array", "items": { "type": "string" } },
+        "searchText": { "type": "string" },
+        "aiDoc": { "type": "string" },
+        "docgenError": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

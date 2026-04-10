@@ -1,0 +1,28 @@
+{
+  "denylist": [
+    {
+      "pattern": "^asd\\.vue$",
+      "reason": "Временный scratch-файл, не часть дизайн-системы"
+    },
+    {
+      "pattern": "^qwe\\.vue$",
+      "reason": "Временный scratch-файл, не часть дизайн-системы"
+    }
+  ],
+  "requireAiDoc": [
+    "patterns/McFilter/McFilter",
+    "templates/McTable/McTable/McTable",
+    "templates/McModal/McModal",
+    "templates/McDrawer/McDrawer",
+    "templates/McMain/McMain",
+    "patterns/McChat/McChat"
+  ],
+  "typesAllowlist": [
+    "IFilter.ts",
+    "ITable.ts",
+    "IModal.ts",
+    "IDrawer.ts",
+    "IToast.ts",
+    "IDSOptions.ts"
+  ]
+}

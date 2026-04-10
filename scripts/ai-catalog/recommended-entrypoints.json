@@ -1,0 +1,36 @@
+{
+  "$comment": "Рекомендуемые компоненты для типовых задач; id совпадают с полем id в ai-catalog",
+  "layout": [
+    "templates/McMain/McMain",
+    "templates/McTopBar/McTopBar",
+    "patterns/McSideBar/McSideBar"
+  ],
+  "form": [
+    "elements/McFieldText/McFieldText",
+    "elements/McFieldSelect/McFieldSelect",
+    "elements/McButton/McButton",
+    "elements/McFieldCheckbox/McFieldCheckbox"
+  ],
+  "table": [
+    "templates/McTable/McTable/McTable",
+    "templates/McVirtualScroll/McVirtualScroll"
+  ],
+  "filter": [
+    "patterns/McFilter/McFilter"
+  ],
+  "modal": [
+    "templates/McModal/McModal",
+    "templates/McModal/McModalContainer/McModalContainer"
+  ],
+  "drawer": [
+    "templates/McDrawer/McDrawer",
+    "templates/McDrawer/McDrawerContainer/McDrawerContainer"
+  ],
+  "feedback": [
+    "templates/McToast/McToast",
+    "elements/McTooltip/McTooltip"
+  ],
+  "chat": [
+    "patterns/McChat/McChat"
+  ]
+}

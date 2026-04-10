@@ -204,6 +204,44 @@ The following style files are available:
 - spacing 
 - toast 
 
+## Документация для ИИ (ai-catalog) и MCP
+
+После `npm run build` в пакет попадает машиночитаемый каталог всех Vue-компонентов: `dist/ai-catalog/index.json` (поле `libraryVersion` совпадает с версией пакета). Поле **`catalogSchemaVersion`** отражает формат JSON (типы, `storyHints`, гайд); при его смене обновите клиенты MCP/скрипты, которые парсят каталог.
+
+### Где взять JSON
+
+- **Локально после установки:** `node_modules/mediacube-ui-v2/dist/ai-catalog/index.json`
+- **Через exports:** зарезервирован путь `mediacube-ui-v2/ai-catalog.json` (указывает на тот же файл в опубликованном пакете).
+- **По сети (CDN), подставьте версию:**  
+  - `https://unpkg.com/mediacube-ui-v2@<version>/dist/ai-catalog/index.json`  
+  - `https://cdn.jsdelivr.net/npm/mediacube-ui-v2@<version>/dist/ai-catalog/index.json`  
+
+Шаблоны также перечислены в `package.json` → `aiCatalog`.
+
+### Скрипты в репозитории библиотеки
+
+- `npm run build:ai-catalog` — только генерация каталога в `dist/ai-catalog/`
+- `npm run verify:ai-catalog` — генерация + проверка полноты, Storybook-сторис и обязательных `*.ai.md` для сложных компонентов
+- `npm run mcp:ui` — MCP-сервер (stdio): `list_components`, `search_ui`, `get_component`, `list_types`, `get_type`, `get_ai_guide` и ресурсы `mediacube-ui://component/...`
+
+Переменные окружения для MCP: `MEDIACUBE_UI_CATALOG_PATH` (путь к `index.json`), `MEDIACUBE_UI_CATALOG_URL` (URL каталога), опционально `MEDIACUBE_UI_TYPES_ROOT` (корень `dist/ai-catalog`, если каталог загружен по URL без локальных `types/` и `FOR_AI.md`).
+
+### Пример `mcp.json` (Cursor)
+
+```json
+{
+  "mcpServers": {
+    "mediacube-ui": {
+      "command": "node",
+      "args": ["/absolute/path/to/mediacube-ui-v2/scripts/mcp-ui-server.mjs"],
+      "env": {}
+    }
+  }
+}
+```
+
+В проекте-потребителе с установленным `mediacube-ui-v2` можно не задавать `env`, если каталог резолвится через `require.resolve('mediacube-ui-v2/ai-catalog.json')` из корня потребителя.
+
 ## Storybook interface support
 
 ![info image storybook interface](./dist/npm_preview.jpg)
