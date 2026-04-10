@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, nextTick, type PropType, reactive, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, type PropType, reactive, ref, useSlots, watch } from 'vue'
 import { LineHeights, type LineHeightTypes } from '@/types/styles/LineHeights'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Spaces, type SpaceTypes } from '@/types/styles/Spaces'
@@ -7,6 +7,8 @@ import { HorizontalAlignment } from '@/enums/ui/Alignment'
 import { TransitionPresets, useTransition } from '@vueuse/core'
 import { ModalVariation } from '@/enums/Modal'
 const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
+
+const slots = useSlots()
 
 const emit = defineEmits<{
   (e: 'before-open'): void
@@ -157,6 +159,10 @@ const data = reactive({
   }
 })
 
+const hasTitleSlot = computed((): boolean => {
+  return !!slots['title']
+})
+
 const classes = computed((): { [key: string]: boolean } => {
   return {
     'mc-modal--arrow-visible': props.arrowVisible,
@@ -165,8 +171,9 @@ const classes = computed((): { [key: string]: boolean } => {
     'mc-modal--scrollable': props.scrollableContent,
     'mc-modal--top-padding': props.topPadding,
     'mc-modal--small-indents': data.small_indents,
+    'mc-modal--with-title': hasTitleSlot.value,
     [`mc-modal--variation-${props.variation}`]: !!props.variation,
-    [`mc-modal--header-align-${props.headerAlign}`]: (props.closeVisible || props.arrowVisible) && !!props.headerAlign
+    [`mc-modal--header-align-${props.headerAlign}`]: (props.closeVisible || props.arrowVisible) && !!props.headerAlign,
   }
 })
 
@@ -180,7 +187,7 @@ const styles = computed((): { [key: string]: string | number } => {
     '--mc-modal-button-height-small': Sizes[data.footer.button.small],
     '--mc-modal-max-width': `${props.maxWidth + 24}px`,
     '--mc-modal-min-width': `${props.minWidth - 24}px`,
-    '--mc-modal-state-number': modalTransition.value
+    '--mc-modal-state-number': modalTransition.value,
   }
 })
 
