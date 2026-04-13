@@ -45,9 +45,14 @@ const handleKeyUp = (e: KeyboardEvent) => {
 
 const lockBodyScroll = (val: boolean) => {
   if (typeof window === 'undefined') return
-
-  document.body.style.overflow = val ? 'hidden' : ''
-  // document.body.style.paddingRight = val ? '15px' : ''
+  if (val) {
+    const scrollbarWidth = Math.max(0, window.innerWidth - document.documentElement.clientWidth)
+    document.body.style.overflow = 'hidden'
+    document.body.style.paddingRight = `${scrollbarWidth}px`
+  } else {
+    document.body.style.overflow = ''
+    document.body.style.paddingRight = ''
+  }
 }
 
 onMounted(() => {

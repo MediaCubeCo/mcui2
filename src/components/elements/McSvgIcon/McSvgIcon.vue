@@ -9,7 +9,7 @@ import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from
 import { useHelper } from '@/composables/useHelper'
 import { useTheme } from '@/composables/useTheme'
 //@ts-ignore
-import { SPRITE_IDS } from '@/consts/iconsSpriteIds.js'
+import { SPRITE_FILES, SPRITE_IDS } from '@/consts/iconsSpriteIds.js'
 
 const helper = useHelper()
 const props = defineProps({
@@ -21,12 +21,20 @@ const props = defineProps({
     type: String as () => IconsListUnion,
     required: true
   },
+  byId: {
+    type: Boolean,
+    default: true,
+  },
   /**
    * ID-префикс в названиях иконок, для использлования иконок из стороннего спрайта
    */
   spriteId: {
     type: String as PropType<string | (typeof SPRITE_IDS)[keyof typeof SPRITE_IDS]>,
     default: () => SPRITE_IDS.MAIN
+  },
+  spritePath: {
+    type: String as PropType<string | (typeof SPRITE_IDS)[keyof typeof SPRITE_IDS]>,
+    default: () => `/${SPRITE_FILES[SPRITE_IDS.MAIN]}`
   },
   /**
    * Цвет иконки
@@ -123,11 +131,18 @@ const computedSpriteId = computed(() => {
   return props.spriteId
 })
 
+const computedSpritePath = computed(() => {
+  if (GRADS.has(props.name)) return `/${SPRITE_FILES[SPRITE_IDS.GRADS]}`
+  if (FLAGS.has(props.name)) return `/${SPRITE_FILES[SPRITE_IDS.FLAGS]}`
+  return props.spritePath
+})
+
 </script>
 
 <template>
   <svg :class="classes" :style="styles">
-    <use :xlink:href="`#${computedSpriteId}-${props.name}`"></use>
+    <use v-if="props.byId" :xlink:href="`#${computedSpriteId}-${props.name}`"></use>
+    <use v-else :xlink:href="`${computedSpritePath}#${computedSpriteId}-${props.name}`"></use>
   </svg>
 </template>
 

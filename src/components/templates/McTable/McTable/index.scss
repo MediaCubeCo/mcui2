@@ -209,7 +209,7 @@
           }
         }
         @media #{$media-desktop} {
-          &:hover:not(#{$body}-row--active) {
+          &:hover:not(#{$body}-row--active):not(#{$body}-row--fake) {
             #{$body}-cell {
               background-color: var(--table-row-hover-background-color);
               --row-cell-color: var(--table-row-hover-background-color);

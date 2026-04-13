@@ -126,7 +126,6 @@
     -webkit-appearance: none;
     -webkit-text-fill-color: currentColor;
     color: $color-dark-gray;
-    opacity: 0.2;
 
     &:hover {
       opacity: 1;
@@ -143,12 +142,19 @@
       #{$block-name} {
         &__button {
           color: var(--mc-chip-color);
+          opacity: 0.25;
+          .mc-svg-icon {
+            --mc-svg-icon-color: #{$color-white};
+          }
           &:hover {
             opacity: 1;
-            color: $color-white;
+            color: $color-red;
+            .mc-svg-icon {
+              --mc-svg-icon-color: #{$color-red};
+            }
           }
           &:active {
-            color: sasscolor.adjust($color-white, $lightness: 15%);
+            color: sasscolor.adjust($color-red, $lightness: 15%);
           }
         }
         &__title {
@@ -170,7 +176,7 @@
     &-invert {
       color: $color-black;
       &:before {
-        background-color: color-mix(in srgb, var(--mc-chip-color) 10%, white);
+        background-color: color-mix(in srgb, var(--mc-chip-color) 10%, transparent);
       }
     }
   }
