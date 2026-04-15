@@ -179,6 +179,7 @@
     }
   }
   &__inner {
+    position: relative;
     box-shadow: $shadow-s;
     background-color: $color-white;
     display: flex;
@@ -195,13 +196,11 @@
       #{$block-name}__btn-close {
         @media #{$media-query-s} {
           @include position(absolute, var(--mc-modal-padding) $space-600 null null);
-          transform: translateY(50%);
         }
       }
       #{$block-name}__btn-back {
         @media #{$media-query-s} {
           @include position(absolute, var(--mc-modal-padding) null null $space-600);
-          transform: translateY(50%);
         }
       }
     }
@@ -281,7 +280,6 @@
             &-back,
             &-close {
               top: var(--mc-modal-padding-small) !important;
-              transform: translateY(50%);
             }
           }
         }

@@ -66,7 +66,7 @@ export const Default: Story = {
       template: `
                 <div style="height: 500px">
                   <mc-button @click.prevent="openModal">Show Modal</mc-button>
-                  <mc-modal v-model="showModal" @close="handleClose">
+                  <mc-modal v-model="showModal" arrow-visible @close="handleClose">
                     <template #title>McModal</template>
                     <mc-title v-for="num in 1" :key="num" class="mt-300">
                       Этот пример демонстрирует как использовать 1 модаль.
