@@ -128,7 +128,6 @@
     color: $color-dark-gray;
 
     &:hover {
-      opacity: 1;
       color: $color-red;
     }
 
@@ -136,45 +135,65 @@
       color: sasscolor.adjust($color-red, $lightness: 15%);
     }
   }
+  &__button {
+    color: var(--mc-chip-color);
+    .mc-svg-icon {
+      --mc-svg-icon-color: #{$color-white};
+    }
+    &:hover {
+      color: $color-red;
+      .mc-svg-icon {
+        --mc-svg-icon-color: #{$color-red} !important;
+      }
+    }
+    &:active {
+      color: sasscolor.adjust($color-red, $lightness: 15%);
+    }
+  }
+  &__title {
+    color: var(--mc-chip-text-color);
+  }
+  &__counter {
+    color: var(--mc-chip-text-color);
+    opacity: 0.5;
+  }
 
   &--variation {
     &-default {
       #{$block-name} {
         &__button {
-          color: var(--mc-chip-color);
-          opacity: 0.25;
           .mc-svg-icon {
-            --mc-svg-icon-color: #{$color-white};
+            --mc-svg-icon-color: color-mix(in srgb, #{$color-white} 25%, transparent);
           }
-          &:hover {
-            opacity: 1;
-            color: $color-red;
-            .mc-svg-icon {
-              --mc-svg-icon-color: #{$color-red};
-            }
-          }
-          &:active {
-            color: sasscolor.adjust($color-red, $lightness: 15%);
-          }
-        }
-        &__title {
-          color: var(--mc-chip-text-color);
-        }
-        &__counter {
-          color: var(--mc-chip-text-color);
-          opacity: 0.5;
         }
       }
     }
     &-outline {
       color: var(--mc-chip-color);
       border: 1px solid var(--mc-chip-color);
+      #{$block-name} {
+        &__button {
+          .mc-svg-icon {
+            --mc-svg-icon-color: #{$color-outline-light};
+          }
+        }
+        &__title {
+          color: var(--mc-chip-color);
+        }
+      }
       &:before {
         display: none;
       }
     }
     &-invert {
       color: $color-black;
+      #{$block-name} {
+        &__button {
+          .mc-svg-icon {
+            --mc-svg-icon-color: #{$color-outline-light};
+          }
+        }
+      }
       &:before {
         background-color: color-mix(in srgb, var(--mc-chip-color) 10%, transparent);
       }

@@ -171,7 +171,6 @@ const classes = computed((): { [key: string]: boolean } => {
     'mc-modal--scrollable': props.scrollableContent,
     'mc-modal--top-padding': props.topPadding,
     'mc-modal--small-indents': data.small_indents,
-    'mc-modal--with-title': hasTitleSlot.value,
     [`mc-modal--variation-${props.variation}`]: !!props.variation,
     [`mc-modal--header-align-${props.headerAlign}`]: (props.closeVisible || props.arrowVisible) && !!props.headerAlign,
   }
@@ -323,7 +322,7 @@ watch(
   <div v-if="props.modelValue" class="mc-modal__wrapper">
     <div v-if="props.showOverlay" class="mc-modal__overlay" @click.stop="handleOverlayClick" />
     <div class="mc-modal" :class="classes" :style="styles">
-      <div ref="modalInner" class="mc-modal__inner">
+      <div ref="modalInner" class="mc-modal__inner" :class="{ 'mc-modal__inner--with-title': $slots.title }">
         <div v-if="$slots.title" class="mc-modal__header">
           <div class="mc-modal__title">
             <!-- @slot Слот заголовка -->
@@ -339,13 +338,13 @@ watch(
         <div v-if="$slots.footer" class="mc-modal__control" id="mcModalFooter">
           <slot name="footer" />
         </div>
+        <button v-if="arrowVisible" type="button" class="mc-modal__btn-back" @click.prevent="handleBack">
+          <mc-svg-icon name="arrow_leftward" class="mc-modal__icon-back" />
+        </button>
+        <button v-if="closeVisible" type="button" class="mc-modal__btn-close" @click.prevent="closeModal">
+          <mc-svg-icon class="mc-modal__icon-close" width="24" height="24" name="close" />
+        </button>
       </div>
-      <button v-if="arrowVisible" type="button" class="mc-modal__btn-back" @click.prevent="handleBack">
-        <mc-svg-icon name="arrow_leftward" class="mc-modal__icon-back" />
-      </button>
-      <button v-if="closeVisible" type="button" class="mc-modal__btn-close" @click.prevent="closeModal">
-        <mc-svg-icon class="mc-modal__icon-close" width="24" height="24" name="close" />
-      </button>
     </div>
   </div>
 </template>

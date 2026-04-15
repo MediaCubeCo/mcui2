@@ -76,27 +76,16 @@
     @include close-link();
   }
   &__btn-close {
+    @include position(absolute, $space-300 $space-300 null null);
+    padding: 0 !important;
     @media #{$media-query-s} {
       @include position(absolute, $space-300 $space-300 null null);
     }
   }
   &__btn-back {
+    @include position(absolute, $space-300 null null $space-300);
     @media #{$media-query-s} {
       @include position(absolute, $space-300 null null $space-300);
-    }
-  }
-  &--with-title {
-    #{$block-name}__btn-close {
-      @media #{$media-query-s} {
-        @include position(absolute, var(--mc-modal-padding) $space-600 null null);
-        transform: translateY(50%);
-      }
-    }
-    #{$block-name}__btn-back {
-      @media #{$media-query-s} {
-        @include position(absolute, var(--mc-modal-padding) null null $space-600);
-        transform: translateY(50%);
-      }
     }
   }
   &__icon-close {
@@ -202,6 +191,20 @@
     > *:last-child {
       padding-bottom: var(--mc-modal-padding);
     }
+    &--with-title {
+      #{$block-name}__btn-close {
+        @media #{$media-query-s} {
+          @include position(absolute, var(--mc-modal-padding) $space-600 null null);
+          transform: translateY(50%);
+        }
+      }
+      #{$block-name}__btn-back {
+        @media #{$media-query-s} {
+          @include position(absolute, var(--mc-modal-padding) null null $space-600);
+          transform: translateY(50%);
+        }
+      }
+    }
     @media #{$media-query-s} {
       overflow: visible;
       /* прячет рандомный скроллбар при включении модалки */
@@ -272,17 +275,16 @@
         }
       }
     }
-    &#{$block-name}--with-title {
-      @media #{$media-query-s} {
+    #{$block-name}__inner--with-title {
         #{$block-name} {
           &__btn {
             &-back,
             &-close {
               top: var(--mc-modal-padding-small) !important;
+              transform: translateY(50%);
             }
           }
         }
-      }
     }
   }
 

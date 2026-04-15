@@ -171,7 +171,7 @@ const handleOnError = (): void => {
         name="no_user"
         :size="props.size"
         :color="theme.component.defaultIcon"
-        style="margin-left: -1px"
+        class="mc-avatar__default-icon"
       />
     </div>
   </div>
