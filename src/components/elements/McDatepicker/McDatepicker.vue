@@ -214,7 +214,7 @@ const props = defineProps({
   },
   setDefaultToday: {
     type: Boolean as PropType<boolean>,
-    default: true
+    default: false
   },
   markers: {
     type: Array as () => DatePickerMarker[],
