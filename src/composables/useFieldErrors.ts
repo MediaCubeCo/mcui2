@@ -6,7 +6,7 @@ export function useFieldErrors(errors: string[]) {
 
   const errorText = computed((): string | null => {
     if (errors_text.value === null || !errors_text.value?.length || !is_error_visible.value) return null
-    return errors_text.value.join(', ')?.replace(/-/gm, '&#x2011;')
+    return errors_text.value.join(', ')
   })
 
   const toggleErrorVisible = function(): void {
