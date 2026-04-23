@@ -110,14 +110,13 @@
       .mc-svg-icon {
         @include size($size-200);
       }
-
-      #{$block-name} {
-        &__prepend {
-          margin-inline-end: $space-50;
-        }
-        &__append {
-          margin-inline-start: $space-50;
-        }
+      #{$block-name}__prepend:has(~ #{$block-name}__text),
+      #{$block-name}__prepend:has(~ #{$block-name}__append) {
+        margin-inline-end: $space-50;
+      }
+      #{$block-name}__text ~ #{$block-name}__append,
+      #{$block-name}__prepend ~ #{$block-name}__append {
+        margin-inline-start: $space-50;
       }
     }
     &-xs {
@@ -138,13 +137,13 @@
         @include size($size-250);
       }
 
-      #{$block-name} {
-        &__prepend {
-          margin-inline-end: $space-50;
-        }
-        &__append {
-          margin-inline-start: $space-50;
-        }
+      #{$block-name}__prepend:has(~ #{$block-name}__text),
+      #{$block-name}__prepend:has(~ #{$block-name}__append) {
+        margin-inline-end: $space-50;
+      }
+      #{$block-name}__text ~ #{$block-name}__append,
+      #{$block-name}__prepend ~ #{$block-name}__append {
+        margin-inline-start: $space-50;
       }
     }
     &-s {
@@ -165,13 +164,13 @@
         @include size($size-250);
       }
 
-      #{$block-name} {
-        &__prepend {
-          margin-inline-end: $space-50;
-        }
-        &__append {
-          margin-inline-start: $space-50;
-        }
+      #{$block-name}__prepend:has(~ #{$block-name}__text),
+      #{$block-name}__prepend:has(~ #{$block-name}__append) {
+        margin-inline-end: $space-50;
+      }
+      #{$block-name}__text ~ #{$block-name}__append,
+      #{$block-name}__prepend ~ #{$block-name}__append {
+        margin-inline-start: $space-50;
       }
     }
     &-m {
@@ -191,13 +190,13 @@
         @include size($size-300);
       }
 
-      #{$block-name} {
-        &__prepend {
-          margin-inline-end: $space-50;
-        }
-        &__append {
-          margin-inline-start: $space-50;
-        }
+      #{$block-name}__prepend:has(~ #{$block-name}__text),
+      #{$block-name}__prepend:has(~ #{$block-name}__append) {
+        margin-inline-end: $space-50;
+      }
+      #{$block-name}__text ~ #{$block-name}__append,
+      #{$block-name}__prepend ~ #{$block-name}__append {
+        margin-inline-start: $space-50;
       }
     }
     &-l {
@@ -217,13 +216,13 @@
         @include size($size-300);
       }
 
-      #{$block-name} {
-        &__prepend {
-          margin-inline-end: $space-100;
-        }
-        &__append {
-          margin-inline-start: $space-100;
-        }
+      #{$block-name}__prepend:has(~ #{$block-name}__text),
+      #{$block-name}__prepend:has(~ #{$block-name}__append) {
+        margin-inline-end: $space-100;
+      }
+      #{$block-name}__text ~ #{$block-name}__append,
+      #{$block-name}__prepend ~ #{$block-name}__append {
+        margin-inline-start: $space-100;
       }
     }
 

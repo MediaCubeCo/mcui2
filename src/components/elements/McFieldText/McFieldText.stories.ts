@@ -10,6 +10,7 @@ const meta = {
   argTypes: {
     type: { control: 'select', options: Object.values(InputTypes) },
     disabled: { control: 'boolean' },
+    allowEmpty: { control: 'boolean' },
     copy: { control: 'boolean' },
     readOnly: { control: 'boolean' },
     isMobile: { control: 'boolean' },
@@ -31,6 +32,7 @@ const meta = {
   },
   args: {
     disabled: false,
+    allowEmpty: true,
     copy: false,
     readOnly: false,
     isMobile: false,
@@ -226,6 +228,7 @@ export const AmountFormat: Story = {
                   title="McFieldText"
                   placeholder="AmountFormat pls" 
                   name="InputAmountFormat"
+                  :allow-empty="false"
                 />
                 <br />
                 Output: {{ v }}

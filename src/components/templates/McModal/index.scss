@@ -163,6 +163,8 @@
     margin-bottom: 0;
     color: hsl(0, 0%, 13%);
     font-family: $font-family-main;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
   }
 
   &__body {
@@ -195,12 +197,12 @@
     &--with-title {
       #{$block-name}__btn-close {
         @media #{$media-query-s} {
-          @include position(absolute, var(--mc-modal-padding) $space-600 null null);
+          @include position(absolute, var(--mc-modal-padding) $space-400 null null);
         }
       }
       #{$block-name}__btn-back {
         @media #{$media-query-s} {
-          @include position(absolute, var(--mc-modal-padding) null null $space-600);
+          @include position(absolute, var(--mc-modal-padding) null null $space-400);
         }
       }
     }

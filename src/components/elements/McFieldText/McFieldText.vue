@@ -280,6 +280,10 @@ const props = defineProps({
   allowNegative: {
     type: Boolean,
     default: false
+  },
+  allowEmpty: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -292,6 +296,7 @@ const copyIcon = reactive<{ name: IconsListUnion; color: ColorTypes }>({
 const fieldErrors = useFieldErrors(props.errors)
 
 const is_backspace = ref<boolean>(false)
+const input = ref<HTMLInputElement | null>(null)
 
 const isRtl = computed((): boolean => {
   return props.dir === Directions.Rtl
@@ -427,6 +432,11 @@ const computedValue = computed({
 const handleInput = (e: Event): void => {
   computedValue.value = getPreparedInputValue(e) as string
 }
+
+const isAmountOrNumFormat = computed(() => {
+  return props.type === InputTypes.AmountFormat || props.type === InputTypes.Num
+})
+
 const inputAttrs = computed((): object => {
   return {
     style: inputStyles.value,
@@ -556,6 +566,45 @@ const getPreparedInputValue = (e: Event): InputValue => {
   return value
 }
 
+const isKeyboardEvent = (e: KeyboardEvent | ClipboardEvent): e is KeyboardEvent => 'key' in e
+
+const setDefaultNullValue = (e: KeyboardEvent | ClipboardEvent) => {
+  const el = input.value
+  if (!e || !el || props.allowEmpty || !isAmountOrNumFormat.value) return
+  e.preventDefault()
+  el.value = '0'
+  computedValue.value = '0'
+  setCaretPos(el, 1, 1)
+}
+
+const checkAllowEmpty = (e: KeyboardEvent | ClipboardEvent) => {
+  const el = input.value
+  if (!e || !el || props.allowEmpty || !isAmountOrNumFormat.value) return
+
+  const is_paste = e.type === 'paste'
+  const is_key = isKeyboardEvent(e)
+  const is_ctrl_pressed = is_key && (e.metaKey || e.ctrlKey)
+  const is_backspace_or_del = is_key && (e.key === 'Delete' || e.key === 'Backspace')
+  const is_last_symbol = (is_backspace_or_del || is_paste) && el.value.length <= 1
+  const is_mass_delete = is_backspace_or_del && is_ctrl_pressed
+  if (is_last_symbol || is_mass_delete) {
+    setDefaultNullValue(e)
+  }
+}
+
+const prepareHandleKeyUp = (e: KeyboardEvent) => {
+  if (!e || !input.value) return
+  const target = e.target as HTMLInputElement
+  if (!props.allowEmpty && target.value.length < 1 && isAmountOrNumFormat.value) {
+    setDefaultNullValue(e)
+  }
+}
+
+const handleCheckPaste = (e: ClipboardEvent) => {
+  if (!e || !input.value) return
+  if (!props.allowEmpty && isAmountOrNumFormat.value) checkAllowEmpty(e)
+}
+
 const prepareHandleKeyDown = (e: KeyboardEvent): void => {
   switch (props.type) {
     case InputTypes.AmountFormat:
@@ -569,10 +618,11 @@ const prepareHandleKeyDown = (e: KeyboardEvent): void => {
       const is_ctrl_pressed = e.metaKey || e.ctrlKey
       const is_allowed_symbol = e.key?.match(/Arrow|Backspace|\.,/)
 
+      if (!props.allowEmpty && isAmountOrNumFormat.value) checkAllowEmpty(e)
+
       if ((isNaN(+e.key) && !is_allowed_symbol && !is_excluded_symbol && !is_ctrl_pressed) || is_space) {
         e.preventDefault()
       }
-
       const already_has_symbol =
         typeof props.modelValue === 'string' &&
         excluded_symbols.some((symbol) => String(props.modelValue)?.includes(symbol))
@@ -741,13 +791,16 @@ const handleFocus = (e: MouseEvent): void => {
             />
             <input
               v-else
+              ref="input"
               :value="computedValue"
               v-bind="inputAttrs"
               :type="prettyType"
               :readonly="props.readOnly"
               :maxlength="maxLength"
               @keydown="prepareHandleKeyDown"
+              @keyup="prepareHandleKeyUp"
               @input="handleInput"
+              @paste="handleCheckPaste"
             />
           </template>
         </div>
