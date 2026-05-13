@@ -103,7 +103,7 @@ class TooltipInstance {
     const computePosition = (placement: string): ITooltipStyles => {
       switch (placement) {
         case TooltipPositions.Right:
-          return  {
+          return {
             top: requiredTop,
             left: requiredLeft + width + (space + arrow),
             translate: `translate(0, calc(-50% + ${height / 2}px))`
@@ -121,7 +121,7 @@ class TooltipInstance {
             translate: 'translate(-50%, -100%)'
           }
         case TooltipPositions.Bottom:
-          return  {
+          return {
             top: requiredTop + height + (space + arrow),
             left: requiredLeft + width / 2,
             translate: 'translate(-50%, 0%)'
@@ -142,11 +142,14 @@ class TooltipInstance {
       const { width: ttWidth, height: ttHeight } = tooltipEl.getBoundingClientRect()
       const viewportWidth = window.innerWidth
       const viewportHeight = window.innerHeight
-
-      const overflowRight = pos.left + ttWidth / 2 > viewportWidth
-      const overflowLeft = pos.left - ttWidth / 2 < 0
-      const overflowTop = pos.top - ttHeight < 0
-      const overflowBottom = pos.top + ttHeight > viewportHeight
+      const viewportLeft = window.scrollX
+      const viewportTop = window.scrollY
+      const viewportRight = viewportLeft + viewportWidth
+      const viewportBottom = viewportTop + viewportHeight
+      const overflowRight = pos.left + ttWidth / 2 > viewportRight
+      const overflowLeft = pos.left - ttWidth / 2 < viewportLeft
+      const overflowTop = pos.top - ttHeight < viewportTop
+      const overflowBottom = pos.top + ttHeight > viewportBottom
 
       if (this.placement === TooltipPositions.Right && overflowRight) {
         this.placement = TooltipPositions.Left
@@ -164,21 +167,18 @@ class TooltipInstance {
 
       if (this.placement === TooltipPositions.Top || this.placement === TooltipPositions.Bottom) {
         const halfWidth = ttWidth / 2
-
-        if (correctedLeft - halfWidth < 4) {
-          correctedLeft = halfWidth + 4
-        } else if (correctedLeft + halfWidth > viewportWidth - 4) {
-          correctedLeft = viewportWidth - halfWidth - 4
+        if (correctedLeft - halfWidth < viewportLeft + 4) {
+          correctedLeft = viewportLeft + halfWidth + 4
+        } else if (correctedLeft + halfWidth > viewportRight - 4) {
+          correctedLeft = viewportRight - halfWidth - 4
         }
       }
-
       if (this.placement === TooltipPositions.Left || this.placement === TooltipPositions.Right) {
         const halfHeight = ttHeight / 2
-
-        if (correctedTop - halfHeight < 4) {
-          correctedTop = halfHeight + 4
-        } else if (correctedTop + halfHeight > viewportHeight - 4) {
-          correctedTop = viewportHeight - halfHeight - 4
+        if (correctedTop - halfHeight < viewportTop + 4) {
+          correctedTop = viewportTop + halfHeight + 4
+        } else if (correctedTop + halfHeight > viewportBottom - 4) {
+          correctedTop = viewportBottom - halfHeight - 4
         }
       }
 
@@ -186,8 +186,8 @@ class TooltipInstance {
 
       this.position.value = {
         ...pos,
-        top: Math.min(correctedTop, pos.top),
-        left: correctedLeft,
+        top: correctedTop, // вместо Math.min(correctedTop, pos.top)
+        left: correctedLeft
       }
       for (const key in this.position.value) {
         if (key && helper.hasProperty(this.position.value, key)) {
@@ -267,7 +267,7 @@ export function useTooltip() {
     beforeUnmount() {
       tooltip.value?.destroy()
       activeTooltipCount--
-      
+
       // Удаляем обработчики только когда больше нет активных tooltip'ов
       if (activeTooltipCount === 0) {
         window.removeEventListener('scroll', handleScroll)

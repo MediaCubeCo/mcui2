@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import {
-  computed,
-  defineAsyncComponent,
-  getCurrentInstance,
-  inject,
-  onMounted,
-  type PropType,
-  ref,
-  useSlots
-} from 'vue'
+import { computed, defineAsyncComponent, getCurrentInstance, inject, onMounted, type PropType, ref } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import { FontWeights } from '@/types/styles/FontWeights'
 import { useTooltip } from '@/composables/useTooltip'
@@ -24,6 +15,8 @@ import type { FontWeightsUnion } from '@/types/styles/FontWeights'
 import { ButtonModifiers } from '@/enums/ui/Button'
 import { IDSOptions } from '@/types/IDSOptions'
 import { useTheme } from '@/composables/useTheme'
+import { adaptiveAdditionalProps, adaptivePropsParams, adaptivePropsSizes } from '@/utils/mcButtonAdaptiveProps'
+import { useHelper } from '@/composables/useHelper'
 
 interface ElButtonTagBind {
   to?: string | null
@@ -34,6 +27,7 @@ interface ElButtonTagBind {
   tabindex: number | string | undefined | null
 }
 
+const helper = useHelper()
 const dsOptions = inject<IDSOptions>('dsOptions', {})
 
 const vTooltip = useTooltip()
@@ -119,6 +113,7 @@ const props = defineProps({
    *  Размеры:
    *  `xs, xs-compact, s, s-compact, m, m-compact, l, l-compact`
    */
+  ...adaptiveAdditionalProps,
   size: {
     type: String as () => ButtonSizeUnion,
     default: 'm'
@@ -252,16 +247,29 @@ const mcButton = ref(null)
 const has_click = ref(false)
 const emit = defineEmits(['blur', 'click'])
 
+const responsivePropsClasses = computed((): { [key: string]: boolean } => {
+  const result: { [key: string]: any } = {}
+  adaptivePropsParams.forEach((value) => {
+    adaptivePropsSizes.forEach((size) => {
+      //@ts-ignore
+      const sizeValue: string | undefined | unknown = props[`${value}${helper.upperFirst(size)}`]
+      result[`mc-button--${value}-${size}-${sizeValue}`] = !!sizeValue
+    })
+  })
+
+  return result
+})
+
 const classes = computed((): { [key: string]: boolean } => {
   return {
-    [`mc-button--variation-${props.variation}`]: !!props.variation,
     [`mc-button--size-${props.size}`]: !!props.size,
+    [`mc-button--variation-${props.variation}`]: !!props.variation,
     [`mc-button--text-align-${props.textAlign}`]: !!props.textAlign,
     'mc-button--loading': props.loading,
     'mc-button--icon-loading': props.iconLoading,
     'mc-button--is-active': props.isActive,
     'mc-button--disabled': props.disabled,
-    'mc-button--rounded': props.rounded && /-compact$/.test(props.size),
+    'mc-button--rounded': props.rounded,
     'mc-button--semi-rounded': props.semiRounded,
     'mc-button--full-width': props.fullWidth,
     'mc-button--uppercase': props.uppercase,
@@ -270,7 +278,8 @@ const classes = computed((): { [key: string]: boolean } => {
     'mc-button--underline-link': props.underlineLink,
     'mc-button--bg-flat': props.bgFlat,
     [`mc-button--type-${buttonVariation.value.type}`]: !!buttonVariation.value.type,
-    'mc-button--inactive': props.inactive
+    'mc-button--inactive': props.inactive,
+    ...responsivePropsClasses.value
   }
 })
 

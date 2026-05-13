@@ -1,3 +1,4 @@
+@use 'sass:map';
 @use '../../../assets/styles/mixins' as *;
 @use '../../../assets/styles/tooltip' as *;
 @use '../../../assets/tokens/durations' as *;
@@ -88,154 +89,130 @@
       }
     }
   }
+  $mc-button-sizes: (
+    xxs: (
+      height: $size-300,
+      padding: 0 $space-100,
+      letter-spacing: normal,
+      icon: $size-200,
+      compact-padding: $space-50,
+      slots: $space-50
+    ),
+    xs: (
+      height: $size-400,
+      padding: 0 $space-150,
+      letter-spacing: normal,
+      font-size: $font-size-200,
+      line-height: $line-height-200,
+      icon: $size-250,
+      compact-padding: 6px,
+      slots: $space-50
+    ),
+    s: (
+      height: $size-500,
+      padding: 0 $space-200,
+      letter-spacing: normal,
+      font-size: $font-size-200,
+      line-height: $line-height-200,
+      icon: $size-250,
+      compact-padding: $space-100,
+      slots: $space-50
+    ),
+    m: (
+      height: $size-500,
+      padding: 0 $space-200,
+      font-size: $font-size-200,
+      line-height: $line-height-200,
+      icon: $size-300,
+      compact-padding: $space-150,
+      slots: $space-50
+    ),
+    l: (
+      height: $size-600,
+      padding: $space-150 $space-300,
+      font-size: $font-size-200,
+      line-height: $line-height-200,
+      icon: $size-300,
+      compact-padding: $space-150,
+      slots: $space-100
+    )
+  );
+  @mixin slots-indents($indent: $space-50) {
+    #{$block-name}__prepend:has(~ #{$block-name}__text),
+    #{$block-name}__prepend:has(~ #{$block-name}__append) {
+      margin-inline-end: $indent;
+    }
+    #{$block-name}__text ~ #{$block-name}__append,
+    #{$block-name}__prepend ~ #{$block-name}__append {
+      margin-inline-start: $indent;
+    }
+  }
+  @mixin common-sizes-styles {
+    width: auto;
+    border-radius: $radius-100;
+  }
+  @mixin _size-branch($name, $cfg) {
+    $icon-compact: map.get($cfg, compact-icon);
+    @if $icon-compact == null {
+      $icon-compact: map.get($cfg, icon);
+    }
+    &-#{$name} {
+      height: map.get($cfg, height);
+      padding: map.get($cfg, padding);
+      @if map.has-key($cfg, letter-spacing) {
+        letter-spacing: map.get($cfg, letter-spacing);
+      }
+      @if map.has-key($cfg, font-size) {
+        font-size: map.get($cfg, font-size);
+        line-height: map.get($cfg, line-height);
+      }
+      @include slots-indents(map.get($cfg, slots));
+      @include common-sizes-styles;
+      .mc-svg-icon {
+        @include size(map.get($cfg, icon));
+      }
+      &-compact {
+        @include size(map.get($cfg, height));
+        padding: map.get($cfg, compact-padding);
+        .mc-svg-icon {
+          @include size($icon-compact);
+        }
+      }
+    }
+  }
+  @mixin sizes {
+    @each $name, $cfg in $mc-button-sizes {
+      @include _size-branch($name, $cfg);
+    }
+    &-xxs,
+    &-xs,
+    &-s,
+    &-m,
+    &-l {
+      &-compact {
+        border-radius: $radius-circle;
+        #{$block-name} {
+          &__prepend,
+          &__append {
+            margin: 0 !important;
+            margin-inline-end: 0 !important;
+            margin-inline-start: 0 !important;
+          }
+        }
+      }
+    }
+  }
   @include hoverMixin {
     filter: brightness(var(--mc-button-hover-brightness));
   }
 
   &--size {
-    &-xxs {
-      height: $size-300;
-      padding: 0 $space-100;
-      letter-spacing: normal;
-      font-size: $font-size-200;
-      line-height: $line-height-200;
-
-      &-compact {
-        @include size($size-300);
-        padding: $space-50;
-        .mc-svg-icon {
-          @include size($size-200);
-        }
-      }
-      .mc-svg-icon {
-        @include size($size-200);
-      }
-      #{$block-name}__prepend:has(~ #{$block-name}__text),
-      #{$block-name}__prepend:has(~ #{$block-name}__append) {
-        margin-inline-end: $space-50;
-      }
-      #{$block-name}__text ~ #{$block-name}__append,
-      #{$block-name}__prepend ~ #{$block-name}__append {
-        margin-inline-start: $space-50;
-      }
-    }
-    &-xs {
-      height: $size-400;
-      padding: 0 $space-150;
-      letter-spacing: normal;
-      font-size: $font-size-200;
-      line-height: $line-height-200;
-
-      &-compact {
-        @include size($size-400);
-        padding: 6px;
-        .mc-svg-icon {
-          @include size($size-250);
-        }
-      }
-      .mc-svg-icon {
-        @include size($size-250);
-      }
-
-      #{$block-name}__prepend:has(~ #{$block-name}__text),
-      #{$block-name}__prepend:has(~ #{$block-name}__append) {
-        margin-inline-end: $space-50;
-      }
-      #{$block-name}__text ~ #{$block-name}__append,
-      #{$block-name}__prepend ~ #{$block-name}__append {
-        margin-inline-start: $space-50;
-      }
-    }
-    &-s {
-      height: $size-500;
-      padding: 0 $space-200;
-      letter-spacing: normal;
-      font-size: $font-size-200;
-      line-height: $line-height-200;
-
-      &-compact {
-        @include size($size-500);
-        padding: $space-150;
-        .mc-svg-icon {
-          @include size($size-250);
-        }
-      }
-      .mc-svg-icon {
-        @include size($size-250);
-      }
-
-      #{$block-name}__prepend:has(~ #{$block-name}__text),
-      #{$block-name}__prepend:has(~ #{$block-name}__append) {
-        margin-inline-end: $space-50;
-      }
-      #{$block-name}__text ~ #{$block-name}__append,
-      #{$block-name}__prepend ~ #{$block-name}__append {
-        margin-inline-start: $space-50;
-      }
-    }
-    &-m {
-      height: $size-500;
-      padding: 0 $space-200;
-      font-size: $font-size-200;
-      line-height: $line-height-200;
-
-      &-compact {
-        @include size($size-500);
-        padding: $space-100;
-        .mc-svg-icon {
-          @include size($size-300);
-        }
-      }
-      .mc-svg-icon {
-        @include size($size-300);
-      }
-
-      #{$block-name}__prepend:has(~ #{$block-name}__text),
-      #{$block-name}__prepend:has(~ #{$block-name}__append) {
-        margin-inline-end: $space-50;
-      }
-      #{$block-name}__text ~ #{$block-name}__append,
-      #{$block-name}__prepend ~ #{$block-name}__append {
-        margin-inline-start: $space-50;
-      }
-    }
-    &-l {
-      height: $size-600;
-      padding: $space-150 $space-300;
-      font-size: $font-size-200;
-      line-height: $line-height-200;
-
-      &-compact {
-        @include size($size-600);
-        padding: $space-150;
-        .mc-svg-icon {
-          @include size($size-300);
-        }
-      }
-      .mc-svg-icon {
-        @include size($size-300);
-      }
-
-      #{$block-name}__prepend:has(~ #{$block-name}__text),
-      #{$block-name}__prepend:has(~ #{$block-name}__append) {
-        margin-inline-end: $space-100;
-      }
-      #{$block-name}__text ~ #{$block-name}__append,
-      #{$block-name}__prepend ~ #{$block-name}__append {
-        margin-inline-start: $space-100;
-      }
-    }
-
-    &-s,
-    &-m,
-    &-l {
-      &-compact {
-        #{$block-name} {
-          &__prepend,
-          &__append {
-            margin: 0 !important;
-          }
-        }
+    @include sizes;
+  }
+  @each $media, $value in $token-media-queries {
+    @media #{$value} {
+      &--size-#{$media} {
+        @include sizes;
       }
     }
   }

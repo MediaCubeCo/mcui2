@@ -18,7 +18,7 @@ $dot-colors: $token-colors;
   height: var(--mc-avatar-avatar-size);
   min-width: var(--mc-avatar-avatar-size);
   border-radius: $radius-100;
-  border: var(--mc-avatar-dot-border-width) solid $color-white;
+  border: var(--mc-avatar-dot-border-width) solid var(--mc-avatar-border-color);
   overflow: hidden;
   background-color: $color-hover-gray;
   transition: box-shadow $duration-s;
