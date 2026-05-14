@@ -173,6 +173,9 @@
       }
       &-compact {
         @include size(map.get($cfg, height));
+        &--rounded {
+          border-radius: $radius-circle;
+        }
         padding: map.get($cfg, compact-padding);
         .mc-svg-icon {
           @include size($icon-compact);
@@ -190,7 +193,6 @@
     &-m,
     &-l {
       &-compact {
-        border-radius: $radius-circle;
         #{$block-name} {
           &__prepend,
           &__append {
@@ -344,10 +346,6 @@
     background-color: transparent;
     border-color: transparent;
     pointer-events: none;
-  }
-
-  &--rounded {
-    border-radius: $radius-circle;
   }
 
   &--semi-rounded {

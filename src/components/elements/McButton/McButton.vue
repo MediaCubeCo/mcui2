@@ -253,7 +253,10 @@ const responsivePropsClasses = computed((): { [key: string]: boolean } => {
     adaptivePropsSizes.forEach((size) => {
       //@ts-ignore
       const sizeValue: string | undefined | unknown = props[`${value}${helper.upperFirst(size)}`]
-      result[`mc-button--${value}-${size}-${sizeValue}`] = !!sizeValue
+      if (sizeValue) {
+        result[`mc-button--${value}-${size}-${sizeValue}`] = !!sizeValue
+        result[`mc-button--${value}-${size}-${sizeValue}--rounded`] = props.rounded && !!String(sizeValue).match('-compact')
+      }
     })
   })
 
@@ -269,7 +272,6 @@ const classes = computed((): { [key: string]: boolean } => {
     'mc-button--icon-loading': props.iconLoading,
     'mc-button--is-active': props.isActive,
     'mc-button--disabled': props.disabled,
-    'mc-button--rounded': props.rounded,
     'mc-button--semi-rounded': props.semiRounded,
     'mc-button--full-width': props.fullWidth,
     'mc-button--uppercase': props.uppercase,
