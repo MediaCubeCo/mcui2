@@ -36,7 +36,7 @@ const drawersList = computed((): IDrawerState[] => {
 
 const computedDrawers = computed((): IEnrichedDrawerState[] => {
   return drawersList.value.map((cDrawer, i) => {
-    const indent_coefficient = drawersList.value.length - 1 - i
+    const indent_coefficient = drawersList.value.filter((d) => d.modelValue).length - 1 - i
     const real_coefficient = Math.min(indent_coefficient, props.drawersMaxInCascade - 1)
 
     const last_drawer_has_overlay = drawersList.value.findLastIndex(
