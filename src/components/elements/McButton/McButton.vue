@@ -266,6 +266,7 @@ const responsivePropsClasses = computed((): { [key: string]: boolean } => {
 const classes = computed((): { [key: string]: boolean } => {
   return {
     [`mc-button--size-${props.size}`]: !!props.size,
+    [`mc-button--size-${props.size}--rounded`]: props.rounded && !!String(props.size).match('-compact'),
     [`mc-button--variation-${props.variation}`]: !!props.variation,
     [`mc-button--text-align-${props.textAlign}`]: !!props.textAlign,
     'mc-button--loading': props.loading,
