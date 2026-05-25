@@ -67,11 +67,19 @@
   }
 
   &__text {
-    @include ellipsis($display: inline-block);
+    $icon-only: ':has(> .mc-svg-icon:only-child)';
     @include layout-flex-fix();
     z-index: 1;
     &:empty {
       display: none;
+    }
+    &#{$icon-only} {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    &:not(#{$icon-only}) {
+      @include ellipsis($display: inline-block);
     }
   }
   @mixin hoverMixin {
