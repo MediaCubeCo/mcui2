@@ -55,7 +55,7 @@ const classes = computed(() => {
   return {
     'mc-slide-up-down': true,
     'mc-slide-up-down--server-open': !is_hydrated.value && open.value,
-    'mc-slide-up-down--server-close': !is_hydrated.value && !open.value,
+    'mc-slide-up-down--server-close': !is_hydrated.value && !open.value
   }
 })
 
@@ -104,13 +104,14 @@ const runAnimationTo = (targetOpen: boolean): void => {
     emit('slide-close-start', open.value)
   }
 
-  animation.value = el.animate(
-    [{ height: `${currentHeight}px` }, { height: `${targetHeight}px` }],
-    { duration: props.duration, easing: props.type, fill: 'forwards' }
-  )
+  animation.value = el.animate([{ height: `${currentHeight}px` }, { height: `${targetHeight}px` }], {
+    duration: props.duration,
+    easing: props.type,
+    fill: 'none'
+  })
 
   animation.value.onfinish = () => {
-    open.value = props.active
+    open.value = targetOpen
     animation_in_progress.value = false
     if (container.value) {
       const containerEl = container.value as HTMLElement
