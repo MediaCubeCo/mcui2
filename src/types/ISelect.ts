@@ -14,6 +14,11 @@ export interface ISelectGroupOption {
   [SelectGroupKeys.Values]: ISelectOption[]
 }
 
+export interface ISelectDefaultTranslate {
+  noResultsText?: string
+  emptyList?: string
+}
+
 export type ISelectOptions = ISelectOption[]
 export type ISelectGroupOptions = ISelectGroupOption[]
 export type SelectListDirectionsUnion =

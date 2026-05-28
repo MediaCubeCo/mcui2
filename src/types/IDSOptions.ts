@@ -2,6 +2,7 @@ import { VueElement } from 'vue'
 import { IToast } from '@/types/IToast'
 import { Themes } from '@/enums/Themes'
 import { ColorThemes } from '@/types/styles/ColorTheme'
+import { ITranslations } from '@/types/ITranslations'
 
 export interface IDSOptions {
   drawerComponents?: Partial<VueElement>
@@ -14,4 +15,5 @@ export interface IDSOptions {
   meta?: {
     router_push?: null | Function,
   }
+  componentTranslations?: ITranslations,
 }

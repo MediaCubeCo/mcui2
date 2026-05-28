@@ -1,4 +1,6 @@
 import type { Preview } from '@storybook/vue3'
+import { setup } from '@storybook/vue3'
+import McUI from '../src/index'
 
 import iconsSprite from '../src/assets/iconsSprite.svg?raw'
 import iconsSpriteFlags from '../src/assets/iconsSpriteFlags.svg?raw'
@@ -9,6 +11,10 @@ const sprites = {
   [SPRITE_IDS.FLAGS]: iconsSpriteFlags,
   [SPRITE_IDS.GRADS]: iconsSpriteGrads,
 }
+
+setup((app) => {
+  app.use(McUI)
+})
 
 function injectSprites() {
   if (typeof document === 'undefined') return

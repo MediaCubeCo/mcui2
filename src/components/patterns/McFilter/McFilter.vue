@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { defaultPlaceholders } from '@/mocks/filterMocks'
-
 import {
   computed,
+  inject,
   onBeforeUnmount,
   onMounted,
   type PropType,
@@ -47,6 +46,8 @@ import { TooltipPositions, TooltipSizes } from '@/enums/Tooltip'
 import { useLocalStorage } from '@vueuse/core'
 import { useTheme } from '@/composables/useTheme'
 import { normalizeMcFilterModel } from '@/utils/normalizeMcFilterModel'
+import { IDSOptions } from '@/types/IDSOptions'
+import { UiComponentTranslations } from '@/types/ITranslations'
 import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import McButton from '@/components/elements/McButton/McButton.vue'
 import McTitle from '@/components/elements/McTitle/McTitle.vue'
@@ -152,6 +153,7 @@ const props = defineProps({
 })
 
 const theme = useTheme('filter')
+const dsOptions = inject<IDSOptions>('dsOptions', {})
 
 const isOpen = ref<boolean>(false)
 
@@ -172,7 +174,9 @@ const selectedOptionFilter = ref<string | null>(null)
 
 const activeTag = ref<IFilterRelationTag | null>(null)
 
-const placeholders = reactive<IFilterPlaceholders>(helper.deepMerge(defaultPlaceholders, props.placeholders))
+const placeholders = reactive<IFilterPlaceholders>(
+  helper.deepMerge(dsOptions.componentTranslations?.filter, props.placeholders)
+)
 
 const isDisableConfirmButton = computed(() => {
   return helper.isEqual(computedModelValue.value.filter, currentValues.value)

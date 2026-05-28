@@ -33,6 +33,7 @@ const meta = {
       avatar: { control: 'text' },
       locale: { control: 'text' },
       noResultsText: { control: 'text' },
+      emptyList: { control: 'text' },
       maxHeight: { control: 'text' },
       tabindex: { control: 'number' },
       backgroundColor: { control: 'select', options: Object.keys(Colors) },
@@ -58,6 +59,7 @@ const meta = {
       locale: 'en',
       tabindex: 0,
       noResultsText: 'No results for now',
+      emptyList: 'List is empty',
       maxHeight: '',
     },
     parameters: {
