@@ -451,7 +451,7 @@ const computedModelValue = computed({
         [props.valueField]: item?.[props.valueField] || pv,
         text: item?.text,
         icon: item?.icon,
-        is_closable: (item && (!Object.prototype.hasOwnProperty.call(item, 'is_closable') || item.is_closable)) || !item
+        is_closable: item && (!Object.prototype.hasOwnProperty.call(item, 'is_closable') || item.is_closable) || !item
       }
     })
 
