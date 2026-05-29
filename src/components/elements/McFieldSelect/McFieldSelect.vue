@@ -1,5 +1,15 @@
 <script setup lang="ts">
-import { computed, type PropType, ref, useSlots, watch, nextTick, onBeforeUnmount, defineAsyncComponent } from 'vue'
+import {
+  computed,
+  type PropType,
+  ref,
+  useSlots,
+  watch,
+  nextTick,
+  onBeforeUnmount,
+  defineAsyncComponent,
+  inject
+} from 'vue'
 import { default as MultiSelect } from 'vue-multiselect'
 import type { ISelectGroupOptions, ISelectOption, ISelectOptions } from '@/types/ISelect'
 import { type DirectionsUnion } from '@/types/IDirections'
@@ -19,6 +29,7 @@ import { useThrottleFn } from '@vueuse/core'
 import McTitle from '@/components/elements/McTitle/McTitle.vue'
 import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import { ChipVariationUnion } from '@/types/IChip'
+import { IDSOptions } from '@/types/IDSOptions'
 const McAvatar = defineAsyncComponent(() => import('@/components/elements/McAvatar/McAvatar.vue'))
 const McTooltip = defineAsyncComponent(() => import('@/components/elements/McTooltip/McTooltip.vue'))
 const McPreview = defineAsyncComponent(() => import('@/components/patterns/McPreview/McPreview.vue'))
@@ -33,6 +44,7 @@ const emit = defineEmits<{
   (e: 'handle-close'): void
 }>()
 const slots = useSlots()
+const dsOptions = inject<IDSOptions>('dsOptions', {})
 const props = defineProps({
   /**
    *  Значение
@@ -241,7 +253,14 @@ const props = defineProps({
    */
   noResultsText: {
     type: String as PropType<string>,
-    default: 'No results'
+    default: null
+  },
+  /**
+   * Текст для пустого списка опций
+   */
+  emptyList: {
+    type: String as PropType<string>,
+    default: null
   },
   /**
    * Показывать ли состояние лоадинга
@@ -303,6 +322,12 @@ const isValueMustBeArray = computed(() => {
 const hasValue = computed((): boolean => {
   // @ts-ignore
   return isValueMustBeArray.value ? !!(props.modelValue || [])?.length : !!props.modelValue
+})
+const computedNoResultsText = computed((): string => {
+  return props.noResultsText ?? dsOptions.componentTranslations?.select?.noResultsText
+})
+const computedEmptyListText = computed((): string => {
+  return props.emptyList ?? dsOptions.componentTranslations?.select?.emptyList
 })
 
 const tagBind = computed(() => {
@@ -788,7 +813,13 @@ watch(
         <template #noResult>
           <!-- @slot Слот для текста, если ничего не найдено -->
           <slot name="noResult">
-            <span>{{ props.noResultsText }}</span>
+            <span>{{ computedNoResultsText }}</span>
+          </slot>
+        </template>
+        <template #noOptions>
+          <!-- @slot Слот для текста, если список опций пуст -->
+          <slot name="noOptions">
+            <span>{{ computedEmptyListText }}</span>
           </slot>
         </template>
 
