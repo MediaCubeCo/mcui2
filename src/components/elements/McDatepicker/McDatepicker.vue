@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, type PropType, ref, useAttrs, watch } from 'vue'
+import { computed, inject, onMounted, type PropType, ref, useAttrs, watch } from 'vue'
 import { DatepickerFormat, DatepickerTypes, DatepickerOutputFormat } from '@/enums/Datepicker'
 import type { IDatepickerPlaceholders, IDatepickerPreset } from '@/types/IDatepicker'
 import { type DatePickerValue, type DatepickerTypesUnion } from '@/types/IDatepicker'
@@ -11,6 +11,7 @@ import { TitleVariations } from '@/enums/Title'
 import { Weights } from '@/enums/ui/Weights'
 import { useTheme } from '@/composables/useTheme'
 import { ColorTypes } from '@/types/styles/Colors'
+import { IDSOptions } from '@/types/IDSOptions'
 import McSvgIcon from '@/components/elements/McSvgIcon/McSvgIcon.vue'
 import McTitle from '@/components/elements/McTitle/McTitle.vue'
 import McButton from '@/components/elements/McButton/McButton.vue'
@@ -29,14 +30,6 @@ import {
   pickerToOutput,
   type McFormatPair
 } from './McDatepicker.calendar'
-
-const default_placeholders: IDatepickerPlaceholders = {
-  week: 'Week',
-  month: 'Month',
-  quarter: 'Quarter',
-  year: 'Year',
-  confirm: 'Confirm'
-}
 
 const attrs = useAttrs()
 const emit = defineEmits(['update:modelValue'])
@@ -118,14 +111,8 @@ const props = defineProps({
    *  Формат отдаваемой даты
    */
   placeholders: {
-    type: Object as IDatepickerPlaceholders,
-    default: () => ({
-      week: 'Week',
-      month: 'Month',
-      quarter: 'Quarter',
-      year: 'Year',
-      confirm: 'Confirm'
-    })
+    type: Object as PropType<Partial<IDatepickerPlaceholders>>,
+    default: () => ({})
   },
   /**
    * Пресеты для быстрых периодов
@@ -238,6 +225,7 @@ const props = defineProps({
   }
 })
 const theme = useTheme('datepicker')
+const dsOptions = inject<IDSOptions>('dsOptions', {})
 const fieldErrors = useFieldErrors(props.errors)
 const pickDate = ref<DatePickerValue | Date | null>(null)
 const input = ref<InstanceType<typeof DatePicker> | null | any>(null)
@@ -307,7 +295,15 @@ const calendarContext = computed(() => ({
   useTimezone: props.useTimezone
 }))
 const dateFnsFormatLocale = computed(() => langToDateFnsLocale(props.lang))
-
+const computedPlaceholders = computed((): IDatepickerPlaceholders => {
+  return {
+    week: props.placeholders?.week ?? dsOptions.componentTranslations?.datePicker?.week,
+    month: props.placeholders?.month ?? dsOptions.componentTranslations?.datePicker?.month,
+    quarter: props.placeholders?.quarter ?? dsOptions.componentTranslations?.datePicker?.quarter,
+    year: props.placeholders?.year ?? dsOptions.componentTranslations?.datePicker?.year,
+    confirm: props.placeholders?.confirm ?? dsOptions.componentTranslations?.datePicker?.confirm,
+  }
+})
 function formatSegmentForPicker(pv: unknown, direction: 'inbound' | 'outbound'): string | null {
   return formatSegmentMc(pv, computedType.value, direction, calendarContext.value)
 }
@@ -616,36 +612,36 @@ watch(
                 </template>
                 <template v-else-if="!hasDisableDatesProp">
                   <mc-button
-                    v-if="placeholders.week"
+                    v-if="computedPlaceholders.week"
                     variation="black-link"
                     secondary-color="purple"
                     @click="selectPeriod('week')"
                   >
-                    {{ placeholders.week }}
+                    {{ computedPlaceholders.week }}
                   </mc-button>
                   <mc-button
-                    v-if="placeholders.month"
+                    v-if="computedPlaceholders.month"
                     variation="black-link"
                     secondary-color="purple"
                     @click="selectPeriod('month')"
                   >
-                    {{ placeholders.month }}
+                    {{ computedPlaceholders.month }}
                   </mc-button>
                   <mc-button
-                    v-if="placeholders.quarter"
+                    v-if="computedPlaceholders.quarter"
                     variation="black-link"
                     secondary-color="purple"
                     @click="selectPeriod('quarter')"
                   >
-                    {{ placeholders.quarter }}
+                    {{ computedPlaceholders.quarter }}
                   </mc-button>
                   <mc-button
-                    v-if="placeholders.year"
+                    v-if="computedPlaceholders.year"
                     variation="black-link"
                     secondary-color="purple"
                     @click="selectPeriod('year')"
                   >
-                    {{ placeholders.year }}
+                    {{ computedPlaceholders.year }}
                   </mc-button>
                 </template>
               </div>
@@ -655,7 +651,7 @@ watch(
                 class="mc-date-picker__confirm-button"
                 @click="handleSubmit"
               >
-                {{ placeholders.confirm || default_placeholders.confirm }}
+                {{ computedPlaceholders.confirm }}
               </mc-button>
             </div>
             <mc-button
@@ -665,7 +661,7 @@ watch(
               class="mc-date-picker__confirm-button"
               @click="handleSubmit"
             >
-              {{ placeholders.confirm || default_placeholders.confirm }}
+              {{ computedPlaceholders.confirm }}
             </mc-button>
           </template>
           <template #input-icon>

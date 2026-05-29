@@ -3,6 +3,7 @@ import { setStoredAppContext } from './storedAppContext'
 import type { IDSOptions } from '@/types/IDSOptions'
 import { Themes } from '@/enums/Themes'
 import { ThemesColors, UiThemes } from '@/types/styles/ColorTheme'
+import { UiComponentTranslations } from '@/types/ITranslations'
 import defaultAvatar from './assets/img/no_user.png'
 import { createProxy } from '@/utils/proxy'
 
@@ -18,7 +19,8 @@ export default {
       theme: Themes.Light,
       meta: {
         router_push: null
-      }
+      },
+      componentTranslations: UiComponentTranslations
     }
 
     const dsOptions = {
@@ -26,7 +28,10 @@ export default {
       ...options,
       colors: options.colors ? createProxy(defaultOptions.colors!, options.colors) : defaultOptions.colors,
       themes: options.themes ? createProxy(defaultOptions.themes!, options.themes) : defaultOptions.themes,
-      meta: options.meta ? createProxy(defaultOptions.meta!, options.meta) : defaultOptions.meta
+      meta: options.meta ? createProxy(defaultOptions.meta!, options.meta) : defaultOptions.meta,
+      componentTranslations: options.componentTranslations
+        ? createProxy(defaultOptions.componentTranslations!, options.componentTranslations)
+        : defaultOptions.componentTranslations
     }
 
     app.config.globalProperties.$dsOptions = dsOptions
