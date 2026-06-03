@@ -451,7 +451,8 @@ const computedModelValue = computed({
         [props.valueField]: item?.[props.valueField] || pv,
         text: item?.text,
         icon: item?.icon,
-        is_closable: item && (!Object.prototype.hasOwnProperty.call(item, 'is_closable') || item.is_closable) || !item
+        avatar: item?.avatar,
+        is_closable: (item && (!Object.prototype.hasOwnProperty.call(item, 'is_closable') || item.is_closable)) || !item
       }
     })
 
@@ -758,8 +759,9 @@ watch(
       >
         <template #singleLabel="{ option }">
           <mc-preview v-if="props.optionWithPreview" class="option__desc" :size="PreviewSizes.L">
-            <template v-if="!!option.icon" #left>
-              <mc-svg-icon :name="option.icon" :color="option.iconColor || 'main'" size="400" />
+            <template v-if="!!option.icon || !!option.avatar" #left>
+              <mc-svg-icon v-if="option.icon" :name="option.icon" :color="option.iconColor || 'main'" size="400" />
+              <mc-avatar v-else :src="option.avatar" size="400" rounded />
             </template>
             <template #top>
               <mc-title :weight="Weights.SemiBold" :html-data="option[props.titleField]" />
@@ -789,8 +791,9 @@ watch(
         <template v-if="optionsTooltip || props.optionWithPreview" #option="{ option }">
           <mc-title v-if="option.$isLabel" color="gray">{{ option.$groupLabel }}</mc-title>
           <mc-preview v-if="props.optionWithPreview" class="option__desc" :size="PreviewSizes.L">
-            <template v-if="!!option.icon" #left>
-              <mc-svg-icon :name="option.icon" :color="option.iconColor || 'main'" size="400" />
+            <template v-if="!!option.icon || !!option.avatar" #left>
+              <mc-svg-icon v-if="option.icon" :name="option.icon" :color="option.iconColor || 'main'" size="400" />
+              <mc-avatar v-else :src="option.avatar" size="400" rounded />
             </template>
             <template #top>
               <mc-title :weight="Weights.SemiBold" :html-data="option[props.titleField]" />
