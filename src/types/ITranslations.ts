@@ -30,7 +30,7 @@ export const UiFilterTranslations: IFilterPlaceholders = {
   fast_filters: 'Fast filters',
   added_filters: 'Added filters',
   enter_preset_name: 'Enter preset name',
-  enter_preset_tooltip: 'Сохранение выбранных параметров фильтра в пользовательский пресет',
+  enter_preset_tooltip: 'Save selected filter parameters to a custom preset',
   from: 'From',
   to: 'To',
   enter: 'Enter',
@@ -54,11 +54,11 @@ export const UiFilterTranslations: IFilterPlaceholders = {
     confirm: 'Confirm'
   },
   messages: {
-    same_filter: 'Уже есть фильтр с таким параметром',
-    same_preset_name: 'Уже есть фильтр с таким именем',
-    accidentally_cleared: 'Случайно очистили?',
-    accidentally_deleted: 'Случайно удалили?',
-    more_than: 'Значение "от" не может быть больше значения "до"'
+    same_filter: 'A filter with this parameter already exists',
+    same_preset_name: 'A preset with this name already exists',
+    accidentally_cleared: 'Accidentally cleared?',
+    accidentally_deleted: 'Accidentally deleted?',
+    more_than: 'The "From" value cannot be greater than the "To" value'
   }
 }
 
