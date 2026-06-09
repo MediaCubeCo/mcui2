@@ -140,7 +140,6 @@ onMounted((): void => {
           {{ action.title }}
         </mc-button>
         <mc-button v-if="props.closable" @click.stop="handleClose" variation="gray-link">
-          a
           <template #icon-append>
             <mc-svg-icon name="close" />
           </template>
