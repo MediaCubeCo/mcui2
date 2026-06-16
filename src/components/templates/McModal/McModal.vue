@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, nextTick, type PropType, reactive, ref, useSlots, watch } from 'vue'
+import { computed, defineAsyncComponent, type PropType, reactive, ref, useSlots, watch } from 'vue'
 import { LineHeights, type LineHeightTypes } from '@/types/styles/LineHeights'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Spaces, type SpaceTypes } from '@/types/styles/Spaces'
 import { HorizontalAlignment } from '@/enums/ui/Alignment'
-import { TransitionPresets, useTransition } from '@vueuse/core'
+import { TransitionPresets, useEventListener, useTransition } from '@vueuse/core'
 import { ModalVariation } from '@/enums/Modal'
 const McSvgIcon = defineAsyncComponent(() => import('@/components/elements/McSvgIcon/McSvgIcon.vue'))
 
@@ -190,64 +190,109 @@ const styles = computed((): { [key: string]: string | number } => {
   }
 })
 
+const resetScrollState = (): void => {
+  data.scrolled_top = false
+  data.scrolled_bottom = false
+  data.small_indents = false
+  data.can_shorten_modal = false
+}
+
+const getModalElement = (): HTMLElement | null => modalInner.value?.parentElement ?? null
+
+const readCssLengthPx = (element: HTMLElement, varName: string): number => {
+  const raw = getComputedStyle(element).getPropertyValue(varName).trim()
+  if (!raw) return 0
+  const value = parseFloat(raw)
+  if (raw.endsWith('rem')) {
+    return value * parseFloat(getComputedStyle(document.documentElement).fontSize)
+  }
+  return value
+}
+
+const getSizeDifferences = (): number => {
+  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
+  const remToPx = (rem: string): number => parseFloat(rem) * rootFontSize
+
+  const padding =
+    +data.modal_params['--mc-modal-padding'] || remToPx(Spaces[data.indent.regular])
+  const paddingSmall =
+    +data.modal_params['--mc-modal-padding-small'] || remToPx(Spaces[data.indent.small])
+  const headerLineHeight =
+    +data.modal_params['--mc-modal-header-line-height'] ||
+    remToPx(LineHeights[data.header.title.line_height.regular])
+  const headerLineHeightSmall =
+    +data.modal_params['--mc-modal-header-line-height-small'] ||
+    remToPx(LineHeights[data.header.title.line_height.small])
+  const buttonHeight =
+    +data.modal_params['--mc-modal-button-height'] || remToPx(Sizes[data.footer.button.regular])
+  const buttonHeightSmall =
+    +data.modal_params['--mc-modal-button-height-small'] || remToPx(Sizes[data.footer.button.small])
+
+  const indentDifferences = (padding - paddingSmall) * 3 + paddingSmall
+  const lineHeightDifferences = headerLineHeight - headerLineHeightSmall
+  const buttonDifferences = buttonHeight - buttonHeightSmall
+
+  return indentDifferences + lineHeightDifferences + buttonDifferences
+}
+
 /**
  * Устанавливаем сепараторы, если есть скролл
- * @param {Boolean} scrolled - если метод вызван скроллом
  */
-const calculateSeparators = (scrolled: boolean = true): void => {
-  if (!scrolled) {
-    data.scrolled_top = false
-    data.scrolled_bottom = false
-    data.small_indents = false
+const calculateSeparators = (): void => {
+  if (!mcModalBody.value) return
+
+  const { scrollTop, scrollHeight, clientHeight } = mcModalBody.value
+  // Сепаратор появится если высота скролла будет > 2px
+  const offset = 2
+  data.scrolled_top = scrollTop > offset
+
+  if (!data.small_indents) {
+    data.small_indents = scrollTop > offset && data.can_shorten_modal
+  } else {
+    data.small_indents = scrollTop > 0
   }
 
-  setTimeout(
-    () => {
-      if (mcModalBody.value) {
-        const { scrollTop, scrollHeight, clientHeight } = mcModalBody.value
-        // Сепаратор появится если высота скролла будет > 2px
-        const offset = 2
-        data.scrolled_top = scrollTop > offset
-        data.small_indents = data.scrolled_top && data.can_shorten_modal
-        data.scrolled_bottom = scrollTop + clientHeight < scrollHeight - offset
-      }
-    },
-    scrolled ? 0 : 300
-  )
+  data.scrolled_bottom = scrollTop + clientHeight < scrollHeight - offset
 }
 
-const scrollHandler = () => calculateSeparators()
-
-const handleBeforeClose = (): void => {
-  /**
-   * Событие перед закрытием
-   * @property {Object}
-   */
-  emit('before-close')
-  if (mcModalBody.value) {
-    resize_observer.value && resize_observer.value.disconnect()
-    mcModalBody.value.removeEventListener('scroll', scrollHandler)
-  }
+const scrollHandler = (): void => {
+  calculateIndents()
+  calculateSeparators()
 }
 
-const handleOpened = (): void => {
-  if (props.separators) {
-    getParams()
-    if (mcModalBody.value) {
-      mcModalBody.value.addEventListener('scroll', scrollHandler, {
-        passive: true
-      })
-      resize_observer.value = new ResizeObserver(resizeHandler)
-      resize_observer.value.observe(mcModalBody.value)
-    }
-    calculateSeparators()
-  }
+const onBodyScroll = (): void => {
+  if (props.separators) scrollHandler()
+}
 
-  /**
-   * Событие после открытия
-   * @property {Object}
-   */
-  emit('opened')
+useEventListener(mcModalBody, 'scroll', onBodyScroll, { passive: true })
+
+const detachResizeObserver = (): void => {
+  resize_observer.value?.disconnect()
+  resize_observer.value = null
+}
+
+const attachResizeObserver = (): void => {
+  if (!mcModalBody.value || !props.separators) return
+  detachResizeObserver()
+  resize_observer.value = new ResizeObserver(resizeHandler)
+  resize_observer.value.observe(mcModalBody.value)
+}
+
+const scheduleInitScrollState = (): void => {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      initScrollState()
+    })
+  })
+}
+
+const initScrollState = (): void => {
+  if (!mcModalBody.value) return
+
+  getParams()
+  mcModalBody.value.scrollTop = 0
+  calculateIndents()
+  calculateSeparators()
 }
 
 const handleBack = (event: Event): void => {
@@ -256,32 +301,36 @@ const handleBack = (event: Event): void => {
 
 const getParams = (): void => {
   try {
-    if (modalInner.value) {
-      Object.keys(styles.value).forEach((attr) => {
-        //@ts-ignore
-        const param = parseFloat(getComputedStyle(modalInner.value)?.getPropertyValue(attr)) * parseFloat(getComputedStyle(document.documentElement).fontSize)
-        param && (data.modal_params[attr] = param)
-      })
-    }
+    const modalEl = getModalElement()
+    if (!modalEl) return
+
+    const vars = [
+      '--mc-modal-padding',
+      '--mc-modal-padding-small',
+      '--mc-modal-header-line-height',
+      '--mc-modal-header-line-height-small',
+      '--mc-modal-button-height',
+      '--mc-modal-button-height-small'
+    ]
+
+    vars.forEach((attr) => {
+      const param = readCssLengthPx(modalEl, attr)
+      param && (data.modal_params[attr] = param)
+    })
   } catch (e) {
     console.error(e)
   }
 }
 
 const calculateIndents = (): void => {
-  /* Если шапка уже маленькая, то отключаем при отключении сепаратора
-   * Иначе смотрим, чтобы отступ был > чем убираемые отступы, т.к. нет смысла сжимать шапку, если <
-   */
-  const indentDifferences =
-    (+data.modal_params?.['--mc-modal-padding'] - +data.modal_params?.['--mc-modal-padding-small']) * 3 +
-    +data.modal_params?.['--mc-modal-padding-small']
-  const lineHeightDifferences =
-    +data.modal_params?.['--mc-modal-header-line-height'] - +data.modal_params?.['--mc-modal-header-line-height-small']
-  const buttonDifferences =
-    +data.modal_params?.['--mc-modal-button-height'] - +data.modal_params?.['--mc-modal-button-height-small']
-  const sizeDifferences = indentDifferences + lineHeightDifferences + buttonDifferences
-  if (!data.small_indents && mcModalBody.value) {
-    data.can_shorten_modal = mcModalBody.value?.scrollHeight - mcModalBody.value?.clientHeight > sizeDifferences
+  /* Сжимаем шапку/футер только если overflow больше, чем экономия от сжатия */
+  if (!mcModalBody.value) return
+
+  const { scrollTop, scrollHeight, clientHeight } = mcModalBody.value
+  const sizeDifferences = getSizeDifferences()
+
+  if (!data.small_indents || scrollTop === 0) {
+    data.can_shorten_modal = scrollHeight - clientHeight > sizeDifferences
   }
 }
 
@@ -290,15 +339,12 @@ const resizeHandler = (): void => {
   calculateSeparators()
 }
 
-const openModal = (): void => {
-  modalTransitionState.value = 1
-  emit('before-open')
-  emit('update:modelValue', true)
-  nextTick(handleOpened)
-}
 const closeModal = (): void => {
-  modalTransitionState.value = 0
-  handleBeforeClose()
+  /**
+   * Событие перед закрытием
+   * @property {Object}
+   */
+  emit('before-close')
   emit('closed')
   emit('update:modelValue', false)
 }
@@ -310,11 +356,35 @@ const handleOverlayClick = (): void => {
 
 watch(
   () => props.modelValue,
-  (value, oldValue): void => {
-    if (value === oldValue) return
-    value ? openModal() : closeModal()
+  (open, wasOpen) => {
+    if (open === wasOpen) return
+
+    if (open) {
+      modalTransitionState.value = 1
+      emit('before-open')
+      return
+    }
+
+    detachResizeObserver()
+    resetScrollState()
+    modalTransitionState.value = 0
   },
   { immediate: true }
+)
+
+watch(
+  mcModalBody,
+  (body, prevBody) => {
+    if (!props.modelValue || !body || !props.separators) return
+
+    attachResizeObserver()
+
+    if (!prevBody) {
+      scheduleInitScrollState()
+      emit('opened')
+    }
+  },
+  { flush: 'post' }
 )
 </script>
 
