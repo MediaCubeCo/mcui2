@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, type PropType, ref, inject, onMounted, useAttrs } from 'vue'
+import { computed, type PropType, ref, inject, onMounted, useAttrs, onBeforeUnmount } from 'vue'
 import { type ColorTypes } from '@/types/styles/Colors'
 import type { ITab } from '@/types/ITabs'
 import { type IconsListUnion } from '@/types/styles/Icons'
 import { useTheme } from '@/composables/useTheme'
 
 const selfRegisterTabToMcTabs: Function = inject('selfRegisterTabMethod', () => {})
+const selfUnregisterTabFromMcTabs: Function = inject('selfUnregisterTabMethod', () => {})
 const attrs = useAttrs()
 const props = defineProps({
   /**
@@ -170,6 +171,10 @@ onMounted(() => {
     }
     selfRegisterTabToMcTabs(payload)
   }
+})
+
+onBeforeUnmount(() => {
+  selfUnregisterTabFromMcTabs(computedId.value)
 })
 
 const showTab = () => {

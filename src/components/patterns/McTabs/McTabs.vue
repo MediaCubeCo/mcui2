@@ -135,7 +135,12 @@ const updateTabsState = (payload: string): void => {
 }
 
 const selfRegisterTabMethod = (payload: ITab): void => {
+  if (tabs.value.some((t) => t.computedId === payload.computedId)) return
   tabs.value.push(payload)
+}
+
+const selfUnregisterTabMethod = (id: string): void => {
+  tabs.value = tabs.value.filter((tab: ITab) => tab.computedId !== id)
 }
 
 const handleCheckInitTab = (): void => {
@@ -195,6 +200,7 @@ watch(
   }
 )
 provide('selfRegisterTabMethod', selfRegisterTabMethod)
+provide('selfUnregisterTabMethod', selfUnregisterTabMethod)
 </script>
 
 <template>
@@ -202,9 +208,9 @@ provide('selfRegisterTabMethod', selfRegisterTabMethod)
     <div class="tabs-component">
       <mc-wrap-scroll tag-name="ul" role="tablist" scrollable class="tabs-component-tabs">
         <li
-          v-for="(tab, i) in tabs"
+          v-for="tab in tabs"
           v-show="tab.isVisible"
-          :key="i"
+          :key="tab.computedId"
           :class="{ 'is-active': tab.isActive, 'is-disabled': tab.isDisabled, 'is-hidden': !tab.visible }"
           class="tabs-component-tab"
           role="presentation"
