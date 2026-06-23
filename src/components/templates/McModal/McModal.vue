@@ -368,6 +368,7 @@ watch(
     detachResizeObserver()
     resetScrollState()
     modalTransitionState.value = 0
+    closeModal()
   },
   { immediate: true }
 )
