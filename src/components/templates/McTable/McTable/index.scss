@@ -196,6 +196,7 @@
     &_body {
       @include grow;
       $body: &;
+      position: relative;
       &-row {
         display: flex;
         flex-wrap: nowrap;
