@@ -146,7 +146,7 @@ const selfUnregisterTabMethod = (id: string): void => {
 const handleCheckInitTab = (): void => {
   let [tab]: ITab[] = activeVisibleTabs.value
   const preselectedTab: ITab | undefined = tabs.value.find((tab: ITab) => tab.computedId === props.modelValue)
-  if (preselectedTab && !preselectedTab.isDisabled) {
+  if (preselectedTab?.visible && !preselectedTab.isDisabled) {
     tab = preselectedTab
   }
   if (!tab) return
@@ -158,11 +158,12 @@ const handleEmitChange = (tab: ITab, event?: Event): void => {
   emit('tab-changed', { tab, event } as { tab: ITab; event?: Event })
 }
 
-const watchDisableTab = useDebounceFn((): void => {
+const watchInvalidActiveTab = useDebounceFn((): void => {
   if (props.loading) return
   const activeTab: ITab | undefined = tabs.value?.find((tab) => tab.isActive)
-  if (!activeTab?.isDisabled) return
+  if (!activeTab || (activeTab.visible && !activeTab.isDisabled)) return
   const [tab]: ITab[] = activeVisibleTabs.value
+  if (!tab) return
   handleSelectTab(tab)
 }, 100)
 
@@ -188,7 +189,7 @@ const handleSelectTab = (tab: ITab, event?: Event): void | undefined => {
 }
 
 onMounted(handleCheckInitTab)
-onUpdated(watchDisableTab)
+onUpdated(watchInvalidActiveTab)
 
 watch(
   () => props.loading,

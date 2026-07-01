@@ -224,7 +224,6 @@
       &__body {
         overflow-y: auto;
         overflow-x: hidden;
-        @include hide-scrollbar();
       }
       &__inner {
         overflow-x: hidden;
