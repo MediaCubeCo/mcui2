@@ -118,6 +118,9 @@
       & > .mc-table__table-bottom-loader {
         width: var(--mc-table-first-col-width);
       }
+      .mc-table-skeleton-loading {
+        width: var(--mc-table-first-col-width);
+      }
     }
   }
   &__table {
@@ -196,7 +199,6 @@
     &_body {
       @include grow;
       $body: &;
-      position: relative;
       &-row {
         display: flex;
         flex-wrap: nowrap;
