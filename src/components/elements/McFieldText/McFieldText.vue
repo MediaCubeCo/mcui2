@@ -483,6 +483,29 @@ const handleRemoveLeadingZero = (val: string): string => {
   if (val.length > 1 && +first_char === 0 && val.indexOf('.') === -1) result = val.slice(1)
   return result
 }
+
+/**
+ * Remove all leading zero from input if length > 1 && number isn't decimal (event blur)
+ */
+const stripAllLeadingZeros = (val: string): string => {
+  if (!val || val.length <= 1) return val
+  const negative = val.startsWith('-')
+  const body = negative ? val.slice(1) : val
+
+  if (body.indexOf('.') !== -1) {
+    const [intPart, decPart] = body.split('.')
+    const strippedInt = intPart.replace(/^0+/, '') || '0'
+    return `${negative ? '-' : ''}${strippedInt}.${decPart}`
+  }
+
+  const stripped = body.replace(/^0+/, '') || '0'
+  return negative ? `-${stripped}` : stripped
+}
+
+const isDeletionEvent = (e: Event): boolean => {
+  const inputType = (e as InputEvent).inputType
+  return typeof inputType === 'string' && inputType.startsWith('delete')
+}
 const getPreparedInputValue = (e: Event): InputValue => {
   if(!e) return props.modelValue
 
@@ -497,22 +520,38 @@ const getPreparedInputValue = (e: Event): InputValue => {
       const prep_val = value?.replace(/,/g, '.')?.replace(/ /g, '')
       let [num] = /-?\d*[\.]?\d*/.exec(String(prep_val)) || []
       num = setDecimalsLimit(num as string)
-      num = handleRemoveLeadingZero(num)
+      const raw = String(num ?? '')
+      num = isDeletionEvent(e) ? raw : handleRemoveLeadingZero(raw)
       value = String(num)
-      target.value = String(num)
+      if (target.value !== value) {
+        target.value = value
+        if (Number.isFinite(cursor_position)) {
+          const diff = raw.length - value.length
+          const new_pos = Math.max(0, cursor_position - Math.max(0, diff))
+          scheduleCaretPos(target, new_pos, new_pos)
+        }
+      }
       break
     }
     case InputTypes.Int: {
       let [int] = /-?\d*/.exec(String(target.value)) || []
-      int = handleRemoveLeadingZero(int as string)
+      const raw = String(int ?? '')
+      int = isDeletionEvent(e) ? raw : handleRemoveLeadingZero(raw)
       value = String(int)
-      target.value = String(int)
+      if (target.value !== value) {
+        target.value = value
+        if (Number.isFinite(cursor_position)) {
+          const diff = raw.length - value.length
+          const new_pos = Math.max(0, cursor_position - Math.max(0, diff))
+          scheduleCaretPos(target, new_pos, new_pos)
+        }
+      }
       break
     }
     case InputTypes.AmountFormat: {
       value = value?.replace(/,/g, '.')?.replace(/ /g, '')
       value = setDecimalsLimit(value)
-      value = handleRemoveLeadingZero(value)
+      if (!isDeletionEvent(e)) value = handleRemoveLeadingZero(value)
       prepared_value = formattedToNumber(value)
 
       const float_value = parseFloat(prepared_value)
@@ -745,6 +784,21 @@ const handleFocus = (e: MouseEvent): void => {
   }
   return
 }
+
+const handleBlur = (e: FocusEvent): void => {
+  if (!e || !props.removeLeadingZero) return
+  const target = e.target as HTMLInputElement | null
+  if (!target) return
+
+  const isNumericType = [InputTypes.Int, InputTypes.Num, InputTypes.AmountFormat].includes(props.type)
+  if (!isNumericType) return
+
+  const current = String(props.modelValue ?? '')
+  if (!current) return
+
+  const stripped = stripAllLeadingZeros(current)
+  if (stripped !== current) computedValue.value = stripped
+}
 </script>
 
 <template>
@@ -801,6 +855,7 @@ const handleFocus = (e: MouseEvent): void => {
               @keyup="prepareHandleKeyUp"
               @input="handleInput"
               @paste="handleCheckPaste"
+              @blur="handleBlur"
             />
           </template>
         </div>
