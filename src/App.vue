@@ -7,7 +7,7 @@ const value = ref(0)
 
 <template>
   <div>
-    <mc-field-text v-model="value" name="test" type="amount_format" allow-negative />
+    <mc-field-text v-model="value" name="test" type="num" allow-negative />
   </div>
 </template>
 
