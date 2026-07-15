@@ -492,15 +492,15 @@ const handleRemoveLeadingZero = (val: string): string => {
 const stripAllLeadingZeros = (val: string): string => {
   if (!val || val.length <= 1) return val
   const negative = val.startsWith('-')
-  const body = negative ? val.slice(1) : val
+  const row = negative ? val.slice(1) : val
 
-  if (body.indexOf('.') !== -1) {
-    const [intPart, decPart] = body.split('.')
+  if (row.indexOf('.') !== -1) {
+    const [intPart, decPart] = row.split('.')
     const strippedInt = intPart.replace(/^0+/, '') || '0'
     return `${negative ? '-' : ''}${strippedInt}.${decPart}`
   }
 
-  const stripped = body.replace(/^0+/, '') || '0'
+  const stripped = row.replace(/^0+/, '') || '0'
   return negative ? `-${stripped}` : stripped
 }
 /**
