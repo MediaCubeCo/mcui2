@@ -477,12 +477,61 @@ const setDecimalsLimit = (val: string): string => {
  * */
 const handleRemoveLeadingZero = (val: string): string => {
   if (!props.removeLeadingZero) return val
+  const negative = val.startsWith('-')
+  const row = negative ? val.slice(1) : val
+  const [first_char] = row || []
+  if (row.length > 1 && +first_char === 0 && row.indexOf('.') === -1) {
+    return (negative ? '-' : '') + row.slice(1)
+  }
+  return val
+}
 
-  let result = val
-  const [first_char] = val || []
-  if (val.length > 1 && +first_char === 0 && val.indexOf('.') === -1) result = val.slice(1)
+/**
+ * Remove all leading zero from input if length > 1 && number isn't decimal (event blur)
+ */
+const stripAllLeadingZeros = (val: string): string => {
+  if (!val || val.length <= 1) return val
+  const negative = val.startsWith('-')
+  const row = negative ? val.slice(1) : val
+
+  if (row.indexOf('.') !== -1) {
+    const [intPart, decPart] = row.split('.')
+    const strippedInt = intPart.replace(/^0+/, '') || '0'
+    return `${negative ? '-' : ''}${strippedInt}.${decPart}`
+  }
+
+  const stripped = row.replace(/^0+/, '') || '0'
+  return negative ? `-${stripped}` : stripped
+}
+/**
+ * проверка на удаления символа с помощью delete/backspace
+ */
+const isDeletionEvent = (e: Event): boolean => {
+  const inputType = (e as InputEvent).inputType
+  return typeof inputType === 'string' && inputType.startsWith('delete')
+}
+/**
+ * метод синхонизирует положение курсора после удаления
+ * и не дропает лидирующий ноль, если пользователь сам удалил число перед ним
+ * пример (| - курсор) (1|020 удалить 1, лид ноль останется в строке |020, курсор на том же месте)
+ * @param raw строка после парса регуляркой
+ * @param e эвент
+ * @param target элемент
+ * @param cursor_position позиция курсора
+ */
+const syncLeadingZero = (raw: string, e: Event, target: HTMLInputElement, cursor_position: number): string => {
+  const result = isDeletionEvent(e) ? raw : handleRemoveLeadingZero(raw)
+  if (target.value !== result) {
+    target.value = result
+    if (Number.isFinite(cursor_position)) {
+      const diff = raw.length - result.length
+      const new_pos = Math.max(0, cursor_position - Math.max(0, diff))
+      scheduleCaretPos(target, new_pos, new_pos)
+    }
+  }
   return result
 }
+
 const getPreparedInputValue = (e: Event): InputValue => {
   if(!e) return props.modelValue
 
@@ -497,22 +546,18 @@ const getPreparedInputValue = (e: Event): InputValue => {
       const prep_val = value?.replace(/,/g, '.')?.replace(/ /g, '')
       let [num] = /-?\d*[\.]?\d*/.exec(String(prep_val)) || []
       num = setDecimalsLimit(num as string)
-      num = handleRemoveLeadingZero(num)
-      value = String(num)
-      target.value = String(num)
+      value = syncLeadingZero(String(setDecimalsLimit(num ?? '') ?? ''), e, target, cursor_position)
       break
     }
     case InputTypes.Int: {
       let [int] = /-?\d*/.exec(String(target.value)) || []
-      int = handleRemoveLeadingZero(int as string)
-      value = String(int)
-      target.value = String(int)
+      value = syncLeadingZero(String(int ?? ''), e, target, cursor_position)
       break
     }
     case InputTypes.AmountFormat: {
       value = value?.replace(/,/g, '.')?.replace(/ /g, '')
       value = setDecimalsLimit(value)
-      value = handleRemoveLeadingZero(value)
+      if (!isDeletionEvent(e)) value = handleRemoveLeadingZero(value)
       prepared_value = formattedToNumber(value)
 
       const float_value = parseFloat(prepared_value)
@@ -623,9 +668,8 @@ const prepareHandleKeyDown = (e: KeyboardEvent): void => {
       if ((isNaN(+e.key) && !is_allowed_symbol && !is_excluded_symbol && !is_ctrl_pressed) || is_space) {
         e.preventDefault()
       }
-      const already_has_symbol =
-        typeof props.modelValue === 'string' &&
-        excluded_symbols.some((symbol) => String(props.modelValue)?.includes(symbol))
+      const conflict_regex = e.key === '-' ? /-/ : /[.,]/
+      const already_has_symbol = typeof props.modelValue === 'string' && conflict_regex.test(props.modelValue)
 
       if (is_excluded_symbol && already_has_symbol) {
         e.preventDefault()
@@ -745,6 +789,18 @@ const handleFocus = (e: MouseEvent): void => {
   }
   return
 }
+
+const handleBlur = (): void => {
+  if (props.removeLeadingZero) {
+    const isNumericType = [InputTypes.Int, InputTypes.Num, InputTypes.AmountFormat].includes(props.type)
+    const current = String(props.modelValue ?? '')
+    if (isNumericType && current) {
+      const stripped = stripAllLeadingZeros(current)
+      if (stripped !== current) computedValue.value = stripped
+    }
+  }
+}
+
 </script>
 
 <template>
@@ -801,6 +857,7 @@ const handleFocus = (e: MouseEvent): void => {
               @keyup="prepareHandleKeyUp"
               @input="handleInput"
               @paste="handleCheckPaste"
+              @blur="handleBlur"
             />
           </template>
         </div>
