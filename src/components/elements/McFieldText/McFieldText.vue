@@ -790,20 +790,17 @@ const handleFocus = (e: MouseEvent): void => {
   return
 }
 
-const handleBlur = (e: FocusEvent): void => {
-  if (!e || !props.removeLeadingZero) return
-  const target = e.target as HTMLInputElement | null
-  if (!target) return
-
-  const isNumericType = [InputTypes.Int, InputTypes.Num, InputTypes.AmountFormat].includes(props.type)
-  if (!isNumericType) return
-
-  const current = String(props.modelValue ?? '')
-  if (!current) return
-
-  const stripped = stripAllLeadingZeros(current)
-  if (stripped !== current) computedValue.value = stripped
+const handleBlur = (): void => {
+  if (props.removeLeadingZero) {
+    const isNumericType = [InputTypes.Int, InputTypes.Num, InputTypes.AmountFormat].includes(props.type)
+    const current = String(props.modelValue ?? '')
+    if (isNumericType && current) {
+      const stripped = stripAllLeadingZeros(current)
+      if (stripped !== current) computedValue.value = stripped
+    }
+  }
 }
+
 </script>
 
 <template>
