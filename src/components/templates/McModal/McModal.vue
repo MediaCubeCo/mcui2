@@ -123,6 +123,9 @@ const props = defineProps({
   }
 })
 
+const SMALL_INDENTS_SAFETY_MARGIN_PX = 24
+const SCROLL_OFFSET_PX = 2
+
 const modalTransitionState = ref<number>(0)
 const modalTransition = useTransition(modalTransitionState, {
   duration: props.duration || 300,
@@ -130,6 +133,7 @@ const modalTransition = useTransition(modalTransitionState, {
 })
 
 const mcModalBody = ref<HTMLElement | null>(null)
+const mcModalTitle = ref<HTMLElement | null>(null)
 const modalInner = ref<HTMLElement | null>(null)
 const resize_observer = ref<ResizeObserver | null>(null)
 
@@ -172,7 +176,7 @@ const classes = computed((): { [key: string]: boolean } => {
     'mc-modal--top-padding': props.topPadding,
     'mc-modal--small-indents': data.small_indents,
     [`mc-modal--variation-${props.variation}`]: !!props.variation,
-    [`mc-modal--header-align-${props.headerAlign}`]: (props.closeVisible || props.arrowVisible) && !!props.headerAlign,
+    [`mc-modal--header-align-${props.headerAlign}`]: (props.closeVisible || props.arrowVisible) && !!props.headerAlign
   }
 })
 
@@ -186,7 +190,7 @@ const styles = computed((): { [key: string]: string | number } => {
     '--mc-modal-button-height-small': Sizes[data.footer.button.small],
     '--mc-modal-max-width': `${props.maxWidth + 24}px`,
     '--mc-modal-min-width': `${props.minWidth - 24}px`,
-    '--mc-modal-state-number': modalTransition.value,
+    '--mc-modal-state-number': modalTransition.value
   }
 })
 
@@ -213,23 +217,24 @@ const getSizeDifferences = (): number => {
   const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
   const remToPx = (rem: string): number => parseFloat(rem) * rootFontSize
 
-  const padding =
-    +data.modal_params['--mc-modal-padding'] || remToPx(Spaces[data.indent.regular])
-  const paddingSmall =
-    +data.modal_params['--mc-modal-padding-small'] || remToPx(Spaces[data.indent.small])
+  const padding = +data.modal_params['--mc-modal-padding'] || remToPx(Spaces[data.indent.regular])
+  const paddingSmall = +data.modal_params['--mc-modal-padding-small'] || remToPx(Spaces[data.indent.small])
   const headerLineHeight =
-    +data.modal_params['--mc-modal-header-line-height'] ||
-    remToPx(LineHeights[data.header.title.line_height.regular])
+    +data.modal_params['--mc-modal-header-line-height'] || remToPx(LineHeights[data.header.title.line_height.regular])
   const headerLineHeightSmall =
     +data.modal_params['--mc-modal-header-line-height-small'] ||
     remToPx(LineHeights[data.header.title.line_height.small])
-  const buttonHeight =
-    +data.modal_params['--mc-modal-button-height'] || remToPx(Sizes[data.footer.button.regular])
+  const buttonHeight = +data.modal_params['--mc-modal-button-height'] || remToPx(Sizes[data.footer.button.regular])
   const buttonHeightSmall =
     +data.modal_params['--mc-modal-button-height-small'] || remToPx(Sizes[data.footer.button.small])
 
   const indentDifferences = (padding - paddingSmall) * 3 + paddingSmall
-  const lineHeightDifferences = headerLineHeight - headerLineHeightSmall
+  const currentLineHeight = data.small_indents ? headerLineHeightSmall : headerLineHeight
+  const titleLines =
+    mcModalTitle.value && currentLineHeight
+      ? Math.max(1, Math.round(mcModalTitle.value.scrollHeight / currentLineHeight))
+      : 1
+  const lineHeightDifferences = (headerLineHeight - headerLineHeightSmall) * titleLines
   const buttonDifferences = buttonHeight - buttonHeightSmall
 
   return indentDifferences + lineHeightDifferences + buttonDifferences
@@ -242,22 +247,26 @@ const calculateSeparators = (): void => {
   if (!mcModalBody.value) return
 
   const { scrollTop, scrollHeight, clientHeight } = mcModalBody.value
-  // Сепаратор появится если высота скролла будет > 2px
-  const offset = 2
-  data.scrolled_top = scrollTop > offset
+  data.scrolled_top = scrollTop > SCROLL_OFFSET_PX
+  data.scrolled_bottom = scrollTop + clientHeight < scrollHeight - SCROLL_OFFSET_PX
+}
+
+const calculateSmallIndents = (): void => {
+  if (!mcModalBody.value) return
+
+  const { scrollTop } = mcModalBody.value
 
   if (!data.small_indents) {
-    data.small_indents = scrollTop > offset && data.can_shorten_modal
+    data.small_indents = scrollTop > SCROLL_OFFSET_PX && data.can_shorten_modal
   } else {
     data.small_indents = scrollTop > 0
   }
-
-  data.scrolled_bottom = scrollTop + clientHeight < scrollHeight - offset
 }
 
 const scrollHandler = (): void => {
   calculateIndents()
   calculateSeparators()
+  calculateSmallIndents()
 }
 
 const onBodyScroll = (): void => {
@@ -330,7 +339,7 @@ const calculateIndents = (): void => {
   const sizeDifferences = getSizeDifferences()
 
   if (!data.small_indents || scrollTop === 0) {
-    data.can_shorten_modal = scrollHeight - clientHeight > sizeDifferences
+    data.can_shorten_modal = scrollHeight - clientHeight - sizeDifferences > SMALL_INDENTS_SAFETY_MARGIN_PX
   }
 }
 
@@ -395,7 +404,7 @@ watch(
     <div class="mc-modal" :class="classes" :style="styles">
       <div ref="modalInner" class="mc-modal__inner" :class="{ 'mc-modal__inner--with-title': $slots.title }">
         <div v-if="$slots.title" class="mc-modal__header">
-          <div class="mc-modal__title">
+          <div ref="mcModalTitle" class="mc-modal__title">
             <!-- @slot Слот заголовка -->
             <slot name="title" />
           </div>
