@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.343](https://github.com/MediaCubeCo/mcui2/compare/v0.0.342...v0.0.343) (2026-09-23)
+
+
+### Features
+
+* losing focus now add tag at taggable type ([558c86b](https://github.com/MediaCubeCo/mcui2/commit/558c86bb8693d6bd5651be20689743ebda071d8b))
+
 ### [0.0.342](https://github.com/MediaCubeCo/mcui2/compare/v0.0.341...v0.0.342) (2026-09-08)
 
 ### [0.0.341](https://github.com/MediaCubeCo/mcui2/compare/v0.0.340...v0.0.341) (2026-09-08)
