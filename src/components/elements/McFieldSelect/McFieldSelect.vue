@@ -703,9 +703,23 @@ const removeScrollListener = () => {
 }
 
 const handleClose = (): void => {
+  if (props.taggable) commitPendingTag()
   if (list_teleported_to_body.value) moveListBack()
   removeScrollListener()
   emit('handle-close')
+}
+
+const commitPendingTag = (): void => {
+  const value = searchValue.value?.trim()
+  if (!value) return
+
+  const alreadyExists = flatOptions.value.some(
+    (option) => String(option[props.titleField]).toLowerCase() === value.toLowerCase()
+  )
+  if (alreadyExists) return
+
+  handleTag(value)
+  searchValue.value = ''
 }
 
 onBeforeUnmount(() => {
