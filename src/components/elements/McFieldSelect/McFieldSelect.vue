@@ -876,8 +876,8 @@ watch(
           :variation="TitleVariations.Overline"
           color="gray"
           max-width="100%"
-        >
-          {{ props.helpText }}
+          pre-line
+        >{{ props.helpText }}
         </mc-title>
       </slot>
     </div>
