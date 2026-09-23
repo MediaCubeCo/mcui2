@@ -875,7 +875,6 @@ watch(
           tag-name="div"
           :variation="TitleVariations.Overline"
           color="gray"
-          pre-line
           max-width="100%"
           pre-line
         >{{ props.helpText }}
