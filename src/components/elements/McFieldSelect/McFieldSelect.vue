@@ -702,8 +702,19 @@ const removeScrollListener = () => {
   closest_scroll_element.value = null
 }
 
+const just_selected_option = ref(false)
+
+const handleSelectOption = (): void => {
+  // select в multiselect всегда синхронно вызывает `close` сразу после выбора опции и срабатывает лишний blur
+  just_selected_option.value = true
+}
+
 const handleClose = (): void => {
-  if (props.taggable) commitPendingTag()
+  if (just_selected_option.value) {
+    just_selected_option.value = false
+  } else if (props.taggable) {
+    commitPendingTag()
+  }
   if (list_teleported_to_body.value) moveListBack()
   removeScrollListener()
   emit('handle-close')
@@ -767,6 +778,7 @@ watch(
         v-model="computedModelValue"
         v-bind="tagBind"
         @tag="handleTag"
+        @select="handleSelectOption"
         @search-change="handleSearchChange"
         @open="handleOpen"
         @close="handleClose"
