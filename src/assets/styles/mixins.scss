@@ -382,7 +382,17 @@
   }
 }
 
-@mixin editor-default-styles($main-font-size: $font-size-300, $main-line-height: $line-height-300) {
+/**
+ * $preserve-empty-lines — сохранять пустые строки, набранные в редакторе (Enter x2 / Shift+Enter).
+ * По умолчанию выключено: пустые параграфы прячутся, как и раньше.
+ * Включать только там, где рендерится контент из визуального редактора, и пустая строка —
+ * осмысленная часть вёрстки автора. Для текстов из бэка/переводов оставлять false.
+ */
+@mixin editor-default-styles(
+  $main-font-size: $font-size-300,
+  $main-line-height: $line-height-300,
+  $preserve-empty-lines: false
+) {
   p,
   strong,
   em,
@@ -393,6 +403,21 @@
     margin: 0;
     &:empty {
       display: none;
+    }
+  }
+  @if $preserve-empty-lines {
+    /**
+     * Пустой <p> без контента имеет нулевую высоту, а висящий <br> в конце абзаца
+     * браузер не отрисовывает вовсе. Zero-width space даёт последней строке содержимое,
+     * поэтому отступ, который автор видит в редакторе, не схлопывается при показе.
+     */
+    p {
+      &:empty {
+        display: block;
+      }
+      &::after {
+        content: '\200B';
+      }
     }
   }
   ol,
@@ -704,8 +729,8 @@
 }
 
 
-@mixin editor-notification-styles {
-  @include editor-default-styles;
+@mixin editor-notification-styles($preserve-empty-lines: false) {
+  @include editor-default-styles($preserve-empty-lines: $preserve-empty-lines);
   h1 {
     margin-bottom: $space-250;
     img {
@@ -751,7 +776,7 @@
   }
 }
 
-@mixin editor-assist-styles {
+@mixin editor-assist-styles($preserve-empty-lines: false) {
   img {
     max-width: 100%;
     width: 100%;
@@ -759,5 +784,5 @@
     object-fit: cover;
     margin: 16px 0;
   }
-  @include editor-default-styles;
+  @include editor-default-styles($preserve-empty-lines: $preserve-empty-lines);
 }
