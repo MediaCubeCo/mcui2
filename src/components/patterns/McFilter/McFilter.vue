@@ -674,7 +674,6 @@ watch(
   { deep: true }
 )
 
-// правка значений не должна менять пресет — вместо этого снимаем с него выделение
 watch(
   () => currentValues.value,
   (): void => {
@@ -702,7 +701,6 @@ watch(
 watch(
   () => props.selectedPreset,
   (val: IFilterPreset) => {
-    // эхо собственного сброса или повторный выбор того же пресета — значения не трогаем
     if (val?.name === activePreset.value?.name) return
     handleSelectPreset(val)
   }
