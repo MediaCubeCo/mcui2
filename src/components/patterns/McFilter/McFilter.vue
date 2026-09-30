@@ -79,6 +79,7 @@ const emit = defineEmits<{
   (e: 'open', value: boolean): void
   (e: 'delete-preset', value: string): void
   (e: 'update:modelValue', value: IFilterValue): void
+  (e: 'update:selectedPreset', value: IFilterPreset | null): void
   (e: 'confirm', value: IFilterValue): void
 }>()
 const props = defineProps({
@@ -184,6 +185,8 @@ const isDisableConfirmButton = computed(() => {
 
 const newPresetName = ref<string>('')
 const activePreset = ref<IFilterPreset | null>(null)
+// значения выбранного пресета в нормализованном виде, для сверки с текущими
+const activePresetValues = ref<IFilterParsedValueFilter | null>(null)
 const temporaryActivePreset = ref<IFilterPreset | null>(null)
 const filterLocalStorage = useLocalStorage<Record<string, IFilterPreset[]>>('mcFilterPresets', {})
 const presets = ref<IFilterPreset[]>([])
@@ -584,8 +587,10 @@ const handleSelectPreset = (preset: IFilterPreset) => {
     )
     currentValues.value = filter
     currentValuesName.value = filter_name
+    activePresetValues.value = helper.cloneDeep(filter)
   } else {
     activePreset.value = null
+    activePresetValues.value = null
     currentValues.value = {}
     currentValuesName.value = {}
   }
@@ -599,8 +604,10 @@ const handleDeletePreset = (preset: IFilterPreset | null): void => {
   filterLocalStorage.value[props.name] = [...filteredPresets]
   temporaryActivePreset.value = helper.cloneDeep(activePreset.value)
   activePreset.value = null
+  activePresetValues.value = null
   currentValues.value = {}
   currentValuesName.value = {}
+  emit('update:selectedPreset', null)
   /**
    * Событие по удалению пресета
    */
@@ -630,6 +637,8 @@ const handleCreatePreset = (): void => {
 
   newPresetName.value = ''
   activePreset.value = { ...preset }
+  activePresetValues.value = helper.cloneDeep(currentValues.value)
+  emit('update:selectedPreset', activePreset.value)
 }
 
 watch(
@@ -668,19 +677,10 @@ watch(
 watch(
   () => currentValues.value,
   (): void => {
-    if (activePreset.value && filterLocalStorage.value[props.name]) {
-      const presetName = activePreset.value.name
-      const mappedPresets = filterLocalStorage.value[props.name].map((p) => {
-        if (p.name === presetName) {
-          return {
-            name: p.name,
-            filter: helper.cloneDeep(currentValues.value),
-            filter_name: helper.cloneDeep(currentValuesName.value)
-          }
-        }
-        return p
-      })
-      filterLocalStorage.value[props.name] = [...mappedPresets]
+    if (activePreset.value && !helper.isEqual(currentValues.value, activePresetValues.value)) {
+      activePreset.value = null
+      activePresetValues.value = null
+      emit('update:selectedPreset', null)
     }
   },
   { deep: true }
@@ -701,6 +701,7 @@ watch(
 watch(
   () => props.selectedPreset,
   (val: IFilterPreset) => {
+    if (val?.name === activePreset.value?.name) return
     handleSelectPreset(val)
   }
 )
