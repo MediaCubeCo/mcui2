@@ -12,6 +12,7 @@ npm install mediacube-ui-v2
 ```
 
 # Usage #
+
 ###  Nuxt@3.X
 ```ts
 //Nuxt plugin
