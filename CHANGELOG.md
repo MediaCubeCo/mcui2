@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.344 (2026-10-06)
+
+
+### Features
+
+* losing focus now add tag at taggable type ([558c86b](https://github.com/MediaCubeCo/mcui2/commit/558c86bb8693d6bd5651be20689743ebda071d8b))
+
+
+### Bug Fixes
+
+* fix mc-drawer async setup components ([d267f8b](https://github.com/MediaCubeCo/mcui2/commit/d267f8b3399f9dfa1c94ae15c79992455ba2a444))
+
 ### [0.0.343](https://github.com/MediaCubeCo/mcui2/compare/v0.0.342...v0.0.343) (2026-09-23)
 
 
