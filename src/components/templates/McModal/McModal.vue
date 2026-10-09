@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, type PropType, reactive, ref, useSlots, watch } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, type PropType, reactive, ref, useSlots, watch } from 'vue'
 import { LineHeights, type LineHeightTypes } from '@/types/styles/LineHeights'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Spaces, type SpaceTypes } from '@/types/styles/Spaces'
@@ -132,6 +132,7 @@ const modalTransition = useTransition(modalTransitionState, {
 const mcModalBody = ref<HTMLElement | null>(null)
 const modalInner = ref<HTMLElement | null>(null)
 const resize_observer = ref<ResizeObserver | null>(null)
+let mutation_observer: MutationObserver | null = null
 
 const data = reactive({
   scrolled_top: false,
@@ -196,6 +197,8 @@ const resetScrollState = (): void => {
 
 const getModalElement = (): HTMLElement | null => modalInner.value?.parentElement ?? null
 
+/* Запас в px: сжимаем, только если и после сжатия останется скролл больше этого значения */
+const SHORTEN_BUFFER = 10
 const SMALL_INDENTS_CLASS = 'mc-modal--small-indents'
 const MEASURING_CLASS = 'mc-modal--measuring'
 
@@ -212,7 +215,8 @@ const measureShrunkOverflow = (): number => {
   const overflow = body.scrollHeight - body.clientHeight
   if (!wasSmall) {
     modalEl.classList.remove(SMALL_INDENTS_CLASS)
-    body.scrollTop = scrollTop
+    /* Пишем scrollTop только если браузер его обрезал: любая запись обрывает плавный скролл колесом */
+    if (body.scrollTop !== scrollTop) body.scrollTop = scrollTop
   }
   modalEl.classList.remove(MEASURING_CLASS)
 
@@ -253,13 +257,26 @@ useEventListener(mcModalBody, 'scroll', onBodyScroll, { passive: true })
 const detachResizeObserver = (): void => {
   resize_observer.value?.disconnect()
   resize_observer.value = null
+  mutation_observer?.disconnect()
+  mutation_observer = null
 }
 
 const attachResizeObserver = (): void => {
   if (!mcModalBody.value || !props.separators) return
   detachResizeObserver()
   resize_observer.value = new ResizeObserver(resizeHandler)
+  observeBodyContent()
+  mutation_observer = new MutationObserver(() => {
+    observeBodyContent()
+    resizeHandler()
+  })
+  mutation_observer.observe(mcModalBody.value, { childList: true })
+}
+
+const observeBodyContent = (): void => {
+  if (!mcModalBody.value || !resize_observer.value) return
   resize_observer.value.observe(mcModalBody.value)
+  Array.from(mcModalBody.value.children).forEach((child) => resize_observer.value?.observe(child))
 }
 
 const scheduleInitScrollState = (): void => {
@@ -274,7 +291,7 @@ const initScrollState = (): void => {
   if (!mcModalBody.value) return
 
   mcModalBody.value.scrollTop = 0
-  calculateIndents()
+  calculateIndents(true)
   calculateSeparators()
 }
 
@@ -282,17 +299,35 @@ const handleBack = (event: Event): void => {
   emit('back', event)
 }
 
-const calculateIndents = (): void => {
-  /* Сжимаем шапку/футер только если и после сжатия останется скролл */
-  if (!mcModalBody.value) return
+/* Длительность transition у шапки/футера ($duration-s = 150ms) + запас */
+const INDENTS_TRANSITION_MS = 200
+let indentsAnimating = false
+let indentsAnimationTimer: ReturnType<typeof setTimeout> | undefined
 
-  if (!data.small_indents || mcModalBody.value.scrollTop === 0) {
-    data.can_shorten_modal = measureShrunkOverflow() > 0
+watch(
+  () => data.small_indents,
+  () => {
+    indentsAnimating = true
+    clearTimeout(indentsAnimationTimer)
+    indentsAnimationTimer = setTimeout(() => {
+      indentsAnimating = false
+      resizeHandler()
+    }, INDENTS_TRANSITION_MS)
+  }
+)
+
+onBeforeUnmount(() => clearTimeout(indentsAnimationTimer))
+
+const calculateIndents = (force = false): void => {
+  if (!mcModalBody.value || indentsAnimating) return
+
+  if (force || mcModalBody.value.scrollTop === 0) {
+    data.can_shorten_modal = measureShrunkOverflow() > SHORTEN_BUFFER
   }
 }
 
 const resizeHandler = (): void => {
-  calculateIndents()
+  calculateIndents(true)
   calculateSeparators()
 }
 
