@@ -138,7 +138,6 @@ const data = reactive({
   scrolled_bottom: false,
   small_indents: false,
   can_shorten_modal: false,
-  modal_params: {} as { [key: string]: string | number },
   indent: {
     regular: '400',
     small: '150'
@@ -197,33 +196,27 @@ const resetScrollState = (): void => {
 
 const getModalElement = (): HTMLElement | null => modalInner.value?.parentElement ?? null
 
-const readCssLengthPx = (element: HTMLElement, varName: string): number => {
-  const raw = getComputedStyle(element).getPropertyValue(varName).trim()
-  if (!raw) return 0
-  const value = parseFloat(raw)
-  if (raw.endsWith('rem')) {
-    return value * parseFloat(getComputedStyle(document.documentElement).fontSize)
+const SMALL_INDENTS_CLASS = 'mc-modal--small-indents'
+const MEASURING_CLASS = 'mc-modal--measuring'
+
+const measureShrunkOverflow = (): number => {
+  const modalEl = getModalElement()
+  const body = mcModalBody.value
+  if (!modalEl || !body) return 0
+
+  const wasSmall = modalEl.classList.contains(SMALL_INDENTS_CLASS)
+  const scrollTop = body.scrollTop
+
+  modalEl.classList.add(MEASURING_CLASS)
+  if (!wasSmall) modalEl.classList.add(SMALL_INDENTS_CLASS)
+  const overflow = body.scrollHeight - body.clientHeight
+  if (!wasSmall) {
+    modalEl.classList.remove(SMALL_INDENTS_CLASS)
+    body.scrollTop = scrollTop
   }
-  return value
-}
+  modalEl.classList.remove(MEASURING_CLASS)
 
-const getSizeDifferences = (): number => {
-  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
-  const remToPx = (rem: string): number => parseFloat(rem) * rootFontSize
-
-  const padding =
-    +data.modal_params['--mc-modal-padding'] || remToPx(Spaces[data.indent.regular])
-  const paddingSmall =
-    +data.modal_params['--mc-modal-padding-small'] || remToPx(Spaces[data.indent.small])
-  const buttonHeight =
-    +data.modal_params['--mc-modal-button-height'] || remToPx(Sizes[data.footer.button.regular])
-  const buttonHeightSmall =
-    +data.modal_params['--mc-modal-button-height-small'] || remToPx(Sizes[data.footer.button.small])
-
-  const indentDifferences = (padding - paddingSmall) * 3 + paddingSmall
-  const buttonDifferences = buttonHeight - buttonHeightSmall
-
-  return indentDifferences + buttonDifferences
+  return overflow
 }
 
 /**
@@ -280,7 +273,6 @@ const scheduleInitScrollState = (): void => {
 const initScrollState = (): void => {
   if (!mcModalBody.value) return
 
-  getParams()
   mcModalBody.value.scrollTop = 0
   calculateIndents()
   calculateSeparators()
@@ -290,36 +282,12 @@ const handleBack = (event: Event): void => {
   emit('back', event)
 }
 
-const getParams = (): void => {
-  try {
-    const modalEl = getModalElement()
-    if (!modalEl) return
-
-    const vars = [
-      '--mc-modal-padding',
-      '--mc-modal-padding-small',
-      '--mc-modal-button-height',
-      '--mc-modal-button-height-small'
-    ]
-
-    vars.forEach((attr) => {
-      const param = readCssLengthPx(modalEl, attr)
-      param && (data.modal_params[attr] = param)
-    })
-  } catch (e) {
-    console.error(e)
-  }
-}
-
 const calculateIndents = (): void => {
-  /* Сжимаем шапку/футер только если overflow больше, чем экономия от сжатия */
+  /* Сжимаем шапку/футер только если и после сжатия останется скролл */
   if (!mcModalBody.value) return
 
-  const { scrollTop, scrollHeight, clientHeight } = mcModalBody.value
-  const sizeDifferences = getSizeDifferences()
-
-  if (!data.small_indents || scrollTop === 0) {
-    data.can_shorten_modal = scrollHeight - clientHeight > sizeDifferences
+  if (!data.small_indents || mcModalBody.value.scrollTop === 0) {
+    data.can_shorten_modal = measureShrunkOverflow() > 0
   }
 }
 
