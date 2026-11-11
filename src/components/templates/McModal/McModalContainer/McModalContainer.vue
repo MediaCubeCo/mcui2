@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, type PropType, watch } from 'vue'
 import type { IModalServiceState, IModalState } from '@/types/IModal'
 import McModalSafeComponent from '@/components/templates/McModal/McModalSafeComponent.vue'
+import { setBodyScrollLock } from '@/composables/useBodyScrollLock'
 
 const props = defineProps({
   modalServiceState: {
@@ -43,17 +44,9 @@ const handleKeyUp = (e: KeyboardEvent) => {
   }
 }
 
-const lockBodyScroll = (val: boolean) => {
-  if (typeof window === 'undefined') return
-  if (val) {
-    const scrollbarWidth = Math.max(0, window.innerWidth - document.documentElement.clientWidth)
-    document.body.style.overflow = 'hidden'
-    document.body.style.paddingRight = `${scrollbarWidth}px`
-  } else {
-    document.body.style.overflow = ''
-    document.body.style.paddingRight = ''
-  }
-}
+// Замок общий с дроверами (useBodyScrollLock): модалка, закрытая поверх открытого дровера, не должна
+// возвращать прокрутку странице, которую дровер держит.
+const lockBodyScroll = (val: boolean) => setBodyScrollLock('modal', val)
 
 onMounted(() => {
   document.addEventListener('keyup', handleKeyUp)
@@ -66,6 +59,7 @@ onMounted(() => {
 })
 onBeforeUnmount(() => {
   document.removeEventListener('keyup', handleKeyUp)
+  lockBodyScroll(false)
 })
 </script>
 

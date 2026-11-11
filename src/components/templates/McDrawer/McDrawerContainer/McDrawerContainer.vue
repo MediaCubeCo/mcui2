@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, type PropType } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, type PropType, watch } from 'vue'
 import type { IDrawerServiceState, IDrawerState } from '@/types/IDrawer'
 import McDrawerSafeComponent from '@/components/templates/McDrawer/McDrawerSafeComponent.vue'
+import { setBodyScrollLock } from '@/composables/useBodyScrollLock'
 const McDrawer = defineAsyncComponent(() => import('@/components/templates/McDrawer/McDrawer.vue'))
 
 interface IEnrichedDrawerState extends IDrawerState {
@@ -77,11 +78,27 @@ const handleKeyUp = (e: KeyboardEvent) => {
   }
 }
 
+/**
+ * Под открытым дровером с затемнением страница не прокручивается — так же, как под модалкой (замок
+ * общий, useBodyScrollLock). Без этого колесо над затемнением и прокрутка, дошедшая до края дровера,
+ * уходили странице: она уезжала под дровером, а бесконечный список на ней подгружал страницы.
+ *
+ * Дровер без затемнения (`showOverlay: false`) — боковая панель, рядом с которой со страницей
+ * работают как обычно: её прокрутку он не трогает. Замок снимается, как только не осталось ни одного
+ * открытого дровера с затемнением, не дожидаясь конца анимации.
+ */
+const hasOpenOverlayDrawer = computed((): boolean =>
+  drawersList.value.some((drawer) => drawer.modelValue && drawer.drawerProps?.showOverlay !== false)
+)
+
 onMounted(() => {
   document.addEventListener('keyup', handleKeyUp)
+
+  watch(hasOpenOverlayDrawer, (locked) => setBodyScrollLock('drawer', locked), { immediate: true })
 })
 onBeforeUnmount(() => {
   document.removeEventListener('keyup', handleKeyUp)
+  setBodyScrollLock('drawer', false)
 })
 </script>
 

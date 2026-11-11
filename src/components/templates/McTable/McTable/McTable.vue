@@ -267,6 +267,16 @@ const computedColumns = computed((): ITableColumnEnriched[] => {
   })
 })
 
+/**
+ * Минимальная ширина таблицы — сумма заданных ширин колонок (width или minWidth).
+ * Без неё таблица растягивается ровно на видимую ширину: строки кончаются на краю экрана, ячейки
+ * вылезают за них, и закреплённая колонка (sticky держится только внутри своей строки) при прокрутке
+ * вбок дальше ширины экрана уезжает вместе со строкой. Колонка без width и minWidth считается за 0.
+ * */
+const tableMinWidth = computed((): number => {
+  return computedColumns.value.reduce((sum, column) => sum + (Number(column.width || column.minWidth) || 0), 0)
+})
+
 const tableFirstColWidth = computed((): number => {
   const [first] = computedColumns.value
   return first?.width ? first.width : TABLE.defaultTableFirstColWidth
@@ -340,6 +350,7 @@ const containerStyle = computed((): { [key: string]: string } => {
     '--mc-table-row-height': helper.isNumber(props.rowHeight) ? `${props.rowHeight}px` : '40px',
     '--mc-table-footer-row-height': helper.isNumber(props.footerRowHeight) ? `${props.footerRowHeight}px` : '40px',
     '--mc-table-first-col-width': `${tableFirstColWidth.value}px`,
+    '--mc-table-min-width': tableMinWidth.value ? `${tableMinWidth.value}px` : 'auto',
     '--mc-table-row-active-color': theme.colors[theme.component.activeRow as ColorTypes],
   }
 })

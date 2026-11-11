@@ -125,6 +125,10 @@
   }
   &__table {
     @include grow;
+    // Не уже суммы колонок (--mc-table-min-width считает McTable.vue). Иначе строка кончается на
+    // краю видимой области, ячейки вылезают за неё, и закреплённая колонка (sticky держится только
+    // внутри своей строки) при прокрутке вбок дальше ширины экрана уезжает вместе со строкой.
+    min-width: var(--mc-table-min-width, auto);
     &_header {
       position: sticky;
       top: 0;
@@ -298,6 +302,12 @@
             display: flex;
             align-items: center;
             @include child-indent-right($space-50);
+            // McTitle рядом с чекбоксом или иконкой: у flex-элемента min-width: auto, и заголовок
+            // шириной 100% не сжимался — длинный текст вылезал за ячейку на ширину соседа, а
+            // многоточие вставало уже в чужой колонке.
+            > .mc-title {
+              min-width: 0;
+            }
           }
           .mc-cell {
             width: 100%;
