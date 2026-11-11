@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, type PropType, reactive, ref, useSlots, watch } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, type PropType, reactive, ref, useSlots, watch } from 'vue'
 import { LineHeights, type LineHeightTypes } from '@/types/styles/LineHeights'
 import { Sizes, type SizeTypes } from '@/types/styles/Sizes'
 import { Spaces, type SpaceTypes } from '@/types/styles/Spaces'
@@ -132,13 +132,13 @@ const modalTransition = useTransition(modalTransitionState, {
 const mcModalBody = ref<HTMLElement | null>(null)
 const modalInner = ref<HTMLElement | null>(null)
 const resize_observer = ref<ResizeObserver | null>(null)
+let mutation_observer: MutationObserver | null = null
 
 const data = reactive({
   scrolled_top: false,
   scrolled_bottom: false,
   small_indents: false,
   can_shorten_modal: false,
-  modal_params: {} as { [key: string]: string | number },
   indent: {
     regular: '400',
     small: '150'
@@ -197,33 +197,30 @@ const resetScrollState = (): void => {
 
 const getModalElement = (): HTMLElement | null => modalInner.value?.parentElement ?? null
 
-const readCssLengthPx = (element: HTMLElement, varName: string): number => {
-  const raw = getComputedStyle(element).getPropertyValue(varName).trim()
-  if (!raw) return 0
-  const value = parseFloat(raw)
-  if (raw.endsWith('rem')) {
-    return value * parseFloat(getComputedStyle(document.documentElement).fontSize)
+/* Запас в px: сжимаем, только если и после сжатия останется скролл больше этого значения */
+const SHORTEN_BUFFER = 10
+const SMALL_INDENTS_CLASS = 'mc-modal--small-indents'
+const MEASURING_CLASS = 'mc-modal--measuring'
+
+const measureShrunkOverflow = (): number => {
+  const modalEl = getModalElement()
+  const body = mcModalBody.value
+  if (!modalEl || !body) return 0
+
+  const wasSmall = modalEl.classList.contains(SMALL_INDENTS_CLASS)
+  const scrollTop = body.scrollTop
+
+  modalEl.classList.add(MEASURING_CLASS)
+  if (!wasSmall) modalEl.classList.add(SMALL_INDENTS_CLASS)
+  const overflow = body.scrollHeight - body.clientHeight
+  if (!wasSmall) {
+    modalEl.classList.remove(SMALL_INDENTS_CLASS)
+    /* Пишем scrollTop только если браузер его обрезал: любая запись обрывает плавный скролл колесом */
+    if (body.scrollTop !== scrollTop) body.scrollTop = scrollTop
   }
-  return value
-}
+  modalEl.classList.remove(MEASURING_CLASS)
 
-const getSizeDifferences = (): number => {
-  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
-  const remToPx = (rem: string): number => parseFloat(rem) * rootFontSize
-
-  const padding =
-    +data.modal_params['--mc-modal-padding'] || remToPx(Spaces[data.indent.regular])
-  const paddingSmall =
-    +data.modal_params['--mc-modal-padding-small'] || remToPx(Spaces[data.indent.small])
-  const buttonHeight =
-    +data.modal_params['--mc-modal-button-height'] || remToPx(Sizes[data.footer.button.regular])
-  const buttonHeightSmall =
-    +data.modal_params['--mc-modal-button-height-small'] || remToPx(Sizes[data.footer.button.small])
-
-  const indentDifferences = (padding - paddingSmall) * 3 + paddingSmall
-  const buttonDifferences = buttonHeight - buttonHeightSmall
-
-  return indentDifferences + buttonDifferences
+  return overflow
 }
 
 /**
@@ -260,13 +257,26 @@ useEventListener(mcModalBody, 'scroll', onBodyScroll, { passive: true })
 const detachResizeObserver = (): void => {
   resize_observer.value?.disconnect()
   resize_observer.value = null
+  mutation_observer?.disconnect()
+  mutation_observer = null
 }
 
 const attachResizeObserver = (): void => {
   if (!mcModalBody.value || !props.separators) return
   detachResizeObserver()
   resize_observer.value = new ResizeObserver(resizeHandler)
+  observeBodyContent()
+  mutation_observer = new MutationObserver(() => {
+    observeBodyContent()
+    resizeHandler()
+  })
+  mutation_observer.observe(mcModalBody.value, { childList: true })
+}
+
+const observeBodyContent = (): void => {
+  if (!mcModalBody.value || !resize_observer.value) return
   resize_observer.value.observe(mcModalBody.value)
+  Array.from(mcModalBody.value.children).forEach((child) => resize_observer.value?.observe(child))
 }
 
 const scheduleInitScrollState = (): void => {
@@ -280,9 +290,8 @@ const scheduleInitScrollState = (): void => {
 const initScrollState = (): void => {
   if (!mcModalBody.value) return
 
-  getParams()
   mcModalBody.value.scrollTop = 0
-  calculateIndents()
+  calculateIndents(true)
   calculateSeparators()
 }
 
@@ -290,41 +299,35 @@ const handleBack = (event: Event): void => {
   emit('back', event)
 }
 
-const getParams = (): void => {
-  try {
-    const modalEl = getModalElement()
-    if (!modalEl) return
+/* Длительность transition у шапки/футера ($duration-s = 150ms) + запас */
+const INDENTS_TRANSITION_MS = 200
+let indentsAnimating = false
+let indentsAnimationTimer: ReturnType<typeof setTimeout> | undefined
 
-    const vars = [
-      '--mc-modal-padding',
-      '--mc-modal-padding-small',
-      '--mc-modal-button-height',
-      '--mc-modal-button-height-small'
-    ]
-
-    vars.forEach((attr) => {
-      const param = readCssLengthPx(modalEl, attr)
-      param && (data.modal_params[attr] = param)
-    })
-  } catch (e) {
-    console.error(e)
+watch(
+  () => data.small_indents,
+  () => {
+    indentsAnimating = true
+    clearTimeout(indentsAnimationTimer)
+    indentsAnimationTimer = setTimeout(() => {
+      indentsAnimating = false
+      resizeHandler()
+    }, INDENTS_TRANSITION_MS)
   }
-}
+)
 
-const calculateIndents = (): void => {
-  /* Сжимаем шапку/футер только если overflow больше, чем экономия от сжатия */
-  if (!mcModalBody.value) return
+onBeforeUnmount(() => clearTimeout(indentsAnimationTimer))
 
-  const { scrollTop, scrollHeight, clientHeight } = mcModalBody.value
-  const sizeDifferences = getSizeDifferences()
+const calculateIndents = (force = false): void => {
+  if (!mcModalBody.value || indentsAnimating) return
 
-  if (!data.small_indents || scrollTop === 0) {
-    data.can_shorten_modal = scrollHeight - clientHeight > sizeDifferences
+  if (force || mcModalBody.value.scrollTop === 0) {
+    data.can_shorten_modal = measureShrunkOverflow() > SHORTEN_BUFFER
   }
 }
 
 const resizeHandler = (): void => {
-  calculateIndents()
+  calculateIndents(true)
   calculateSeparators()
 }
 

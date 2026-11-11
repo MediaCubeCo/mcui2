@@ -250,6 +250,10 @@
       }
     }
   }
+  &--measuring,
+  &--measuring * {
+    transition: none !important;
+  }
   &--small-indents {
     @media #{$media-query-s} {
       #{$block-name} {
